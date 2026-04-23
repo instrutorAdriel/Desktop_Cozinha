@@ -14,30 +14,26 @@
         <junit.version>5.12.1</junit.version>
     </properties>
 
+
     <dependencies>
         <dependency>
             <groupId>io.github.mkpaz</groupId>
-            <artifactId>atlantafx-base</artifactId>
+            <artifactId>atlantafx-base</artifactId><!-- adiciona o atlantaFX para o front end -->
             <version>2.0.0</version>
         </dependency>
         <dependency>
             <groupId>com.sun.mail</groupId>
-            <artifactId>jakarta.mail</artifactId>
+            <artifactId>jakarta.mail</artifactId><!-- Adiciona a dependencia para envio de email-->
             <version>2.0.1</version>
         </dependency>
         <dependency>
             <groupId>org.mindrot</groupId>
-            <artifactId>jbcrypt</artifactId>
-            <version>0.4</version>
-        </dependency>
-        <dependency>
-            <groupId>org.mindrot</groupId>
-            <artifactId>jbcrypt</artifactId>
+            <artifactId>jbcrypt</artifactId><!-- adiciona a dependencia para a criptografia de senhas-->
             <version>0.4</version>
         </dependency>
         <dependency>
             <groupId>com.mysql</groupId>
-            <artifactId>mysql-connector-j</artifactId>
+            <artifactId>mysql-connector-j</artifactId><!-- adiciona a dependencia -->
             <version>9.2.0</version>
         </dependency>
         <dependency>
