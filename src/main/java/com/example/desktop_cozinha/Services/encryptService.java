@@ -1,0 +1,16 @@
+package com.example.desktop_cozinha.Services;
+
+import org.mindrot.jbcrypt.BCrypt;
+
+
+public class encryptService {
+    public static String encrypt(String codigo) {
+        return BCrypt.hashpw(codigo, BCrypt.gensalt());
+    }
+
+
+public boolean checkPassword(String codigoDigitado, String codigoHash) {
+    if (codigoDigitado == null || codigoHash == null) return false;
+    return BCrypt.checkpw(codigoDigitado, codigoHash);
+}
+}
