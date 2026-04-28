@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.desktop_cozinha.controller.confirmaEmailController">
+   <children>
+      <TextField fx:id="codigoDigitar" layoutX="226.0" layoutY="188.0" promptText="codigo" />
+      <TextField fx:id="emailDigitar" layoutX="226.0" layoutY="100.0" promptText="email" />
+      <Button layoutX="274.0" layoutY="237.0" mnemonicParsing="false" onAction="#onConfirmaToken" text="Button" />
+      <Button layoutX="274.0" layoutY="142.0" mnemonicParsing="false" onAction="#onConfirmaEmailClick" text="Button" />
+      <Button fx:id="onVoltarClick" layoutX="14.0" layoutY="361.0" mnemonicParsing="false" text="Voltar" />
+   </children>
+</AnchorPane>

@@ -9,7 +9,7 @@ public class encryptService {
     }
 
 
-public boolean checkPassword(String codigoDigitado, String codigoHash) {
+public static boolean checkPassword(String codigoDigitado, String codigoHash) {
     if (codigoDigitado == null || codigoHash == null) return false;
     return BCrypt.checkpw(codigoDigitado, codigoHash);
 }
