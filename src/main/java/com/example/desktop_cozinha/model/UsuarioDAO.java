@@ -16,12 +16,12 @@ public class UsuarioDAO {
             ResultSet rs = stmt.executeQuery();
             if(rs.next()){
                 Usuario usuario = new Usuario();
-                stmt.setInt(1, rs.getInt("ID"));
-                stmt.setString(2, rs.getString("nome"));
-                stmt.setString(3, rs.getString("senha"));
-                stmt.setString(4, rs.getString("email"));
-                stmt.setString(5, rs.getString("cargo"));
-                stmt.setString(6, rs.getString("token"));
+                usuario.setID(rs.getInt("ID"));
+                usuario.setNome(rs.getString("nome"));
+                usuario.setSenha(rs.getString("senha"));
+                usuario.setEmail(rs.getString("email"));
+                usuario.setCargo(rs.getString("cargo"));
+                usuario.setToken(rs.getString("token"));
                 return usuario;
             }
 
