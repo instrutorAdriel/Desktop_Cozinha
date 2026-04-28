@@ -1,5 +1,6 @@
 package com.example.desktop_cozinha;
 
+import com.example.desktop_cozinha.controller.ListaController;
 import com.example.desktop_cozinha.model.ListaEstoqueDAO;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -21,6 +22,15 @@ public class MainApplication extends Application {
 
         primaryStage.setTitle("Sistema Cozinha");
         primaryStage.show();
+
+        public class Main {
+            public static void main(String[] args) {
+
+                ListaController controller = new ListaController();
+
+                controller.listarUsuarios();
+            }
+        }
 
     }
 

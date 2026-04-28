@@ -7,7 +7,7 @@ import java.util.List;
 public class ListaController {
 
 
-        private ListaEstoqueDAO listaEstoqueDAO;
+        private final ListaEstoqueDAO listaEstoqueDAO;
 
         // Injeção via construtor (boa prática)
         public ListaController() {
