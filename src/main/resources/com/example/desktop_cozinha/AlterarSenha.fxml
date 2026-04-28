@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.desktop_cozinha.controller.AlterarSenhaController">
+   <top>
+      <Label text="Alterar Senha" BorderPane.alignment="CENTER" />
+   </top>
+   <bottom>
+      <Button fx:id="btnAlterar" mnemonicParsing="false" onAction="#alterarSenha" text="Confirmação" BorderPane.alignment="CENTER" />
+   </bottom>
+   <center>
+      <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+         <children>
+            <TextField fx:id="txtEmail" promptText="E-mail" />
+            <PasswordField fx:id="txtSenha" promptText="Nova Senha" />
+            <PasswordField fx:id="txtConfirmarSenha" promptText="Confirmar Senha" />
+         </children>
+      </VBox>
+   </center>
+</BorderPane>
