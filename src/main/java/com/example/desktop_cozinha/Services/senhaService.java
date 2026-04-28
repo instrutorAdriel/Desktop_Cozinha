@@ -10,7 +10,7 @@ import java.security.SecureRandom;
 
 public class senhaService {
 
-    public void enviarEmail(String email) throws SQLException, MessagingException {
+    public static void enviarEmail(String email) throws SQLException, MessagingException {
         Usuario usuario = UsuarioDAO.buscaEmail(email);
         if(usuario == null){
             System.out.println("Usuario nao encontrado");
@@ -33,7 +33,7 @@ public class senhaService {
 
     }
 
-    public static void resetaSenha(String novaSenha, String confirmaSenha, String codigoHash)throws SQLException {
+    public static void resetaSenha(String novaSenha, String codigoHash)throws SQLException {
 
         String email = SessaoService.getEmailAtual();
 
