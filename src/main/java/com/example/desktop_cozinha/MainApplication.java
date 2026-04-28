@@ -9,7 +9,7 @@ import java.io.IOException;
 
 public class MainApplication extends Application {
 
-    private Stage primaryStage;
+    private static Stage primaryStage;
 
     @Override
     public void start(Stage stage) throws IOException {
@@ -21,7 +21,7 @@ public class MainApplication extends Application {
         primaryStage.show();
     }
 
-    public void trocadorDeTelas(String fxml) throws IOException {
+    public static void trocadorDeTelas(String fxml) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(
                 MainApplication.class.getResource(fxml)
         );
