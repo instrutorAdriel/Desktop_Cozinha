@@ -2,24 +2,29 @@
 
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 
-
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="496.0" prefWidth="708.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1">
+   <opaqueInsets>
+      <Insets />
+   </opaqueInsets>
+   <top>
+      <TextField alignment="CENTER" promptText="Sistema de Gerenciamento de Estoque da Cozinha" BorderPane.alignment="CENTER" />
+   </top>
    <center>
-      <VBox prefHeight="194.0" prefWidth="216.0" spacing="35.0" BorderPane.alignment="CENTER">
+      <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
          <children>
-            <TextField alignment="CENTER" prefHeight="0.0" prefWidth="363.0" promptText="Alterar Senha" />
-            <PasswordField alignment="CENTER" promptText="Nova Senha" />
-            <PasswordField alignment="CENTER" promptText="Confirmar Senha" />
-            <Button alignment="CENTER" mnemonicParsing="false" text="Voltar" />
+            <ImageView fitHeight="105.0" fitWidth="306.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@Imagem/Design%20sem%20nome.png" />
+               </image>
+            </ImageView>
+            <Label text="Nova Senha" />
+            <PasswordField />
+            <Label text="Confirmar Nova Senha" />
+            <PasswordField />
          </children>
-         <BorderPane.margin>
-            <Insets left="150.0" right="150.0" top="150.0" />
-         </BorderPane.margin>
       </VBox>
    </center>
-   <bottom>
-      <Button mnemonicParsing="false" text="Alterar" BorderPane.alignment="CENTER" />
-   </bottom>
 </BorderPane>
