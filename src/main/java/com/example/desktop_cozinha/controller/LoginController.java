@@ -38,8 +38,6 @@ public class LoginController {
 
         String senhaHashDoBanco = loginDAO.obterSenhaHash(usuarioDigitado);
 
-        IO.println(senhaHashDoBanco);
-
         if (senhaHashDoBanco != null) {
                 if (BCrypt.checkpw(senhaDigitada, senhaHashDoBanco)){
                     MainApplication.trocadorDeTelas("home.fxml");
