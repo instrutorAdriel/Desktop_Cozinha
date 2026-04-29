@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" scaleZ="0.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1">
+   <center>
+      <VBox alignment="CENTER" prefHeight="446.0" prefWidth="600.0" BorderPane.alignment="CENTER">
+         <children>
+            <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@Imagens/Logo%20colorida%20Senac.png" />
+               </image>
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin>
+            </ImageView>
+            <Label text="CADASTRO">
+               <font>
+                  <Font name="System Bold" size="20.0" />
+               </font>
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin>
+            </Label>
+            <Label text="Nome Completo">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+               <VBox.margin>
+                  <Insets right="337.5" />
+               </VBox.margin>
+            </Label>
+            <TextField promptText="Insira o nome completo aqui:">
+               <VBox.margin>
+                  <Insets left="175.0" right="175.0" top="1.0" />
+               </VBox.margin>
+            </TextField>
+            <Label text="E-mail">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+               <VBox.margin>
+                  <Insets right="407.5" top="7.5" />
+               </VBox.margin>
+            </Label>
+            <TextField promptText="Insira o e-mail aqui:">
+               <VBox.margin>
+                  <Insets left="175.0" right="175.0" top="1.0" />
+               </VBox.margin>
+            </TextField>
+            <Label layoutX="185.0" layoutY="244.0" text="Senha">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+               <VBox.margin>
+                  <Insets right="407.5" top="7.5" />
+               </VBox.margin>
+            </Label>
+            <TextField layoutX="185.0" layoutY="265.0" promptText="Crie a senha aqui:">
+               <VBox.margin>
+                  <Insets left="175.0" right="175.0" />
+               </VBox.margin>
+            </TextField>
+            <Label layoutX="185.0" layoutY="298.0" text="Confirmar Senha">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+               <VBox.margin>
+                  <Insets right="337.5" top="7.5" />
+               </VBox.margin>
+            </Label>
+            <TextField layoutX="185.0" layoutY="318.0" promptText="Confirme a senha criada aqui:">
+               <VBox.margin>
+                  <Insets left="175.0" right="175.0" />
+               </VBox.margin>
+            </TextField>
+            <Button mnemonicParsing="false" style="-fx-background-color: #e4891b;" text="CONFIRMAR">
+               <VBox.margin>
+                  <Insets top="25.0" />
+               </VBox.margin>
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+            </Button>
+         </children></VBox>
+   </center>
+   <cursor>
+      <Cursor fx:constant="CLOSED_HAND" />
+   </cursor>
+   <top>
+      <HBox prefHeight="50.0" style="-fx-background-color: #054584;" BorderPane.alignment="CENTER">
+         <children>
+            <ImageView fitHeight="50.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@Imagens/Logo%20branca%20Senac.png" />
+               </image>
+            </ImageView>
+            <Label style="-fx-background-color: transparente;" text="Sistema de gerenciamneto de Estoque da Cozinha" textFill="WHITE">
+               <font>
+                  <Font name="System Bold" size="20.0" />
+               </font>
+               <HBox.margin>
+                  <Insets left="37.5" top="10.0" />
+               </HBox.margin>
+            </Label>
+         </children>
+      </HBox>
+   </top>
+</BorderPane>
