@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.desktop_cozinha.controller.CadastroProdutoController">
+   <left>
+      <VBox alignment="TOP_CENTER" prefHeight="400.0" prefWidth="131.0" BorderPane.alignment="CENTER">
+         <children>
+            <Button alignment="CENTER" mnemonicParsing="false" text="Button">
+               <VBox.margin>
+                  <Insets top="30.0" />
+               </VBox.margin>
+            </Button>
+            <Button mnemonicParsing="false" text="Button">
+               <VBox.margin>
+                  <Insets top="15.0" />
+               </VBox.margin>
+            </Button>
+            <Button mnemonicParsing="false" text="Button">
+               <VBox.margin>
+                  <Insets top="15.0" />
+               </VBox.margin>
+            </Button>
+            <Button mnemonicParsing="false" text="Button">
+               <VBox.margin>
+                  <Insets top="200.0" />
+               </VBox.margin>
+            </Button>
+         </children>
+      </VBox>
+   </left>
+   <center>
+      <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+         <children>
+            <Label text="CADASTRO DE PRODUTOS">
+               <font>
+                  <Font name="Arial Bold" size="18.0" />
+               </font>
+               <VBox.margin>
+                  <Insets top="30.0" />
+               </VBox.margin>
+            </Label>
+            <TextField fx:id="txtNomeProduto" promptText="NOME DO PRODUTO ">
+               <VBox.margin>
+                  <Insets left="100.0" right="100.0" top="15.0" />
+               </VBox.margin>
+            </TextField>
+            <DatePicker />
+            <HBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0">
+               <VBox.margin>
+                  <Insets top="15.0" />
+               </VBox.margin>
+               <children>
+                  <ChoiceBox prefWidth="150.0" />
+                  <ChoiceBox prefWidth="150.0" />
+               </children>
+            </HBox>
+            <TextField fx:id="txtTipoProduto" promptText="TIPO :'PERECIVEL','NAO_PERECIVEL','UTENSILIO'">
+               <VBox.margin>
+                  <Insets left="100.0" right="100.0" top="15.0" />
+               </VBox.margin>
+            </TextField>
+            <TextField fx:id="txtQtdAtual" promptText="QUANTIDADE ATUAL">
+               <VBox.margin>
+                  <Insets left="100.0" right="100.0" top="15.0" />
+               </VBox.margin>
+            </TextField>
+            <TextField fx:id="txtUnidadeDeMedida" promptText="UNIDADE DE MEDIDA : 'KG','LITRO','UNIDADE'">
+               <VBox.margin>
+                  <Insets left="100.0" right="100.0" top="15.0" />
+               </VBox.margin>
+            </TextField>
+            <TextField fx:id="txtEstoqueMinimo" promptText="ESTOQUE MINIMO">
+               <VBox.margin>
+                  <Insets left="100.0" right="100.0" top="15.0" />
+               </VBox.margin>
+            </TextField>
+            <TextField fx:id="txtDataValidade" promptText="DATA VALIDADE">
+               <VBox.margin>
+                  <Insets left="100.0" right="100.0" top="15.0" />
+               </VBox.margin>
+            </TextField>
+            <HBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0">
+               <VBox.margin>
+                  <Insets top="15.0" />
+               </VBox.margin>
+               <children>
+                  <Button fx:id="btnVoltar" mnemonicParsing="false" onAction="#voltarTela" text="VOLTAR">
+                     <HBox.margin>
+                        <Insets right="30.0" />
+                     </HBox.margin>
+                  </Button>
+                  <Button fx:id="btnCadastro" mnemonicParsing="false" onAction="#onCadastrar" text="CADASTRAR">
+                     <HBox.margin>
+                        <Insets left="30.0" />
+                     </HBox.margin>
+                  </Button>
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+   </center>
+</BorderPane>
