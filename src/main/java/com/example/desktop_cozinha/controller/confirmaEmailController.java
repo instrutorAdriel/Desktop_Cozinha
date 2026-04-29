@@ -42,7 +42,7 @@ public class confirmaEmailController {
             //usuario nao encontrado no sistema
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Erro");
-            alert.setHeaderText("Email nao encontrado!");
+            alert.setHeaderText("Email não encontrado!");
             alert.showAndWait();
             return ;
         }
