@@ -20,11 +20,11 @@ public class senhaService {
         String token = String.format("%06d", new SecureRandom().nextInt(999999));
         String codigoHash = encryptService.encrypt(token);
 
-        UsuarioDAO.salvarToken(codigoHash, email);
+        UsuarioDAO.salvarToken(email, codigoHash);
 
         String corpo = """ 
                 Voce solicitou a recuperacao de senha, seu codigo de recuperacao e: 
-                """.formatted(token);
+                """+ token;
 
 
 
