@@ -17,7 +17,7 @@ public class MainApplication extends Application {
         primaryStage = stage;
 
         // Carrega a tela inicial (login.fxml)
-        trocadorDeTelas("login.fxml");
+        trocadorDeTelas("confirmaEmail.fxml");
 
         primaryStage.setTitle("Sistema genérico");
         primaryStage.show();

@@ -50,7 +50,7 @@ public class confirmaEmailController {
             SessaoService.setEmailAtual(emailDigitado);
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Sucesso");
-            alert.setHeaderText("Codigo confirmado com sucesso!");
+            alert.setHeaderText("Código confirmado com sucesso!");
             senhaService.enviarEmail(emailDigitado);
             return;
         }
@@ -69,13 +69,13 @@ public class confirmaEmailController {
         if(codigoDigitado.isBlank()){
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Erro");
-            alert.setHeaderText("Preencha o campo de codigo!");
+            alert.setHeaderText("Preencha o campo de código!");
             alert.showAndWait();
         }
         if(SessaoService.getEmailAtual() == null || codigoDigitado.isBlank()){
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Erro");
-            alert.setHeaderText("Codigo nao encontrado!");
+            alert.setHeaderText("Código não encontrado!");
             alert.showAndWait();
 
 
@@ -89,7 +89,7 @@ public class confirmaEmailController {
         else{
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Erro");
-            alert.setHeaderText("Codigo invalido!");
+            alert.setHeaderText("Código inválido!");
             alert.showAndWait();
             
         }
