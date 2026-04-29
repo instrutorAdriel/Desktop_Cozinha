@@ -1,15 +1,70 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-<?import javafx.scene.control.Button?>
-<VBox alignment="CENTER" spacing="20.0" xmlns:fx="http://javafx.com/fxml">
-    <padding>
-        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
-    </padding>
-
-    <Label fx:id="welcomeText"/>
-    <Button text="Hello!"/>
-</VBox>
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1">
+   <top>
+      <HBox alignment="CENTER" prefHeight="50.0" prefWidth="600.0" style="-fx-background-color: #054685;" BorderPane.alignment="BOTTOM_LEFT">
+         <children>
+            <ImageView fitHeight="50.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" scaleZ="0.0" translateX="-140.0">
+               <image>
+                  <Image url="@../../../Imagens/logo-branco.png" />
+               </image>
+            </ImageView>
+            <Label text="Sistema de Gerenciamento de Estoque da Cozinha" textFill="WHITE">
+               <font>
+                  <Font name="Arial" size="18.0" />
+               </font></Label>
+         </children></HBox>
+   </top>
+   <left>
+      <VBox alignment="TOP_CENTER" prefHeight="350.0" prefWidth="200.0" style="-fx-background-color: #8daccb;" BorderPane.alignment="CENTER">
+         <children>
+            <Label alignment="CENTER" prefHeight="17.0" prefWidth="176.0" text="Controle de Estoque">
+               <VBox.margin>
+                  <Insets top="10.0" />
+               </VBox.margin>
+               <font>
+                  <Font name="Bodoni MT" size="17.0" />
+               </font>
+            </Label>
+            <Button mnemonicParsing="false" prefHeight="42.0" prefWidth="185.0" style="-fx-background-color: #c7d0e2;" text="Lista de produto">
+               <VBox.margin>
+                  <Insets top="30.0" />
+               </VBox.margin>
+               <font>
+                  <Font name="Bodoni MT" size="17.0" />
+               </font>
+               <graphic>
+                  <ImageView fitHeight="30.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true" />
+               </graphic>
+            </Button>
+            <Button layoutX="18.0" layoutY="61.0" mnemonicParsing="false" prefHeight="42.0" prefWidth="185.0" style="-fx-background-color: #c7d0e2;" text="Relatório          ">
+               <font>
+                  <Font name="Bodoni MT" size="17.0" />
+               </font>
+               <graphic>
+                  <ImageView fitHeight="30.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true" />
+               </graphic>
+               <VBox.margin>
+                  <Insets top="50.0" />
+               </VBox.margin>
+            </Button>
+            <Button layoutX="18.0" layoutY="103.0" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" prefHeight="42.0" prefWidth="185.0" style="-fx-background-color: #c7d0e2;" text="Configuração     ">
+               <font>
+                  <Font name="Bodoni MT" size="17.0" />
+               </font>
+               <graphic>
+                  <ImageView fitHeight="30.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true" />
+               </graphic>
+               <VBox.margin>
+                  <Insets top="300.0" />
+               </VBox.margin>
+            </Button>
+         </children></VBox>
+   </left>
+</BorderPane>
