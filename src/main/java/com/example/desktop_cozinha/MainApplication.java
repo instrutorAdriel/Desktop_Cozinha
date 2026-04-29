@@ -16,7 +16,7 @@ public class MainApplication extends Application {
     public void start(Stage stage) throws IOException {
         primaryStage = stage;
 
-        // Carrega a tela inicial (login.fxml)
+        // Carrega a tela inicial (carrega tela inicial)
         trocadorDeTelas("confirmaEmail.fxml");
 
         primaryStage.setTitle("Sistema genérico");
