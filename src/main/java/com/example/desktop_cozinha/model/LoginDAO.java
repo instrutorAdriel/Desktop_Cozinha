@@ -7,18 +7,18 @@ import com.example.desktop_cozinha.config.DatabaseConfig;
 import java.sql.*;
 
 public class LoginDAO {
-    public boolean autenticar(String email, String senha) {
+    public boolean autenticar(String emailD, String senhaD) {
         String sql = "SELECT senha FROM usuarios WHERE email = ?";
 
 
         try (Connection conn = DatabaseConfig.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            stmt.setString(1, email);
+            stmt.setString(1, emailD);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     String senhaDoBanco = rs.getString("senha");
-                    if (senha.equals(senhaDoBanco))
+                    if (senhaD.equals(senhaDoBanco))
                         return true; //senha correta
                     else {
                         return false;//senha incorreta
@@ -32,19 +32,7 @@ public class LoginDAO {
         return false; // usuário não encontrado
     }
 
-    public static Connection conectar() {
-        try {
-            // Exemplo para MySQL
-            String url = "jdbc:mysql://localhost:3306/nome_do_seu_banco?useTimezone=true&serverTimezone=UTC";
-            String usuario = "root";
-            String senha = "sua_senha";
 
-            return DriverManager.getConnection(url, usuario, senha);
-        } catch (SQLException e) {
-            System.err.println("Erro de Conexão: " + e.getMessage());
-            return null;
-        }
-    }
     public String obterSenhaHash(String usuario) {
         String sql = "SELECT senha FROM usuarios WHERE nome = ?";
         try (Connection conn = DatabaseConfig.getConnection();
