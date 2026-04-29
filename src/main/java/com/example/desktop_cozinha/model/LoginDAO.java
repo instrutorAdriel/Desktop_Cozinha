@@ -34,7 +34,7 @@ public class LoginDAO {
 
 
     public String obterSenhaHash(String usuario) {
-        String sql = "SELECT senha FROM usuarios WHERE nome = ?";
+        String sql = "SELECT senha FROM usuarios WHERE email = ?";
         try (Connection conn = DatabaseConfig.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 

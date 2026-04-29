@@ -11,6 +11,8 @@ import org.mindrot.jbcrypt.BCrypt;
 import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.function.BinaryOperator;
+import java.util.function.IntBinaryOperator;
 
 import static com.mysql.cj.Messages.getString;
 
@@ -36,25 +38,27 @@ public class LoginController {
 
         String senhaHashDoBanco = loginDAO.obterSenhaHash(usuarioDigitado);
 
+        IO.println(senhaHashDoBanco);
+
         if (senhaHashDoBanco != null) {
                 if (BCrypt.checkpw(senhaDigitada, senhaHashDoBanco)){
                     MainApplication.trocadorDeTelas("home.fxml");
                 }
                 else {
                     Alert alerta = new Alert(Alert.AlertType.WARNING);
-                    alerta.setTitle("senhas não conferem");
+                    alerta.setTitle("As senhas não conferem.");
                     alerta.setHeaderText(null);
-                    alerta.setContentText("as senhas não batem digite a senha e o confirmar senha iguais ");
+                    alerta.setContentText("A senha informada é inválida.");
                     alerta.showAndWait();
                 }
-            } else {
-                Alert alerta = new Alert(Alert.AlertType.WARNING);
-                alerta.setTitle("campos obrigatorios");
-                alerta.setHeaderText(null);
-                alerta.setContentText("preencha os campos");
-                alerta.showAndWait();
-                return;
-            }
+        } else {
+            Alert alerta = new Alert(Alert.AlertType.WARNING);
+            alerta.setTitle("Preencha os campos obrigatórios.");
+            alerta.setHeaderText(null);
+            alerta.setContentText("Existem campos não preenchidos.");
+            alerta.showAndWait();
+            return;
+        }
         }
     }
 
