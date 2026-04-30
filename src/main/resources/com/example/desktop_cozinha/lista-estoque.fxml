@@ -1,12 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 
-<TableView fx:id="ListaEstoque" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="303.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/17.0.12" fx:controller="com.example.desktop_cozinha.controller.ListaController">
-  <columns>
-    <TableColumn fx:id="nomeProduto" prefWidth="75.0" text="Nome" />
-    <TableColumn fx:id="tipoProduto" prefWidth="75.0" text="Tipo" />
-      <TableColumn fx:id="quantidadeProduto" prefWidth="75.0" text="Quantidade" />
-      <TableColumn fx:id="unidadeProduto" prefWidth="75.0" text="Unidade" />
-  </columns>
-</TableView>
+<Pane fx:id="painelFrame" prefHeight="457.0" prefWidth="302.0" xmlns="http://javafx.com/javafx/17.0.12"
+      xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.desktop_cozinha.controller.ListaController">
+    <children>
+        <TableView fx:id="ListaEstoque" layoutX="1.0" layoutY="37.0" maxHeight="-Infinity" maxWidth="-Infinity"
+                   minHeight="-Infinity" minWidth="-Infinity" prefHeight="420.0" prefWidth="302.0">
+            <columns>
+                <TableColumn fx:id="nomeProduto" prefWidth="75.0" text="Nome"/>
+                <TableColumn fx:id="tipoProduto" prefWidth="75.0" text="Tipo"/>
+                <TableColumn fx:id="quantidadeProduto" prefWidth="75.0" text="Quantidade"/>
+                <TableColumn fx:id="unidadeProduto" prefWidth="75.0" text="Unidade"/>
+            </columns>
+        </TableView>
+        <Button fx:id="btnBuscar" layoutX="169.0" layoutY="2.0" mnemonicParsing="false" onAction="#onHelloButtonClick"
+                text="Buscar">
+            <opaqueInsets>
+                <Insets/>
+            </opaqueInsets>
+        </Button>
+        <TextField fx:id="FiltrarProdutos" layoutX="20.0" layoutY="2.0"/>
+    </children>
+</Pane>

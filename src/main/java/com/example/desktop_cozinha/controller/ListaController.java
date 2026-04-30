@@ -7,7 +7,9 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.Pane;
 
 public class ListaController {
 
@@ -16,6 +18,7 @@ public class ListaController {
 
     @FXML
     private TableColumn<ProdutoListaEstoque, String> nomeProduto;
+
 
     @FXML
     private TableColumn<ProdutoListaEstoque, String> tipoProduto;
@@ -26,12 +29,15 @@ public class ListaController {
     @FXML
     private TableColumn<ProdutoListaEstoque, String> unidadeProduto;
 
+    @FXML
+    private TextField FiltrarProdutos;
+
     private final ListaEstoqueDAO dao = new ListaEstoqueDAO();
 
     @FXML
     public void initialize() {
         configurarColunas();
-        carregarDados();
+        carregarDados("");
     }
 
     private void configurarColunas() {
@@ -42,10 +48,16 @@ public class ListaController {
         unidadeProduto.setCellValueFactory(new PropertyValueFactory<>("unidade"));
     }
 
-    private void carregarDados() {
+    @FXML
+    protected void onHelloButtonClick() {
+        String textoBusca = FiltrarProdutos.getText();
+        carregarDados(textoBusca);
+
+    }
+    private void carregarDados(String textoBusca) {
 
         ObservableList<ProdutoListaEstoque> lista =
-                FXCollections.observableArrayList(dao.lerTodos());
+                FXCollections.observableArrayList(dao.filtrarProdutos(textoBusca));
 
         ListaEstoque.setItems(lista);
     }
