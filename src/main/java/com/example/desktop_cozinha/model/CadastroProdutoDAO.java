@@ -19,7 +19,13 @@ public class CadastroProdutoDAO {
             stmt.setString(3, qtdAtual);
             stmt.setString(4, unidadeDeMedida);
             stmt.setString(5, estoqueMinimo);
-            stmt.setDate(6, dataValidade );
+            if (dataValidade != null) {
+                // Se tem data, salva a data normal
+                stmt.setDate(6, dataValidade);
+            } else {
+                // Se não tem data (é null), avisa o banco para salvar como campo vazio (NULL)
+                stmt.setNull(6, java.sql.Types.DATE);
+            }
             stmt.executeUpdate();
             IO.println("Produto Cadastrado com sucesso!");
         } catch (SQLException e) {

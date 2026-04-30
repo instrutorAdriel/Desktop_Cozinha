@@ -48,27 +48,7 @@
                   <Insets left="100.0" right="100.0" top="15.0" />
                </VBox.margin>
             </TextField>
-            <DatePicker />
-            <HBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0">
-               <VBox.margin>
-                  <Insets top="15.0" />
-               </VBox.margin>
-               <children>
-                  <ChoiceBox prefWidth="150.0" />
-                  <ChoiceBox prefWidth="150.0" />
-               </children>
-            </HBox>
-            <TextField fx:id="txtTipoProduto" promptText="TIPO :'PERECIVEL','NAO_PERECIVEL','UTENSILIO'">
-               <VBox.margin>
-                  <Insets left="100.0" right="100.0" top="15.0" />
-               </VBox.margin>
-            </TextField>
             <TextField fx:id="txtQtdAtual" promptText="QUANTIDADE ATUAL">
-               <VBox.margin>
-                  <Insets left="100.0" right="100.0" top="15.0" />
-               </VBox.margin>
-            </TextField>
-            <TextField fx:id="txtUnidadeDeMedida" promptText="UNIDADE DE MEDIDA : 'KG','LITRO','UNIDADE'">
                <VBox.margin>
                   <Insets left="100.0" right="100.0" top="15.0" />
                </VBox.margin>
@@ -78,12 +58,55 @@
                   <Insets left="100.0" right="100.0" top="15.0" />
                </VBox.margin>
             </TextField>
-            <TextField fx:id="txtDataValidade" promptText="DATA VALIDADE">
+            <HBox alignment="TOP_CENTER" prefHeight="26.0" prefWidth="469.0">
                <VBox.margin>
-                  <Insets left="100.0" right="100.0" top="15.0" />
+                  <Insets top="15.0" />
                </VBox.margin>
-            </TextField>
-            <HBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0">
+               <children>
+                  <Label text="TIPO DO PRODUTO">
+                     <HBox.margin>
+                        <Insets right="15.0" />
+                     </HBox.margin></Label>
+                  <ChoiceBox fx:id="txtTipoProduto" prefWidth="150.0">
+                     <HBox.margin>
+                        <Insets right="30.0" />
+                     </HBox.margin></ChoiceBox>
+               </children>
+            </HBox>
+            <HBox alignment="TOP_CENTER" layoutX="10.0" layoutY="116.0" prefHeight="26.0" prefWidth="469.0">
+               <children>
+                  <Label text="UNIDADE DE MEDIDA">
+                     <HBox.margin>
+                        <Insets right="15.0" />
+                     </HBox.margin>
+                  </Label>
+                  <ChoiceBox fx:id="txtUnidadeDeMedida" prefWidth="150.0">
+                     <HBox.margin>
+                        <Insets right="30.0" />
+                     </HBox.margin></ChoiceBox>
+               </children>
+               <VBox.margin>
+                  <Insets top="15.0" />
+               </VBox.margin>
+            </HBox>
+            <HBox alignment="TOP_CENTER" prefHeight="29.0" prefWidth="469.0">
+               <children>
+                  <Label text="DATA DE VALIDADE">
+                     <HBox.margin>
+                        <Insets right="15.0" />
+                     </HBox.margin>
+                  </Label>
+                  <DatePicker fx:id="txtDataValidade">
+                     <HBox.margin>
+                        <Insets right="30.0" />
+                     </HBox.margin>
+                  </DatePicker>
+               </children>
+               <VBox.margin>
+                  <Insets top="15.0" />
+               </VBox.margin>
+            </HBox>
+            <HBox alignment="TOP_CENTER" prefHeight="47.0" prefWidth="469.0">
                <VBox.margin>
                   <Insets top="15.0" />
                </VBox.margin>

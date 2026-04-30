@@ -2,43 +2,39 @@ package com.example.desktop_cozinha.controller;
 
 import com.example.desktop_cozinha.MainApplication;
 import com.example.desktop_cozinha.model.CadastroProdutoDAO;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.TextField;
+import javafx.fxml.Initializable;
+import javafx.scene.control.*;
 
-import java.math.BigDecimal;
+import java.net.URL;
 import java.sql.Date;
-import java.util.Objects;
+import java.util.ResourceBundle;
+import java.time.LocalDate;
+import java.sql.Date;
 
 
-public class CadastroProdutoController {
+
+public class CadastroProdutoController  implements Initializable {
 
     @FXML
     private TextField txtNomeProduto;
 
     @FXML
-    private MenuItem perecivel;
-    @FXML
-    private MenuItem nao_perecivel;
-
-    @FXML
-    private MenuItem utensilhos
-
-    @FXML
-    private TextField txtTipoProduto;
-
-    @FXML
     private TextField txtQtdAtual ;
-    @FXML
-    private TextField txtUnidadeDeMedida;
 
     @FXML
     private TextField txtEstoqueMinimo;
+    @FXML
+    private ChoiceBox<String> txtUnidadeDeMedida;
 
     @FXML
-    private TextField txtDataValidade;
+    private ChoiceBox <String>txtTipoProduto;
+
+
+    @FXML
+    private DatePicker txtDataValidade;
 
 
     @FXML
@@ -46,6 +42,13 @@ public class CadastroProdutoController {
 
     @FXML
     private Button btnVoltar;
+
+    public void initialize(URL url, ResourceBundle rb) {
+        txtUnidadeDeMedida.getItems().addAll("KG", "LITRO", "UNIDADE");
+        txtTipoProduto.getItems().addAll("PERECIVEL", "NAO_PERECIVEL", "UTENSILIO");
+
+    }
+
 
     @FXML
     protected void voltarTela () throws Exception {
@@ -59,15 +62,25 @@ public class CadastroProdutoController {
         // getText () retorna o conteudo atual do campo como String
 
         String nomeProduto = txtNomeProduto.getText();
-        String tipoProduto = txtTipoProduto.getText();
         String qtdAtual = txtQtdAtual.getText();
-        String unidadeDeMedida = txtUnidadeDeMedida.getText();
+        String tipoProduto = txtTipoProduto.getValue();
+        String unidadeDeMedida = txtUnidadeDeMedida.getValue();
         String estoqueMinimo = txtEstoqueMinimo.getText();
-        Date dataValidade = Date.valueOf(txtDataValidade.getText());
+        // Pega o valor do calendário (pode ser a data ou pode ser null se estiver vazio)
+        LocalDate dataSelecionada = txtDataValidade.getValue();
+
+        // Cria a variável do banco vazia por padrão
+        Date dataValidade = null;
+
+        // Só converte se o usuário realmente tiver escolhido uma data
+        if (dataSelecionada != null) {
+            dataValidade = Date.valueOf(dataSelecionada);
+        }
+
 
         //2. Validar se tem um campo vazio
 
-        if (nomeProduto.isBlank () || tipoProduto.isBlank () || qtdAtual.isBlank () || unidadeDeMedida.isBlank () || estoqueMinimo.isBlank() ){
+        if ( nomeProduto.isBlank () || tipoProduto.isBlank () || qtdAtual.isBlank () || unidadeDeMedida.isBlank () || estoqueMinimo.isBlank() ){
             //  exibe uma janela de aviso para o usuario
             Alert alerta = new Alert(Alert.AlertType.WARNING);
             alerta.setTitle("Campos obrigatorios!");
@@ -88,7 +101,7 @@ public class CadastroProdutoController {
         //4. Chama o metodo de cadastro do cliente
 
 
-        dao.cadastrarProduto(nomeProduto,tipoProduto,qtdAtual,unidadeDeMedida,estoqueMinimo, Date.valueOf(dataValidade.toLocalDate()));
+        dao.cadastrarProduto(nomeProduto, tipoProduto, qtdAtual, unidadeDeMedida, estoqueMinimo, dataValidade);
 
         //5.informa ao usuario que o cadastro foi realizado
 
@@ -100,14 +113,11 @@ public class CadastroProdutoController {
 
         //6. limpa os campos de texto
         txtNomeProduto.clear();
-        txtTipoProduto.clear();
-        txtUnidadeDeMedida.clear();
         txtQtdAtual.clear();
         txtEstoqueMinimo.clear();
-        txtDataValidade.clear();
 
 
-        MainApplication.trocadorDeTelas("login.fxml");
+
 
 
     }
