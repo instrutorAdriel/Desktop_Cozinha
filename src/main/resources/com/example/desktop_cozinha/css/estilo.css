@@ -1,0 +1,13 @@
+.painel-superior{
+    -fx-background-color:#054584 ;
+}
+
+.btn-laranja {
+    -fx-background-color:#e4891b;
+    -fx-font-family: SansSerif;
+    -fx-font-weight: bold;
+}
+
+.btn-laranja:hover{
+    -fx-background-color: #ba7119;
+}
