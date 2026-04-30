@@ -23,7 +23,7 @@ public class ListaEstoqueDAO {
                 ProdutoListaEstoque p = new ProdutoListaEstoque(
                         rs.getString("nome"),
                         rs.getString("tipo"),
-                        rs.getDouble("quantidade_atual"),
+                        rs.getString("quantidade_atual"),
                         rs.getString("unidade_medida")
                 );
 

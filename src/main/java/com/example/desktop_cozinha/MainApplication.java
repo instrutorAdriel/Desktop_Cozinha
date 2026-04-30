@@ -1,14 +1,11 @@
 package com.example.desktop_cozinha;
 
-import com.example.desktop_cozinha.controller.ListaController;
-import com.example.desktop_cozinha.model.ListaEstoqueDAO;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.util.List;
 
 public class MainApplication extends Application {
 
@@ -18,12 +15,10 @@ public class MainApplication extends Application {
     public void start(Stage stage) throws IOException {
         primaryStage = stage;
 
-        trocadorDeTelas("login.fxml");
+        trocadorDeTelas("lista-estoque.fxml");
 
         primaryStage.setTitle("Sistema Cozinha");
         primaryStage.show();
-        }
-
     }
 
     public void trocadorDeTelas(String fxml) throws IOException {
@@ -35,4 +30,4 @@ public class MainApplication extends Application {
 
         primaryStage.setScene(scene);
     }
-
+}
