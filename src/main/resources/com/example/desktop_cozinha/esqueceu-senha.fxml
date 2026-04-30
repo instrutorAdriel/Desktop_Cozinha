@@ -7,6 +7,20 @@
 <?import javafx.scene.text.*?>
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" stylesheets="@css/estilo.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.desktop_cozinha.controller.LoginController">
+   <top>
+      <AnchorPane prefHeight="50.0" prefWidth="800.0" style="-fx-background-color: #054685;" BorderPane.alignment="CENTER">
+         <children>
+            <ImageView fitHeight="40.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="5.0">
+               <image>
+                  <Image url="@imagens/Logo%20branca%20Senac.png" />
+               </image></ImageView>
+            <Label alignment="CENTER" layoutX="212.0" layoutY="15.0" text="Sistema de Gerenciamento de Estoque da Cozinha" textFill="WHITE" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+               <font>
+                  <Font name="Arial" size="18.0" />
+               </font>
+            </Label>
+         </children></AnchorPane>
+   </top>
    <center>
       <VBox alignment="CENTER" prefHeight="600.0" prefWidth="800.0" BorderPane.alignment="CENTER">
          <children>
@@ -15,12 +29,12 @@
                   <Image url="@imagens/Logo%20colorida%20Senac.png" />
                </image>
                <VBox.margin>
-                  <Insets top="-10.0" />
+                  <Insets top="-53.0" />
                </VBox.margin>
             </ImageView>
             <Label text="ESQUECEU SUA SENHA">
                <VBox.margin>
-                  <Insets top="15.0" />
+                  <Insets />
                </VBox.margin>
                <font>
                   <Font name="Arial Bold" size="18.0" />
@@ -36,7 +50,7 @@
             </Label>
             <Label alignment="CENTER" contentDisplay="CENTER" graphicTextGap="0.0" prefHeight="19.0" prefWidth="500.0" text="E-MAIL" textOverrun="CENTER_ELLIPSIS">
                <VBox.margin>
-                  <Insets top="50.0" />
+                  <Insets top="42.0" />
                </VBox.margin>
                <padding>
                   <Insets bottom="4.0" />
@@ -47,29 +61,41 @@
             </Label>
             <TextField maxHeight="25.0" maxWidth="500.0" minHeight="25.0" minWidth="250.0" prefHeight="25.0" prefWidth="500.0">
                <VBox.margin>
-                  <Insets left="150.0" right="150.0" />
+                  <Insets bottom="8.0" left="152.0" right="150.0" />
                </VBox.margin>
             </TextField>
-            <Button mnemonicParsing="false" prefHeight="26.0" prefWidth="110.0" styleClass="btn-laranja" text="REDEFINIR">
+            <Button layoutX="355.0" layoutY="468.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="110.0" styleClass="btn-laranja" text="REDEFINIR">
                <VBox.margin>
-                  <Insets top="34.0" />
+                  <Insets bottom="21.0" top="1.0" />
+               </VBox.margin>
+            </Button>
+            <Label text="Insira o código recebido no e-mail">
+               <font>
+                  <Font name="Arial Bold" size="18.0" />
+               </font>
+               <VBox.margin>
+                  <Insets bottom="16.0" />
+               </VBox.margin>
+            </Label>
+            <Label alignment="CENTER" contentDisplay="CENTER" graphicTextGap="0.0" text="CÓDIGO" textOverrun="CENTER_ELLIPSIS">
+               <font>
+                  <Font name="Arial Bold" size="13.0" />
+               </font>
+               <VBox.margin>
+                  <Insets bottom="2.0" />
+               </VBox.margin>
+            </Label>
+            <TextField layoutX="160.0" layoutY="386.0" maxHeight="25.0" maxWidth="500.0" minHeight="25.0" minWidth="250.0" prefHeight="25.0" prefWidth="500.0">
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin>
+            </TextField>
+            <Button mnemonicParsing="false" prefHeight="26.0" prefWidth="110.0" styleClass="btn-laranja" text="CONFIRMAR">
+               <VBox.margin>
+                  <Insets top="11.0" />
                </VBox.margin>
             </Button>
          </children>
       </VBox>
    </center>
-   <top>
-      <AnchorPane prefHeight="50.0" prefWidth="800.0" style="-fx-background-color: #054685;" BorderPane.alignment="CENTER">
-         <children>
-            <ImageView fitHeight="40.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="5.0">
-               <image>
-                  <Image url="@imagens/Logo%20branca%20Senac.png" />
-               </image></ImageView>
-            <Label alignment="CENTER" layoutX="212.0" layoutY="15.0" text="Sistema de Gerenciamento de Estoque da Cozinha" textFill="WHITE" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
-               <font>
-                  <Font name="Arial" size="18.0" />
-               </font>
-            </Label>
-         </children></AnchorPane>
-   </top>
 </BorderPane>
