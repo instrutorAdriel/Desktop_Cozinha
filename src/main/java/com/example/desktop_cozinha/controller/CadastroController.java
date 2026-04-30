@@ -102,7 +102,7 @@ public class CadastroController {
         txtSenha.clear();
         txtConfirmarSenha.clear();
 
-        MainApplication.trocadorDeTelas("hello-view.fxml");
+        //MainApplication.trocadorDeTelas("hello-view.fxml");
 
 
     }
