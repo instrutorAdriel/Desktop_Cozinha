@@ -22,14 +22,6 @@ public class MainApplication extends Application {
 
         primaryStage.setTitle("Sistema Cozinha");
         primaryStage.show();
-
-        public class Main {
-            public static void main(String[] args) {
-
-                ListaController controller = new ListaController();
-
-                controller.listarUsuarios();
-            }
         }
 
     }
@@ -43,4 +35,4 @@ public class MainApplication extends Application {
 
         primaryStage.setScene(scene);
     }
-}
+

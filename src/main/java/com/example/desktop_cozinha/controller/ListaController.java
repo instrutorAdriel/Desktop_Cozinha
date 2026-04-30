@@ -1,30 +1,52 @@
 package com.example.desktop_cozinha.controller;
 
 import com.example.desktop_cozinha.model.ListaEstoqueDAO;
-
-import java.util.List;
+import com.example.desktop_cozinha.model.ProdutoListaEstoque;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.fxml.FXML;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.cell.PropertyValueFactory;
 
 public class ListaController {
 
+    @FXML
+    private TableView<ProdutoListaEstoque> ListaEstoque;
 
-        private final ListaEstoqueDAO listaEstoqueDAO;
+    @FXML
+    private TableColumn<ProdutoListaEstoque, String> nomeProduto;
 
-        // Injeção via construtor (boa prática)
-        public ListaController() {
-            this.listaEstoqueDAO = new listaEstoqueDAO();
-        }
+    @FXML
+    private TableColumn<ProdutoListaEstoque, String> tipoProduto;
 
-        public void setListaEstoqueDAO() {
-            IO.println("Lista de Usuários:");
+    @FXML
+    private TableColumn<ProdutoListaEstoque, String> quantidadeProduto;
 
-            List<String> resultados = listaEstoqueDAO.lerTodos();
+    @FXML
+    private TableColumn<ProdutoListaEstoque, String> unidadeProduto;
 
-            for (String user : resultados) {
-                IO.println(user);
-            }
+    private final ListaEstoqueDAO dao = new ListaEstoqueDAO();
 
-            IO.println("--- FIM DA LISTA ---");
-        }
+    @FXML
+    public void initialize() {
+        configurarColunas();
+        carregarDados();
     }
 
+    private void configurarColunas() {
 
+        nomeProduto.setCellValueFactory(new PropertyValueFactory<>("nome"));
+        tipoProduto.setCellValueFactory(new PropertyValueFactory<>("tipo"));
+        quantidadeProduto.setCellValueFactory(new PropertyValueFactory<>("quantidade"));
+        unidadeProduto.setCellValueFactory(new PropertyValueFactory<>("unidade"));
+    }
+
+    private void carregarDados() {
+
+        ObservableList<ProdutoListaEstoque> lista =
+                FXCollections.observableArrayList(dao.lerTodos());
+
+        ListaEstoque.setItems(lista);
+    }
+}

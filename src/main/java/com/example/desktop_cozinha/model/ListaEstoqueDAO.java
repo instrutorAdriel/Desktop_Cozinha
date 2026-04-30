@@ -1,7 +1,6 @@
 package com.example.desktop_cozinha.model;
 
 import com.example.desktop_cozinha.config.DatabaseConfig;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -9,24 +8,33 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ListaEstoqueDAO {// READ (Busca todos os usuários e retorna uma lista)
+public class ListaEstoqueDAO {
 
-    public List<String> lerTodos() {
-        String sql = "SELECT * FROM estoque_geral";
-        List<String> itens = new ArrayList<>();
+    public List<ProdutoListaEstoque> lerTodos() {
+        String sql = "SELECT nome, tipo, quantidade_atual, unidade_medida FROM estoque_geral";
+        List<ProdutoListaEstoque> itens = new ArrayList<>();
 
         try (Connection conn = DatabaseConfig.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql);
              ResultSet rs = stmt.executeQuery()) {
 
             while (rs.next()) {
-                String info = rs.getString("nome") + " - " + rs.getString("tipo") + " (" + rs.getString("quantidade_atual") + " (" + rs.getString("unidade_medida");
-                itens.add(info);
+
+                ProdutoListaEstoque p = new ProdutoListaEstoque(
+                        rs.getString("nome"),
+                        rs.getString("tipo"),
+                        rs.getDouble("quantidade_atual"),
+                        rs.getString("unidade_medida")
+                );
+
+                itens.add(p);
             }
+
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao ler", e);
+            System.err.println("Erro ao executar SELECT em estoque_geral");
+            e.printStackTrace();
         }
+
         return itens;
     }
-
 }
