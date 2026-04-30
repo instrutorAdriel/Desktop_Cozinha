@@ -68,11 +68,88 @@
    <center>
       <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
          <children>
-            <HBox prefHeight="100.0" prefWidth="200.0">
+            <HBox alignment="CENTER" prefHeight="93.0" prefWidth="337.0" spacing="15.0">
                <children>
-                  <Label text="Olá, Rosicleia." />
+                  <ImageView fitHeight="70.0" fitWidth="43.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@imagem/imagem_profile-removebg-preview.png" />
+                     </image>
+                  </ImageView>
+                  <VBox prefHeight="93.0" prefWidth="251.0">
+                     <children>
+                        <Label text="Olá, Rosicleia.">
+                           <font>
+                              <Font name="System Bold" size="17.0" />
+                           </font>
+                           <padding>
+                              <Insets top="14.0" />
+                           </padding>
+                        </Label>
+                        <Label prefHeight="17.0" prefWidth="239.0" text="Quinta-feira, 30 de Maio de 2026-10:30 BRT" />
+                     </children>
+                  </VBox>
                </children></HBox>
+            <VBox alignment="CENTER">
+               <children>
+                  <Label text="Alertas de Estoque de Alta Prioridadel" textAlignment="JUSTIFY">
+                     <padding>
+                        <Insets bottom="9.0" />
+                     </padding></Label>
+                  <TableView prefHeight="82.0" prefWidth="438.0">
+                    <columns>
+                        <TableColumn prefWidth="75.0" resizable="false" text="Item" />
+                      <TableColumn prefWidth="75.0" text="Status" />
+                      <TableColumn prefWidth="116.0" text="Ação  surgerida" />
+                    </columns>
+                     <padding>
+                        <Insets left="3.0" />
+                     </padding>
+                  </TableView>
+               </children>
+            </VBox>
+            <VBox prefHeight="200.0" prefWidth="100.0">
+               <children>
+                  <Label prefHeight="26.0" prefWidth="89.0" text="Acão Rápida">
+                     <VBox.margin>
+                        <Insets bottom="-55.0" left="14.0" right="7.0" top="24.0" />
+                     </VBox.margin>
+                     <padding>
+                        <Insets right="5.0" />
+                     </padding>
+                     <font>
+                        <Font name="System Bold" size="12.0" />
+                     </font>
+                  </Label>
+                  <TextField alignment="CENTER" text="Adcionar Novo Item">
+                     <VBox.margin>
+                        <Insets left="12.0" right="264.0" top="67.0" />
+                     </VBox.margin>
+                     <padding>
+                        <Insets bottom="-1.0" right="2.0" top="12.0" />
+                     </padding>
+                  </TextField>
+                  <TextField alignment="TOP_CENTER" layoutX="29.0" layoutY="26.0" prefHeight="28.0" prefWidth="412.0" text=" Baixa de Estoque">
+                     <padding>
+                        <Insets bottom="-1.0" right="2.0" top="12.0" />
+                     </padding>
+                     <VBox.margin>
+                        <Insets left="12.0" right="264.0" top="16.0" />
+                     </VBox.margin>
+                  </TextField>
+                  <TextField alignment="TOP_CENTER" layoutX="29.0" layoutY="26.0" text="Ajustar Estoque">
+                     <padding>
+                        <Insets bottom="-1.0" right="2.0" top="12.0" />
+                     </padding>
+                     <VBox.margin>
+                        <Insets left="12.0" right="264.0" top="16.0" />
+                     </VBox.margin>
+                  </TextField>
+               </children>
+            </VBox>
          </children>
+         <rotationAxis>
+            <Point3D x="1.0" y="1.0" z="1.0" />
+         </rotationAxis>
       </VBox>
    </center>
 </BorderPane>
