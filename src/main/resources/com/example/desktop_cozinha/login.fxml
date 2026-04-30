@@ -7,64 +7,104 @@
 <?import javafx.scene.text.*?>
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1">
-   <top>
-      <HBox alignment="CENTER" prefHeight="50.0" prefWidth="600.0" style="-fx-background-color: #054685;" BorderPane.alignment="BOTTOM_LEFT">
-         <children>
-            <ImageView fitHeight="50.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" scaleZ="0.0" translateX="-140.0">
-               <image>
-                  <Image url="@../../../Imagens/logo-branco.png" />
-               </image>
-            </ImageView>
-            <Label text="Sistema de Gerenciamento de Estoque da Cozinha" textFill="WHITE">
-               <font>
-                  <Font name="Arial" size="18.0" />
-               </font></Label>
-         </children></HBox>
-   </top>
    <left>
-      <VBox alignment="TOP_CENTER" prefHeight="350.0" prefWidth="200.0" style="-fx-background-color: #8daccb;" BorderPane.alignment="CENTER">
+      <VBox alignment="TOP_CENTER" prefHeight="601.0" prefWidth="200.0" style="-fx-background-color: #8daccb;" BorderPane.alignment="CENTER">
          <children>
-            <Label alignment="CENTER" prefHeight="17.0" prefWidth="176.0" text="Controle de Estoque">
+            <Label alignment="TOP_LEFT" style="-fx-background-color: transparente;" text="Controle de Estoque">
                <VBox.margin>
                   <Insets top="10.0" />
                </VBox.margin>
                <font>
+                  <Font name="Bodoni MT Bold" size="17.0" />
+               </font>
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../../Imagens/home.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Label>
+            <Button alignment="CENTER" mnemonicParsing="false" prefHeight="40.0" prefWidth="185.0" style="-fx-background-color: #aecae6; -fx-background-radius: 10; -fx-border-color: transparent transparent #f6ca88 transparent; -fx-border-width: 0 0 3 0;" text="Lista de Produtos">
+               <font>
                   <Font name="Bodoni MT" size="17.0" />
+               </font>
+               <graphic>
+                  <ImageView disable="true" fitHeight="20.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true" translateX="-5.0">
+                     <image>
+                        <Image url="@../../../Imagens/ESTOQUE.png" />
+                     </image></ImageView>
+               </graphic>
+               <VBox.margin>
+                  <Insets top="20.0" />
+               </VBox.margin>
+            </Button>
+            <Button alignment="TOP_LEFT" layoutX="18.0" layoutY="61.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="185.0" style="-fx-background-color: #aecae6; -fx-background-radius: 10;" text="Utensílios">
+               <font>
+                  <Font name="Bodoni MT" size="17.0" />
+               </font>
+               <graphic>
+                  <ImageView disable="true" fitHeight="20.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true" translateX="-5.0">
+                     <image>
+                        <Image url="@../../../Imagens/utensilio.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+               <VBox.margin>
+                  <Insets top="20.0" />
+               </VBox.margin>
+            </Button>
+            <Button alignment="TOP_LEFT" layoutX="18.0" layoutY="61.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="185.0" style="-fx-background-color: #aecae6; -fx-background-radius: 10;" text="Relatório      ">
+               <font>
+                  <Font name="Bodoni MT" size="17.0" />
+               </font>
+               <graphic>
+                  <ImageView disable="true" fitHeight="20.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true" translateX="-5.0">
+                     <image>
+                        <Image url="@../../../Imagens/relatorio.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+               <VBox.margin>
+                  <Insets top="20.0" />
+               </VBox.margin>
+            </Button>
+            <Region prefHeight="303.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
+            <Button alignment="CENTER" layoutX="18.0" layoutY="190.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="185.0" style="-fx-background-color: transparente;" text="Configuração     ">
+               <font>
+                  <Font name="Bodoni MT" size="16.0" />
+               </font>
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+               <VBox.margin>
+                  <Insets top="20.0" />
+               </VBox.margin>
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true" translateX="-5.0">
+                     <image>
+                        <Image url="@../../../Imagens/configuração.png" />
+                     </image></ImageView>
+               </graphic>
+            </Button>
+         </children>
+      </VBox>
+   </left>
+   <top>
+      <AnchorPane prefHeight="50.0" prefWidth="800.0" style="-fx-background-color: #054685;" BorderPane.alignment="CENTER">
+         <children>
+            <ImageView fitHeight="40.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="5.0">
+               <image>
+                  <Image url="@../../../Imagens/Logo%20branca%20Senac.png" />
+               </image></ImageView>
+            <Label alignment="CENTER" layoutX="212.0" layoutY="15.0" text="Sistema de Gerenciamento de Estoque da Cozinha" textFill="WHITE" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+               <font>
+                  <Font name="Arial" size="18.0" />
                </font>
             </Label>
-            <Button mnemonicParsing="false" prefHeight="42.0" prefWidth="185.0" style="-fx-background-color: #c7d0e2;" text="Lista de produto">
-               <VBox.margin>
-                  <Insets top="30.0" />
-               </VBox.margin>
-               <font>
-                  <Font name="Bodoni MT" size="17.0" />
-               </font>
-               <graphic>
-                  <ImageView fitHeight="30.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true" />
-               </graphic>
-            </Button>
-            <Button layoutX="18.0" layoutY="61.0" mnemonicParsing="false" prefHeight="42.0" prefWidth="185.0" style="-fx-background-color: #c7d0e2;" text="Relatório          ">
-               <font>
-                  <Font name="Bodoni MT" size="17.0" />
-               </font>
-               <graphic>
-                  <ImageView fitHeight="30.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true" />
-               </graphic>
-               <VBox.margin>
-                  <Insets top="50.0" />
-               </VBox.margin>
-            </Button>
-            <Button layoutX="18.0" layoutY="103.0" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" prefHeight="42.0" prefWidth="185.0" style="-fx-background-color: #c7d0e2;" text="Configuração     ">
-               <font>
-                  <Font name="Bodoni MT" size="17.0" />
-               </font>
-               <graphic>
-                  <ImageView fitHeight="30.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true" />
-               </graphic>
-               <VBox.margin>
-                  <Insets top="300.0" />
-               </VBox.margin>
-            </Button>
-         </children></VBox>
-   </left>
+         </children></AnchorPane>
+   </top>
+   <right>
+      <ScrollBar orientation="VERTICAL" BorderPane.alignment="CENTER" />
+   </right>
 </BorderPane>

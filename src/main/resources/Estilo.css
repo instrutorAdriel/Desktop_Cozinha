@@ -1,0 +1,26 @@
+.btn-padrao {
+    -fx-background-color:  #aecae6;
+    -fx-background-radius: 10;
+    -fx-pref-width: 185;
+    -fx-pref-height: 40;
+    -fx-font-family: "Bodoni MT";
+    -fx-font-size: 17;
+}
+.btn-click {
+    -fx-background-color:  #aecae6;
+    -fx-background-radius: 10;
+    -fx-border-color:  transparent transparent #f6ca88 transparent;
+    -fx-border-width:  0 0 3 0;
+    -fx-pref-width: 185;
+    -fx-pref-height: 40;
+    -fx-font-family: "Bodoni MT";
+    -fx-font-size: 17;
+}
+.btn-transparent {
+    -fx-background-color: "transparent";
+    -fx-background-radius: 10;
+    -fx-pref-width: 185;
+    -fx-pref-height: 40;
+    -fx-font-family: "Bodoni MT";
+    -fx-font-size: 17;
+}
