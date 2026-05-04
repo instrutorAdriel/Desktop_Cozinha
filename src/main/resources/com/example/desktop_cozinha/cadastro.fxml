@@ -39,6 +39,9 @@
                <VBox.margin>
                   <Insets left="175.0" right="175.0" top="1.0" />
                </VBox.margin>
+               <font>
+                  <Font name="Arial Bold" size="13.0" />
+               </font>
             </TextField>
             <Label layoutX="187.0" layoutY="245.0" text="Cargo">
                <font>
@@ -52,6 +55,9 @@
                <VBox.margin>
                   <Insets left="175.0" right="175.0" />
                </VBox.margin>
+               <font>
+                  <Font name="Arial Bold" size="13.0" />
+               </font>
             </TextField>
             <Label text="E-mail">
                <font>
@@ -65,6 +71,9 @@
                <VBox.margin>
                   <Insets left="175.0" right="175.0" top="1.0" />
                </VBox.margin>
+               <font>
+                  <Font name="Arial Bold" size="13.0" />
+               </font>
             </TextField>
             <Label layoutX="185.0" layoutY="244.0" text="Senha">
                <font>
@@ -78,6 +87,9 @@
                <VBox.margin>
                   <Insets left="175.0" right="175.0" />
                </VBox.margin>
+               <font>
+                  <Font name="Arial Bold" size="13.0" />
+               </font>
             </PasswordField>
             <Label layoutX="185.0" layoutY="298.0" text="Confirmar Senha">
                <font>
@@ -91,6 +103,9 @@
                <VBox.margin>
                   <Insets left="175.0" right="175.0" />
                </VBox.margin>
+               <font>
+                  <Font name="Arial Bold" size="13.0" />
+               </font>
             </PasswordField>
             <Button mnemonicParsing="false" styleClass="btn-laranja" text="CADASTRAR">
                <VBox.margin>
