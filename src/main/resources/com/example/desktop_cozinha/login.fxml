@@ -26,7 +26,7 @@
                         <Font name="SansSerif Bold" size="15.0" />
                     </font>
                 </Label>
-                <Label alignment="TOP_CENTER" graphicTextGap="0.0" prefHeight="19.0" prefWidth="500.0" text="EMAIL" textOverrun="CENTER_ELLIPSIS">
+                <Label alignment="TOP_CENTER" graphicTextGap="0.0" prefHeight="19.0" prefWidth="500.0" text="E-mail" textOverrun="CENTER_ELLIPSIS">
                     <VBox.margin>
                         <Insets top="50.0" />
                     </VBox.margin>
@@ -34,7 +34,7 @@
                         <Insets bottom="4.0" left="-460.0" />
                     </padding>
                     <font>
-                        <Font name="SansSerif Bold" size="12.0" />
+                        <Font name="Arial Bold" size="13.0" />
                     </font>
                 </Label>
                 <TextField maxHeight="25.0" maxWidth="500.0" minHeight="25.0" minWidth="250.0" prefHeight="25.0" prefWidth="500.0">
@@ -42,12 +42,12 @@
                         <Insets left="150.0" right="150.0" />
                     </VBox.margin>
                 </TextField>
-                <Label alignment="TOP_CENTER" graphicTextGap="0.0" layoutX="160.0" layoutY="207.0" prefHeight="19.0" prefWidth="500.0" text="SENHA" textOverrun="CENTER_ELLIPSIS">
+                <Label alignment="TOP_CENTER" graphicTextGap="0.0" layoutX="160.0" layoutY="207.0" prefHeight="19.0" prefWidth="500.0" text="Senha" textOverrun="CENTER_ELLIPSIS">
                     <padding>
                         <Insets bottom="4.0" left="-460.0" />
                     </padding>
                     <font>
-                        <Font name="SansSerif Bold" size="12.0" />
+                        <Font name="Arial Bold" size="13.0" />
                     </font>
                     <VBox.margin>
                         <Insets top="20.0" />
