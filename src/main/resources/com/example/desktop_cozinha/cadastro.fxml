@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" scaleZ="0.0" stylesheets="@css/estilo.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" stylesheets="@css/estilo.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1">
    <center>
       <VBox alignment="CENTER" prefHeight="446.0" prefWidth="600.0" BorderPane.alignment="CENTER">
          <children>
@@ -97,13 +97,13 @@
                   <Insets top="25.0" />
                </VBox.margin>
                <font>
-                  <Font name="System Bold" size="14.0" />
+                  <Font name="Arial Bold" size="12.0" />
                </font>
             </Button>
          </children></VBox>
    </center>
    <cursor>
-      <Cursor fx:constant="CLOSED_HAND" />
+      <Cursor fx:constant="DEFAULT" />
    </cursor>
    <top>
       <AnchorPane prefHeight="50.0" prefWidth="800.0" style="-fx-background-color: #054685;" BorderPane.alignment="CENTER">
