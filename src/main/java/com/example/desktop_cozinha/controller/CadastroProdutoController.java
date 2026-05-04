@@ -79,21 +79,45 @@ public class CadastroProdutoController  implements Initializable {
 
 
         //2. Validar se tem um campo vazio
+        if (nomeProduto.isBlank() || tipoProduto == null || tipoProduto.isBlank() ||
+                qtdAtual.isBlank() || unidadeDeMedida == null || unidadeDeMedida.isBlank() || estoqueMinimo.isBlank()) {
 
-        if ( nomeProduto.isBlank () || tipoProduto.isBlank () || qtdAtual.isBlank () || unidadeDeMedida.isBlank () || estoqueMinimo.isBlank() ){
-            //  exibe uma janela de aviso para o usuario
             Alert alerta = new Alert(Alert.AlertType.WARNING);
-            alerta.setTitle("Campos obrigatorios!");
+            alerta.setTitle("Campos obrigatórios!");
             alerta.setHeaderText(null);
-            alerta.setContentText("Por favor, preencha os campos obrigatorios antes de cadastrar o produto!");
+            alerta.setContentText("Por favor, preencha os campos obrigatórios antes de cadastrar o produto!");
             alerta.showAndWait();
-
-            // interromper o metodo
-
             return;
         }
 
+        // Substitui a vírgula pelo ponto e SALVA na própria variável ANTES de testar
+        qtdAtual = qtdAtual.replace(",", ".");
+        estoqueMinimo = estoqueMinimo.replace(",", ".");
 
+        try {
+            // Guarda a conversão em variáveis para podermos fazer o teste do negativo
+            double valorQtdAtual = Double.parseDouble(qtdAtual);
+            double valorEstoqueMinimo = Double.parseDouble(estoqueMinimo);
+
+            //  Não aceitar valores negativos
+            if (valorQtdAtual < 0 || valorEstoqueMinimo < 0) {
+                Alert alerta = new Alert(Alert.AlertType.WARNING);
+                alerta.setTitle("Valor Inválido");
+                alerta.setHeaderText(null);
+                alerta.setContentText("A quantidade atual e o estoque mínimo não podem ser negativos!");
+                alerta.showAndWait();
+                return; // Interrompe o metodo e não salva no banco
+            }
+
+        } catch (NumberFormatException e) {
+            // Se cair aqui, é porque o usuário digitou letras ou caracteres especiais
+            Alert alerta = new Alert(Alert.AlertType.ERROR);
+            alerta.setTitle("Formato Inválido");
+            alerta.setHeaderText(null);
+            alerta.setContentText("Os campos de Quantidade e Estoque Mínimo devem conter apenas números (ex: 5 ou 0.33)!");
+            alerta.showAndWait();
+            return; // Interrompe o metodo
+        }
 
         // 3. Cria uma instancia do CadastroDAO
         CadastroProdutoDAO dao = new CadastroProdutoDAO();
@@ -115,9 +139,9 @@ public class CadastroProdutoController  implements Initializable {
         txtNomeProduto.clear();
         txtQtdAtual.clear();
         txtEstoqueMinimo.clear();
-
-
-
+        txtUnidadeDeMedida.setValue(null);
+        txtTipoProduto.setValue(null);
+        txtDataValidade.setValue(null);
 
 
     }
