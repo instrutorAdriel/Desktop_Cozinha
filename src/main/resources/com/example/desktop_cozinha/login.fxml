@@ -1,21 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" stylesheets="@../../../Estilo.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1">
    <left>
-      <VBox alignment="TOP_CENTER" prefHeight="601.0" prefWidth="200.0" style="-fx-background-color: #8daccb;" BorderPane.alignment="CENTER">
+      <VBox alignment="TOP_CENTER" prefHeight="601.0" prefWidth="200.0" styleClass="painel-lateral" BorderPane.alignment="CENTER">
          <children>
-            <Label alignment="TOP_LEFT" style="-fx-background-color: transparente;" text="Controle de Estoque">
-               <VBox.margin>
-                  <Insets top="10.0" />
-               </VBox.margin>
+            <Button mnemonicParsing="false" prefHeight="40.0" prefWidth="185.0" text="Controle de Estoque">
                <font>
-                  <Font name="Bodoni MT Bold" size="17.0" />
+                  <Font name="Bodoni MT" size="14.0" />
                </font>
                <graphic>
                   <ImageView fitHeight="20.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
@@ -24,22 +22,28 @@
                      </image>
                   </ImageView>
                </graphic>
-            </Label>
-            <Button alignment="CENTER" mnemonicParsing="false" prefHeight="40.0" prefWidth="185.0" style="-fx-background-color: #aecae6; -fx-background-radius: 10; -fx-border-color: transparent transparent #f6ca88 transparent; -fx-border-width: 0 0 3 0;" text="Lista de Produtos">
+               <VBox.margin>
+                  <Insets top="10.0" />
+               </VBox.margin>
+               <styleClass>
+                  <String fx:value="btn-padrao-home" />
+                  <String fx:value="btn-click" />
+               </styleClass></Button>
+            <Button alignment="CENTER" mnemonicParsing="false" prefHeight="40.0" prefWidth="185.0" styleClass="btn-padrao" text="Lista de Produtos">
                <font>
                   <Font name="Bodoni MT" size="17.0" />
                </font>
                <graphic>
                   <ImageView disable="true" fitHeight="20.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true" translateX="-5.0">
                      <image>
-                        <Image url="@../../../Imagens/ESTOQUE.png" />
+                        <Image url="@../../../Imagens/estoque.png" />
                      </image></ImageView>
                </graphic>
                <VBox.margin>
-                  <Insets top="20.0" />
+                  <Insets top="30.0" />
                </VBox.margin>
             </Button>
-            <Button alignment="TOP_LEFT" layoutX="18.0" layoutY="61.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="185.0" style="-fx-background-color: #aecae6; -fx-background-radius: 10;" text="Utensílios">
+            <Button alignment="TOP_LEFT" layoutX="18.0" layoutY="61.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="185.0" styleClass="btn-padrao" text="Utensílios">
                <font>
                   <Font name="Bodoni MT" size="17.0" />
                </font>
@@ -51,10 +55,10 @@
                   </ImageView>
                </graphic>
                <VBox.margin>
-                  <Insets top="20.0" />
+                  <Insets top="25.0" />
                </VBox.margin>
             </Button>
-            <Button alignment="TOP_LEFT" layoutX="18.0" layoutY="61.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="185.0" style="-fx-background-color: #aecae6; -fx-background-radius: 10;" text="Relatório      ">
+            <Button alignment="TOP_LEFT" layoutX="18.0" layoutY="61.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="185.0" styleClass="btn-padrao" text="Relatório      ">
                <font>
                   <Font name="Bodoni MT" size="17.0" />
                </font>
@@ -66,11 +70,11 @@
                   </ImageView>
                </graphic>
                <VBox.margin>
-                  <Insets top="20.0" />
+                  <Insets top="25.0" />
                </VBox.margin>
             </Button>
             <Region prefHeight="303.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
-            <Button alignment="CENTER" layoutX="18.0" layoutY="190.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="185.0" style="-fx-background-color: transparente;" text="Configuração     ">
+            <Button alignment="CENTER" layoutX="18.0" layoutY="190.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="185.0" styleClass="btn-padrao-transparent" text="Configuração     ">
                <font>
                   <Font name="Bodoni MT" size="16.0" />
                </font>
@@ -104,7 +108,75 @@
             </Label>
          </children></AnchorPane>
    </top>
-   <right>
-      <ScrollBar orientation="VERTICAL" BorderPane.alignment="CENTER" />
-   </right>
+   <center>
+      <StackPane prefHeight="550.0" prefWidth="599.0" styleClass="painel-center" BorderPane.alignment="CENTER">
+         <children>
+            <ImageView fitHeight="550.0" fitWidth="600.0" opacity="0.2" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../../Imagens/Logo%20colorida%20Senac.png" />
+               </image>
+               <viewport>
+                  <Rectangle2D />
+               </viewport>
+            </ImageView>
+            <VBox alignment="TOP_CENTER" prefHeight="550.0" prefWidth="600.0">
+               <children>
+                  <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="50.0" prefWidth="600.0" text="Bem-Vindo, &quot;Nome&quot;">
+                     <font>
+                        <Font name="Arial Bold Italic" size="20.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets left="200.0" right="200.0" />
+                     </VBox.margin>
+                  </Label>
+                  <HBox alignment="CENTER" prefHeight="20.0">
+                     <children>
+                        <Label alignment="BOTTOM_LEFT" graphicTextGap="0.0" prefHeight="20.0" text="Quinta, 01/01/2026">
+                           <font>
+                              <Font name="Arial Bold" size="20.0" />
+                           </font>
+                           <opaqueInsets>
+                              <Insets />
+                           </opaqueInsets>
+                           <HBox.margin>
+                              <Insets left="10.0" />
+                           </HBox.margin>
+                        </Label>
+                        <Region prefHeight="450.0" prefWidth="300.0" HBox.hgrow="ALWAYS" />
+                        <Label alignment="CENTER_RIGHT" contentDisplay="RIGHT" graphicTextGap="0.0" prefHeight="20.0" text="08:30:00">
+                           <font>
+                              <Font name="Arial Bold" size="20.0" />
+                           </font>
+                           <opaqueInsets>
+                              <Insets />
+                           </opaqueInsets>
+                           <HBox.margin>
+                              <Insets right="10.0" />
+                           </HBox.margin>
+                        </Label>
+                     </children>
+                  </HBox>
+                  <Region prefHeight="50.0" prefWidth="200.0" />
+                  <Label alignment="CENTER" text="Notificação" VBox.vgrow="ALWAYS">
+                     <font>
+                        <Font name="Arial" size="20.0" />
+                     </font>
+                     <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="30.0" opacity="0.8" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../../../Imagens/aviso.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Label>
+                  <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="30.0" prefWidth="250.0" text="&quot;Exibição da notificação&quot;" VBox.vgrow="ALWAYS">
+                     <font>
+                        <Font name="Arial" size="20.0" />
+                     </font>
+                  </Label>
+               </children>
+            </VBox>
+         </children>
+      </StackPane>
+   </center>
 </BorderPane>
