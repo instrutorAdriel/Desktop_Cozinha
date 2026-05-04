@@ -40,7 +40,7 @@ public class LoginController {
 
         if (senhaHashDoBanco != null) {
                 if (BCrypt.checkpw(senhaDigitada, senhaHashDoBanco)){
-                    //MainApplication.trocadorDeTelas("home.fxml");
+                    MainApplication.trocadorDeTelas("historico.fxml");
                     IO.println("login on");
                 }
                 else {
