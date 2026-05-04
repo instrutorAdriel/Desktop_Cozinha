@@ -5,6 +5,7 @@ import com.example.desktop_cozinha.model.ProdutoListaEstoque;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -30,6 +31,15 @@ public class ListaController {
     private TableColumn<ProdutoListaEstoque, String> unidadeProduto;
 
     @FXML
+    private CheckBox chkNaoPereciveis;
+
+    @FXML
+    private CheckBox chkPereciveis;
+
+    @FXML
+    private CheckBox chkUtensilios;
+
+    @FXML
     private TextField FiltrarProdutos;
 
     private final ListaEstoqueDAO dao = new ListaEstoqueDAO();
@@ -37,7 +47,10 @@ public class ListaController {
     @FXML
     public void initialize() {
         configurarColunas();
-        carregarDados("");
+        chkNaoPereciveis.setOnAction(event -> onHelloButtonClick());
+        chkPereciveis.setOnAction(event -> onHelloButtonClick());
+        chkUtensilios.setOnAction(event -> onHelloButtonClick());
+        carregarDados("", false,false,false);
     }
 
     private void configurarColunas() {
@@ -51,13 +64,16 @@ public class ListaController {
     @FXML
     protected void onHelloButtonClick() {
         String textoBusca = FiltrarProdutos.getText();
-        carregarDados(textoBusca);
+        boolean naoPereciveis = chkNaoPereciveis.isSelected();
+        boolean perecivel = chkPereciveis.isSelected();
+        boolean utensilio = chkUtensilios.isSelected();
+        carregarDados(textoBusca, naoPereciveis, perecivel, utensilio);
 
     }
-    private void carregarDados(String textoBusca) {
+    private void carregarDados(String textoBusca, boolean naoPereciveis, boolean perecivel, boolean utensilio ) {
 
         ObservableList<ProdutoListaEstoque> lista =
-                FXCollections.observableArrayList(dao.filtrarProdutos(textoBusca));
+                FXCollections.observableArrayList(dao.filtrarProdutos(textoBusca,naoPereciveis, perecivel, utensilio));
 
         ListaEstoque.setItems(lista);
     }

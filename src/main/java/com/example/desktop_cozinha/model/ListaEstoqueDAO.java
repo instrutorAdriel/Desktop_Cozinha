@@ -11,9 +11,22 @@ import java.util.List;
 
 public class ListaEstoqueDAO {
 
-    public List<ProdutoListaEstoque> filtrarProdutos(String nomeBusca) {
+    public List<ProdutoListaEstoque> filtrarProdutos(String nomeBusca, boolean naoPereciveis,boolean pereciveis, boolean utensilios) {
         String sql = "SELECT nome, tipo, quantidade_atual, unidade_medida FROM estoque_geral WHERE nome LIKE ?";
+
+        List<String> filtros = new ArrayList<>();
+
+        if (naoPereciveis) filtros.add("tipo = 'Não-Perecível'");
+        if (pereciveis)    filtros.add("tipo = 'Perecível'");
+        if (utensilios)    filtros.add("tipo = 'Utensílio'");
+
+        if (!filtros.isEmpty()) {
+            sql += " AND (" + String.join(" OR ", filtros) + ")";
+        }
+
+
         List<ProdutoListaEstoque> itens = new ArrayList<>();
+
 
         try (Connection conn = DatabaseConfig.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
