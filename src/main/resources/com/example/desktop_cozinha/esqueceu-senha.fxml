@@ -85,9 +85,9 @@
                   <Insets bottom="2.0" />
                </VBox.margin>
             </Label>
-            <TextField layoutX="160.0" layoutY="386.0" maxHeight="25.0" maxWidth="500.0" minHeight="25.0" minWidth="250.0" prefHeight="25.0" prefWidth="500.0">
+            <TextField layoutX="160.0" layoutY="386.0" maxHeight="25.0" maxWidth="500.0" minHeight="25.0" minWidth="250.0" prefHeight="25.0" prefWidth="452.0">
                <VBox.margin>
-                  <Insets />
+                  <Insets left="152.0" right="150.0" />
                </VBox.margin>
             </TextField>
             <Button mnemonicParsing="false" prefHeight="26.0" prefWidth="110.0" styleClass="btn-laranja" text="CONFIRMAR">
@@ -98,4 +98,14 @@
          </children>
       </VBox>
    </center>
+   <left>
+      <VBox prefHeight="550.0" prefWidth="68.0" BorderPane.alignment="CENTER">
+         <children>
+            <Hyperlink prefHeight="23.0" prefWidth="71.0" text="Voltar" textFill="#134980ad">
+               <font>
+                  <Font size="18.0" />
+               </font></Hyperlink>
+         </children>
+      </VBox>
+   </left>
 </BorderPane>
