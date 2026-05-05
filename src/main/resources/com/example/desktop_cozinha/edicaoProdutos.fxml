@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.desktop_cozinha.controller.EdicaoProdutosController">
+    <left>
+        <VBox alignment="TOP_CENTER" prefHeight="400.0" prefWidth="131.0" BorderPane.alignment="CENTER">
+            <children>
+                <Button alignment="CENTER" mnemonicParsing="false" text="Button">
+                    <VBox.margin>
+                        <Insets top="30.0" />
+                    </VBox.margin>
+                </Button>
+                <Button mnemonicParsing="false" text="Button">
+                    <VBox.margin>
+                        <Insets top="15.0" />
+                    </VBox.margin>
+                </Button>
+                <Button mnemonicParsing="false" text="Button">
+                    <VBox.margin>
+                        <Insets top="15.0" />
+                    </VBox.margin>
+                </Button>
+                <Button mnemonicParsing="false" text="Button">
+                    <VBox.margin>
+                        <Insets top="200.0" />
+                    </VBox.margin>
+                </Button>
+            </children>
+        </VBox>
+    </left>
+    <center>
+        <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+            <children>
+                <Label text="EDITAR PRODUTOS">
+                    <font>
+                        <Font name="Arial Bold" size="18.0" />
+                    </font>
+                    <VBox.margin>
+                        <Insets top="30.0" />
+                    </VBox.margin>
+                </Label>
+                <TextField fx:id="txtNomeProduto" promptText="NOME DO PRODUTO ">
+                    <VBox.margin>
+                        <Insets left="100.0" right="100.0" top="15.0" />
+                    </VBox.margin>
+                </TextField>
+                <TextField fx:id="txtQtdAtual" promptText="QUANTIDADE ATUAL">
+                    <VBox.margin>
+                        <Insets left="100.0" right="100.0" top="15.0" />
+                    </VBox.margin>
+                </TextField>
+                <TextField fx:id="txtEstoqueMinimo" promptText="ESTOQUE MINIMO">
+                    <VBox.margin>
+                        <Insets left="100.0" right="100.0" top="15.0" />
+                    </VBox.margin>
+                </TextField>
+                <HBox alignment="TOP_CENTER" prefHeight="26.0" prefWidth="469.0">
+                    <VBox.margin>
+                        <Insets top="15.0" />
+                    </VBox.margin>
+                    <children>
+                        <Label text="TIPO DO PRODUTO">
+                            <HBox.margin>
+                                <Insets right="15.0" />
+                            </HBox.margin></Label>
+                        <ChoiceBox fx:id="txtTipoProduto" prefWidth="150.0">
+                            <HBox.margin>
+                                <Insets right="30.0" />
+                            </HBox.margin></ChoiceBox>
+                    </children>
+                </HBox>
+                <HBox alignment="TOP_CENTER" layoutX="10.0" layoutY="116.0" prefHeight="26.0" prefWidth="469.0">
+                    <children>
+                        <Label text="UNIDADE DE MEDIDA">
+                            <HBox.margin>
+                                <Insets right="15.0" />
+                            </HBox.margin>
+                        </Label>
+                        <ChoiceBox fx:id="txtUnidadeDeMedida" prefWidth="150.0">
+                            <HBox.margin>
+                                <Insets right="30.0" />
+                            </HBox.margin></ChoiceBox>
+                    </children>
+                    <VBox.margin>
+                        <Insets top="15.0" />
+                    </VBox.margin>
+                </HBox>
+                <HBox alignment="TOP_CENTER" prefHeight="29.0" prefWidth="469.0">
+                    <children>
+                        <Label text="DATA DE VALIDADE">
+                            <HBox.margin>
+                                <Insets right="15.0" />
+                            </HBox.margin>
+                        </Label>
+                        <DatePicker fx:id="txtDataValidade">
+                            <HBox.margin>
+                                <Insets right="30.0" />
+                            </HBox.margin>
+                        </DatePicker>
+                    </children>
+                    <VBox.margin>
+                        <Insets top="15.0" />
+                    </VBox.margin>
+                </HBox>
+                <HBox alignment="TOP_CENTER" prefHeight="47.0" prefWidth="469.0">
+                    <VBox.margin>
+                        <Insets top="15.0" />
+                    </VBox.margin>
+                    <children>
+                        <Button fx:id="btnVoltar" mnemonicParsing="false" onAction="#voltarTela" text="VOLTAR">
+                            <HBox.margin>
+                                <Insets right="30.0" />
+                            </HBox.margin>
+                        </Button>
+                        <Button fx:id="btnCadastro" mnemonicParsing="false" onAction="#onCadastrar" text="EDITAR">
+                            <HBox.margin>
+                                <Insets left="30.0" />
+                            </HBox.margin>
+                        </Button>
+                    </children>
+                </HBox>
+            </children>
+        </VBox>
+    </center>
+</BorderPane>

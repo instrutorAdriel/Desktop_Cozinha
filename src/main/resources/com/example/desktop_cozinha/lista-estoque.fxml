@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<Pane fx:id="painelFrame" prefHeight="485.0" prefWidth="303.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.desktop_cozinha.controller.ListaController">
+    <children>
+        <Button fx:id="btnBuscar" layoutX="50.0" layoutY="4.0" mnemonicParsing="false" onAction="#onHelloButtonClick" text="Buscar">
+            <opaqueInsets>
+                <Insets />
+            </opaqueInsets>
+         <graphic>
+              <TextField fx:id="FiltrarProdutos" />
+         </graphic>
+        </Button>
+      <CheckBox fx:id="chkNaoPereciveis" layoutX="195.0" layoutY="37.0" mnemonicParsing="false" text="Não-perecíveis" />
+      <CheckBox fx:id="chkPereciveis" layoutX="105.0" layoutY="37.0" mnemonicParsing="false" text="Perecíveis" />
+      <CheckBox fx:id="chkUtensilios" layoutX="21.0" layoutY="37.0" mnemonicParsing="false" text="Utensilios" />
+        <TableView fx:id="ListaEstoque" layoutY="54.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="433.0" prefWidth="303.0">
+            <columns>
+                <TableColumn fx:id="nomeProduto" prefWidth="75.0" text="Nome" />
+                <TableColumn fx:id="tipoProduto" prefWidth="75.0" text="Tipo" />
+                <TableColumn fx:id="quantidadeProduto" prefWidth="75.0" text="Quantidade" />
+                <TableColumn fx:id="unidadeProduto" prefWidth="75.0" text="Unidade" />
+            </columns>
+        </TableView>
+    </children>
+</Pane>
