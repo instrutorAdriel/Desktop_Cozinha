@@ -59,10 +59,10 @@ public class alteraSenhaController {
         alert.showAndWait();
         TranslateTransition tt = new TranslateTransition(javafx.util.Duration.seconds(1), confirmaTroca);
         tt.setToX(1000);
-        tt.play();}
+        tt.play();
+        MainApplication.trocadorDeTelas("Login.fxml");}
         novaSenha.clear();
         confirmaSenha.clear();
-        MainApplication.trocadorDeTelas("Login.fxml");
     }
 
 

@@ -1,14 +1,13 @@
 package com.example.desktop_cozinha.Services;
 
-import jakarta.mail.*;
 
-
-public class SessaoService {
+public class sessaoService {
     public static String emailAtual;
 
 
        public static String getEmailAtual() {return emailAtual;}
-       public static void setEmailAtual(String emailAtual) {SessaoService.emailAtual = emailAtual;}
+       public static void setEmailAtual(String emailAtual) {
+           sessaoService.emailAtual = emailAtual;}
 
 
 

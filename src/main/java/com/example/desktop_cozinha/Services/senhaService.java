@@ -35,7 +35,7 @@ public class senhaService {
 
     public static void resetaSenha(String novaSenha, String codigoHash)throws SQLException {
 
-        String email = SessaoService.getEmailAtual();
+        String email = sessaoService.getEmailAtual();
 
         if(email == null){
             System.out.println("Sessao expirada");
@@ -44,7 +44,7 @@ public class senhaService {
         String novaSenhaHash = encryptService.encrypt(novaSenha);
         UsuarioDAO.recuperaSenha(novaSenhaHash, email);
         UsuarioDAO.deletaToken(email);
-        SessaoService.setEmailAtual(null);
+        sessaoService.setEmailAtual(null);
 
     }
 
