@@ -3,7 +3,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.desktop_cozinha.controller.confirmaEmailController">
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.desktop_cozinha.controller.ConfirmaEmailController">
    <children>
       <TextField fx:id="codigoDigitar" layoutX="226.0" layoutY="188.0" promptText="codigo" />
       <TextField fx:id="emailDigitar" layoutX="226.0" layoutY="100.0" promptText="email" />

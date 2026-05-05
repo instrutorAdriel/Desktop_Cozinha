@@ -3,10 +3,9 @@ module com.example.desktop_cozinha {
     requires javafx.fxml;
     requires java.sql;
     requires jbcrypt;
-    requires jakarta.mail;
     requires jdk.compiler;
-
-
+    requires mysql.connector.j;
+    requires jakarta.mail;
 
     opens com.example.desktop_cozinha to javafx.fxml;
     exports com.example.desktop_cozinha;
@@ -17,3 +16,4 @@ module com.example.desktop_cozinha {
     exports com.example.desktop_cozinha.model;
     opens com.example.desktop_cozinha.model to javafx.fxml;
 }
+

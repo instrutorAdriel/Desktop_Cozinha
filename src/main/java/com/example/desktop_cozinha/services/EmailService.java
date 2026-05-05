@@ -1,11 +1,11 @@
-package com.example.desktop_cozinha.Services;
+package com.example.desktop_cozinha.services;
 
 import jakarta.mail.*;
 import jakarta.mail.internet.MimeMessage;
 
 import java.util.Properties;
 
-public class emailService {
+public class EmailService {
 
 private static final String email = "diegolopes13072007@gmail.com";
 private static final String senha = "zrvluuhnizyiscad";

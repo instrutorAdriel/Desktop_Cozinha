@@ -1,6 +1,4 @@
-package com.example.desktop_cozinha.Services;
-
-import jakarta.mail.*;
+package com.example.desktop_cozinha.services;
 
 
 public class SessaoService {
@@ -9,9 +7,6 @@ public class SessaoService {
 
        public static String getEmailAtual() {return emailAtual;}
        public static void setEmailAtual(String emailAtual) {SessaoService.emailAtual = emailAtual;}
-
-
-
 
 
 }

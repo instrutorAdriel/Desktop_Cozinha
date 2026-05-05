@@ -1,7 +1,7 @@
 package com.example.desktop_cozinha.controller;
 
 import com.example.desktop_cozinha.MainApplication;
-import com.example.desktop_cozinha.Services.senhaService;
+import com.example.desktop_cozinha.services.SenhaService;
 import javafx.animation.TranslateTransition;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -11,7 +11,7 @@ import javafx.scene.control.PasswordField;
 import java.io.IOException;
 import java.sql.SQLException;
 
-public class alteraSenhaController {
+public class AlteraSenhaController {
 
     @FXML
     private Button confirmaTroca;
@@ -52,32 +52,18 @@ public class alteraSenhaController {
         alert.setHeaderText("Confirme sua senha!");
 
         }
-        else {senhaService.resetaSenha(senhaDigitada, senhaConfirmada);
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Sucesso");
-        alert.setHeaderText("Senha alterada com sucesso!");
-        alert.showAndWait();
-        TranslateTransition tt = new TranslateTransition(javafx.util.Duration.seconds(1), confirmaTroca);
-        tt.setToX(1000);
-        tt.play();}
+        else {
+            SenhaService.resetaSenha(senhaDigitada, senhaConfirmada);
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Sucesso");
+            alert.setHeaderText("Senha alterada com sucesso!");
+            alert.showAndWait();
+            TranslateTransition tt = new TranslateTransition(javafx.util.Duration.seconds(1), confirmaTroca);
+            tt.setToX(1000);
+            tt.play();
+            MainApplication.trocadorDeTelas("Login.fxml");
+        }
         novaSenha.clear();
         confirmaSenha.clear();
-        MainApplication.trocadorDeTelas("Login.fxml");
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }
