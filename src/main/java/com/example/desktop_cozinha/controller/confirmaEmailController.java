@@ -42,7 +42,7 @@ public class confirmaEmailController {
             alert.showAndWait();
             return;
         }
-        
+
         Usuario usuario = UsuarioDAO.buscaEmail(emailDigitado);
 
         if(usuario == null || !usuario.getEmail().equals(emailDigitado)){
