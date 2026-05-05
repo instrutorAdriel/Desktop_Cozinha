@@ -1,5 +1,6 @@
 package com.example.desktop_cozinha.controller;
 
+import com.example.desktop_cozinha.MainApplication;
 import com.example.desktop_cozinha.model.LoginDAO;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -49,6 +50,12 @@ public class LoginController {
             return;
         }
     }
+
+    @FXML
+    public void EsqueciSenha() throws IOException {
+        MainApplication.trocadorDeTelas("confirmaEmail.fxml");
+    }
+
 }
 
 
