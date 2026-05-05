@@ -6,10 +6,13 @@
 <AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.desktop_cozinha.controller.HistoricoController">
    <children>
       <Button fx:id="btnhistorico" mnemonicParsing="false" onAction="#imprimirHistoricoCompleto" text="historico" />
-      <TableView layoutX="190.0" layoutY="100.0" prefHeight="200.0" prefWidth="200.0">
+      <TableView fx:id="historico" layoutX="190.0" layoutY="91.0" onSort="#initialize" prefHeight="210.0" prefWidth="376.0" AnchorPane.rightAnchor="34.0">
         <columns>
-          <TableColumn prefWidth="75.0" text="C1" />
-          <TableColumn prefWidth="75.0" text="C2" />
+          <TableColumn fx:id="nome_produto" prefWidth="75.0" text="nome_produto" />
+          <TableColumn fx:id="nome_usuario" prefWidth="75.0" text="nome_usuario" />
+            <TableColumn fx:id="tipo" prefWidth="75.0" text="tipo" />
+            <TableColumn fx:id="quantidade" prefWidth="75.0" text="quantidade" />
+            <TableColumn fx:id="observacao" prefWidth="75.0" text="obsevacao" />
         </columns>
       </TableView>
    </children>

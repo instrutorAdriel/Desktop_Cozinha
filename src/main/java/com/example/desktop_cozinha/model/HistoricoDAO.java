@@ -1,11 +1,9 @@
 package com.example.desktop_cozinha.model;
 import com.example.desktop_cozinha.config.DatabaseConfig;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.sql.Timestamp;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class HistoricoDAO {
 
@@ -16,7 +14,7 @@ public class HistoricoDAO {
     }
 
     // Método JDBC normal para ler e imprimir toda a tabela
-    public void imprimirHistoricoCompleto() {
+    public List<Historico> imprimirHistoricoCompleto() {
         String sql = "SELECT \n" +
                 "    e.nome AS nome_produto, \n" +
                 "    u.nome AS nome_usuario, \n" +
@@ -27,24 +25,42 @@ public class HistoricoDAO {
                 "FROM historico_movimentacoes h\n" +
                 "JOIN estoque_geral e ON h.produto_id = e.id\n" +
                 "JOIN usuarios u ON h.usuario_id = u.id\n" +
-                "ORDER BY h.data_hora DESC;";
+                "ORDER BY h.data_hora DESC";
 
 
-        try (Connection conn =  DatabaseConfig.getConnection();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
+
+                // vamos escrever os dados de cada livro
+                List<Historico> itens = new ArrayList<>();
 
 
-                        rs.getInt("id"),
-                        rs.getLong("produto_id"),
-                        rs.getLong("usuario_id"),
-                        rs.getString("tipo_movimentacao"),
-                        rs.getInt("quantidade_movimentada"),
-                        rs.getTimestamp("data_hora"),
-                        rs.getString("observacao");
+                try (Connection conn = DatabaseConfig.getConnection()) {
+                    try (PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+
+                        try (ResultSet rs = stmt.executeQuery()) {
+
+                            while (rs.next()) {
+
+                                Historico H = new Historico(
+                                        rs.getString("nome_produto"),
+                                        rs.getString("nome_usuario"),
+                                        rs.getString("tipo"),
+                                        rs.getInt("quantidade_movimentada"),
+                                        rs.getString("observacao")
+                                );
+                                itens.add(H);
+                            }
+                        }
+
+                    }
+                } catch (SQLException e) {
+                    System.err.println("Erro");
+                }
+
+                return itens;
+
+
+            }
+
     }
-}
+
