@@ -15,7 +15,7 @@ public class MainApplication extends Application {
     public void start(Stage stage) throws IOException {
         primaryStage = stage;
 
-        trocadorDeTelas("cadastro.fxml");
+        trocadorDeTelas("Cadastrar_produtos.fxml");
 
         primaryStage.setTitle("Sistema Cozinha");
         primaryStage.show();
