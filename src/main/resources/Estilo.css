@@ -41,7 +41,7 @@
 .btn-padrao-transparent {
     -fx-background-color:  transparent;
     -fx-background-radius: 10;
-    -fx-pref-width: 185;
+    -fx-pref-width: 150;
     -fx-pref-height: 40;
     -fx-font-family: "Arial";
     -fx-font-size: 14;
@@ -112,6 +112,29 @@
     -fx-border-width: 0 0 2 0;
 }
 .btn-sair-adimin:hover {
+    /*
+       Parâmetros do dropshadow:
+       - three-pass-box: algoritmo de blur suave
+       - rgba(0,0,0,0.4): cor preta com 40% de opacidade
+       - 10: raio do blur (espalhamento)
+       - 0.5: quanto a sombra se espalha além do blur
+       - 5: deslocamento em X (move para a direita)
+       - 5: deslocamento em Y (move para baixo)
+    */
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.4), 10, 0.5, 5, 5);
+}
+.btn-padrao-transparent-2 {
+    -fx-background-color:  transparent;
+    -fx-background-radius: 10;
+    -fx-pref-width: 100;
+    -fx-pref-height: 40;
+    -fx-font-family: "Arial";
+    -fx-font-size: 14;
+    -fx-text-fill: #054584;
+    -fx-cursor: hand;
+    -fx-text-alignment: right;
+}
+.btn-padrao-transparent-2:hover { /*botão configuração
     /*
        Parâmetros do dropshadow:
        - three-pass-box: algoritmo de blur suave

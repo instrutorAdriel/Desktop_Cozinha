@@ -120,11 +120,11 @@
                   <Rectangle2D />
                </viewport>
             </ImageView>
-            <VBox alignment="TOP_CENTER" prefHeight="550.0" prefWidth="600.0">
+            <VBox alignment="TOP_CENTER" prefHeight="550.0" prefWidth="600.0" StackPane.alignment="CENTER">
                <children>
-                  <HBox alignment="CENTER" prefHeight="50.0" style="-fx-background-color: #ff914d;" VBox.vgrow="ALWAYS">
+                  <HBox alignment="TOP_CENTER" prefHeight="50.0" prefWidth="600.0" style="-fx-background-color: #ff914d;">
                      <children>
-                        <Label alignment="BOTTOM_LEFT" graphicTextGap="0.0" prefHeight="30.0" prefWidth="350.0" text="Quinta, 01/01/2026">
+                        <Label alignment="BOTTOM_LEFT" graphicTextGap="0.0" prefHeight="50.0" prefWidth="170.0" text="Quinta, 01/01/2026">
                            <font>
                               <Font name="Arial Bold" size="18.0" />
                            </font>
@@ -135,14 +135,8 @@
                               <Insets left="10.0" />
                            </HBox.margin>
                         </Label>
-                        <Region prefHeight="450.0" prefWidth="300.0" HBox.hgrow="ALWAYS" />
-                        <Label prefHeight="21.0" prefWidth="275.0" text="Usuarios">
-                           <font>
-                              <Font name="Arial Bold" size="18.0" />
-                           </font>
-                        </Label>
-                        <Region layoutX="192.0" layoutY="10.0" prefHeight="450.0" prefWidth="300.0" />
-                        <Label alignment="CENTER_RIGHT" contentDisplay="RIGHT" graphicTextGap="0.0" prefHeight="30.0" prefWidth="275.0" text="08:30:00" textAlignment="RIGHT">
+                        <Region layoutX="192.0" layoutY="10.0" prefHeight="50.0" prefWidth="150.0" HBox.hgrow="ALWAYS" />
+                        <Label alignment="CENTER_RIGHT" contentDisplay="RIGHT" graphicTextGap="0.0" prefHeight="50.0" prefWidth="100.0" text="08:30:00" textAlignment="RIGHT">
                            <font>
                               <Font name="Arial Bold" size="18.0" />
                            </font>
@@ -155,28 +149,26 @@
                         </Label>
                      </children>
                   </HBox>
-                  <HBox alignment="CENTER" prefHeight="30.0">
+                  <HBox alignment="CENTER" prefHeight="30.0" prefWidth="600.0">
                      <children>
-                        <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS">
-                           <HBox.margin>
-                              <Insets />
-                           </HBox.margin></Region>
-                        <Label alignment="BOTTOM_CENTER" contentDisplay="CENTER" graphicTextGap="0.0" prefHeight="30.0" style="-fx-border-color: transparent transparent black transparent;" text="Editar/" textFill="#054685">
+                        <Region prefHeight="26.0" prefWidth="161.0" HBox.hgrow="ALWAYS" />
+                        <Label alignment="CENTER" contentDisplay="CENTER" graphicTextGap="0.0" prefHeight="25.0" prefWidth="125.0" text="Usuários" textFill="#054584">
                            <font>
-                              <Font name="Bodoni MT Bold Italic" size="15.0" />
-                           </font>
-                        </Label>
-                        <Label alignment="BOTTOM_RIGHT" contentDisplay="RIGHT" graphicTextGap="5.0" prefHeight="30.0" style="-fx-border-color: transparent transparent black transparent;" text="Adicionar" textFill="#054685">
-                           <font>
-                              <Font name="Bodoni MT Bold Italic" size="15.0" />
+                              <Font name="Arial Bold Italic" size="15.0" />
                            </font>
                            <HBox.margin>
-                              <Insets right="15.0" />
+                              <Insets left="10.0" />
                            </HBox.margin>
                         </Label>
+                        <Region prefHeight="26.0" prefWidth="90.0" HBox.hgrow="ALWAYS" />
+                        <Button mnemonicParsing="false" prefHeight="20.0" prefWidth="80.0" styleClass="btn-padrao-transparent-2" text="Editar/">
+                           <font>
+                              <Font name="Arial" size="12.0" />
+                           </font></Button>
+                        <Button mnemonicParsing="false" prefHeight="20.0" prefWidth="100.0" styleClass="btn-padrao-transparent-2" text="Adicionar" />
                      </children>
                      <VBox.margin>
-                        <Insets top="10.0" />
+                        <Insets left="50.0" right="50.0" top="10.0" />
                      </VBox.margin>
                   </HBox>
                   <TableView style="-fx-background-color: transparent; -fx-border-color: black;" VBox.vgrow="ALWAYS">
