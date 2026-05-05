@@ -74,6 +74,7 @@
                </VBox.margin>
             </Button>
             <Region prefHeight="303.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
+            <Button alignment="BOTTOM_CENTER" contentDisplay="BOTTOM" mnemonicParsing="false" styleClass="btn-sair-adimin" text="Sair" />
             <Button alignment="CENTER" layoutX="18.0" layoutY="190.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="185.0" styleClass="btn-padrao-transparent" text="Configuração     ">
                <font>
                   <Font name="Bodoni MT" size="16.0" />
@@ -82,7 +83,7 @@
                   <Insets />
                </opaqueInsets>
                <VBox.margin>
-                  <Insets top="20.0" />
+                  <Insets bottom="10.0" top="20.0" />
                </VBox.margin>
                <graphic>
                   <ImageView fitHeight="20.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true" translateX="-5.0">
@@ -121,13 +122,10 @@
             </ImageView>
             <VBox alignment="TOP_CENTER" prefHeight="550.0" prefWidth="600.0">
                <children>
-                  <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="50.0" prefWidth="600.0" text="Bem-Vindo, &quot;Nome&quot;">
+                  <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="50.0" prefWidth="240.0" text="Bem-Vindo, &quot;Nome&quot;">
                      <font>
                         <Font name="Arial Bold Italic" size="20.0" />
                      </font>
-                     <VBox.margin>
-                        <Insets left="200.0" right="200.0" />
-                     </VBox.margin>
                   </Label>
                   <HBox alignment="CENTER" prefHeight="20.0">
                      <children>
@@ -169,11 +167,22 @@
                         </ImageView>
                      </graphic>
                   </Label>
-                  <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="30.0" prefWidth="250.0" text="&quot;Exibição da notificação&quot;" VBox.vgrow="ALWAYS">
-                     <font>
-                        <Font name="Arial" size="20.0" />
-                     </font>
-                  </Label>
+                  <TableView opacity="0.8" prefHeight="200.0" prefWidth="200.0">
+                    <columns>
+                      <TableColumn prefWidth="307.0" text="Nome" />
+                      <TableColumn minWidth="0.0" prefWidth="109.0" text="Status" />
+                        <TableColumn prefWidth="76.0" text="Quantidade" />
+                    </columns>
+                     <VBox.margin>
+                        <Insets left="50.0" right="50.0" />
+                     </VBox.margin>
+                  </TableView>
+                  <Region prefHeight="200.0" prefWidth="200.0" />
+                  <HBox alignment="CENTER" prefHeight="50.0" prefWidth="600.0">
+                     <children>
+                        <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
+                     </children>
+                  </HBox>
                </children>
             </VBox>
          </children>
