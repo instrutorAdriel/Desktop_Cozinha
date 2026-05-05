@@ -9,8 +9,4 @@ public class sessaoService {
        public static void setEmailAtual(String emailAtual) {
            sessaoService.emailAtual = emailAtual;}
 
-
-
-
-
 }

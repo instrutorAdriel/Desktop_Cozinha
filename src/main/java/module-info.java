@@ -5,7 +5,7 @@ module com.example.desktop_cozinha {
     requires jbcrypt;
     requires jakarta.mail;
     requires jdk.compiler;
-
+    requires java.desktop;
 
 
     opens com.example.desktop_cozinha to javafx.fxml;
