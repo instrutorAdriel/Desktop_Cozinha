@@ -20,7 +20,6 @@ public class CadastroDAO {
             stmt.setString(3, senhaCriptografada);
             stmt.setString(4, cargo);
             stmt.executeUpdate();
-            IO.println("Usuário criado!");
         } catch (SQLException e) {
             throw new RuntimeException("Erro ao criar", e);
         }
