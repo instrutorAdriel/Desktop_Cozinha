@@ -122,4 +122,7 @@
          </children>
       </VBox>
    </left>
+   <right>
+      <Pane prefHeight="550.0" prefWidth="68.0" BorderPane.alignment="CENTER" />
+   </right>
 </BorderPane>
