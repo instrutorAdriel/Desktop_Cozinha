@@ -21,6 +21,8 @@
        - 5: deslocamento em Y (move para baixo)
     */
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.4), 10, 0.5, 5, 5);
+    -fx-background-color: #0c4582;
+    -fx-text-fill: white;
 }
 
 .btn-click {
@@ -71,6 +73,7 @@
     -fx-text-fill: black;
     -fx-cursor: hand;
     -fx-text-alignment: left;
+    -fx-graphic: url("Imagens/home-branca.png");
 }
 .btn-padrao-home:hover {
     /*
@@ -83,6 +86,8 @@
        - 5: deslocamento em Y (move para baixo)
     */
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.4), 10, 0.5, 5, 5);
+    -fx-background-color: #0c4582;
+    -fx-text-fill: white;
 }
 
 .painel-lateral {

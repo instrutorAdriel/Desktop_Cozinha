@@ -14,13 +14,6 @@
                     <font>
                         <Font name="Bodoni MT" size="14.0" />
                     </font>
-                    <graphic>
-                        <ImageView fitHeight="20.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
-                            <image>
-                                <Image url="@../../../Imagens/home.png" />
-                            </image>
-                        </ImageView>
-                    </graphic>
                     <VBox.margin>
                         <Insets top="10.0" />
                     </VBox.margin></Button>
@@ -31,7 +24,7 @@
                     <graphic>
                         <ImageView disable="true" fitHeight="20.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true" translateX="-5.0">
                             <image>
-                                <Image url="@../../../Imagens/estoque.png" />
+                                <Image url="@../../../Imagens/estoque%20(preta).png" />
                             </image></ImageView>
                     </graphic>
                     <VBox.margin>
@@ -45,7 +38,7 @@
                     <graphic>
                         <ImageView disable="true" fitHeight="20.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true" translateX="-5.0">
                             <image>
-                                <Image url="@../../../Imagens/utensilio.png" />
+                                <Image url="@../../../Imagens/utensilio%20(preta).png" />
                             </image>
                         </ImageView>
                     </graphic>
@@ -60,7 +53,7 @@
                     <graphic>
                         <ImageView disable="true" fitHeight="20.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true" translateX="-5.0">
                             <image>
-                                <Image url="@../../../Imagens/relatorio.png" />
+                                <Image url="@../../../Imagens/relatorio%20(preta).png" />
                             </image>
                         </ImageView>
                     </graphic>
@@ -83,7 +76,7 @@
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true" translateX="-5.0">
                             <image>
-                                <Image url="@../../../Imagens/configuração.png" />
+                                <Image url="@../../../Imagens/configuração%20(preta).png" />
                             </image></ImageView>
                     </graphic>
                 </Button>
