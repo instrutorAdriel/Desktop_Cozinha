@@ -1,5 +1,6 @@
 package com.example.desktop_cozinha.model;
 import java.sql.*;
+import java.util.List;
 
 import com.example.desktop_cozinha.config.DatabaseConfig;
 
@@ -76,7 +77,16 @@ public class UsuarioDAO {
     }
 
 
+public static List<Relatorio> relatorioProduto (String nomeProduto) throws SQLException{
 
+
+
+
+
+
+
+
+}
 
 
 

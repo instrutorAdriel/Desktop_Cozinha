@@ -1,5 +1,0 @@
-Remover a tela de login, manter apenas alterar senha
-
-Nomear, os botões, enviar e-mail, confirmar código
-
-Corrigir mensagem de erro ao confirmar e-mail
