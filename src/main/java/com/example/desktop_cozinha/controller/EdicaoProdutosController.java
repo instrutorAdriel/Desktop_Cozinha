@@ -10,6 +10,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 
         import java.net.URL;
@@ -18,6 +19,7 @@ import java.util.ResourceBundle;
 import java.time.LocalDate;
 import java.sql.Date;
 
+import static com.example.desktop_cozinha.MainApplication.trocadorDeTelas;
 
 
 public class  EdicaoProdutosController implements Initializable {
@@ -80,11 +82,11 @@ public class  EdicaoProdutosController implements Initializable {
     @FXML
     protected void voltarTela () throws Exception {
         // ao cliclar no botão volta para tela de login
-        MainApplication.trocadorDeTelas("login.fxml");
+        trocadorDeTelas("lista-estoque.fxml");
     }
 
     @FXML
-    protected void onCadastrar () throws Exception {
+    protected void onEditar () throws Exception {
         //1. Le os valores digitados nos campos de tela
         // getText () retorna o conteudo atual do campo como String
 
@@ -151,13 +153,13 @@ public class  EdicaoProdutosController implements Initializable {
 
         // --- INÍCIO DO CÓDIGO DE TESTE ---
 
-        // MOCK: Forçando um ID de um produto que você TEM CERTEZA que existe no seu MySQL.
+        /* MOCK: Forçando um ID de um produto que você TEM CERTEZA que existe no seu MySQL.
         Integer idTemporarioParaTeste = 3;
 
         // 4. Chama o metodo de edição passando o ID de teste
         dao.editarProduto(idTemporarioParaTeste, nomeProduto, tipoProduto, qtdAtual, unidadeDeMedida, estoqueMinimo, dataValidade);
 
-        // --- FIM DO CÓDIGO DE TESTE ---
+        // --- FIM DO CÓDIGO DE TESTE --- */
 
 
         //4. Chama o metodo de editar do cliente
@@ -179,6 +181,10 @@ public class  EdicaoProdutosController implements Initializable {
             txtTipoProduto.setValue(null);
             txtDataValidade.setValue(null);
 
+            // volta para tela da lista
+            // volta para a tela da lista de produtos
+            trocadorDeTelas("lista-estoque.fxml");
+
 
             } else {
             Alert erro = new Alert(Alert.AlertType.ERROR);
@@ -186,4 +192,9 @@ public class  EdicaoProdutosController implements Initializable {
             erro.setContentText("Nenhum produto foi selecionado para edição.");
             erro.showAndWait();
 
-    }}}
+    }}
+
+    public Scene getScene() {
+        return null;
+    }
+}

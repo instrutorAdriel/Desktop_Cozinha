@@ -6,6 +6,7 @@ module com.example.desktop_cozinha {
     requires jbcrypt;
     requires jdk.compiler;
     requires mysql.connector.j;
+    requires java.desktop;
 
     opens com.example.desktop_cozinha to javafx.fxml;
     exports com.example.desktop_cozinha;

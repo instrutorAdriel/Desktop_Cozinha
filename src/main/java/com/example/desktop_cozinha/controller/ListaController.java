@@ -5,12 +5,18 @@ import com.example.desktop_cozinha.model.ProdutoListaEstoque;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.Pane;
+import javafx.stage.Stage;
+
+import java.awt.event.ActionEvent;
+
+import static com.example.desktop_cozinha.MainApplication.trocadorDeTelas;
+
 
 public class ListaController {
 
@@ -41,6 +47,9 @@ public class ListaController {
 
     @FXML
     private TextField FiltrarProdutos;
+
+    @FXML
+    private Hyperlink editar;
 
     private final ListaEstoqueDAO dao = new ListaEstoqueDAO();
 
@@ -77,4 +86,38 @@ public class ListaController {
 
         ListaEstoque.setItems(lista);
     }
+    @FXML
+    protected void onEditarProduto(javafx.event.ActionEvent actionEvent) {
+        ProdutoListaEstoque produtoSelecionado = ListaEstoque.getSelectionModel().getSelectedItem();
+
+        if (produtoSelecionado == null) {
+            Alert alerta = new Alert(Alert.AlertType.WARNING);
+            alerta.setTitle("Atenção");
+            alerta.setContentText("Por favor, selecione um produto na lista para editar.");
+            alerta.showAndWait();
+            return;
+        }
+
+        try {
+
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/desktop_cozinha/edicaoProdutos.fxml"));
+            Parent root = loader.load();
+
+            EdicaoProdutosController controllerEdicao = loader.getController();
+
+            // Passa o produto selecionado para a sua tela
+            controllerEdicao.preencherDadosParaEdicao(produtoSelecionado);
+
+            // Usa a ListaEstoque para pegar a Scene e o Window
+            Stage stage = (Stage) ListaEstoque.getScene().getWindow();
+            stage.setScene(new Scene(root));
+            stage.show();
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.err.println("Erro ao abrir a tela de edição!");
+        }
+    }
+
 }
