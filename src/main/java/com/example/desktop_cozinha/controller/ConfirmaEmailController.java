@@ -56,7 +56,7 @@ public class ConfirmaEmailController {
 
     @FXML
     private void onVoltarClick() throws IOException {
-        MainApplication.trocadorDeTelas("Login.fxml");
+        MainApplication.trocadorDeTelas("login.fxml");
     }
 
     @FXML

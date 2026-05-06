@@ -35,7 +35,6 @@ private static final String senha = "zrvluuhnizyiscad";
             message.setSubject(assunto);
             message.setText(mensagem);
             Transport.send(message);
-            System.out.println("Email enviado com sucesso!");
 
     }catch (MessagingException e) {
             System.out.println("Erro ao enviar o email: " + e.getMessage());

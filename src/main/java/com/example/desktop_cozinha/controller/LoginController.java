@@ -53,9 +53,8 @@ public class LoginController {
 
     @FXML
     public void EsqueciSenha() throws IOException {
-        MainApplication.trocadorDeTelas("confirmaEmail.fxml");
+        MainApplication.trocadorDeTelas("esqueceu-senha.fxml");
     }
-
 }
 
 
