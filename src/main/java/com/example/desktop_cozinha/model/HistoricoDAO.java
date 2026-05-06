@@ -1,6 +1,7 @@
 package com.example.desktop_cozinha.model;
 import com.example.desktop_cozinha.config.DatabaseConfig;
 
+import java.awt.image.ImagingOpException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +15,7 @@ public class HistoricoDAO {
     }
 
     // Método JDBC normal para ler e imprimir toda a tabela
-    public List<Historico> imprimirHistoricoCompleto() {
+    public static List<Historico> imprimirHistoricoCompleto() {
         String sql = "SELECT \n" +
                 "    e.nome AS nome_produto, \n" +
                 "    u.nome AS nome_usuario, \n" +
@@ -29,6 +30,7 @@ public class HistoricoDAO {
 
 
 
+
                 // vamos escrever os dados de cada livro
                 List<Historico> itens = new ArrayList<>();
 
@@ -40,13 +42,13 @@ public class HistoricoDAO {
                         try (ResultSet rs = stmt.executeQuery()) {
 
                             while (rs.next()) {
-
                                 Historico H = new Historico(
                                         rs.getString("nome_produto"),
                                         rs.getString("nome_usuario"),
-                                        rs.getString("tipo"),
+                                        rs.getString("tipo_movimentacao"),
                                         rs.getInt("quantidade_movimentada"),
-                                        rs.getString("observacao")
+                                        rs.getString("observacao"),
+                                        rs.getString("data_hora")
                                 );
                                 itens.add(H);
                             }
