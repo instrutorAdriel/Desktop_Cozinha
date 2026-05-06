@@ -20,7 +20,7 @@
             </ImageView>
             <Label text="ALTERAR SENHA">
                <font>
-                  <Font name="System Bold" size="12.0" />
+                  <Font name="Arial Bold" size="18.0" />
                </font>
             </Label>
             <Label>
@@ -44,7 +44,7 @@
             </Label>
             <PasswordField fx:id="novaSenha" maxHeight="25.0" maxWidth="500.0" minHeight="25.0" minWidth="250.0" prefHeight="25.0" prefWidth="500.0">
                <VBox.margin>
-                  <Insets left="150.0" right="150.0" />
+                  <Insets bottom="15.0" left="150.0" right="150.0" />
                </VBox.margin>
             </PasswordField>
             <Label alignment="TOP_CENTER" graphicTextGap="0.0" layoutX="160.0" layoutY="207.0" prefHeight="19.0" prefWidth="502.0" text="CONFIRMAR NOVA SENHA" textOverrun="CENTER_ELLIPSIS">
@@ -63,7 +63,7 @@
                   <Insets left="150.0" right="150.0" />
                </VBox.margin>
             </PasswordField>
-            <Button fx:id="confirmaTroca" mnemonicParsing="false" onAction="#onConfirmaTrocaClick" prefHeight="26.0" prefWidth="195.0" styleClass="btn-laranja" text="CONFIRMAR ALTERACAO">
+            <Button fx:id="confirmaTroca" mnemonicParsing="false" onAction="#onConfirmaTrocaClick" prefHeight="26.0" prefWidth="195.0" styleClass="btn-laranja" text="CONFIRMAR ALTERAÇÃO">
                <VBox.margin>
                   <Insets top="34.0" />
                </VBox.margin>
