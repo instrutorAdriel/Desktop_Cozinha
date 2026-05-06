@@ -82,7 +82,7 @@ public class ConfirmaEmailController {
         boolean verifica = EncryptService.checkPassword(codigoDigitado, UsuarioDAO.buscaEmail(SessaoService.getEmailAtual()).getToken());
 
         if(verifica){
-            MainApplication.trocadorDeTelas("alteraSenha.fxml");
+            MainApplication.trocadorDeTelas("alterar-senha.fxml");
         }
         else{
             Alert alert = new Alert(Alert.AlertType.ERROR);

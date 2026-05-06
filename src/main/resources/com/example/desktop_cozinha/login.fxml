@@ -12,7 +12,7 @@
             <children>
                 <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
                     <image>
-                        <Image url="@imagens/senac-laranja.png" />
+                        <Image url="@imagens/LogocoloridaSenac.png" />
                     </image>
                     <VBox.margin>
                         <Insets top="-10.0" />
@@ -76,7 +76,7 @@
             <children>
                 <ImageView fitHeight="40.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="5.0">
                <image>
-                  <Image url="@imagens/Logo-branca-Senac.png" />
+                  <Image url="@imagens/LogobrancaSenac.png" />
                </image></ImageView>
                 <Label alignment="CENTER" layoutX="212.0" layoutY="15.0" text="Sistema de Gerenciamento de Estoque da Cozinha" textFill="WHITE" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
                     <font>
