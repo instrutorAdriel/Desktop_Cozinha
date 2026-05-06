@@ -48,25 +48,32 @@
                   <Insets top="20.0" />
                </padding>
             </Label>
-            <Label alignment="CENTER" contentDisplay="CENTER" graphicTextGap="0.0" prefHeight="19.0" prefWidth="500.0" text="E-MAIL" textOverrun="CENTER_ELLIPSIS">
+            <VBox maxHeight="41.0" maxWidth="432.0" prefHeight="41.0" prefWidth="432.0">
+               <children>
+                  <Label alignment="CENTER" contentDisplay="CENTER" graphicTextGap="0.0" text="E-MAIL" textOverrun="CENTER_ELLIPSIS">
+                     <VBox.margin>
+                        <Insets top="42.0" />
+                     </VBox.margin>
+                     <padding>
+                        <Insets bottom="4.0" />
+                     </padding>
+                     <font>
+                        <Font name="Arial Bold" size="13.0" />
+                     </font>
+                  </Label>
+                  <TextField>
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                  </TextField>
+               </children>
                <VBox.margin>
-                  <Insets top="42.0" />
+                  <Insets left="150.0" right="150.0" />
                </VBox.margin>
-               <padding>
-                  <Insets bottom="4.0" />
-               </padding>
-               <font>
-                  <Font name="Arial Bold" size="13.0" />
-               </font>
-            </Label>
-            <TextField maxHeight="25.0" maxWidth="500.0" minHeight="25.0" minWidth="250.0" prefHeight="25.0" prefWidth="500.0">
-               <VBox.margin>
-                  <Insets bottom="8.0" left="152.0" right="150.0" />
-               </VBox.margin>
-            </TextField>
+            </VBox>
             <Button layoutX="355.0" layoutY="468.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="110.0" styleClass="btn-laranja" text="REDEFINIR">
                <VBox.margin>
-                  <Insets bottom="21.0" top="1.0" />
+                  <Insets top="11.0" />
                </VBox.margin>
             </Button>
             <Label text="Insira o código recebido no e-mail">
@@ -74,22 +81,29 @@
                   <Font name="Arial Bold" size="18.0" />
                </font>
                <VBox.margin>
-                  <Insets bottom="16.0" />
+                  <Insets bottom="17.0" top="10.0" />
                </VBox.margin>
             </Label>
-            <Label alignment="CENTER" contentDisplay="CENTER" graphicTextGap="0.0" text="CÓDIGO" textOverrun="CENTER_ELLIPSIS">
-               <font>
-                  <Font name="Arial Bold" size="13.0" />
-               </font>
+            <VBox maxHeight="41.0" maxWidth="432.0" prefHeight="41.0" prefWidth="432.0">
+               <children>
+                  <Label alignment="CENTER" contentDisplay="CENTER" graphicTextGap="0.0" text="CÓDIGO" textOverrun="CENTER_ELLIPSIS">
+                     <font>
+                        <Font name="Arial Bold" size="13.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                  </Label>
+                  <TextField>
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                  </TextField>
+               </children>
                <VBox.margin>
-                  <Insets bottom="2.0" />
+                  <Insets left="150.0" right="150.0" />
                </VBox.margin>
-            </Label>
-            <TextField layoutX="160.0" layoutY="386.0" maxHeight="25.0" maxWidth="500.0" minHeight="25.0" minWidth="250.0" prefHeight="25.0" prefWidth="452.0">
-               <VBox.margin>
-                  <Insets left="152.0" right="150.0" />
-               </VBox.margin>
-            </TextField>
+            </VBox>
             <Button mnemonicParsing="false" prefHeight="26.0" prefWidth="110.0" styleClass="btn-laranja" text="CONFIRMAR">
                <VBox.margin>
                   <Insets top="11.0" />
