@@ -15,13 +15,16 @@
                   <Image url="@imagens/Logo%20colorida%20Senac.png" />
                </image>
                <VBox.margin>
-                  <Insets top="-10.0" />
+                  <Insets bottom="-30.0" top="-10.0" />
                </VBox.margin>
             </ImageView>
             <Label text="ALTERAR SENHA">
                <font>
                   <Font name="System Bold" size="12.0" />
                </font>
+               <VBox.margin>
+                  <Insets bottom="-11.0" top="13.0" />
+               </VBox.margin>
             </Label>
             <Label>
                <VBox.margin>
@@ -44,7 +47,7 @@
             </Label>
             <PasswordField maxHeight="25.0" maxWidth="500.0" minHeight="25.0" minWidth="250.0" prefHeight="25.0" prefWidth="500.0">
                <VBox.margin>
-                  <Insets left="150.0" right="150.0" />
+                  <Insets bottom="20.0" left="150.0" right="150.0" />
                </VBox.margin>
             </PasswordField>
             <Label alignment="TOP_CENTER" graphicTextGap="0.0" layoutX="160.0" layoutY="207.0" prefHeight="19.0" prefWidth="502.0" text="CONFIRMAR NOVA SENHA" textOverrun="CENTER_ELLIPSIS">
@@ -60,12 +63,12 @@
             </Label>
             <PasswordField maxHeight="25.0" maxWidth="500.0" minHeight="25.0" minWidth="250.0" prefHeight="25.0" prefWidth="500.0">
                <VBox.margin>
-                  <Insets left="150.0" right="150.0" />
+                  <Insets bottom="120.0" left="150.0" right="150.0" />
                </VBox.margin>
             </PasswordField>
-            <Button mnemonicParsing="false" prefHeight="26.0" prefWidth="195.0" styleClass="btn-laranja" text="CONFIRMAR ALTERACAO">
+            <Button mnemonicParsing="false" prefHeight="26.0" prefWidth="195.0" styleClass="btn-laranja" text="CONFIRMAR ALTERAÇÄO">
                <VBox.margin>
-                  <Insets top="34.0" />
+                  <Insets bottom="45.0" top="-70.0" />
                </VBox.margin>
             </Button>
          </children>
