@@ -8,14 +8,26 @@
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" stylesheets="@../../../Estilo.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1">
    <top>
-      <AnchorPane prefHeight="50.0" prefWidth="800.0" styleClass="painel-superior" BorderPane.alignment="CENTER" />
+      <AnchorPane prefHeight="50.0" prefWidth="800.0" styleClass="painel-superior" stylesheets="@../../../Estilo.css" BorderPane.alignment="CENTER">
+         <children>
+            <ImageView fitHeight="40.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="5.0">
+               <image>
+                  <Image url="@../../../imagens/Logo%20branca%20Senac.png" />
+               </image>
+            </ImageView>
+            <Label alignment="CENTER" layoutX="178.0" layoutY="15.0" stylesheets="@../../../Estilo.css" text="Sistema de  Gerenciamento  de Estoque da Cozinha" textFill="WHITE">
+               <font>
+                  <Font name="Arial" size="18.0" />
+               </font>
+            </Label>
+         </children></AnchorPane>
    </top>
    <center>
       <StackPane prefHeight="150.0" prefWidth="564.0" BorderPane.alignment="CENTER">
          <children>
             <ImageView fitHeight="150.0" fitWidth="200.0" opacity="0.2" pickOnBounds="true" preserveRatio="true">
                <image>
-                  <Image url="@../../../imagens/Logo%20colorida%20Senac.png" />
+                  <Image url="@../../../imagens/Logo branca Senac.png " />
                </image>
             </ImageView>
             <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0">
@@ -41,17 +53,20 @@
                      <font>
                         <Font name="System Bold" size="12.0" />
                      </font></Label>
-                  <AnchorPane prefHeight="200.0" prefWidth="587.0">
+                  <AnchorPane prefHeight="198.0" prefWidth="476.0">
                      <children>
                         <TableView layoutX="2.0" prefHeight="200.0" prefWidth="439.0">
                           <columns>
                             <TableColumn prefWidth="75.0" text="1" />
                             <TableColumn prefWidth="75.0" text="2" />
                           </columns>
+                           <opaqueInsets>
+                              <Insets />
+                           </opaqueInsets>
                         </TableView>
                      </children>
                      <VBox.margin>
-                        <Insets left="104.0" right="57.0" />
+                        <Insets bottom="1.0" left="60.0" right="60.0" top="4.0" />
                      </VBox.margin>
                   </AnchorPane>
                   <VBox prefHeight="172.0" prefWidth="400.0">
@@ -73,7 +88,7 @@
                               <Font name="System Bold" size="12.0" />
                            </font>
                         </Label>
-                        <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="200.0" text="Adcionar Novo Item.">
+                        <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="200.0" text="Adicionar Novo Item.">
                            <VBox.margin>
                               <Insets left="5.0" top="20.0" />
                            </VBox.margin>
@@ -98,10 +113,7 @@
    <left>
       <VBox alignment="TOP_CENTER" prefHeight="350.0" prefWidth="200.0" styleClass="painel-lateral" BorderPane.alignment="CENTER">
          <children>
-            <Button alignment="TOP_CENTER" mnemonicParsing="false" styleClass="btn-padrao-home" text="HOME">
-               <VBox.margin>
-                  <Insets top="10.0" />
-               </VBox.margin>
+            <Button alignment="TOP_LEFT" graphicTextGap="10.0" layoutX="18.0" layoutY="146.0" mnemonicParsing="false" styleClass="btn-padrao" text="Home">
                <graphic>
                   <ImageView fitHeight="25.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -109,19 +121,26 @@
                      </image>
                   </ImageView>
                </graphic>
+               <VBox.margin>
+                  <Insets top="20.0" />
+               </VBox.margin>
             </Button>
-            <Button alignment="CENTER" mnemonicParsing="false" styleClass="btn-padrao" text="Lista de produtos.">
+            <Button alignment="TOP_LEFT" graphicTextGap="10.0" layoutX="18.0" layoutY="12.0" mnemonicParsing="false" styleClass="btn-padrao" text="Lista de Produtos">
                <graphic>
-                  <ImageView fitHeight="25.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" />
+                  <ImageView fitHeight="25.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../../imagens/estoque.png" />
+                     </image>
+                  </ImageView>
                </graphic>
                <VBox.margin>
-                  <Insets top="30.0" />
+                  <Insets top="50.0" />
                </VBox.margin>
-               <opaqueInsets>
-                  <Insets />
-               </opaqueInsets>
+               <font>
+                  <Font name="Arial Bold" size="12.0" />
+               </font>
             </Button>
-            <Button alignment="TOP_LEFT" mnemonicParsing="false" styleClass="btn-padrao" text="Utensílios">
+            <Button alignment="TOP_LEFT" graphicTextGap="10.0" mnemonicParsing="false" styleClass="btn-padrao" text="Utensílios">
                <graphic>
                   <ImageView fitHeight="25.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -130,10 +149,9 @@
                   </ImageView>
                </graphic>
                <VBox.margin>
-                  <Insets top="20.0" />
+                  <Insets top="50.0" />
                </VBox.margin>
             </Button>
-            <Region prefHeight="200.0" prefWidth="200.0" />
             <Button alignment="TOP_CENTER" mnemonicParsing="false" styleClass="btn-padrao-transparent" text="Configurações">
                <graphic>
                   <ImageView fitHeight="25.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
