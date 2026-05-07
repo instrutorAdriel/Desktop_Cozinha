@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="500.0" stylesheets="@../../../Estilo.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1">
+    <center>
+        <StackPane prefHeight="150.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+            <children>
+                <ImageView fitHeight="350.0" fitWidth="450.0" opacity="0.3" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="@../../../imagens/Logo%20colorida%20Senac.png" />
+                    </image>
+                </ImageView>
+                <VBox alignment="CENTER" prefHeight="400.0" prefWidth="500.0">
+                    <children>
+                        <Label alignment="CENTER" contentDisplay="CENTER" graphicTextGap="0.0" text="CADASTRAR USUÁRIO">
+                            <font>
+                                <Font name="Arial Bold" size="20.0" />
+                            </font>
+                            <VBox.margin>
+                                <Insets bottom="30.0" left="75.0" right="75.0" />
+                            </VBox.margin>
+                        </Label>
+                        <TextField promptText="NOME COMPLETO">
+                            <font>
+                                <Font name="Arial" size="12.0" />
+                            </font>
+                            <VBox.margin>
+                                <Insets bottom="10.0" left="75.0" right="75.0" />
+                            </VBox.margin>
+                        </TextField>
+                        <TextField layoutX="10.0" layoutY="206.0" promptText="EMAIL">
+                            <VBox.margin>
+                                <Insets bottom="10.0" left="75.0" right="75.0" />
+                            </VBox.margin>
+                            <font>
+                                <Font name="Arial" size="12.0" />
+                            </font>
+                        </TextField>
+                        <TextField layoutX="10.0" layoutY="219.0" promptText="CARGO">
+                            <font>
+                                <Font name="Arial" size="12.0" />
+                            </font>
+                            <VBox.margin>
+                                <Insets bottom="10.0" left="75.0" right="75.0" />
+                            </VBox.margin>
+                        </TextField>
+                        <PasswordField promptText="SENHA">
+                            <VBox.margin>
+                                <Insets bottom="10.0" left="75.0" right="75.0" />
+                            </VBox.margin>
+                            <font>
+                                <Font name="Arial" size="12.0" />
+                            </font>
+                        </PasswordField>
+                        <PasswordField layoutX="10.0" layoutY="244.0" promptText="CONFIRMAR SENHA">
+                            <font>
+                                <Font name="Arial" size="12.0" />
+                            </font>
+                            <VBox.margin>
+                                <Insets bottom="15.0" left="75.0" right="75.0" />
+                            </VBox.margin>
+                        </PasswordField>
+                        <HBox alignment="CENTER" prefHeight="50.0" prefWidth="100.0">
+                            <VBox.margin>
+                                <Insets left="75.0" right="75.0" />
+                            </VBox.margin>
+                            <children>
+                                <Button graphicTextGap="0.0" mnemonicParsing="false" opacity="0.9" prefHeight="28.0" prefWidth="92.0" styleClass="btn-edicao" text="VOLTAR">
+                                    <font>
+                                        <Font name="Arial Bold" size="12.0" />
+                                    </font>
+                                    <HBox.margin>
+                                        <Insets left="25.0" />
+                                    </HBox.margin>
+                                </Button>
+                                <Region prefHeight="50.0" prefWidth="124.0" HBox.hgrow="ALWAYS" />
+                                <Button alignment="CENTER" contentDisplay="CENTER" graphicTextGap="0.0" mnemonicParsing="false" opacity="0.9" prefHeight="28.0" prefWidth="125.0" styleClass="btn-edicao" text="CADASTRAR">
+                                    <font>
+                                        <Font name="Arial Bold" size="12.0" />
+                                    </font>
+                                    <HBox.margin>
+                                        <Insets right="25.0" />
+                                    </HBox.margin></Button>
+                            </children>
+                        </HBox>
+                    </children>
+                </VBox>
+            </children>
+        </StackPane>
+    </center>
+</BorderPane>
