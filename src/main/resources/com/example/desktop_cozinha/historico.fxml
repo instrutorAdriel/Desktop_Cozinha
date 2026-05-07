@@ -4,21 +4,33 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.desktop_cozinha.controller.HistoricoController">
-   <children>
-      <Button fx:id="btnhistorico" mnemonicParsing="false" onAction="#imprimirHistoricoCompleto" text="historico" />
-      <TableView fx:id="Historico" layoutX="190.0" layoutY="91.0" prefHeight="210.0" prefWidth="451.0" AnchorPane.rightAnchor="254.0">
-        <columns>
-          <TableColumn fx:id="nome_produto" prefWidth="75.0" text="nome_produto" />
-          <TableColumn fx:id="nome_usuario" prefWidth="75.0" text="nome_usuario" />
-            <TableColumn fx:id="tipo" prefWidth="75.0" text="tipo" />
-            <TableColumn fx:id="quantidade" prefWidth="75.0" text="quantidade" />
-            <TableColumn fx:id="observacao" prefWidth="75.0" text="obsevacao" />
-            <TableColumn fx:id="data_hora" prefWidth="75.0" text="datahora" />
-        </columns>
-         <opaqueInsets>
-            <Insets right="100150.0" />
-         </opaqueInsets>
-      </TableView>
-   </children>
+<AnchorPane prefHeight="500.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.desktop_cozinha.controller.HistoricoController">
+    <children>
+        <VBox spacing="15.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+            <children>
+                <HBox alignment="CENTER_LEFT" spacing="10.0">
+                    <children>
+                        <Label text="Filtrar por:" />
+                        <ChoiceBox fx:id="filtro" prefWidth="120.0" />
+                        <TextField fx:id="txtpesquisa" prefHeight="25.0" prefWidth="250.0" promptText="Digite sua busca aqui..." />
+                        <Button fx:id="btnbuscar" mnemonicParsing="false" onAction="#filtrarHistorico" prefWidth="100.0" text="BUSCAR" />
+                    </children>
+                </HBox>
+
+                <TableView fx:id="tableHistorico" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn fx:id="nome_produto" prefWidth="150.0" text="Produto" />
+                        <TableColumn fx:id="nome_usuario" prefWidth="120.0" text="Usuário" />
+                        <TableColumn fx:id="tipo" prefWidth="100.0" text="Tipo" />
+                        <TableColumn fx:id="quantidade" prefWidth="80.0" text="Qtd" />
+                        <TableColumn fx:id="observacao" prefWidth="150.0" text="Observação" />
+                        <TableColumn fx:id="data_hora" prefWidth="150.0" text="Data/Hora" />
+                    </columns>
+                    <columnResizePolicy>
+                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                    </columnResizePolicy>
+                </TableView>
+            </children>
+        </VBox>
+    </children>
 </AnchorPane>
