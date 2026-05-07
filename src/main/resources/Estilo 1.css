@@ -1,4 +1,4 @@
-.btn-padrao {
+.btn-padrao { /* todos os botões exceto home confg e sair */
     -fx-background-color:  #aecae6;
     -fx-background-radius: 10;
     -fx-pref-width: 185;
@@ -21,26 +21,13 @@
        - 5: deslocamento em Y (move para baixo)
     */
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.4), 10, 0.5, 5, 5);
-    -fx-background-color: #0c4582;
-    -fx-text-fill: white;
 }
 
-.btn-click {
+.btn-click { /* somente os botões da tela que está sendo criada("clicada")*/
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.4), 10, 0.5, 5, 5);
 }
 
-.btn-sair{
-    -fx-background-color: #00008B;
-    -fx-background-radius: 10;
-    -fx-pref-width: 70;
-    -fx-pref-height: 20;
-    -fx-font-family: "Arial";
-    -fx-font-size: 13;
-    -fx-text-fill: with;
-    -fx-cursor: hand;
-    -fx-text-alignment: center;
-}
-.btn-padrao-transparent {
+.btn-padrao-transparent {/* botao pra configuração*/
     -fx-background-color:  transparent;
     -fx-background-radius: 10;
     -fx-pref-width: 185;
@@ -63,7 +50,7 @@
     */
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.4), 10, 0.5, 5, 5);
 }
-.btn-padrao-home { /* botão controle de estoque*/
+.btn-padrao-home { /* botão controle de estoque(home da tela de inicio)*/
     -fx-background-color:  #aecae6;
     -fx-background-radius: 10;
     -fx-pref-width: 185;
@@ -73,7 +60,6 @@
     -fx-text-fill: black;
     -fx-cursor: hand;
     -fx-text-alignment: left;
-    -fx-graphic: url("Imagens/home-branca.png");
 }
 .btn-padrao-home:hover {
     /*
@@ -86,8 +72,6 @@
        - 5: deslocamento em Y (move para baixo)
     */
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.4), 10, 0.5, 5, 5);
-    -fx-background-color: #0c4582;
-    -fx-text-fill: white;
 }
 
 .painel-lateral {
@@ -102,19 +86,21 @@
 .painel-superior {
     -fx-background-color: #054584;
 }
-.btn-sair-adimin {
+.btn-sair {
     -fx-background-color: transparent;
     -fx-background-radius: 10;
     -fx-pref-width: 50;
     -fx-pref-height: 20;
     -fx-font-family: "Arial";
     -fx-font-size: 14;
+    -fx-text-fill: black;
     -fx-cursor: hand;
+    -fx-text-alignment: center;
     -fx-border-color: #f3ad50;
     -fx-border-radius: 5;
-    -fx-border-width:  0 0 2 0;
+    -fx-border-width: 0 0 2 0;
 }
-.btn-sair-adimin:hover {
+.btn-sair:hover {
     /*
        Parâmetros do dropshadow:
        - three-pass-box: algoritmo de blur suave
@@ -124,5 +110,5 @@
        - 5: deslocamento em X (move para a direita)
        - 5: deslocamento em Y (move para baixo)
     */
-    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.4), 10, 0.5, 5, 5);
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.4), 10, 0.5, 5, 5);
 }
