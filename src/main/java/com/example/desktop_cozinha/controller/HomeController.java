@@ -39,17 +39,13 @@ public class HomeController implements Initializable {
 
     public void usuarioAtual(){
         String email = SessaoService.getEmailAtual();
-        IO.println(email);
         if  (email != null){
             HomeDAO user = new HomeDAO();
             String nome = user.bucarNome(email);
-            IO.println(nome);
             usuarioLabel.setText(nome);
         }
     }
-
-
-
+    
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         configurarRelogio();
