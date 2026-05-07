@@ -77,7 +77,7 @@ public class  EdicaoProdutosController implements Initializable {
 
 
 
-   /// 2. Metodo para a tela  injetar os dados nesta tela
+   // 2. Metodo para a tela  injetar os dados nesta tela
 
     public void preencherDadosParaEdicao(ProdutoListaEstoque p) {
         this.idProdutoEmEdicao = p.getId(); // Salva o ID para usar no momento do UPDATE
@@ -114,6 +114,16 @@ public class  EdicaoProdutosController implements Initializable {
         String estoqueMinimo = txtEstoqueMinimo.getText();
         // Pega o valor do calendário (pode ser a data ou pode ser null se estiver vazio)
         LocalDate dataSelecionada = txtDataValidade.getValue();
+
+        // Verifica se o usuário escolheu uma data e se ela é anterior a hoje  
+        if (dataSelecionada != null && dataSelecionada.isBefore(LocalDate.now())) {
+            Alert alerta = new Alert(Alert.AlertType.WARNING);
+            alerta.setTitle("Data de Validade Inválida");
+            alerta.setHeaderText(null);
+            alerta.setContentText("Você não pode definir uma data de validade que já passou!");
+            alerta.showAndWait();
+            return;
+        }
 
         // Cria a variável do banco vazia por padrão
         Date dataValidade = null;
