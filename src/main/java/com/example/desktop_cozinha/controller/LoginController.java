@@ -2,6 +2,8 @@ package com.example.desktop_cozinha.controller;
 
 import com.example.desktop_cozinha.MainApplication;
 import com.example.desktop_cozinha.model.LoginDAO;
+import com.example.desktop_cozinha.services.SessaoService;
+
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import org.mindrot.jbcrypt.BCrypt;
@@ -32,6 +34,7 @@ public class LoginController {
         if (senhaHashDoBanco != null) {
                 if (BCrypt.checkpw(senhaDigitada, senhaHashDoBanco)){
                     //MainApplication.trocadorDeTelas("home.fxml");
+                    SessaoService.setEmailAtual(usuarioDigitado);
                     MainApplication.trocadorDeTelas("home.fxml");
                 }
                 else {
