@@ -2,6 +2,7 @@ package com.example.desktop_cozinha.controller;
 
 import com.example.desktop_cozinha.model.ListaEstoqueDAO;
 import com.example.desktop_cozinha.model.ProdutoListaEstoque;
+import com.example.desktop_cozinha.model.removerDAO;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -50,6 +51,11 @@ public class ListaController {
 
     @FXML
     private Hyperlink editar;
+
+    @FXML
+    private Hyperlink remover;
+
+    private Integer idProdutoEmRemover;
 
     private final ListaEstoqueDAO dao = new ListaEstoqueDAO();
 
@@ -107,6 +113,45 @@ public class ListaController {
 
             // Passa o produto selecionado para a sua tela
             controllerEdicao.preencherDadosParaEdicao(produtoSelecionado);
+
+            // Usa a ListaEstoque para pegar a Scene e o Window
+            Stage stage = (Stage) ListaEstoque.getScene().getWindow();
+            stage.setScene(new Scene(root));
+            stage.show();
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.err.println("Erro ao abrir a tela de edição!");
+        }
+    }
+
+    protected void onRemoverProdutoClick() throws Exception {
+        removerDAO dao = new removerDAO();
+
+        dao.deletarProduto(idProdutoEmRemover);
+    }
+
+    protected void onAlterarProduto(javafx.event.ActionEvent actionEvent) {
+        ProdutoListaEstoque produtoSelecionado = ListaEstoque.getSelectionModel().getSelectedItem();
+
+        if (produtoSelecionado == null) {
+            Alert alerta = new Alert(Alert.AlertType.WARNING);
+            alerta.setTitle("Atenção");
+            alerta.setContentText("Por favor, selecione um produto na lista para remover.");
+            alerta.showAndWait();
+            return;
+        }
+
+        try {
+
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/desktop_cozinha/remover-Lista.fxml"));
+            Parent root = loader.load();
+
+            removerProdutosController controllerRemover = loader.getController();
+
+            // Passa o produto selecionado para a sua tela
+            controllerRemover.preencherDadosParaEdicao(produtoSelecionado);
 
             // Usa a ListaEstoque para pegar a Scene e o Window
             Stage stage = (Stage) ListaEstoque.getScene().getWindow();

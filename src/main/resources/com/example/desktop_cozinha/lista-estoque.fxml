@@ -25,6 +25,7 @@
                 <TableColumn fx:id="unidadeProduto" prefWidth="75.0" text="Unidade" />
             </columns>
         </TableView>
-      <Hyperlink fx:id="editar" onAction="#onEditarProduto" text="editar" />
+      <Hyperlink fx:id="editar" onAction="#onAlterarProduto" text="editar" />
+      <Hyperlink fx:id="remover" layoutX="253.0" onAction="#onRemoverProduto" text="remover" />
     </children>
 </Pane>
