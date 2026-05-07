@@ -70,7 +70,7 @@
                </VBox.margin>
             </Button>
             <Region prefHeight="303.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
-            <Button mnemonicParsing="false" styleClass="btn-sair-adimin" text="Sair" />
+            <Button mnemonicParsing="false" styleClass="btn-sair" text="Sair" />
             <Button alignment="CENTER" layoutX="18.0" layoutY="190.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="185.0" text="Configuração     ">
                <font>
                   <Font name="Bodoni MT" size="16.0" />
@@ -122,15 +122,24 @@
             </ImageView>
             <VBox alignment="TOP_CENTER" prefHeight="550.0" prefWidth="600.0" StackPane.alignment="CENTER">
                <children>
-                  <HBox alignment="TOP_CENTER" prefHeight="50.0" prefWidth="600.0" style="-fx-background-color: #ff914d;">
+                  <HBox alignment="CENTER" prefHeight="50.0" prefWidth="600.0" style="-fx-background-color: #ff914d;">
                      <children>
-                        <Label alignment="BOTTOM_LEFT" graphicTextGap="0.0" prefHeight="50.0" prefWidth="170.0" text="Quinta, 01/01/2026">
+                        <Label graphicTextGap="0.0" prefHeight="50.0" prefWidth="170.0" text="Quinta, 01/01/2026">
                            <font>
                               <Font name="Arial Bold" size="18.0" />
                            </font>
                            <opaqueInsets>
                               <Insets />
                            </opaqueInsets>
+                           <HBox.margin>
+                              <Insets left="10.0" />
+                           </HBox.margin>
+                        </Label>
+                        <Region layoutX="325.0" layoutY="10.0" prefHeight="21.0" prefWidth="74.0" HBox.hgrow="ALWAYS" />
+                        <Label alignment="CENTER" contentDisplay="CENTER" graphicTextGap="0.0" prefHeight="25.0" prefWidth="125.0" text="Usuários">
+                           <font>
+                              <Font name="Arial Bold Italic" size="20.0" />
+                           </font>
                            <HBox.margin>
                               <Insets left="10.0" />
                            </HBox.margin>
@@ -152,26 +161,28 @@
                   <HBox alignment="CENTER" prefHeight="30.0" prefWidth="600.0">
                      <children>
                         <Region prefHeight="26.0" prefWidth="161.0" HBox.hgrow="ALWAYS" />
-                        <Label alignment="CENTER" contentDisplay="CENTER" graphicTextGap="0.0" prefHeight="25.0" prefWidth="125.0" text="Usuários" textFill="#054584">
-                           <font>
-                              <Font name="Arial Bold Italic" size="15.0" />
-                           </font>
-                           <HBox.margin>
-                              <Insets left="10.0" />
-                           </HBox.margin>
-                        </Label>
                         <Region prefHeight="26.0" prefWidth="90.0" HBox.hgrow="ALWAYS" />
-                        <Button mnemonicParsing="false" prefHeight="20.0" prefWidth="80.0" styleClass="btn-padrao-transparent-2" text="Editar/">
+                        <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="80.0" styleClass="btn-sair" text="Editar/">
                            <font>
                               <Font name="Arial" size="12.0" />
-                           </font></Button>
-                        <Button mnemonicParsing="false" prefHeight="20.0" prefWidth="100.0" styleClass="btn-padrao-transparent-2" text="Adicionar" />
+                           </font>
+                           <HBox.margin>
+                              <Insets right="5.0" />
+                           </HBox.margin></Button>
+                        <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="90.0" text="Adicionar">
+                           <HBox.margin>
+                              <Insets right="5.0" />
+                           </HBox.margin>
+                           <styleClass>
+                              <String fx:value="btn-sair" />
+                              <String fx:value="btn-click" />
+                           </styleClass></Button>
                      </children>
                      <VBox.margin>
                         <Insets left="50.0" right="50.0" top="10.0" />
                      </VBox.margin>
                   </HBox>
-                  <TableView style="-fx-background-color: transparent; -fx-border-color: black;" VBox.vgrow="ALWAYS">
+                  <TableView VBox.vgrow="ALWAYS">
                      <columns>
                         <TableColumn maxWidth="1.7976931348623157E308" minWidth="-1.0" prefWidth="300.0" text="Nome" />
                         <TableColumn maxWidth="1.7976931348623157E308" minWidth="-1.0" prefWidth="100.0" text="Email" />
