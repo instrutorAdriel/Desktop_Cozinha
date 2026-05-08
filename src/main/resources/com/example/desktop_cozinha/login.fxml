@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" stylesheets="@css/estilo.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" stylesheets="@css/Estilos.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1">
     <left>
         <VBox alignment="TOP_CENTER" prefHeight="601.0" prefWidth="200.0" style="-fx-background-color: #8daccb; -fx-border-color: #054685; -fx-border-width: 2;" BorderPane.alignment="CENTER">
             <children>
@@ -98,7 +98,7 @@
     <top>
         <AnchorPane prefHeight="50.0" prefWidth="800.0" style="-fx-background-color: #054685;" BorderPane.alignment="CENTER">
             <children>
-                <ImageView fitHeight="40.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="5.0">
+                <ImageView fitHeight="40.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="5.0">
                     <image>
                         <Image url="@imagens/Logo%20branca%20Senac.png" />
                     </image></ImageView>
@@ -120,7 +120,7 @@
                         <Rectangle2D />
                     </viewport>
                 </ImageView>
-                <VBox alignment="TOP_CENTER" prefHeight="550.0" prefWidth="600.0">
+                <VBox alignment="TOP_CENTER" prefWidth="600.0">
                     <children>
                         <HBox alignment="CENTER" prefHeight="50.0" style="-fx-background-color: #ff914d;">
                             <children>
@@ -158,7 +158,7 @@
                                     </font>
                                 </Label>
                                 <Region layoutX="73.0" layoutY="10.0" prefHeight="26.0" prefWidth="80.0" HBox.hgrow="ALWAYS" />
-                                <Button contentDisplay="CENTER" mnemonicParsing="false" prefHeight="30.0" prefWidth="170.0" styleClass="btn-padrao-transparent-2" text="Solicitação" textFill="WHITE">
+                                <Button contentDisplay="CENTER" mnemonicParsing="false" prefHeight="30.0" prefWidth="170.0" styleClass="btn-click2" text="Solicitação" textFill="WHITE">
                                     <font>
                                         <Font name="Arial Bold Italic" size="14.0" />
                                     </font>
@@ -170,11 +170,11 @@
                                 <Insets left="50.0" right="50.0" top="20.0" />
                             </VBox.margin>
                         </HBox>
-                        <TableView style="-fx-background-color: transparent; -fx-border-color: #054584; -fx-border-width: 3 3 3 3;" VBox.vgrow="ALWAYS">
+                        <TableView VBox.vgrow="ALWAYS">
                             <columns>
-                                <TableColumn prefWidth="212.0" style="-fx-border-color: #054584; -fx-border-width: 0 2 2 2;" text="Produto" />
-                                <TableColumn minWidth="0.0" prefWidth="91.0" style="-fx-border-color: #054584; -fx-border-width: 0 2 2 0;" text="QTD em Estoque" />
-                                <TableColumn minWidth="0.0" prefWidth="105.0" style="-fx-border-color: #054584; -fx-border-width: 0 2 2 0;" text="QTD Necessária" />
+                                <TableColumn prefWidth="212.0" text="Produto" />
+                                <TableColumn minWidth="0.0" prefWidth="91.0" text="Qtd em Estoque" />
+                                <TableColumn minWidth="0.0" prefWidth="105.0" text="Qtd Necessária" />
                             </columns>
                             <VBox.margin>
                                 <Insets left="50.0" right="50.0" top="5.0" />
@@ -182,6 +182,11 @@
                             <columnResizePolicy>
                                 <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                             </columnResizePolicy>
+                            <styleClass>
+                                <String fx:value="table-view" />
+                                <String fx:value="table-cell" />
+                                <String fx:value="table-row-cell" />
+                            </styleClass>
                         </TableView>
                         <HBox alignment="CENTER" prefHeight="30.0" prefWidth="600.0" style="-fx-background-color: #054584;">
                             <children>
@@ -201,24 +206,87 @@
                                 <Insets left="50.0" right="50.0" top="20.0" />
                             </VBox.margin>
                         </HBox>
-                        <TableView prefWidth="600.0" styleClass="tabela-padrao">
+                        <HBox alignment="CENTER_RIGHT" prefHeight="20.0" prefWidth="600.0">
+                            <children>
+                                <Button alignment="CENTER" contentDisplay="CENTER" graphicTextGap="0.0" mnemonicParsing="false" prefHeight="20.0" styleClass="btn-padrao-2" text="Editar">
+                                    <HBox.margin>
+                                        <Insets right="10.0" />
+                                    </HBox.margin>
+                                </Button>
+                            </children>
+                            <VBox.margin>
+                                <Insets bottom="5.0" left="50.0" right="50.0" top="5.0" />
+                            </VBox.margin></HBox>
+                        <TableView prefWidth="600.0">
                             <columns>
-                                <TableColumn prefWidth="50.0" style="-fx-border-color: #054584; -fx-border-width: 0 0 2 2;" text="Entrada" />
-                                <TableColumn prefWidth="200.0" style="-fx-border-color: #054584; -fx-border-width: 0 2 2 0;" text="Produto" />
-                                <TableColumn prefWidth="40.0" style="-fx-border-color: #054584; -fx-border-width: 0 0 2 2;" text="Saida" />
-                                <TableColumn prefWidth="200.0" style="-fx-border-color: #054584; -fx-border-width: 0 2 2 0;" text="Produto" />
+                                <TableColumn prefWidth="50.0" text="Entrada" />
+                                <TableColumn prefWidth="200.0" text="Produto" />
+                                <TableColumn prefWidth="30.0" text="Qtd" />
                             </columns>
                             <VBox.margin>
-                                <Insets left="50.0" right="50.0" top="10.0" />
+                                <Insets left="50.0" right="50.0" />
                             </VBox.margin>
                             <columnResizePolicy>
                                 <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                             </columnResizePolicy>
+                            <styleClass>
+                                <String fx:value="table-cell" />
+                                <String fx:value="table-row-cell" />
+                                <String fx:value="table-view" />
+                            </styleClass>
                         </TableView>
-                        <Region prefHeight="300.0" prefWidth="600.0" VBox.vgrow="ALWAYS" />
+                        <HBox alignment="CENTER_RIGHT" layoutX="60.0" layoutY="244.0" prefHeight="20.0" prefWidth="600.0">
+                            <children>
+                                <Button alignment="CENTER" contentDisplay="CENTER" graphicTextGap="0.0" mnemonicParsing="false" prefHeight="20.0" styleClass="btn-padrao-2" text="Editar">
+                                    <HBox.margin>
+                                        <Insets right="10.0" />
+                                    </HBox.margin>
+                                </Button>
+                            </children>
+                            <VBox.margin>
+                                <Insets bottom="5.0" left="50.0" right="50.0" top="5.0" />
+                            </VBox.margin>
+                        </HBox>
+                        <TableView layoutX="60.0" layoutY="317.0" prefWidth="600.0">
+                            <columns>
+                                <TableColumn prefWidth="50.0" text="Saida" />
+                                <TableColumn prefWidth="200.0" text="Produto" />
+                                <TableColumn prefWidth="30.0" text="Qtd" />
+                            </columns>
+                            <columnResizePolicy>
+                                <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                            </columnResizePolicy>
+                            <styleClass>
+                                <String fx:value="table-cell" />
+                                <String fx:value="table-row-cell" />
+                                <String fx:value="table-view" />
+                            </styleClass>
+                            <VBox.margin>
+                                <Insets bottom="30.0" left="50.0" right="50.0" />
+                            </VBox.margin>
+                        </TableView>
+                        <HBox alignment="CENTER_RIGHT" prefHeight="50.0" prefWidth="600.0">
+                            <children>
+                                <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" prefHeight="30.0" styleClass="btn-relatorio" text="Gerar Relatório">
+                                    <HBox.margin>
+                                        <Insets right="15.0" />
+                                    </HBox.margin>
+                                    <font>
+                                        <Font name="Arial Bold Italic" size="12.0" />
+                                    </font>
+                                </Button>
+                            </children>
+                            <VBox.margin>
+                                <Insets left="50.0" right="50.0" />
+                            </VBox.margin>
+                        </HBox>
+                        <Region layoutX="10.0" layoutY="508.0" prefHeight="300.0" prefWidth="600.0" />
                     </children>
                 </VBox>
             </children>
         </StackPane>
     </center>
+    <right>
+        <ScrollBar orientation="VERTICAL" BorderPane.alignment="CENTER" />
+    </right>
 </BorderPane>

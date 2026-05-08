@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="500.0" stylesheets="@css/Estilos.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1">
+   <center>
+      <StackPane prefHeight="150.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+         <children>
+            <ImageView fitHeight="333.0" fitWidth="320.0" opacity="0.3" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@imagens/Logo%20colorida%20Senac.png" />
+               </image>
+            </ImageView>
+            <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0">
+               <children>
+                  <Label alignment="CENTER" contentDisplay="CENTER" graphicTextGap="0.0" text="SOLICITAÇÃO DE PRODUTO">
+                     <font>
+                        <Font name="Arial Bold" size="18.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets bottom="30.0" />
+                     </VBox.margin>
+                  </Label>
+                  <TextField promptText="NOME DO PRODUTO">
+                     <VBox.margin>
+                        <Insets bottom="10.0" left="75.0" right="75.0" />
+                     </VBox.margin>
+                  </TextField>
+                  <TextField layoutX="85.0" layoutY="193.0" promptText="QTD EM ESTOQUE">
+                     <VBox.margin>
+                        <Insets bottom="10.0" left="75.0" right="75.0" />
+                     </VBox.margin>
+                  </TextField>
+                  <TextField layoutX="85.0" layoutY="215.0" promptText="QTD NECESSÁRIA">
+                     <VBox.margin>
+                        <Insets bottom="10.0" left="75.0" right="75.0" />
+                     </VBox.margin>
+                  </TextField>
+                  <HBox alignment="CENTER" prefHeight="50.0">
+                     <children>
+                        <Label graphicTextGap="0.0" opacity="0.8" prefHeight="25.0" text="TIPO DE PRODUTO">
+                           <font>
+                              <Font name="Arial Bold" size="12.0" />
+                           </font>
+                        </Label>
+                        <Region prefHeight="50.0" prefWidth="40.0" />
+                        <MenuButton mnemonicParsing="false" prefHeight="25.0" prefWidth="170.0">
+                          <items>
+                            <MenuItem mnemonicParsing="false" text="Action 1" />
+                            <MenuItem mnemonicParsing="false" text="Action 2" />
+                          </items>
+                        </MenuButton>
+                     </children>
+                     <VBox.margin>
+                        <Insets left="75.0" right="75.0" />
+                     </VBox.margin>
+                  </HBox>
+                  <HBox alignment="CENTER" layoutX="85.0" layoutY="238.0" prefHeight="50.0">
+                     <children>
+                        <Label graphicTextGap="0.0" opacity="0.8" prefHeight="25.0" text="UNIDADE DE MEDIDA">
+                           <font>
+                              <Font name="Arial Bold" size="12.0" />
+                           </font>
+                        </Label>
+                        <Region prefHeight="50.0" prefWidth="26.0" />
+                        <MenuButton graphicTextGap="0.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="170.0">
+                           <items>
+                              <MenuItem mnemonicParsing="false" text="Action 1" />
+                              <MenuItem mnemonicParsing="false" text="Action 2" />
+                           </items>
+                        </MenuButton>
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER" layoutX="10.0" layoutY="288.0" prefHeight="50.0">
+                     <children>
+                        <Button graphicTextGap="0.0" mnemonicParsing="false" opacity="0.9" styleClass="btn-padrao-2" text="VOLTAR" />
+                        <Region prefHeight="50.0" prefWidth="100.0" />
+                        <Button mnemonicParsing="false" styleClass="btn-padrao-2" text="SALVAR" />
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+         </children>
+      </StackPane>
+   </center>
+</BorderPane>

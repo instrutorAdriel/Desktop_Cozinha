@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="500.0" stylesheets="@css/Estilos.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1">
+    <center>
+        <StackPane prefHeight="150.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+            <children>
+                <ImageView fitHeight="333.0" fitWidth="320.0" opacity="0.3" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="@imagens/Logo%20colorida%20Senac.png" />
+                    </image>
+                </ImageView>
+                <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0">
+                    <children>
+                        <Label alignment="CENTER" contentDisplay="CENTER" graphicTextGap="0.0" text="CONTROLE DE SAIDA">
+                            <font>
+                                <Font name="Arial Bold" size="20.0" />
+                            </font>
+                            <VBox.margin>
+                                <Insets bottom="30.0" />
+                            </VBox.margin>
+                        </Label>
+                        <TextField promptText="NOME DO PRODUTO">
+                            <VBox.margin>
+                                <Insets bottom="15.0" left="75.0" right="75.0" />
+                            </VBox.margin>
+                            <font>
+                                <Font name="Arial" size="12.0" />
+                            </font>
+                        </TextField>
+                        <TextField layoutX="85.0" layoutY="220.0" promptText="QTD DO PRODUTO">
+                            <font>
+                                <Font name="Arial" size="12.0" />
+                            </font>
+                            <VBox.margin>
+                                <Insets bottom="15.0" left="75.0" right="75.0" />
+                            </VBox.margin>
+                        </TextField>
+                        <HBox alignment="CENTER" prefHeight="40.0">
+                            <children>
+                                <MenuButton graphicTextGap="0.0" mnemonicParsing="false" prefWidth="100.0" text="MEDIDA">
+                                    <items>
+                                        <MenuItem mnemonicParsing="false" text="Action 1" />
+                                        <MenuItem mnemonicParsing="false" text="Action 2" />
+                                    </items>
+                                    <HBox.margin>
+                                        <Insets right="25.0" />
+                                    </HBox.margin>
+                                    <font>
+                                        <Font name="Arial" size="12.0" />
+                                    </font>
+                                </MenuButton>
+                                <MenuButton layoutX="186.0" layoutY="48.0" mnemonicParsing="false" prefWidth="100.0" text="TIPO">
+                                    <items>
+                                        <MenuItem mnemonicParsing="false" text="Action 1" />
+                                        <MenuItem mnemonicParsing="false" text="Action 2" />
+                                    </items>
+                                    <HBox.margin>
+                                        <Insets right="25.0" />
+                                    </HBox.margin>
+                                    <font>
+                                        <Font name="Arial" size="12.0" />
+                                    </font>
+                                </MenuButton>
+                                <DatePicker prefWidth="100.0" promptText="SAIDA" />
+                            </children>
+                            <VBox.margin>
+                                <Insets bottom="15.0" left="75.0" right="75.0" />
+                            </VBox.margin>
+                        </HBox>
+                        <HBox alignment="CENTER" prefHeight="40.0">
+                            <VBox.margin>
+                                <Insets left="75.0" right="75.0" top="15.0" />
+                            </VBox.margin>
+                            <children>
+                                <Button alignment="CENTER" contentDisplay="CENTER" graphicTextGap="0.0" mnemonicParsing="false" styleClass="btn-padrao-2" text="VOLTAR">
+                                    <font>
+                                        <Font name="Arial Bold" size="15.0" />
+                                    </font>
+                                </Button>
+                                <Region prefHeight="40.0" prefWidth="100.0" />
+                                <Button alignment="CENTER" contentDisplay="CENTER" graphicTextGap="0.0" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" styleClass="btn-padrao-2" text="SALVAR">
+                                    <font>
+                                        <Font name="Arial Bold" size="15.0" />
+                                    </font>
+                                </Button>
+                            </children>
+                        </HBox>
+                    </children>
+                </VBox>
+            </children>
+        </StackPane>
+    </center>
+</BorderPane>
