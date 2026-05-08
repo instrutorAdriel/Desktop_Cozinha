@@ -160,20 +160,19 @@
                   </HBox>
                   <HBox alignment="CENTER" prefHeight="30.0" prefWidth="600.0">
                      <children>
-                        <Region prefHeight="26.0" prefWidth="161.0" HBox.hgrow="ALWAYS" />
-                        <Region prefHeight="26.0" prefWidth="90.0" HBox.hgrow="ALWAYS" />
-                        <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="80.0" text="Editar/">
+                        <TextField promptText="🔎 Pesquisar">
+                           <HBox.margin>
+                              <Insets left="5.0" />
+                           </HBox.margin></TextField>
+                        <Region prefHeight="29.0" prefWidth="139.0" HBox.hgrow="ALWAYS" />
+                        <Button mnemonicParsing="false" prefHeight="29.0" prefWidth="129.0" styleClass="btn-sair" text="Editar ✔">
                            <font>
                               <Font name="Arial" size="12.0" />
                            </font>
                            <HBox.margin>
                               <Insets right="5.0" />
-                           </HBox.margin>
-                           <styleClass>
-                              <String fx:value="btn-sair" />
-                              <String fx:value="btn-click" />
-                           </styleClass></Button>
-                        <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="90.0" styleClass="btn-sair" text="Adicionar">
+                           </HBox.margin></Button>
+                        <Button mnemonicParsing="false" prefHeight="29.0" prefWidth="120.0" styleClass="btn-sair" text="Adicionar ➕">
                            <HBox.margin>
                               <Insets right="5.0" />
                            </HBox.margin></Button>
