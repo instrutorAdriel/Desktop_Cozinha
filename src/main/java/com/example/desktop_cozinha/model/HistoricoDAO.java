@@ -2,6 +2,7 @@ package com.example.desktop_cozinha.model;
 
 import com.example.desktop_cozinha.config.DatabaseConfig;
 import java.sql.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -106,6 +107,29 @@ public class HistoricoDAO {
             System.err.println("Erro na consulta SQL: " + e.getMessage());
         }
         return itens;
+    }
+    public boolean registrarMovimentacao(long produtoId, long usuarioId, String tipo, int quantidade, String obs) {
+        String sql = "INSERT INTO historico_movimentacoes " +
+                "(produto_id, usuario_id, tipo_movimentacao, quantidade_movimentada, data_hora, observacao) " +
+                "VALUES (?, ?, ?, ?, ?, ?)";
+
+        try (Connection conn = DatabaseConfig.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setLong(1, produtoId);
+            stmt.setLong(2, usuarioId);
+            stmt.setString(3, tipo); // ENUM: 'ENTRADA', 'SAIDA', 'EDICAO', 'DESCARTE'
+            stmt.setInt(4, quantidade);
+            stmt.setTimestamp(5, Timestamp.valueOf(LocalDateTime.now()));
+            stmt.setString(6, obs);
+
+            stmt.executeUpdate();
+            return true;
+
+        } catch (SQLException e) {
+            System.err.println("Erro ao registrar histórico: " + e.getMessage());
+            return false;
+        }
     }
 }
 

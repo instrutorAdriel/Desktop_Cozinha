@@ -21,7 +21,7 @@
                     <columns>
                         <TableColumn fx:id="nome_produto" prefWidth="150.0" text="Produto" />
                         <TableColumn fx:id="nome_usuario" prefWidth="120.0" text="Usuário" />
-                        <TableColumn fx:id="tipo" prefWidth="100.0" text="Tipo" />
+                        <TableColumn fx:id="tipo_movimentacao" prefWidth="100.0" text="Tipo" />
                         <TableColumn fx:id="quantidade" prefWidth="80.0" text="Qtd" />
                         <TableColumn fx:id="observacao" prefWidth="150.0" text="Observação" />
                         <TableColumn fx:id="data_hora" prefWidth="150.0" text="Data/Hora" />
