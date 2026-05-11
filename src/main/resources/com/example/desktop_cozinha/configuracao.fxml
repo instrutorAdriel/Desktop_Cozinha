@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" stylesheets="@../../../Estilo.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" stylesheets="@../../../estilo.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1">
    <left>
       <VBox alignment="TOP_CENTER" prefHeight="601.0" prefWidth="200.0" styleClass="painel-lateral" BorderPane.alignment="CENTER">
          <children>
@@ -70,7 +70,7 @@
                </VBox.margin>
             </Button>
             <Region prefHeight="303.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
-            <Button mnemonicParsing="false" styleClass="btn-sair" text="Sair" />
+            <Button mnemonicParsing="false" prefHeight="29.0" prefWidth="52.0" styleClass="btn-sair" text="Sair" />
             <Button alignment="CENTER" layoutX="18.0" layoutY="190.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="185.0" text="Configuração     ">
                <font>
                   <Font name="Bodoni MT" size="16.0" />
@@ -160,12 +160,12 @@
                   </HBox>
                   <HBox alignment="CENTER" prefHeight="30.0" prefWidth="600.0">
                      <children>
-                        <TextField promptText="🔎 Pesquisar">
+                        <TextField prefHeight="25.0" prefWidth="180.0" promptText="🔎 Pesquisar">
                            <HBox.margin>
                               <Insets left="5.0" />
                            </HBox.margin></TextField>
                         <Region prefHeight="29.0" prefWidth="139.0" HBox.hgrow="ALWAYS" />
-                        <Button mnemonicParsing="false" prefHeight="29.0" prefWidth="129.0" styleClass="btn-sair" text="Editar ✔">
+                        <Button mnemonicParsing="false" prefHeight="30.0" prefWidth="120.0" styleClass="btn-sair" text="Editar ✔">
                            <font>
                               <Font name="Arial" size="12.0" />
                            </font>
