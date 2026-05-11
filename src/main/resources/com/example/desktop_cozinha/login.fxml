@@ -2,14 +2,15 @@
 
 <?import java.lang.*?>
 <?import javafx.geometry.*?>
+<?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" stylesheets="@../../../Estilo.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" stylesheets="@../../../estilo.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1">
    <left>
-      <VBox alignment="TOP_CENTER" prefHeight="601.0" prefWidth="200.0" styleClass="painel-lateral" BorderPane.alignment="CENTER">
+      <VBox alignment="TOP_CENTER" prefHeight="601.0" prefWidth="200.0" style="-fx-background-color: #8daccb; -fx-border-color: #054685; -fx-border-width: 2;" BorderPane.alignment="CENTER">
          <children>
             <Button mnemonicParsing="false" prefHeight="40.0" prefWidth="185.0" text="Controle de Estoque">
                <font>
@@ -26,8 +27,8 @@
                   <Insets top="10.0" />
                </VBox.margin>
                <styleClass>
-                  <String fx:value="btn-padrao-home" />
                   <String fx:value="btn-click" />
+                  <String fx:value="btn-padrao-home" />
                </styleClass></Button>
             <Button alignment="CENTER" mnemonicParsing="false" prefHeight="40.0" prefWidth="185.0" styleClass="btn-padrao" text="Lista de Produtos">
                <font>
@@ -74,7 +75,7 @@
                </VBox.margin>
             </Button>
             <Region prefHeight="303.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
-            <Button alignment="BOTTOM_CENTER" contentDisplay="BOTTOM" mnemonicParsing="false" styleClass="btn-sair-adimin" text="Sair" />
+            <Button alignment="CENTER" contentDisplay="CENTER" graphicTextGap="0.0" mnemonicParsing="false" styleClass="btn-padrao-transparent" text="Sair" />
             <Button alignment="CENTER" layoutX="18.0" layoutY="190.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="185.0" styleClass="btn-padrao-transparent" text="Configuração     ">
                <font>
                   <Font name="Bodoni MT" size="16.0" />
@@ -98,11 +99,11 @@
    <top>
       <AnchorPane prefHeight="50.0" prefWidth="800.0" style="-fx-background-color: #054685;" BorderPane.alignment="CENTER">
          <children>
-            <ImageView fitHeight="40.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="5.0">
+            <ImageView fitHeight="40.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="5.0">
                <image>
                   <Image url="@../../../Imagens/Logo%20branca%20Senac.png" />
                </image></ImageView>
-            <Label alignment="CENTER" layoutX="212.0" layoutY="15.0" text="Sistema de Gerenciamento de Estoque da Cozinha" textFill="WHITE" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+            <Label alignment="CENTER" graphicTextGap="0.0" layoutX="212.0" layoutY="15.0" text="Sistema de Gerenciamento de Estoque da Cozinha" textFill="WHITE" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
                <font>
                   <Font name="Arial" size="18.0" />
                </font>
@@ -110,7 +111,7 @@
          </children></AnchorPane>
    </top>
    <center>
-      <StackPane prefHeight="550.0" prefWidth="599.0" styleClass="painel-center" BorderPane.alignment="CENTER">
+      <StackPane prefHeight="550.0" prefWidth="599.0" BorderPane.alignment="CENTER">
          <children>
             <ImageView fitHeight="550.0" fitWidth="600.0" opacity="0.2" pickOnBounds="true" preserveRatio="true">
                <image>
@@ -120,16 +121,11 @@
                   <Rectangle2D />
                </viewport>
             </ImageView>
-            <VBox alignment="TOP_CENTER" prefHeight="550.0" prefWidth="600.0">
+            <VBox alignment="TOP_CENTER" prefHeight="550.0" prefWidth="600.0" style="-fx-border-color: #054584; -fx-border-width: 1 2 2 0;">
                <children>
-                  <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="50.0" prefWidth="240.0" text="Bem-Vindo, &quot;Nome&quot;">
-                     <font>
-                        <Font name="Arial Bold Italic" size="20.0" />
-                     </font>
-                  </Label>
-                  <HBox alignment="CENTER" prefHeight="20.0">
+                  <HBox alignment="CENTER" prefHeight="50.0" style="-fx-background-color: #ff914d; -fx-border-color: #054584; -fx-border-width: 1 0 1 0;">
                      <children>
-                        <Label alignment="BOTTOM_LEFT" graphicTextGap="0.0" prefHeight="20.0" text="Quinta, 01/01/2026">
+                        <Label alignment="BOTTOM_LEFT" graphicTextGap="0.0" prefWidth="200.0" text="Quinta, 01/01/2026">
                            <font>
                               <Font name="Arial Bold" size="20.0" />
                            </font>
@@ -140,8 +136,14 @@
                               <Insets left="10.0" />
                            </HBox.margin>
                         </Label>
-                        <Region prefHeight="450.0" prefWidth="300.0" HBox.hgrow="ALWAYS" />
-                        <Label alignment="CENTER_RIGHT" contentDisplay="RIGHT" graphicTextGap="0.0" prefHeight="20.0" text="08:30:00">
+                        <Region prefHeight="50.0" prefWidth="70.0" HBox.hgrow="ALWAYS" />
+                        <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="50.0" prefWidth="200.0" text="Bem-Vindo, Deysi">
+                           <font>
+                              <Font name="Arial Bold Italic" size="18.0" />
+                           </font>
+                        </Label>
+                        <Region layoutX="192.0" layoutY="10.0" prefHeight="50.0" prefWidth="100.0" HBox.hgrow="ALWAYS" />
+                        <Label alignment="CENTER_RIGHT" contentDisplay="RIGHT" graphicTextGap="0.0" prefHeight="25.0" prefWidth="130.0" text="08:30:00" textAlignment="RIGHT">
                            <font>
                               <Font name="Arial Bold" size="20.0" />
                            </font>
@@ -157,32 +159,27 @@
                   <Region prefHeight="50.0" prefWidth="200.0" />
                   <Label alignment="CENTER" text="Notificação" VBox.vgrow="ALWAYS">
                      <font>
-                        <Font name="Arial" size="20.0" />
+                        <Font name="Bodoni MT Bold" size="20.0" />
                      </font>
                      <graphic>
-                        <ImageView fitHeight="20.0" fitWidth="30.0" opacity="0.8" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fitHeight="30.0" fitWidth="40.0" opacity="0.8" pickOnBounds="true" preserveRatio="true">
                            <image>
                               <Image url="@../../../Imagens/aviso.png" />
                            </image>
                         </ImageView>
                      </graphic>
+                     <VBox.margin>
+                        <Insets bottom="5.0" />
+                     </VBox.margin>
                   </Label>
-                  <TableView opacity="0.8" prefHeight="200.0" prefWidth="200.0">
-                    <columns>
-                      <TableColumn prefWidth="307.0" text="Nome" />
-                      <TableColumn minWidth="0.0" prefWidth="109.0" text="Status" />
-                        <TableColumn prefWidth="76.0" text="Quantidade" />
-                    </columns>
+                  <ListView fixedCellSize="10.0" orientation="HORIZONTAL" prefHeight="150.0" style="-fx-background-color: trasnparent; -fx-border-color: #054584; -fx-border-width: 2;">
                      <VBox.margin>
                         <Insets left="50.0" right="50.0" />
                      </VBox.margin>
-                  </TableView>
-                  <Region prefHeight="200.0" prefWidth="200.0" />
-                  <HBox alignment="CENTER" prefHeight="50.0" prefWidth="600.0">
-                     <children>
-                        <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
-                     </children>
-                  </HBox>
+                     <cursor>
+                        <Cursor fx:constant="NONE" />
+                     </cursor>
+                  </ListView>
                </children>
             </VBox>
          </children>
