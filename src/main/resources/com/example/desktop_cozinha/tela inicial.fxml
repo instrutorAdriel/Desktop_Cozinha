@@ -138,7 +138,7 @@
                   </ImageView>
                </graphic>
                <VBox.margin>
-                  <Insets />
+                  <Insets bottom="25.0" />
                </VBox.margin>
                <font>
                   <Font name="Arial Bold" size="12.0" />
@@ -153,7 +153,7 @@
                   </ImageView>
                </graphic>
                <VBox.margin>
-                  <Insets top="20.0" />
+                  <Insets bottom="25.0" />
                </VBox.margin>
                <font>
                   <Font name="Arial Bold" size="12.0" />
