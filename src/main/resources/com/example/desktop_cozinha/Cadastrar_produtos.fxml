@@ -6,11 +6,11 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" stylesheets="@../../../Estilo%201.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="500.0" stylesheets="@../../../Estilo%201.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1">
     <center>
-        <StackPane prefHeight="550.0" prefWidth="599.0" styleClass="painel-center" BorderPane.alignment="CENTER">
+        <StackPane prefHeight="400.0" prefWidth="500.0" styleClass="painel-center" BorderPane.alignment="CENTER">
             <children>
-                <ImageView fitHeight="550.0" fitWidth="600.0" opacity="0.2" pickOnBounds="true" preserveRatio="true">
+                <ImageView fitHeight="427.0" fitWidth="397.0" opacity="0.2" pickOnBounds="true" preserveRatio="true">
                     <image>
                         <Image url="@../../../Imagens/Logo%20colorida%20Senac%20(1).png" />
                     </image>
@@ -18,96 +18,144 @@
                         <Rectangle2D />
                     </viewport>
                 </ImageView>
-                <VBox alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="550.0" prefWidth="534.0">
+                <VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="400.0" prefWidth="500.0">
                     <children>
-                        <HBox alignment="CENTER" prefHeight="50.0" style="-fx-background-color: #e4891b;">
-                            <children>
-                                <Label alignment="BOTTOM_LEFT" graphicTextGap="0.0" prefHeight="20.0" text="Quinta, 01/01/2026">
-                                    <font>
-                                        <Font name="Arial Bold" size="20.0" />
-                                    </font>
-                                    <opaqueInsets>
-                                        <Insets />
-                                    </opaqueInsets>
-                                    <HBox.margin>
-                                        <Insets left="10.0" />
-                                    </HBox.margin>
-                                </Label>
-                        <Region HBox.hgrow="ALWAYS" />
-                        <Label alignment="BOTTOM_CENTER" contentDisplay="CENTER" graphicTextGap="0.0" layoutX="20.0" layoutY="24.0" prefHeight="20.0" text="Cadastro de Produtos">
-                           <font>
-                              <Font name="Arial Bold" size="20.0" />
-                           </font>
-                           <opaqueInsets>
-                              <Insets />
-                           </opaqueInsets>
-                           <HBox.margin>
-                              <Insets left="10.0" right="10.0" />
-                           </HBox.margin>
+                        <Label alignment="CENTER" contentDisplay="CENTER" graphicTextGap="0.0" prefHeight="20.0" text="CADASTRAR PRODUTOS">
+                            <font>
+                                <Font name="Arial Bold" size="20.0" />
+                            </font>
+                            <opaqueInsets>
+                                <Insets />
+                            </opaqueInsets>
+                            <VBox.margin>
+                                <Insets top="20.0" />
+                            </VBox.margin>
                         </Label>
-                        <Region HBox.hgrow="ALWAYS" />
-                                <Label alignment="BOTTOM_RIGHT" contentDisplay="RIGHT" graphicTextGap="0.0" prefHeight="20.0" text="08:30:00">
-                                    <font>
-                                        <Font name="Arial Bold" size="20.0" />
-                                    </font>
-                                    <opaqueInsets>
-                                        <Insets />
-                                    </opaqueInsets>
-                                    <HBox.margin>
-                                        <Insets right="10.0" />
-                                    </HBox.margin>
-                                </Label>
-                            </children>
-                        </HBox>
-                        <Region prefHeight="100.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
-                  <TextField maxWidth="350.0" promptText="NOME DO PRODUTO">
-                     <VBox.margin>
-                        <Insets />
-                     </VBox.margin>
-                     <font>
-                        <Font name="Arial Bold" size="11.0" />
-                     </font>
-                  </TextField>
-                  <TextField layoutX="232.0" layoutY="120.0" maxWidth="350.0" promptText="QUANTIDADE TOTAL">
-                     <font>
-                        <Font name="Arial Bold" size="11.0" />
-                     </font>
-                     <VBox.margin>
-                        <Insets top="20.0" />
-                     </VBox.margin>
-                  </TextField>
-                  <TextField layoutX="232.0" layoutY="162.0" maxWidth="350.0" promptText="ESTOQUE MÍNIMO">
-                     <font>
-                        <Font name="Arial Bold" size="11.0" />
-                     </font>
-                     <VBox.margin>
-                        <Insets top="20.0" />
-                     </VBox.margin>
-                  </TextField>
-                  <VBox prefHeight="200.0" prefWidth="100.0">
-                     <children>
-                        <HBox alignment="CENTER" layoutX="232.0" layoutY="162.0" maxWidth="350.0" VBox.vgrow="ALWAYS">
-                           <children>
-                              <Label text="Label" />
-                           </children>
-                           <VBox.margin>
-                              <Insets />
-                           </VBox.margin>
-                        </HBox>
-                        <HBox prefHeight="100.0" prefWidth="200.0" />
-                        <HBox prefHeight="100.0" prefWidth="200.0" />
-                     </children>
-                     <VBox.margin>
-                        <Insets top="20.0" />
-                     </VBox.margin>
-                  </VBox>
-                        <Region prefHeight="100.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
-                        <HBox alignment="CENTER" prefHeight="50.0" prefWidth="600.0">
+                        <TextField promptText="NOME DO PRODUTO">
+                            <VBox.margin>
+                                <Insets left="75.0" right="75.0" top="30.0" />
+                            </VBox.margin>
+                            <font>
+                                <Font name="Arial" size="12.0" />
+                            </font>
+                        </TextField>
+                        <TextField layoutX="232.0" layoutY="120.0" promptText="QUANTIDADE TOTAL">
+                            <font>
+                                <Font name="Arial" size="12.0" />
+                            </font>
+                            <VBox.margin>
+                                <Insets left="75.0" right="75.0" top="20.0" />
+                            </VBox.margin>
+                        </TextField>
+                        <TextField layoutX="232.0" layoutY="162.0" promptText="ESTOQUE MÍNIMO">
+                            <font>
+                                <Font name="Arial" size="12.0" />
+                            </font>
+                            <VBox.margin>
+                                <Insets left="75.0" right="75.0" top="20.0" />
+                            </VBox.margin>
+                        </TextField>
+                        <VBox>
                             <children>
-                                <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
-                            </children>
+                                <HBox alignment="CENTER" prefHeight="40.0">
+                                    <children>
+                                        <Label prefWidth="160.0" text="TIPO DE PRODUTO">
+                                            <font>
+                                                <Font name="Arial Bold" size="15.0" />
+                                            </font>
+                                            <HBox.margin>
+                                                <Insets left="12.5" right="12.5" />
+                                            </HBox.margin>
+                                        </Label>
+                                        <MenuButton alignment="CENTER_RIGHT" contentDisplay="RIGHT" mnemonicParsing="false" prefWidth="150.0">
+                                            <items>
+                                                <MenuItem mnemonicParsing="false" text="Alimento" />
+                                                <MenuItem mnemonicParsing="false" text="Utensílio" />
+                                            </items>
+                                            <font>
+                                                <Font name="Arial" size="11.0" />
+                                            </font>
+                                            <HBox.margin>
+                                                <Insets left="12.5" right="12.5" />
+                                            </HBox.margin>
+                                        </MenuButton>
+                                    </children>
+                                </HBox>
+                                <HBox alignment="CENTER" prefHeight="40.0">
+                                    <children>
+                                        <Label prefWidth="160.0" text="UNIDADE DE MEDIDA">
+                                            <font>
+                                                <Font name="Arial Bold" size="15.0" />
+                                            </font>
+                                            <HBox.margin>
+                                                <Insets left="12.5" right="12.5" />
+                                            </HBox.margin>
+                                        </Label>
+                                        <MenuButton alignment="CENTER_RIGHT" contentDisplay="RIGHT" mnemonicParsing="false" prefWidth="150.0">
+                                            <items>
+                                                <MenuItem mnemonicParsing="false" text="Kg" />
+                                                <MenuItem mnemonicParsing="false" text="Litro" />
+                                                <MenuItem mnemonicParsing="false" text="Unidade" />
+                                            </items>
+                                            <font>
+                                                <Font name="Arial" size="11.0" />
+                                            </font>
+                                            <HBox.margin>
+                                                <Insets left="12.5" right="12.5" />
+                                            </HBox.margin>
+                                        </MenuButton>
+                                    </children>
+                                </HBox>
+                                <HBox alignment="CENTER" prefHeight="40.0">
+                                    <children>
+                                        <Label prefWidth="160.0" text="DATA DE VALIDADE">
+                                            <font>
+                                                <Font name="Arial Bold" size="15.0" />
+                                            </font>
+                                            <HBox.margin>
+                                                <Insets left="12.5" right="12.5" />
+                                            </HBox.margin>
+                                        </Label>
+                                        <DatePicker prefWidth="150.0">
+                                            <HBox.margin>
+                                                <Insets left="12.5" right="12.5" />
+                                            </HBox.margin>
+                                        </DatePicker>
+                                    </children>
+                                </HBox>
+                        <HBox alignment="CENTER" prefHeight="40.0" spacing="75.0">
+                           <children>
+                              <Button alignment="CENTER" contentDisplay="CENTER" minWidth="100.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="100.0" styleClass="btn-padrao-2" stylesheets="@../../../Estilo%201.css" text="VOLTAR">
+                                 <HBox.margin>
+                                    <Insets />
+                                 </HBox.margin>
+                                 <font>
+                                    <Font name="Arial Bold" size="15.0" />
+                                 </font>
+                              </Button>
+                              <Button alignment="CENTER" contentDisplay="CENTER" minWidth="100.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="100.0" styleClass="btn-padrao-2" text="CADASTRAR">
+                                 <HBox.margin>
+                                    <Insets />
+                                 </HBox.margin>
+                                 <font>
+                                    <Font name="Arial Bold" size="15.0" />
+                                 </font>
+                              </Button>
+                           </children>
                         </HBox>
+                            </children>
+                            <VBox.margin>
+                                <Insets top="10.0" />
+                            </VBox.margin>
+                            <padding>
+                                <Insets top="10.0" />
+                            </padding>
+                        </VBox>
+                  <Region VBox.vgrow="ALWAYS" />
                     </children>
+               <StackPane.margin>
+                  <Insets top="20.0" />
+               </StackPane.margin>
                 </VBox>
             </children>
         </StackPane>
