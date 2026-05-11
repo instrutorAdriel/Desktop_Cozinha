@@ -1,0 +1,25 @@
+.btn-padrao-2{
+    -fx-background-color: #aecae6;
+    -fx-background-radius: 8;
+    -fx-pref-width: 90;
+    -fx-font-family: "Arial";
+    -fx-font-size: 12;
+    -fx-text-fill: BLACK;
+    -fx-cursor: hand;
+    -fx-text-alignment: center;
+    -fx-border-color: #f3ad50;
+    -fx-border-radius: 5;
+    -fx-border-width: 0 0 2 0;
+}
+.btn-padrao-2:hover{
+    /*
+       Parâmetros do dropshadow:
+       - three-pass-box: algoritmo de blur suave
+       - rgba(0,0,0,0.4): cor preta com 40% de opacidade
+       - 10: raio do blur (espalhamento)
+       - 0.5: quanto a sombra se espalha além do blur
+       - 5: deslocamento em X (move para a direita)
+       - 5: deslocamento em Y (move para baixo)
+    */
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.4), 10, 0.5, 5, 5);
+}

@@ -15,18 +15,19 @@ public class MainApplication extends Application {
     public void start(Stage stage) throws IOException {
         primaryStage = stage;
 
-        trocadorDeTelas("Login.fxml");
+        trocadorDeTelas("tela_editar_produtos.fxml");
 
         primaryStage.setTitle("Sistema Cozinha");
         primaryStage.show();
     }
+
 
     public void trocadorDeTelas(String fxml) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(
                 MainApplication.class.getResource(fxml)
         );
 
-        Scene scene = new Scene(fxmlLoader.load());
+        Scene scene = new Scene(fxmlLoader.load(),500,400);
 
         primaryStage.setScene(scene);
     }
