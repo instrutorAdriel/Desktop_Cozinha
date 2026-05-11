@@ -17,17 +17,12 @@ public class ProductDAO {
 
         List<Relatorio> itens = new ArrayList<>();
 
-        String data_atual = LocalDate.now().toString();
 
     try(Connection connection = DatabaseConfig.getConnection();
     PreparedStatement stmt = connection.prepareStatement(sql)) {
         try(ResultSet rs = stmt.executeQuery()){
 
             while(rs.next()){
-
-                if(data_atual.compareTo(data_validade) > 0){
-                    String validade = "Produto expirado";
-                }
 
                 Relatorio r = new Relatorio(
                         rs.getString(nomeProduto),
@@ -52,6 +47,18 @@ public class ProductDAO {
     return itens;
 
 }
+public boolean status(String estoque_minimo, String data_validade, String estoque_atual) throws SQLException {
+        String sql = "Select estoque_minimo, data_validade, estoque_atual from estoque_geral";
 
+        try(Connection connection = DatabaseConfig.getConnection();
+            PreparedStatement stmt = connection.prepareStatement(sql);){
+            stmt.setString(1, estoque_minimo);
+            stmt.setString(2, data_validade);
+            stmt.setString(3, estoque_atual);
+            ResultSet rs = stmt.executeQuery();
+            return rs.next();
+            }
+
+}
 
 }
