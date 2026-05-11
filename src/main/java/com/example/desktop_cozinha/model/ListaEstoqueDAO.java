@@ -18,9 +18,9 @@ public class ListaEstoqueDAO {
 
         List<String> filtros = new ArrayList<>();
 
-        if (naoPereciveis) filtros.add("tipo = 'Não_Perecível'");
-        if (pereciveis)    filtros.add("tipo = 'Perecível'");
-        if (utensilios)    filtros.add("tipo = 'Utensílio'");
+        if (naoPereciveis) filtros.add("tipo = 'NAO_PERECIVEL'");
+        if (pereciveis)    filtros.add("tipo = 'PERECIVEL'");
+        if (utensilios)    filtros.add("tipo = 'UTENSILIO'");
 
         if (!filtros.isEmpty()) {
             sql += " AND (" + String.join(" OR ", filtros) + ")";
