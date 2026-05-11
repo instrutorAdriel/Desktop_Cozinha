@@ -10,40 +10,44 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * DAO responsável por consultas de listagem e filtro no estoque geral.
+ */
 public class ListaEstoqueDAO {
 
-    public List<ProdutoListaEstoque> filtrarProdutos(String nomeBusca, boolean naoPereciveis, boolean pereciveis, boolean utensilios) {
+    public List<ProdutoListaEstoque> filtrarProdutos(
+            String nomeBusca,
+            boolean naoPereciveis,
+            boolean pereciveis,
+            boolean utensilios) {
 
-        String sql = "SELECT id, nome, tipo, quantidade_atual, unidade_medida, estoque_minimo, data_validade FROM estoque_geral WHERE nome LIKE ?";
+        StringBuilder sql = new StringBuilder(
+                "SELECT id, nome, tipo, quantidade_atual, unidade_medida, estoque_minimo, data_validade " +
+                        "FROM estoque_geral WHERE nome LIKE ?");
 
         List<String> filtros = new ArrayList<>();
-
         if (naoPereciveis) filtros.add("tipo = 'Não_Perecível'");
         if (pereciveis)    filtros.add("tipo = 'Perecível'");
         if (utensilios)    filtros.add("tipo = 'Utensílio'");
 
         if (!filtros.isEmpty()) {
-            sql += " AND (" + String.join(" OR ", filtros) + ")";
+            sql.append(" AND (").append(String.join(" OR ", filtros)).append(")");
         }
 
         List<ProdutoListaEstoque> itens = new ArrayList<>();
 
         try (Connection conn = DatabaseConfig.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+             PreparedStatement stmt = conn.prepareStatement(sql.toString())) {
 
             stmt.setString(1, "%" + nomeBusca + "%");
 
             try (ResultSet rs = stmt.executeQuery()) {
-
                 while (rs.next()) {
 
                     java.sql.Date dataBanco = rs.getDate("data_validade");
-                    LocalDate dataConvertida = null;
-                    if (dataBanco != null) {
-                        dataConvertida = dataBanco.toLocalDate();
-                    }
+                    LocalDate dataConvertida = (dataBanco != null) ? dataBanco.toLocalDate() : null;
 
-                    ProdutoListaEstoque p = new ProdutoListaEstoque(
+                    itens.add(new ProdutoListaEstoque(
                             rs.getInt("id"),
                             rs.getString("nome"),
                             rs.getString("tipo"),
@@ -51,8 +55,7 @@ public class ListaEstoqueDAO {
                             rs.getString("unidade_medida"),
                             rs.getString("estoque_minimo"),
                             dataConvertida
-                    );
-                    itens.add(p);
+                    ));
                 }
             }
 

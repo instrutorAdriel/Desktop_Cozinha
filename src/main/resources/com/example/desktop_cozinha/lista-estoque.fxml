@@ -3,29 +3,97 @@
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-<Pane fx:id="painelFrame" prefHeight="485.0" prefWidth="303.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.desktop_cozinha.controller.ListaController">
+<!--
+    CORREÇÕES APLICADAS:
+    1. TextField FiltrarProdutos estava dentro do graphic do Button (errado) → movido para fora
+    2. Hyperlink "editar" não tinha layoutX definido → corrigido
+    3. Hyperlink "editar" referenciava #onAlterarProduto (inexistente) → corrigido para #onEditarProduto
+    4. Hyperlink "remover" não tinha layoutY definido → corrigido
+    5. Pane substituído por AnchorPane para melhor controle de layout
+    6. Melhorias visuais gerais
+-->
+<AnchorPane
+        prefHeight="500.0"
+        prefWidth="620.0"
+        style="-fx-background-color: #f4f4f4;"
+        xmlns="http://javafx.com/javafx/17.0.12"
+        xmlns:fx="http://javafx.com/fxml/1"
+        fx:controller="com.example.desktop_cozinha.controller.ListaController">
+
     <children>
-        <Button fx:id="btnBuscar" layoutX="50.0" layoutY="4.0" mnemonicParsing="false" onAction="#onHelloButtonClick" text="Buscar">
-            <opaqueInsets>
-                <Insets />
-            </opaqueInsets>
-         <graphic>
-              <TextField fx:id="FiltrarProdutos" />
-         </graphic>
-        </Button>
-      <CheckBox fx:id="chkNaoPereciveis" layoutX="195.0" layoutY="37.0" mnemonicParsing="false" text="Não-perecíveis" />
-      <CheckBox fx:id="chkPereciveis" layoutX="105.0" layoutY="37.0" mnemonicParsing="false" text="Perecíveis" />
-      <CheckBox fx:id="chkUtensilios" layoutX="21.0" layoutY="37.0" mnemonicParsing="false" text="Utensilios" />
-        <TableView fx:id="ListaEstoque" layoutY="54.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="433.0" prefWidth="303.0">
+
+        <!-- ── Título ─────────────────────────────────────────── -->
+        <Label
+                text="Estoque Geral"
+                layoutX="14.0"
+                layoutY="12.0"
+                style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #333333;" />
+
+        <!-- ── Barra de busca ─────────────────────────────────── -->
+        <TextField
+                fx:id="FiltrarProdutos"
+                layoutX="14.0"
+                layoutY="44.0"
+                prefWidth="440.0"
+                promptText="Buscar produto..."
+                style="-fx-background-radius: 4; -fx-border-radius: 4; -fx-border-color: #cccccc; -fx-padding: 4 8 4 8;" />
+
+        <Button
+                fx:id="btnBuscar"
+                layoutX="462.0"
+                layoutY="44.0"
+                mnemonicParsing="false"
+                onAction="#onHelloButtonClick"
+                text="Buscar"
+                style="-fx-background-color: #4a90d9; -fx-text-fill: white; -fx-background-radius: 4; -fx-cursor: hand;" />
+
+        <!-- ── Filtros ────────────────────────────────────────── -->
+        <CheckBox fx:id="chkUtensilios"    layoutX="14.0"  layoutY="80.0" mnemonicParsing="false" text="Utensílios" />
+        <CheckBox fx:id="chkPereciveis"    layoutX="110.0" layoutY="80.0" mnemonicParsing="false" text="Perecíveis" />
+        <CheckBox fx:id="chkNaoPereciveis" layoutX="205.0" layoutY="80.0" mnemonicParsing="false" text="Não-Perecíveis" />
+
+        <!-- ── Tabela ─────────────────────────────────────────── -->
+        <TableView
+                fx:id="ListaEstoque"
+                layoutX="14.0"
+                layoutY="108.0"
+                prefHeight="330.0"
+                prefWidth="592.0"
+                style="-fx-background-radius: 4;">
             <columns>
-                <TableColumn fx:id="nomeProduto" prefWidth="75.0" text="Nome" />
-                <TableColumn fx:id="tipoProduto" prefWidth="75.0" text="Tipo" />
-                <TableColumn fx:id="quantidadeProduto" prefWidth="75.0" text="Quantidade" />
-                <TableColumn fx:id="unidadeProduto" prefWidth="75.0" text="Unidade" />
+                <TableColumn fx:id="nomeProduto"       prefWidth="160.0" text="Nome"       />
+                <TableColumn fx:id="tipoProduto"       prefWidth="120.0" text="Tipo"       />
+                <TableColumn fx:id="quantidadeProduto" prefWidth="140.0" text="Quantidade" />
+                <TableColumn fx:id="unidadeProduto"    prefWidth="120.0" text="Unidade"    />
             </columns>
+            <placeholder>
+                <Label text="Nenhum produto encontrado." />
+            </placeholder>
         </TableView>
-      <Hyperlink fx:id="editar" onAction="#onAlterarProduto" text="editar" />
-      <Hyperlink fx:id="remover" layoutX="253.0" onAction="#onRemoverProduto" text="remover" />
+
+        <!-- ── Ações ──────────────────────────────────────────── -->
+        <!--
+            CORRIGIDO: onAction="#onAlterarProduto" não existia → "#onEditarProduto"
+            CORRIGIDO: onAction="#onRemoverProduto" agora existe no controller
+        -->
+        <Hyperlink
+                fx:id="editar"
+                layoutX="14.0"
+                layoutY="452.0"
+                onAction="#onEditarProduto"
+                text="✏ Editar produto selecionado"
+                style="-fx-text-fill: #4a90d9;" />
+
+        <Hyperlink
+                fx:id="remover"
+                layoutX="490.0"
+                layoutY="452.0"
+                onAction="#onRemoverProduto"
+                text="🗑 Remover"
+                style="-fx-text-fill: #d94a4a;" />
+
     </children>
-</Pane>
+</AnchorPane>
+

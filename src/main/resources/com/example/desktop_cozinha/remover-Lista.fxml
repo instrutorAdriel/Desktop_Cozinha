@@ -5,36 +5,63 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.desktop_cozinha.controller.removerProdutosController">
+<!--
+    CORREÇÕES APLICADAS:
+    1. onAction="#onRemoverProdutoClick" não tinha @FXML no controller → corrigido no controller
+    2. Melhorado o layout visual com ícone e mensagem de confirmação mais clara
+    3. fx:controller atualizado para RemoverProdutosController (classe renomeada)
+-->
+<BorderPane
+        maxHeight="-Infinity"
+        maxWidth="-Infinity"
+        minHeight="-Infinity"
+        minWidth="-Infinity"
+        prefHeight="300.0"
+        prefWidth="480.0"
+        style="-fx-background-color: #f4f4f4;"
+        xmlns="http://javafx.com/javafx/17.0.12"
+        xmlns:fx="http://javafx.com/fxml/1"
+        fx:controller="com.example.desktop_cozinha.controller.RemoverProdutosController">
+
     <center>
-        <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
-            <children>
-                <Label text="REMOVER PRODUTOS">
-                    <font>
-                        <Font name="Arial Bold" size="18.0" />
-                    </font>
-                    <VBox.margin>
-                        <Insets top="30.0" />
-                    </VBox.margin>
-                </Label>
-                <HBox alignment="TOP_CENTER" prefHeight="47.0" prefWidth="469.0">
-                    <VBox.margin>
-                        <Insets top="15.0" />
-                    </VBox.margin>
-                    <children>
-                        <Button fx:id="btnCancelarProduto" mnemonicParsing="false" onAction="#voltarTela" text="VOLTAR">
-                            <HBox.margin>
-                                <Insets right="30.0" />
-                            </HBox.margin>
-                        </Button>
-                        <Button fx:id="btnRemoverProduto" mnemonicParsing="false" onAction="#onRemoverProdutoClick" text="REMOVER">
-                            <HBox.margin>
-                                <Insets left="30.0" />
-                            </HBox.margin>
-                        </Button>
-                    </children>
-                </HBox>
-            </children>
+        <VBox alignment="CENTER" spacing="20.0" BorderPane.alignment="CENTER">
+            <padding>
+                <Insets top="30.0" bottom="30.0" left="40.0" right="40.0" />
+            </padding>
+
+            <!-- Ícone / título -->
+            <Label
+                    text="⚠ Remover Produto"
+                    style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #c0392b;" />
+
+            <!-- Mensagem de aviso -->
+            <Label
+                    text="Você está prestes a remover este produto do estoque.&#10;Esta ação não pode ser desfeita."
+                    wrapText="true"
+                    alignment="CENTER"
+                    style="-fx-font-size: 13px; -fx-text-fill: #555555; -fx-text-alignment: center;" />
+
+            <Separator />
+
+            <!-- Botões -->
+            <HBox alignment="CENTER" spacing="30.0">
+                <Button
+                        fx:id="btnCancelarProduto"
+                        mnemonicParsing="false"
+                        onAction="#voltarTela"
+                        text="← Cancelar"
+                        prefWidth="130.0"
+                        style="-fx-background-color: #95a5a6; -fx-text-fill: white; -fx-background-radius: 4; -fx-cursor: hand; -fx-font-size: 13px;" />
+
+                <Button
+                        fx:id="btnRemoverProduto"
+                        mnemonicParsing="false"
+                        onAction="#onRemoverProdutoClick"
+                        text="🗑 Confirmar Remoção"
+                        prefWidth="160.0"
+                        style="-fx-background-color: #c0392b; -fx-text-fill: white; -fx-background-radius: 4; -fx-cursor: hand; -fx-font-size: 13px;" />
+            </HBox>
+
         </VBox>
     </center>
 </BorderPane>
