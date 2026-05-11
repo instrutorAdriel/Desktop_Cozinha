@@ -10,7 +10,7 @@ public class UsuarioDAO {
         String sql = "SELECT * FROM usuarios WHERE email = ?";
 
         try(Connection connection = DatabaseConfig.getConnection();
-        PreparedStatement stmt = connection.prepareStatement(sql);){
+        PreparedStatement stmt = connection.prepareStatement(sql)){
 
            stmt.setString(1, email);
             ResultSet rs = stmt.executeQuery();
@@ -37,7 +37,7 @@ public class UsuarioDAO {
             String sql = "UPDATE usuarios SET token = ? WHERE email = ?";
 
             try(Connection connection = DatabaseConfig.getConnection();
-            PreparedStatement stmt = connection.prepareStatement(sql);){
+            PreparedStatement stmt = connection.prepareStatement(sql)){
                 stmt.setString(1, token);
                 stmt.setString(2, email);
                 stmt.executeUpdate();
