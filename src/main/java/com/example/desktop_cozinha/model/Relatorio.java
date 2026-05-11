@@ -10,7 +10,6 @@ public class Relatorio {
 
 
 
-
     public Relatorio(String nomeProduto, int quantidade_atual, String unidade_medida, String data_validade, int estoque_minimo) {
 
         this.nomeProduto = nomeProduto;
@@ -18,7 +17,6 @@ public class Relatorio {
         this.unidade_medida = unidade_medida;
         this.data_validade = data_validade;
         this.estoque_minimo = estoque_minimo;
-
     }
 
     public String getNomeProduto() {
@@ -33,7 +31,5 @@ public class Relatorio {
     public String getData_validade() {
         return data_validade;
     }
-    public int getEstoque_minimo() {
-        return estoque_minimo;
-    }
+    public int getEstoque_minimo() {return estoque_minimo;}
 }
