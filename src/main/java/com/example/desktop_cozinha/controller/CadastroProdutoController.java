@@ -46,6 +46,23 @@ public class CadastroProdutoController  implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         txtUnidadeDeMedida.getItems().addAll("KG", "LITRO", "UNIDADE");
         txtTipoProduto.getItems().addAll("PERECIVEL", "NAO_PERECIVEL", "UTENSILIO");
+        txtDataValidade.setDayCellFactory(picker -> new DateCell() {
+            @Override
+            public void updateItem(LocalDate data, boolean vazia) {
+                super.updateItem(data, vazia);
+
+                // Pega a data de hoje do sistema
+                LocalDate hoje = LocalDate.now();
+
+                // Se a data do calendário for menor (isBefore) que hoje, desabilita o clique
+                if (data != null && data.isBefore(hoje)) {
+                    setDisable(true);
+                    //  Muda a cor de fundo das datas passadas para um cinza claro para dar feedback visual
+                    setStyle("-fx-background-color: #dddddd;");
+                }
+            }
+        });
+
 
     }
 
@@ -68,6 +85,16 @@ public class CadastroProdutoController  implements Initializable {
         String estoqueMinimo = txtEstoqueMinimo.getText();
         // Pega o valor do calendário (pode ser a data ou pode ser null se estiver vazio)
         LocalDate dataSelecionada = txtDataValidade.getValue();
+
+        // Verifica se o usuário escolheu uma data e se ela é anterior a hoje
+        if (dataSelecionada != null && dataSelecionada.isBefore(LocalDate.now())) {
+            Alert alerta = new Alert(Alert.AlertType.WARNING);
+            alerta.setTitle("Data de Validade Inválida");
+            alerta.setHeaderText(null);
+            alerta.setContentText("Você não pode definir uma data de validade que já passou!");
+            alerta.showAndWait();
+            return;
+        }
 
         // Cria a variável do banco vazia por padrão
         Date dataValidade = null;
