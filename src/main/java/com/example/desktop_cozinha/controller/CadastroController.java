@@ -54,7 +54,7 @@ public class CadastroController {
         String confirmarSenha = txtConfirmarSenha.getText();
 
         //2. Validar se tem um campo vazio
-        if (nome.isBlank () || senha.isBlank () || email.isBlank () || confirmarSenha.isBlank () ) {
+        if (nome.isBlank () || senha.isBlank () || email.isBlank () || confirmarSenha.isBlank () || cargo.isBlank () ) {
             //  exibe uma janela de aviso para o usuario
             Alert alerta = new Alert(Alert.AlertType.WARNING);
             alerta.setTitle("Campos obrigatorios!");
@@ -66,6 +66,7 @@ public class CadastroController {
 
             return;
         }
+
 
 
         // Verificar se senha e confirmar senha são iguais
@@ -83,6 +84,16 @@ public class CadastroController {
 
         // 3. Cria uma instancia do CadastroDAO
         CadastroDAO dao = new CadastroDAO();
+
+        // Valida se email ja exite no banco de dados
+        if (dao.emailExiste(email)) {
+            Alert alerta = new Alert(Alert.AlertType.ERROR);
+            alerta.setTitle("Erro no Cadastro");
+            alerta.setHeaderText("E-mail já cadastrado!");
+            alerta.setContentText("Este e-mail já está sendo utilizado por outro usuário.");
+            alerta.showAndWait();
+            return; // Interrompe o processo de cadastro
+        }
 
         //4. Chama o metodo de cadastro do cliente
         dao.cadastrarUsuario(nome, email, senha, cargo);
