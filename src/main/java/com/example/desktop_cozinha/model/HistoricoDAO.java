@@ -8,7 +8,6 @@ import java.util.List;
 
 public class HistoricoDAO {
 
-    // Helper para evitar repetição de código na criação do objeto Historico
     private static Historico mapearHistorico(ResultSet rs) throws SQLException {
         return new Historico(
                 rs.getString("nome_produto"),
@@ -33,7 +32,36 @@ public class HistoricoDAO {
         return buscar(sql, null);
     }
 
-    public static List<Historico> imprimirHistoricoporproduto(String txtpesquisa) {
+    public static List<Historico> imprimirHistoricoporentrada() {
+        String sql = """
+            SELECT e.nome AS nome_produto, u.nome AS nome_usuario, 
+                   h.tipo_movimentacao, h.quantidade_movimentada, 
+                   h.observacao, h.data_hora
+            FROM historico_movimentacoes h
+            JOIN estoque_geral e ON h.produto_id = e.id
+            JOIN usuarios u ON h.usuario_id = u.id
+            WHERE h.tipo_movimentacao LIKE '%entrada%'
+            ORDER BY h.data_hora DESC
+            """;
+        return buscar(sql, null);
+    }
+
+    public static List<Historico> imprimirHistoricoporsaida() {
+        String sql = """
+            SELECT e.nome AS nome_produto, u.nome AS nome_usuario, 
+                   h.tipo_movimentacao, h.quantidade_movimentada, 
+                   h.observacao, h.data_hora
+            FROM historico_movimentacoes h
+            JOIN estoque_geral e ON h.produto_id = e.id
+            JOIN usuarios u ON h.usuario_id = u.id
+            WHERE h.tipo_movimentacao LIKE '%saida%'
+            ORDER BY h.data_hora DESC
+            """;
+        return buscar(sql, null);
+    }
+
+    // NOVO MÉTODO: Busca específica por nome de produto
+    public static List<Historico> buscarPorProduto(String nomeProduto) {
         String sql = """
             SELECT e.nome AS nome_produto, u.nome AS nome_usuario, 
                    h.tipo_movimentacao, h.quantidade_movimentada, 
@@ -44,51 +72,9 @@ public class HistoricoDAO {
             WHERE e.nome LIKE ?
             ORDER BY h.data_hora DESC
             """;
-        return buscar(sql, "%" + txtpesquisa + "%");
+        return buscar(sql, "%" + nomeProduto + "%");
     }
 
-    public static List<Historico> imprimirHistoricoporusuario(String txtpesquisa) {
-        String sql = """
-            SELECT e.nome AS nome_produto, u.nome AS nome_usuario, 
-                   h.tipo_movimentacao, h.quantidade_movimentada, 
-                   h.observacao, h.data_hora
-            FROM historico_movimentacoes h
-            JOIN estoque_geral e ON h.produto_id = e.id
-            JOIN usuarios u ON h.usuario_id = u.id
-            WHERE u.nome LIKE ?
-            ORDER BY h.data_hora DESC
-            """;
-        return buscar(sql, "%" + txtpesquisa + "%");
-    }
-
-    public static List<Historico> imprimirHistoricoportipo(String txtpesquisa) {
-        String sql = """
-            SELECT e.nome AS nome_produto, u.nome AS nome_usuario, 
-                   h.tipo_movimentacao, h.quantidade_movimentada, 
-                   h.observacao, h.data_hora
-            FROM historico_movimentacoes h
-            JOIN estoque_geral e ON h.produto_id = e.id
-            JOIN usuarios u ON h.usuario_id = u.id
-            WHERE h.tipo_movimentacao LIKE ?
-            ORDER BY h.data_hora DESC
-            """;
-        return buscar(sql, "%" + txtpesquisa + "%");
-    }
-    public static List<Historico> imprimirHistoricopordata(String txtpesquisa) {
-        String sql = """
-            SELECT e.nome AS nome_produto, u.nome AS nome_usuario, 
-                   h.tipo_movimentacao, h.quantidade_movimentada, 
-                   h.observacao, h.data_hora
-            FROM historico_movimentacoes h
-            JOIN estoque_geral e ON h.produto_id = e.id
-            JOIN usuarios u ON h.usuario_id = u.id
-            WHERE h.data_hora LIKE ?
-            ORDER BY h.data_hora DESC
-            """;
-        return buscar(sql, "%" + txtpesquisa + "%");
-    }
-
-    // Método genérico para reduzir a repetição de código (Boilerplate)
     private static List<Historico> buscar(String sql, String parametro) {
         List<Historico> itens = new ArrayList<>();
         try (Connection conn = DatabaseConfig.getConnection();
@@ -107,29 +93,6 @@ public class HistoricoDAO {
             System.err.println("Erro na consulta SQL: " + e.getMessage());
         }
         return itens;
-    }
-    public boolean registrarMovimentacao(long produtoId, long usuarioId, String tipo, int quantidade, String obs) {
-        String sql = "INSERT INTO historico_movimentacoes " +
-                "(produto_id, usuario_id, tipo_movimentacao, quantidade_movimentada, data_hora, observacao) " +
-                "VALUES (?, ?, ?, ?, ?, ?)";
-
-        try (Connection conn = DatabaseConfig.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            stmt.setLong(1, produtoId);
-            stmt.setLong(2, usuarioId);
-            stmt.setString(3, tipo); // ENUM: 'ENTRADA', 'SAIDA', 'EDICAO', 'DESCARTE'
-            stmt.setInt(4, quantidade);
-            stmt.setTimestamp(5, Timestamp.valueOf(LocalDateTime.now()));
-            stmt.setString(6, obs);
-
-            stmt.executeUpdate();
-            return true;
-
-        } catch (SQLException e) {
-            System.err.println("Erro ao registrar histórico: " + e.getMessage());
-            return false;
-        }
     }
 }
 

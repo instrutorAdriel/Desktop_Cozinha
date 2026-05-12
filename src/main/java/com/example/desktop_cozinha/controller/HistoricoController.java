@@ -12,11 +12,11 @@ import java.util.List;
 public class HistoricoController {
 
     @FXML private TextField txtpesquisa;
-    @FXML private TableView<Historico> tableHistorico; // Mudei o nome para não confundir com a classe
+    @FXML private TableView<Historico> tableHistorico;
     @FXML private TableColumn<Historico, String> nome_produto;
     @FXML private TableColumn<Historico, String> nome_usuario;
     @FXML private TableColumn<Historico, String> tipo_movimentacao;
-    @FXML private TableColumn<Historico, Integer> quantidade; // Quantidade costuma ser Integer
+    @FXML private TableColumn<Historico, Integer> quantidade;
     @FXML private TableColumn<Historico, String> observacao;
     @FXML private TableColumn<Historico, String> data_hora;
     @FXML private ChoiceBox<String> filtro;
@@ -24,40 +24,45 @@ public class HistoricoController {
     @FXML
     public void initialize() {
         configurarColunas();
-        filtro.getItems().addAll("Produto", "Usuário", "Tipo", "Data/Hora");
-        filtro.setValue("Produto"); // Define um padrão para não dar erro de null
+        // Adicionei "Produto" nas opções para bater com a busca nova
+        filtro.getItems().addAll("Ambos", "Entrada", "Saída");
+        filtro.setValue("Ambos");
 
-        // Opcional: Carregar a tabela ao abrir a tela
+        // ADICIONE ISSO: Escuta as mudanças no ChoiceBox
+        filtro.valueProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                filtrarHistorico(); // Chama o método de busca automaticamente
+            }
+        });
+
         filtrarHistorico();
     }
 
     private void configurarColunas() {
-        // IMPORTANTE: O nome dentro de "" deve ser exatamente igual à variável na classe Historico
+        data_hora.setCellValueFactory(new PropertyValueFactory<>("data_hora"));
         nome_produto.setCellValueFactory(new PropertyValueFactory<>("nome_produto"));
-        nome_usuario.setCellValueFactory(new PropertyValueFactory<>("nome_usuario"));
-        tipo_movimentacao.setCellValueFactory(new PropertyValueFactory<>("tipo_movimentacao")); // Verifique se na classe Historico está assim
+        tipo_movimentacao.setCellValueFactory(new PropertyValueFactory<>("tipo_movimentacao"));
         quantidade.setCellValueFactory(new PropertyValueFactory<>("quantidade_movimentada"));
         observacao.setCellValueFactory(new PropertyValueFactory<>("observacao"));
-        data_hora.setCellValueFactory(new PropertyValueFactory<>("data_hora"));
+        nome_usuario.setCellValueFactory(new PropertyValueFactory<>("nome_usuario"));
     }
 
     @FXML
     public void filtrarHistorico() {
-        String termoBusca = txtpesquisa.getText();
-        String tipoFiltro = filtro.getValue();
+        String tipoFiltro = filtro.getValue().toLowerCase();
+        String pesquisa = txtpesquisa.getText();
         List<Historico> resultado;
 
-        // Aqui está a correção: pegamos o retorno do DAO e usamos na lista
-        if (termoBusca == null || termoBusca.isEmpty()) {
-            resultado = HistoricoDAO.imprimirHistoricoCompleto();
+        // Se houver texto no campo de pesquisa, prioriza a busca por produto
+        if (pesquisa != null && !pesquisa.isEmpty()) {
+            resultado = HistoricoDAO.buscarPorProduto(pesquisa);
         } else {
-            switch (tipoFiltro) {
-                case "Produto" -> resultado = HistoricoDAO.imprimirHistoricoporproduto(termoBusca);
-                case "Usuário" -> resultado = HistoricoDAO.imprimirHistoricoporusuario(termoBusca);
-                case "tipo_movimentacao"    -> resultado = HistoricoDAO.imprimirHistoricoportipo(termoBusca);
-                case "Data/Hora" -> resultado = HistoricoDAO.imprimirHistoricopordata(termoBusca);
-                default -> resultado = HistoricoDAO.imprimirHistoricoCompleto();
-            }
+            // Caso contrário, usa o filtro do ChoiceBox
+            resultado = switch (tipoFiltro) {
+                case "saída" -> HistoricoDAO.imprimirHistoricoporsaida();
+                case "entrada" -> HistoricoDAO.imprimirHistoricoporentrada();
+                default -> HistoricoDAO.imprimirHistoricoCompleto();
+            };
         }
 
         atualizarTabela(resultado);
