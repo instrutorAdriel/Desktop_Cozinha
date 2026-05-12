@@ -31,42 +31,65 @@
                                 <Insets top="20.0" />
                             </VBox.margin>
                         </Label>
-                        <TextField promptText="NOME DO PRODUTO">
-                            <VBox.margin>
-                                <Insets left="75.0" right="75.0" top="30.0" />
-                            </VBox.margin>
-                            <font>
-                                <Font name="Arial" size="12.0" />
-                            </font>
-                        </TextField>
-                        <TextField layoutX="232.0" layoutY="120.0" promptText="QUANTIDADE TOTAL">
-                            <font>
-                                <Font name="Arial" size="12.0" />
-                            </font>
-                            <VBox.margin>
-                                <Insets left="75.0" right="75.0" top="20.0" />
-                            </VBox.margin>
-                        </TextField>
-                        <TextField layoutX="232.0" layoutY="162.0" promptText="ESTOQUE MÍNIMO">
-                            <font>
-                                <Font name="Arial" size="12.0" />
-                            </font>
-                            <VBox.margin>
-                                <Insets left="75.0" right="75.0" top="20.0" />
-                            </VBox.margin>
-                        </TextField>
-                        <VBox>
+                        <VBox alignment="CENTER">
                             <children>
-                                <HBox alignment="CENTER" prefHeight="40.0">
+                        <HBox alignment="CENTER_LEFT" prefHeight="40.0">
+                           <children>
+                              <Label prefWidth="160.0" text="NOME DO PRODUTO">
+                                 <font>
+                                    <Font name="Arial Bold" size="15.0" />
+                                 </font>
+                                 <HBox.margin>
+                                    <Insets />
+                                 </HBox.margin>
+                              </Label>
+                              <Region HBox.hgrow="ALWAYS" />
+                              <TextField prefWidth="150.0" promptText="Insira aqui...">
+                                 <font>
+                                    <Font name="Arial Bold Italic" size="12.0" />
+                                 </font>
+                              </TextField>
+                           </children>
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" prefHeight="40.0" VBox.vgrow="ALWAYS">
+                           <children>
+                              <Label prefWidth="160.0" text="QUANTIDADE TOTAL">
+                                 <font>
+                                    <Font name="Arial Bold" size="15.0" />
+                                 </font>
+                                 <HBox.margin>
+                                    <Insets />
+                                 </HBox.margin>
+                              </Label>
+                              <Region HBox.hgrow="ALWAYS" />
+                              <Spinner editable="true" prefWidth="150.0" />
+                           </children>
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" prefHeight="40.0">
+                           <children>
+                              <Label prefWidth="160.0" text="ESTOQUE MÍNIMO">
+                                 <font>
+                                    <Font name="Arial Bold" size="15.0" />
+                                 </font>
+                                 <HBox.margin>
+                                    <Insets />
+                                 </HBox.margin>
+                              </Label>
+                              <Region HBox.hgrow="ALWAYS" />
+                              <Spinner editable="true" prefWidth="150.0" />
+                           </children>
+                        </HBox>
+                                <HBox alignment="CENTER_LEFT" prefHeight="40.0" VBox.vgrow="ALWAYS">
                                     <children>
                                         <Label prefWidth="160.0" text="TIPO DE PRODUTO">
                                             <font>
                                                 <Font name="Arial Bold" size="15.0" />
                                             </font>
                                             <HBox.margin>
-                                                <Insets left="12.5" right="12.5" />
+                                                <Insets />
                                             </HBox.margin>
                                         </Label>
+                              <Region HBox.hgrow="ALWAYS" />
                                         <MenuButton alignment="CENTER_RIGHT" contentDisplay="RIGHT" mnemonicParsing="false" prefWidth="150.0">
                                             <items>
                                                 <MenuItem mnemonicParsing="false" text="Alimento" />
@@ -76,21 +99,22 @@
                                                 <Font name="Arial" size="11.0" />
                                             </font>
                                             <HBox.margin>
-                                                <Insets left="12.5" right="12.5" />
+                                                <Insets />
                                             </HBox.margin>
                                         </MenuButton>
                                     </children>
                                 </HBox>
-                                <HBox alignment="CENTER" prefHeight="40.0">
+                                <HBox alignment="CENTER_LEFT" prefHeight="40.0">
                                     <children>
                                         <Label prefWidth="160.0" text="UNIDADE DE MEDIDA">
                                             <font>
                                                 <Font name="Arial Bold" size="15.0" />
                                             </font>
                                             <HBox.margin>
-                                                <Insets left="12.5" right="12.5" />
+                                                <Insets />
                                             </HBox.margin>
                                         </Label>
+                              <Region HBox.hgrow="ALWAYS" />
                                         <MenuButton alignment="CENTER_RIGHT" contentDisplay="RIGHT" mnemonicParsing="false" prefWidth="150.0">
                                             <items>
                                                 <MenuItem mnemonicParsing="false" text="Kg" />
@@ -101,24 +125,25 @@
                                                 <Font name="Arial" size="11.0" />
                                             </font>
                                             <HBox.margin>
-                                                <Insets left="12.5" right="12.5" />
+                                                <Insets />
                                             </HBox.margin>
                                         </MenuButton>
                                     </children>
                                 </HBox>
-                                <HBox alignment="CENTER" prefHeight="40.0">
+                                <HBox alignment="CENTER_LEFT" prefHeight="40.0">
                                     <children>
                                         <Label prefWidth="160.0" text="DATA DE VALIDADE">
                                             <font>
                                                 <Font name="Arial Bold" size="15.0" />
                                             </font>
                                             <HBox.margin>
-                                                <Insets left="12.5" right="12.5" />
+                                                <Insets />
                                             </HBox.margin>
                                         </Label>
+                              <Region HBox.hgrow="ALWAYS" />
                                         <DatePicker prefWidth="150.0">
                                             <HBox.margin>
-                                                <Insets left="12.5" right="12.5" />
+                                                <Insets />
                                             </HBox.margin>
                                         </DatePicker>
                                     </children>
@@ -145,7 +170,7 @@
                         </HBox>
                             </children>
                             <VBox.margin>
-                                <Insets top="10.0" />
+                                <Insets left="75.0" right="75.0" top="10.0" />
                             </VBox.margin>
                             <padding>
                                 <Insets top="10.0" />
