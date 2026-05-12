@@ -13,42 +13,48 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ResourceBundle;
 
-import static com.example.desktop_cozinha.services.SessaoService.emailAtual;
-
 public class HomeController implements Initializable {
+
     @FXML
-    private Label emailLabel;
+    private Label dataLabel;
 
     @FXML
     private Label usuarioLabel;
 
-    public void configurarRelogio(){
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+    @FXML
+    private Label horaLabel;
 
-        Timeline time = new Timeline(new KeyFrame(Duration.seconds(1), event -> {
-            emailLabel.setText(dtf.format(LocalDateTime.now()));
-        }));
-
-        time.setCycleCount(Timeline.INDEFINITE);
-
-        emailLabel.setText(LocalDateTime.now().format(dtf));
-
-        time.play();
-
-    }
-
-    public void usuarioAtual(){
-        String email = SessaoService.getEmailAtual();
-        if  (email != null){
-            HomeDAO user = new HomeDAO();
-            String nome = user.bucarNome(email);
-            usuarioLabel.setText(nome);
-        }
-    }
-    
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         configurarRelogio();
         usuarioAtual();
+    }
+
+    public void configurarRelogio() {
+        DateTimeFormatter formatadorData = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        DateTimeFormatter formatadorHora = DateTimeFormatter.ofPattern("HH:mm");
+
+        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(1), event -> {
+            LocalDateTime agora = LocalDateTime.now();
+            dataLabel.setText(agora.format(formatadorData));
+            horaLabel.setText(agora.format(formatadorHora));
+        }));
+
+        timeline.setCycleCount(Timeline.INDEFINITE);
+
+        LocalDateTime agoraInicial = LocalDateTime.now();
+        dataLabel.setText(agoraInicial.format(formatadorData));
+        horaLabel.setText(agoraInicial.format(formatadorHora));
+
+        timeline.play();
+    }
+
+    public void usuarioAtual() {
+        String email = SessaoService.getEmailAtual();
+        if (email != null) {
+            HomeDAO user = new HomeDAO();
+            String nome = user.bucarNome(email); // Nota: verifique se o nome do método é 'bucarNome' ou 'buscarNome'
+            usuarioLabel.setText("Bem vindo, " + nome);
+        }
     }
 }

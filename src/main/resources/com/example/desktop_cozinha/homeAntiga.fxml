@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.desktop_cozinha.controller.HomeController">
+   <children>
+      <Label fx:id="emailLabel" layoutX="14.0" layoutY="30.0" prefHeight="20.0" prefWidth="254.0" text="HH:MM" />
+      <Label fx:id="usuarioLabel" prefHeight="29.0" prefWidth="82.0" text="Nome" />
+   </children>
+</AnchorPane>
