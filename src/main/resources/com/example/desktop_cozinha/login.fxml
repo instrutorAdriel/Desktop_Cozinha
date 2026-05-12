@@ -23,7 +23,7 @@
                         <Insets top="15.0" />
                     </VBox.margin>
                     <font>
-                        <Font name="SansSerif Bold" size="15.0" />
+                        <Font name="SansSerif Bold" size="18.0" />
                     </font>
                 </Label>
                 <Label alignment="TOP_CENTER" graphicTextGap="0.0" prefHeight="19.0" prefWidth="500.0" text="E-mail" textOverrun="CENTER_ELLIPSIS">
@@ -58,16 +58,40 @@
                         <Insets left="150.0" right="150.0" />
                     </VBox.margin>
                 </PasswordField>
-                <Hyperlink text="Esqueceu a senha?">
-                    <VBox.margin>
-                        <Insets top="10.0" />
-                    </VBox.margin>
-                </Hyperlink>
+            <HBox alignment="CENTER" prefHeight="27.0" prefWidth="800.0">
+               <children>
+                      <Hyperlink alignment="CENTER" prefHeight="23.0" prefWidth="504.0" text="Esqueceu a senha?" textFill="#1b7ee3" textOverrun="CLIP">
+                     <font>
+                        <Font name="Arial Bold" size="12.0" />
+                     </font>
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin>
+                     <padding>
+                        <Insets right="-391.0" />
+                     </padding>
+                      </Hyperlink>
+               </children></HBox>
                 <Button mnemonicParsing="false" prefHeight="26.0" prefWidth="110.0" styleClass="btn-laranja" text="ENTRAR">
                     <VBox.margin>
-                        <Insets top="34.0" />
+                        <Insets top="17.0" />
                     </VBox.margin>
                 </Button>
+            <HBox alignment="CENTER" prefHeight="43.0" prefWidth="800.0">
+               <children>
+                  <Label text="Não tenho uma conta?">
+                     <font>
+                        <Font name="Arial Bold" size="12.0" />
+                     </font></Label>
+                  <Hyperlink alignment="CENTER" text="Cadastre-se" textAlignment="JUSTIFY" textFill="#1b7ee3">
+                     <font>
+                        <Font name="Arial Bold" size="12.0" />
+                     </font>
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin></Hyperlink>
+               </children>
+            </HBox>
             </children>
         </VBox>
     </center>
