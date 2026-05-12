@@ -72,7 +72,7 @@ public class ListaController {
         chkUtensilios.setOnAction(event -> filtrar());
 
         // Listener do campo de texto para filtrar ao digitar (UX melhorado)
-        FiltrarProdutos.textProperty().addListener((obs, antigo, novo) -> filtrar());
+        //FiltrarProdutos.textProperty().addListener((obs, antigo, novo) -> filtrar());
 
         carregarDados("", false, false, false);
     }
