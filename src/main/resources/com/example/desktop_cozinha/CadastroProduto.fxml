@@ -1,129 +1,84 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.*?>
+<?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.desktop_cozinha.controller.CadastroProdutoController">
-   <left>
-      <VBox alignment="TOP_CENTER" prefHeight="400.0" prefWidth="131.0" BorderPane.alignment="CENTER">
-         <children>
-            <Button alignment="CENTER" mnemonicParsing="false" text="Button">
-               <VBox.margin>
-                  <Insets top="30.0" />
-               </VBox.margin>
-            </Button>
-            <Button mnemonicParsing="false" text="Button">
-               <VBox.margin>
-                  <Insets top="15.0" />
-               </VBox.margin>
-            </Button>
-            <Button mnemonicParsing="false" text="Button">
-               <VBox.margin>
-                  <Insets top="15.0" />
-               </VBox.margin>
-            </Button>
-            <Button mnemonicParsing="false" text="Button">
-               <VBox.margin>
-                  <Insets top="200.0" />
-               </VBox.margin>
-            </Button>
-         </children>
-      </VBox>
-   </left>
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="500.0" stylesheets="@css/Estilo 1.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.desktop_cozinha.controller.CadastroProdutoController">
    <center>
-      <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+      <StackPane prefHeight="400.0" prefWidth="500.0" styleClass="painel-center" BorderPane.alignment="CENTER">
          <children>
-            <Label text="CADASTRO DE PRODUTOS">
-               <font>
-                  <Font name="Arial Bold" size="18.0" />
-               </font>
-               <VBox.margin>
-                  <Insets top="30.0" />
-               </VBox.margin>
-            </Label>
-            <TextField fx:id="txtNomeProduto" promptText="NOME DO PRODUTO ">
-               <VBox.margin>
-                  <Insets left="100.0" right="100.0" top="15.0" />
-               </VBox.margin>
-            </TextField>
-            <TextField fx:id="txtQtdAtual" promptText="QUANTIDADE ATUAL">
-               <VBox.margin>
-                  <Insets left="100.0" right="100.0" top="15.0" />
-               </VBox.margin>
-            </TextField>
-            <TextField fx:id="txtEstoqueMinimo" promptText="ESTOQUE MINIMO">
-               <VBox.margin>
-                  <Insets left="100.0" right="100.0" top="15.0" />
-               </VBox.margin>
-            </TextField>
-            <HBox alignment="TOP_CENTER" prefHeight="26.0" prefWidth="469.0">
-               <VBox.margin>
-                  <Insets top="15.0" />
-               </VBox.margin>
+            <ImageView fitHeight="427.0" fitWidth="397.0" opacity="0.2" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@imagem/Logo colorida Senac.png" />
+               </image>
+            </ImageView>
+            <VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="400.0" prefWidth="500.0">
                <children>
-                  <Label text="TIPO DO PRODUTO">
-                     <HBox.margin>
-                        <Insets right="15.0" />
-                     </HBox.margin></Label>
-                  <ChoiceBox fx:id="txtTipoProduto" prefWidth="150.0">
-                     <HBox.margin>
-                        <Insets right="30.0" />
-                     </HBox.margin></ChoiceBox>
-               </children>
-            </HBox>
-            <HBox alignment="TOP_CENTER" layoutX="10.0" layoutY="116.0" prefHeight="26.0" prefWidth="469.0">
-               <children>
-                  <Label text="UNIDADE DE MEDIDA">
-                     <HBox.margin>
-                        <Insets right="15.0" />
-                     </HBox.margin>
+                  <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="20.0" text="CADASTRAR PRODUTOS">
+                     <font>
+                        <Font name="Arial Bold" size="20.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets top="20.0" />
+                     </VBox.margin>
                   </Label>
-                  <ChoiceBox fx:id="txtUnidadeDeMedida" prefWidth="150.0">
-                     <HBox.margin>
-                        <Insets right="30.0" />
-                     </HBox.margin></ChoiceBox>
+                  <TextField fx:id="txtNomeProduto" promptText="NOME DO PRODUTO">
+                     <VBox.margin>
+                        <Insets left="75.0" right="75.0" top="30.0" />
+                     </VBox.margin>
+                  </TextField>
+                  <TextField fx:id="txtQtdAtual" promptText="QUANTIDADE TOTAL">
+                     <VBox.margin>
+                        <Insets left="75.0" right="75.0" top="20.0" />
+                     </VBox.margin>
+                  </TextField>
+                  <TextField fx:id="txtEstoqueMinimo" promptText="ESTOQUE MÍNIMO">
+                     <VBox.margin>
+                        <Insets left="75.0" right="75.0" top="20.0" />
+                     </VBox.margin>
+                  </TextField>
+                  <VBox spacing="10.0">
+                     <children>
+                        <HBox alignment="CENTER" prefHeight="40.0">
+                           <children>
+                              <Label prefWidth="160.0" text="TIPO DE PRODUTO">
+                                 <font><Font name="Arial Bold" size="15.0" /></font>
+                              </Label>
+                              <ChoiceBox fx:id="txtTipoProduto" prefWidth="150.0" />
+                           </children>
+                        </HBox>
+                        <HBox alignment="CENTER" prefHeight="40.0">
+                           <children>
+                              <Label prefWidth="160.0" text="UNIDADE DE MEDIDA">
+                                 <font><Font name="Arial Bold" size="15.0" /></font>
+                              </Label>
+                              <ChoiceBox fx:id="txtUnidadeDeMedida" prefWidth="150.0" />
+                           </children>
+                        </HBox>
+                        <HBox alignment="CENTER" prefHeight="40.0">
+                           <children>
+                              <Label prefWidth="160.0" text="DATA DE VALIDADE">
+                                 <font><Font name="Arial Bold" size="15.0" /></font>
+                              </Label>
+                              <DatePicker fx:id="txtDataValidade" prefWidth="150.0" />
+                           </children>
+                        </HBox>
+                     </children>
+                     <VBox.margin><Insets top="10.0" /></VBox.margin>
+                  </VBox>
+                  <HBox alignment="CENTER" prefHeight="60.0" spacing="50.0">
+                     <children>
+                        <Button fx:id="btnVoltar" onAction="#voltarTela" styleClass="btn-padrao-2" text="VOLTAR" />
+                        <Button fx:id="btnCadastrar" onAction="#onCadastrar" styleClass="btn-padrao-2" text="CADASTRAR" />
+                     </children>
+                  </HBox>
                </children>
-               <VBox.margin>
-                  <Insets top="15.0" />
-               </VBox.margin>
-            </HBox>
-            <HBox alignment="TOP_CENTER" prefHeight="29.0" prefWidth="469.0">
-               <children>
-                  <Label text="DATA DE VALIDADE">
-                     <HBox.margin>
-                        <Insets right="15.0" />
-                     </HBox.margin>
-                  </Label>
-                  <DatePicker fx:id="txtDataValidade">
-                     <HBox.margin>
-                        <Insets right="30.0" />
-                     </HBox.margin>
-                  </DatePicker>
-               </children>
-               <VBox.margin>
-                  <Insets top="15.0" />
-               </VBox.margin>
-            </HBox>
-            <HBox alignment="TOP_CENTER" prefHeight="47.0" prefWidth="469.0">
-               <VBox.margin>
-                  <Insets top="15.0" />
-               </VBox.margin>
-               <children>
-                  <Button fx:id="btnVoltar" mnemonicParsing="false" onAction="#voltarTela" text="VOLTAR">
-                     <HBox.margin>
-                        <Insets right="30.0" />
-                     </HBox.margin>
-                  </Button>
-                  <Button fx:id="btnCadastro" mnemonicParsing="false" onAction="#onCadastrar" text="CADASTRAR">
-                     <HBox.margin>
-                        <Insets left="30.0" />
-                     </HBox.margin>
-                  </Button>
-               </children>
-            </HBox>
+            </VBox>
          </children>
-      </VBox>
+      </StackPane>
    </center>
 </BorderPane>
