@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
@@ -12,9 +11,9 @@
    <left>
       <VBox alignment="TOP_CENTER" prefHeight="601.0" prefWidth="200.0" style="-fx-background-color: #8daccb; -fx-border-color: #054685; -fx-border-width: 2;" BorderPane.alignment="CENTER">
          <children>
-            <Button mnemonicParsing="false" prefHeight="40.0" prefWidth="185.0" text="Controle de Estoque">
+            <Button alignment="BASELINE_LEFT" graphicTextGap="10.0" mnemonicParsing="false" styleClass="btn-padrao" text="Pagina Inical">
                <font>
-                  <Font name="Bodoni MT" size="14.0" />
+                  <Font name="Arial" size="17.0" />
                </font>
                <graphic>
                   <ImageView fitHeight="20.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
@@ -24,15 +23,11 @@
                   </ImageView>
                </graphic>
                <VBox.margin>
-                  <Insets top="10.0" />
-               </VBox.margin>
-               <styleClass>
-                  <String fx:value="btn-click" />
-                  <String fx:value="btn-padrao-home" />
-               </styleClass></Button>
-            <Button alignment="CENTER" mnemonicParsing="false" prefHeight="40.0" prefWidth="185.0" styleClass="btn-padrao" text="Lista de Produtos">
+                  <Insets bottom="30.0" top="10.0" />
+               </VBox.margin></Button>
+            <Button alignment="BASELINE_LEFT" mnemonicParsing="false" styleClass="btn-padrao" text="Estoque">
                <font>
-                  <Font name="Bodoni MT" size="17.0" />
+                  <Font name="Arial" size="17.0" />
                </font>
                <graphic>
                   <ImageView disable="true" fitHeight="20.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true" translateX="-5.0">
@@ -41,27 +36,12 @@
                      </image></ImageView>
                </graphic>
                <VBox.margin>
-                  <Insets top="30.0" />
+                  <Insets bottom="25.0" />
                </VBox.margin>
             </Button>
-            <Button alignment="TOP_LEFT" layoutX="18.0" layoutY="61.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="185.0" styleClass="btn-padrao" text="Utensílios">
+            <Button alignment="BASELINE_LEFT" graphicTextGap="10.0" layoutX="18.0" layoutY="61.0" mnemonicParsing="false" styleClass="btn-padrao" text="Relatório      ">
                <font>
-                  <Font name="Bodoni MT" size="17.0" />
-               </font>
-               <graphic>
-                  <ImageView disable="true" fitHeight="20.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true" translateX="-5.0">
-                     <image>
-                        <Image url="@../../../Imagens/utensilio.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-               <VBox.margin>
-                  <Insets top="25.0" />
-               </VBox.margin>
-            </Button>
-            <Button alignment="TOP_LEFT" layoutX="18.0" layoutY="61.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="185.0" styleClass="btn-padrao" text="Relatório      ">
-               <font>
-                  <Font name="Bodoni MT" size="17.0" />
+                  <Font name="Arial" size="17.0" />
                </font>
                <graphic>
                   <ImageView disable="true" fitHeight="20.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true" translateX="-5.0">
@@ -71,35 +51,24 @@
                   </ImageView>
                </graphic>
                <VBox.margin>
-                  <Insets top="25.0" />
+                  <Insets />
                </VBox.margin>
             </Button>
             <Region prefHeight="303.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
-            <Button alignment="CENTER" contentDisplay="CENTER" graphicTextGap="0.0" mnemonicParsing="false" styleClass="btn-padrao-transparent" text="Sair" />
-            <Button alignment="CENTER" layoutX="18.0" layoutY="190.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="185.0" styleClass="btn-padrao-transparent" text="Configuração     ">
+            <Button alignment="CENTER" contentDisplay="CENTER" graphicTextGap="0.0" mnemonicParsing="false" styleClass="btn-sair" text="Sair">
                <font>
-                  <Font name="Bodoni MT" size="16.0" />
+                  <Font name="Arial" size="12.0" />
                </font>
-               <opaqueInsets>
-                  <Insets />
-               </opaqueInsets>
                <VBox.margin>
-                  <Insets bottom="10.0" top="20.0" />
-               </VBox.margin>
-               <graphic>
-                  <ImageView fitHeight="20.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true" translateX="-5.0">
-                     <image>
-                        <Image url="@../../../Imagens/configuração.png" />
-                     </image></ImageView>
-               </graphic>
-            </Button>
+                  <Insets bottom="20.0" />
+               </VBox.margin></Button>
          </children>
       </VBox>
    </left>
    <top>
       <AnchorPane prefHeight="50.0" prefWidth="800.0" style="-fx-background-color: #054685;" BorderPane.alignment="CENTER">
          <children>
-            <ImageView fitHeight="40.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="5.0">
+            <ImageView fitHeight="40.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="5.0">
                <image>
                   <Image url="@../../../Imagens/Logo%20branca%20Senac.png" />
                </image></ImageView>
@@ -123,7 +92,7 @@
             </ImageView>
             <VBox alignment="TOP_CENTER" prefHeight="550.0" prefWidth="600.0" style="-fx-border-color: #054584; -fx-border-width: 1 2 2 0;">
                <children>
-                  <HBox alignment="CENTER" prefHeight="50.0" style="-fx-background-color: #ff914d; -fx-border-color: #054584; -fx-border-width: 1 0 1 0;">
+                  <HBox alignment="CENTER" prefHeight="50.0" style="-fx-background-color: #ff914d; -fx-border-color: #054584; -fx-border-width: 1 0 0 0;">
                      <children>
                         <Label alignment="BOTTOM_LEFT" graphicTextGap="0.0" prefWidth="200.0" text="Quinta, 01/01/2026">
                            <font>
@@ -157,9 +126,9 @@
                      </children>
                   </HBox>
                   <Region prefHeight="50.0" prefWidth="200.0" />
-                  <Label alignment="CENTER" text="Notificação" VBox.vgrow="ALWAYS">
+                  <Label alignment="CENTER" graphicTextGap="5.0" text="Notificação" VBox.vgrow="ALWAYS">
                      <font>
-                        <Font name="Bodoni MT Bold" size="20.0" />
+                        <Font name="Arial" size="20.0" />
                      </font>
                      <graphic>
                         <ImageView fitHeight="30.0" fitWidth="40.0" opacity="0.8" pickOnBounds="true" preserveRatio="true">
@@ -172,7 +141,7 @@
                         <Insets bottom="5.0" />
                      </VBox.margin>
                   </Label>
-                  <ListView fixedCellSize="10.0" orientation="HORIZONTAL" prefHeight="150.0" style="-fx-background-color: trasnparent; -fx-border-color: #054584; -fx-border-width: 2;">
+                  <ListView fixedCellSize="10.0" orientation="HORIZONTAL" prefHeight="150.0" styleClass="table-view">
                      <VBox.margin>
                         <Insets left="50.0" right="50.0" />
                      </VBox.margin>
