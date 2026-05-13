@@ -33,7 +33,6 @@ public class LoginController {
 
         if (senhaHashDoBanco != null) {
                 if (BCrypt.checkpw(senhaDigitada, senhaHashDoBanco)){
-                    //MainApplication.trocadorDeTelas("homeAntiga.fxml");
                     SessaoService.setEmailAtual(usuarioDigitado);
                     MainApplication.trocadorDeTelas("home.fxml");
                 }
