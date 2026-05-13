@@ -47,14 +47,16 @@ public class ListaController {
 
     @FXML
     private TextField FiltrarProdutos;
+    @FXML
+    private Button pesquisar;
 
     // ── Hyperlinks ─────────────────────────────────────────────────────────────
 
     @FXML
-    private Hyperlink editar;
+    private Button editar;
 
     @FXML
-    private Hyperlink remover;
+    private Button remover;
 
     // ── Estado e DAO ───────────────────────────────────────────────────────────
 

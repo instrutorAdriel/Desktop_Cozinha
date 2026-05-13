@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" stylesheets="@css/estilo.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" stylesheets="@css/estilo.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.desktop_cozinha.controller.ListaController">
     <top>
         <AnchorPane prefHeight="50.0" style="-fx-background-color: #054685;" BorderPane.alignment="CENTER">
             <children>
@@ -74,10 +74,13 @@
                     </font>
                 </Button>
                 <Region prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
-                <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="93.0" styleClass="btn-sair" text="Sair">
+                <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="50.0" styleClass="btn-sair" text="Sair">
                     <VBox.margin>
                         <Insets bottom="20.0" />
                     </VBox.margin>
+               <font>
+                  <Font name="Arial" size="12.0" />
+               </font>
                 </Button>
             </children>
         </VBox>
@@ -134,11 +137,11 @@
                         </HBox>
                         <HBox alignment="CENTER" prefHeight="30.0">
                             <children>
-                                <TextField alignment="TOP_LEFT" prefHeight="25.0" prefWidth="190.0" promptText="Buscar">
+                                <TextField fx:id="FiltrarProdutos" alignment="TOP_LEFT" prefHeight="25.0" prefWidth="190.0" promptText="Buscar">
                                     <font>
                                         <Font name="Arial" size="15.0" />
                                     </font></TextField>
-                                <Button alignment="CENTER" graphicTextGap="0.0" layoutX="388.0" layoutY="13.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="90.0" styleClass="btn-padrao-2" text="Pesquisar">
+                                <Button alignment="CENTER" graphicTextGap="0.0" layoutX="388.0" layoutY="13.0" mnemonicParsing="false" onAction="#onHelloButtonClick" prefHeight="25.0" prefWidth="90.0" styleClass="btn-padrao-2" text="Pesquisar">
                                     <font>
                                         <Font name="Arial" size="15.0" />
                                     </font>
@@ -162,28 +165,56 @@
                                         <Insets right="5.0" />
                                     </HBox.margin>
                                 </Button>
-                                <Button alignment="CENTER" graphicTextGap="0.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="95.0" styleClass="btn-padrao-2" text="Editar">
+                                <Button fx:id="editar" alignment="CENTER" graphicTextGap="0.0" mnemonicParsing="false" onAction="#onEditarProduto" prefHeight="25.0" prefWidth="95.0" styleClass="btn-padrao-2" text="Editar">
                                     <font>
                                         <Font name="Arial" size="15.0" />
                                     </font>
                                     <HBox.margin>
                                         <Insets right="5.0" />
                                     </HBox.margin></Button>
-                                <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="95.0" styleClass="btn-padrao-2" text="Excluir">
+                                <Button fx:id="remover" mnemonicParsing="false" onAction="#onRemoverProduto" prefHeight="25.0" prefWidth="95.0" styleClass="btn-padrao-2" text="Excluir">
                                     <font>
                                         <Font name="Arial" size="15.0" />
                                     </font></Button>
                             </children>
                             <VBox.margin>
-                                <Insets bottom="10.0" left="20.0" right="20.0" top="10.0" />
+                                <Insets left="20.0" right="20.0" top="10.0" />
                             </VBox.margin>
                         </HBox>
-                        <TableView prefHeight="187.0" prefWidth="517.0" VBox.vgrow="ALWAYS">
+                  <HBox alignment="CENTER_RIGHT" prefHeight="20.0" prefWidth="200.0">
+                     <children>
+                        <CheckBox fx:id="chkPereciveis" mnemonicParsing="false" text="Perecível">
+                           <HBox.margin>
+                              <Insets right="5.0" />
+                           </HBox.margin>
+                           <font>
+                              <Font name="Arial" size="12.0" />
+                           </font>
+                        </CheckBox>
+                        <CheckBox fx:id="chkNaoPereciveis" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="Não Perecível">
+                           <HBox.margin>
+                              <Insets right="5.0" />
+                           </HBox.margin>
+                           <font>
+                              <Font name="Arial" size="12.0" />
+                           </font>
+                        </CheckBox>
+                        <CheckBox fx:id="chkUtensilios" layoutX="83.0" layoutY="10.0" mnemonicParsing="false" text="Utencílios">
+                           <HBox.margin>
+                              <Insets right="5.0" />
+                           </HBox.margin>
+                        </CheckBox>
+                     </children>
+                     <VBox.margin>
+                        <Insets bottom="2.0" left="20.0" right="20.0" top="2.0" />
+                     </VBox.margin>
+                  </HBox>
+                        <TableView fx:id="ListaEstoque" prefHeight="187.0" prefWidth="517.0" VBox.vgrow="ALWAYS">
                             <columns>
-                                <TableColumn prefWidth="200.0" text="Produtos" />
-                                <TableColumn prefWidth="150.0" text="Tipo" />
-                                <TableColumn prefWidth="50.0" text="Quantidades" />
-                        <TableColumn prefWidth="75.0" text="Unidades" />
+                                <TableColumn fx:id="nomeProduto" prefWidth="200.0" text="Produtos" />
+                                <TableColumn fx:id="tipoProduto" prefWidth="150.0" text="Tipo" />
+                                <TableColumn fx:id="quantidadeProduto" prefWidth="50.0" text="Quantidades" />
+                        <TableColumn fx:id="unidadeProduto" prefWidth="75.0" text="Unidades" />
                             </columns>
                             <styleClass>
                                 <String fx:value="table-cell" />
