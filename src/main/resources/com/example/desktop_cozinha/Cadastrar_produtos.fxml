@@ -44,9 +44,9 @@
                                  </HBox.margin>
                               </Label>
                               <Region HBox.hgrow="ALWAYS" />
-                              <TextField prefWidth="150.0" promptText="Insira aqui...">
+                              <TextField layoutX="203.0" layoutY="19.0" prefWidth="150.0">
                                  <font>
-                                    <Font name="Arial Bold Italic" size="12.0" />
+                                    <Font name="Arial" size="12.0" />
                                  </font>
                               </TextField>
                            </children>
@@ -62,7 +62,11 @@
                                  </HBox.margin>
                               </Label>
                               <Region HBox.hgrow="ALWAYS" />
-                              <Spinner editable="true" prefWidth="150.0" />
+                              <TextField prefWidth="150.0">
+                                 <font>
+                                    <Font name="Arial" size="12.0" />
+                                 </font>
+                              </TextField>
                            </children>
                         </HBox>
                         <HBox alignment="CENTER_LEFT" prefHeight="40.0">
@@ -76,7 +80,11 @@
                                  </HBox.margin>
                               </Label>
                               <Region HBox.hgrow="ALWAYS" />
-                              <Spinner editable="true" prefWidth="150.0" />
+                              <TextField prefWidth="150.0">
+                                 <font>
+                                    <Font name="Arial" size="12.0" />
+                                 </font>
+                              </TextField>
                            </children>
                         </HBox>
                                 <HBox alignment="CENTER_LEFT" prefHeight="40.0" VBox.vgrow="ALWAYS">
