@@ -7,10 +7,12 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+
+import javax.swing.*;
 import java.util.List;
 
 public class HistoricoController {
-
+    @FXML private Button btnbuscar;
     @FXML private TextField txtpesquisa;
     @FXML private TableView<Historico> tableHistorico;
     @FXML private TableColumn<Historico, String> nome_produto;
@@ -55,6 +57,7 @@ public class HistoricoController {
 
         // Se houver texto no campo de pesquisa, prioriza a busca por produto
         if (pesquisa != null && !pesquisa.isEmpty()) {
+            filtro.setValue("Ambos");
             resultado = HistoricoDAO.buscarPorProduto(pesquisa);
         } else {
             // Caso contrário, usa o filtro do ChoiceBox

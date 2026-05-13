@@ -15,7 +15,7 @@ public class MainApplication extends Application {
     public void start(Stage stage) throws IOException {
         primaryStage = stage;
 
-        trocadorDeTelas("historico.fxml");
+        trocadorDeTelas("login.fxml");
 
         primaryStage.setTitle("Sistema Cozinha");
         primaryStage.show();
@@ -26,8 +26,9 @@ public class MainApplication extends Application {
                 MainApplication.class.getResource(fxml)
         );
 
-        Scene scene = new Scene(fxmlLoader.load());
+        Scene scene = new Scene(fxmlLoader.load(),1366,768);
 
         primaryStage.setScene(scene);
     }
+
 }
