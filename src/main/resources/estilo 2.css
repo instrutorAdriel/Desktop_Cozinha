@@ -100,7 +100,7 @@
     -fx-border-radius: 5;
     -fx-border-width: 0 0 2 0;
 }
-.btn-sair-adimin:hover {
+.btn-sair:hover {
     /*
        Parâmetros do dropshadow:
        - three-pass-box: algoritmo de blur suave

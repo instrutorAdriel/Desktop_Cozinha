@@ -1,5 +1,6 @@
 package com.example.desktop_cozinha.controller;
 
+import com.example.desktop_cozinha.MainApplication;
 import com.example.desktop_cozinha.model.Historico;
 import com.example.desktop_cozinha.model.HistoricoDAO;
 import javafx.collections.FXCollections;
@@ -9,6 +10,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 
 import javax.swing.*;
+import java.io.IOException;
 import java.util.List;
 
 public class HistoricoController {
@@ -22,7 +24,7 @@ public class HistoricoController {
     @FXML private TableColumn<Historico, String> observacao;
     @FXML private TableColumn<Historico, String> data_hora;
     @FXML private ChoiceBox<String> filtro;
-
+    @FXML private Button btnsair;
     @FXML
     public void initialize() {
         configurarColunas();
@@ -74,5 +76,9 @@ public class HistoricoController {
     private void atualizarTabela(List<Historico> lista) {
         ObservableList<Historico> observableList = FXCollections.observableArrayList(lista);
         tableHistorico.setItems(observableList);
+    }
+    @FXML
+    public void botaoSair () throws IOException {
+        MainApplication.sair();
     }
 }
