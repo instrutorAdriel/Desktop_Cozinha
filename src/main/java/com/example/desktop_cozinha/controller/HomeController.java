@@ -53,7 +53,7 @@ public class HomeController implements Initializable {
         String email = SessaoService.getEmailAtual();
         if (email != null) {
             HomeDAO user = new HomeDAO();
-            String nome = user.bucarNome(email); // Nota: verifique se o nome do método é 'bucarNome' ou 'buscarNome'
+            String nome = user.bucarNome(email);
             usuarioLabel.setText("Bem vindo, " + nome);
         }
     }
