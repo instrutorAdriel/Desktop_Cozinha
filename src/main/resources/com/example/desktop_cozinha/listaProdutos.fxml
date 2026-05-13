@@ -40,7 +40,7 @@
                   <Insets bottom="30.0" top="10.0" />
                </VBox.margin>
             </Button>
-            <Button alignment="BASELINE_LEFT" mnemonicParsing="false" prefHeight="40.0" prefWidth="185.0" text="Estoque">
+            <Button alignment="BASELINE_LEFT" mnemonicParsing="false" prefHeight="40.0" prefWidth="185.0" styleClass="btn-padrao" text="Estoque">
                <graphic>
                   <ImageView fitHeight="20.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -53,11 +53,7 @@
                </VBox.margin>
                <font>
                   <Font name="Arial" size="17.0" />
-               </font>
-               <styleClass>
-                  <String fx:value="btn-padrao" />
-                  <String fx:value="btn-click" />
-               </styleClass></Button>
+               </font></Button>
             <Button alignment="BASELINE_LEFT" graphicTextGap="10.0" mnemonicParsing="false" styleClass="btn-padrao" text="Relatório">
                <VBox.margin>
                   <Insets />
@@ -113,9 +109,9 @@
                            </HBox.margin>
                         </Label>
                      </children></HBox>
-                  <HBox alignment="CENTER" prefHeight="34.0" prefWidth="560.0">
+                  <HBox prefHeight="34.0" prefWidth="560.0">
                      <children>
-                        <Label alignment="CENTER" text="Lista de Itens:">
+                        <Label alignment="TOP_LEFT" text="Lista de Itens:">
                            <font>
                               <Font size="17.0" />
                            </font>
@@ -129,22 +125,19 @@
                         </Label>
                      </children>
                      <VBox.margin>
-                        <Insets bottom="10.0" left="20.0" right="20.0" top="20.0" />
+                        <Insets bottom="10.0" left="20.0" right="20.0" />
                      </VBox.margin>
                   </HBox>
                   <HBox alignment="CENTER" prefHeight="30.0">
                      <children>
-                        <TextField alignment="TOP_LEFT" prefHeight="25.0" prefWidth="190.0" promptText="Buscar">
+                        <TextField alignment="TOP_LEFT" prefHeight="25.0" prefWidth="198.0" promptText="Buscar">
                            <font>
                               <Font name="Arial" size="15.0" />
                            </font></TextField>
-                        <Button alignment="CENTER" graphicTextGap="0.0" layoutX="388.0" layoutY="13.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="90.0" styleClass="btn-padrao-2" text="Pesquisar">
+                        <Button alignment="CENTER" graphicTextGap="0.0" layoutX="388.0" layoutY="13.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="95.0" styleClass="btn-padrao-2" text="Pesquisar">
                            <font>
                               <Font name="Arial" size="15.0" />
                            </font>
-                           <HBox.margin>
-                              <Insets left="2.0" />
-                           </HBox.margin>
                         </Button>
                         <Region prefHeight="30.0" prefWidth="27.0" HBox.hgrow="ALWAYS" />
                         <Button alignment="CENTER" graphicTextGap="5.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="95.0" styleClass="btn-padrao-2" text="Adicionar">
