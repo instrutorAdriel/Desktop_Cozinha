@@ -2,7 +2,6 @@
 
 <?import java.lang.*?>
 <?import javafx.geometry.*?>
-<?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
@@ -26,15 +25,12 @@
    <left>
       <VBox alignment="TOP_CENTER" prefHeight="482.0" prefWidth="200.0" style="-fx-background-color: #8daccb;;" styleClass="painel-lateral" BorderPane.alignment="CENTER">
          <children>
-            <Button alignment="BASELINE_LEFT" graphicTextGap="10.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="179.0" styleClass="btn-padrao-home" text="Pagina Inicial">
+            <Button alignment="BASELINE_LEFT" graphicTextGap="10.0" mnemonicParsing="false" styleClass="btn-padrao-home" text="Pagina Inicial">
                <font>
                   <Font name="Arial" size="17.0" />
                </font>
-               <cursor>
-                  <Cursor fx:constant="HAND" />
-               </cursor>
                <graphic>
-                  <ImageView fitHeight="25.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fitHeight="20.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@imagens/home.png" />
                      </image>
@@ -44,9 +40,9 @@
                   <Insets bottom="30.0" top="10.0" />
                </VBox.margin>
             </Button>
-            <Button alignment="BASELINE_LEFT" graphicTextGap="8.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="185.0" styleClass="btn-padrao" text="Estoque">
+            <Button alignment="BASELINE_LEFT" mnemonicParsing="false" prefHeight="40.0" prefWidth="185.0" text="Estoque">
                <graphic>
-                  <ImageView fitHeight="25.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fitHeight="20.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@imagens/estoque.png" />
                      </image>
@@ -58,20 +54,24 @@
                <font>
                   <Font name="Arial" size="17.0" />
                </font>
-               <cursor>
-                  <Cursor fx:constant="HAND" />
-               </cursor></Button>
+               <styleClass>
+                  <String fx:value="btn-padrao" />
+                  <String fx:value="btn-click" />
+               </styleClass></Button>
             <Button alignment="BASELINE_LEFT" graphicTextGap="10.0" mnemonicParsing="false" styleClass="btn-padrao" text="Relatório">
                <VBox.margin>
                   <Insets />
                </VBox.margin>
                <graphic>
-                  <ImageView fitHeight="25.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fitHeight="20.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@imagens/relatorio.png" />
                      </image>
                   </ImageView>
                </graphic>
+               <font>
+                  <Font name="Arial" size="17.0" />
+               </font>
             </Button>
             <Region prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
             <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="93.0" styleClass="btn-sair" text="Sair">
@@ -92,44 +92,30 @@
             </ImageView>
             <VBox alignment="TOP_CENTER" prefHeight="400.0" prefWidth="600.0">
                <children>
-                  <HBox prefHeight="50.0" prefWidth="600.0" style="-fx-background-color: #e4891b;">
+                  <HBox alignment="CENTER" prefHeight="50.0" style="-fx-background-color: #e4891b;">
                      <children>
-                        <Label prefHeight="27.0" prefWidth="187.0" text="Quinta, 01/01/2026">
+                        <Label prefHeight="27.0" prefWidth="259.0" text="Quinta, 01/01/2026">
                            <font>
-                              <Font size="18.0" />
+                              <Font name="Arial Bold" size="20.0" />
                            </font></Label>
-                        <Label prefHeight="27.0" prefWidth="345.0" text="Bem-Vindo, Claudia">
+                        <Region prefHeight="50.0" prefWidth="70.0" HBox.hgrow="ALWAYS" />
+                        <Label prefHeight="27.0" prefWidth="234.0" text="Bem-Vindo, Maria">
                            <font>
-                              <Font size="18.0" />
+                              <Font name="Arial Bold" size="20.0" />
                            </font></Label>
-                        <Label prefHeight="27.0" prefWidth="108.0" text="08:30:00">
+                        <Region prefHeight="50.0" prefWidth="70.0" HBox.hgrow="ALWAYS" />
+                        <Label alignment="CENTER_RIGHT" contentDisplay="RIGHT" graphicTextGap="0.0" prefHeight="25.0" prefWidth="130.0" text="08:30:00" textAlignment="RIGHT">
                            <font>
-                              <Font size="18.0" />
+                              <Font name="Arial Bold" size="20.0" />
                            </font>
+                           <HBox.margin>
+                              <Insets right="10.0" />
+                           </HBox.margin>
                         </Label>
                      </children></HBox>
-                  <HBox prefHeight="44.0" prefWidth="560.0">
+                  <HBox alignment="CENTER" prefHeight="34.0" prefWidth="560.0">
                      <children>
-                        <TextField alignment="TOP_RIGHT" nodeOrientation="RIGHT_TO_LEFT" prefHeight="25.0" prefWidth="128.0" promptText="Buscar" />
-                        <Button alignment="TOP_RIGHT" mnemonicParsing="false" prefHeight="27.0" prefWidth="109.0" text="Adicionar">
-                           <graphic>
-                              <ImageView fitHeight="19.0" fitWidth="23.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@imagens/sinaldemais.png" />
-                                 </image>
-                              </ImageView>
-                           </graphic>
-                        </Button>
-                        <Button mnemonicParsing="false" text="Editar" />
-                        <Button mnemonicParsing="false" text="Button" />
-                     </children>
-                     <VBox.margin>
-                        <Insets bottom="10.0" left="20.0" right="20.0" />
-                     </VBox.margin>
-                  </HBox>
-                  <HBox prefHeight="34.0" prefWidth="560.0">
-                     <children>
-                        <Label alignment="TOP_LEFT" text="Lista de Produtos:">
+                        <Label alignment="CENTER" text="Lista de Itens:">
                            <font>
                               <Font size="17.0" />
                            </font>
@@ -143,7 +129,53 @@
                         </Label>
                      </children>
                      <VBox.margin>
-                        <Insets bottom="10.0" left="20.0" right="20.0" />
+                        <Insets bottom="10.0" left="20.0" right="20.0" top="20.0" />
+                     </VBox.margin>
+                  </HBox>
+                  <HBox alignment="CENTER" prefHeight="30.0">
+                     <children>
+                        <TextField alignment="TOP_LEFT" prefHeight="25.0" prefWidth="190.0" promptText="Buscar">
+                           <font>
+                              <Font name="Arial" size="15.0" />
+                           </font></TextField>
+                        <Button alignment="CENTER" graphicTextGap="0.0" layoutX="388.0" layoutY="13.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="90.0" styleClass="btn-padrao-2" text="Pesquisar">
+                           <font>
+                              <Font name="Arial" size="15.0" />
+                           </font>
+                           <HBox.margin>
+                              <Insets left="2.0" />
+                           </HBox.margin>
+                        </Button>
+                        <Region prefHeight="30.0" prefWidth="27.0" HBox.hgrow="ALWAYS" />
+                        <Button alignment="CENTER" graphicTextGap="5.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="95.0" styleClass="btn-padrao-2" text="Adicionar">
+                           <graphic>
+                              <ImageView fitHeight="15.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@imagens/sinaldemais.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                           <font>
+                              <Font name="Arial" size="15.0" />
+                           </font>
+                           <HBox.margin>
+                              <Insets right="5.0" />
+                           </HBox.margin>
+                        </Button>
+                        <Button alignment="CENTER" graphicTextGap="0.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="95.0" styleClass="btn-padrao-2" text="Editar">
+                           <font>
+                              <Font name="Arial" size="15.0" />
+                           </font>
+                           <HBox.margin>
+                              <Insets right="5.0" />
+                           </HBox.margin></Button>
+                        <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="95.0" styleClass="btn-padrao-2" text="Excluir">
+                           <font>
+                              <Font name="Arial" size="15.0" />
+                           </font></Button>
+                     </children>
+                     <VBox.margin>
+                        <Insets bottom="10.0" left="20.0" right="20.0" top="10.0" />
                      </VBox.margin>
                   </HBox>
                   <TableView prefHeight="187.0" prefWidth="300.0" VBox.vgrow="ALWAYS">
@@ -161,9 +193,14 @@
                         <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                      </columnResizePolicy>
                      <VBox.margin>
-                        <Insets bottom="30.0" left="20.0" right="20.0" />
+                        <Insets bottom="10.0" left="20.0" right="20.0" />
                      </VBox.margin>
                   </TableView>
+                  <HBox prefHeight="100.0" prefWidth="200.0">
+                     <VBox.margin>
+                        <Insets bottom="30.0" />
+                     </VBox.margin>
+                  </HBox>
                </children>
             </VBox>
          </children>
