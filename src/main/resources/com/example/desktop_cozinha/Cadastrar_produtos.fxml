@@ -90,18 +90,7 @@
                                             </HBox.margin>
                                         </Label>
                               <Region HBox.hgrow="ALWAYS" />
-                                        <MenuButton alignment="CENTER_RIGHT" contentDisplay="RIGHT" mnemonicParsing="false" prefWidth="150.0">
-                                            <items>
-                                                <MenuItem mnemonicParsing="false" text="Alimento" />
-                                                <MenuItem mnemonicParsing="false" text="Utensílio" />
-                                            </items>
-                                            <font>
-                                                <Font name="Arial" size="11.0" />
-                                            </font>
-                                            <HBox.margin>
-                                                <Insets />
-                                            </HBox.margin>
-                                        </MenuButton>
+                              <ChoiceBox prefWidth="150.0" />
                                     </children>
                                 </HBox>
                                 <HBox alignment="CENTER_LEFT" prefHeight="40.0">
@@ -115,19 +104,7 @@
                                             </HBox.margin>
                                         </Label>
                               <Region HBox.hgrow="ALWAYS" />
-                                        <MenuButton alignment="CENTER_RIGHT" contentDisplay="RIGHT" mnemonicParsing="false" prefWidth="150.0">
-                                            <items>
-                                                <MenuItem mnemonicParsing="false" text="Kg" />
-                                                <MenuItem mnemonicParsing="false" text="Litro" />
-                                                <MenuItem mnemonicParsing="false" text="Unidade" />
-                                            </items>
-                                            <font>
-                                                <Font name="Arial" size="11.0" />
-                                            </font>
-                                            <HBox.margin>
-                                                <Insets />
-                                            </HBox.margin>
-                                        </MenuButton>
+                              <ChoiceBox prefWidth="150.0" />
                                     </children>
                                 </HBox>
                                 <HBox alignment="CENTER_LEFT" prefHeight="40.0">
