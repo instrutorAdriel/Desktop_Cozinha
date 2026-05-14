@@ -18,10 +18,6 @@ public class CadastroController {
     private   TextField txtEmail ;
 
     @FXML
-    private   TextField txtCargo ;
-
-
-    @FXML
     private PasswordField txtSenha;
 
     @FXML
@@ -50,7 +46,6 @@ public class CadastroController {
         String nome = txtNome.getText();
         String email = txtEmail.getText();
         String senha = txtSenha.getText();
-        String cargo = txtCargo.getText();
         String confirmarSenha = txtConfirmarSenha.getText();
 
         //2. Validar se tem um campo vazio
@@ -85,7 +80,7 @@ public class CadastroController {
         CadastroDAO dao = new CadastroDAO();
 
         //4. Chama o metodo de cadastro do cliente
-        dao.cadastrarUsuario(nome, email, senha, cargo);
+        dao.cadastrarUsuario(nome, email, senha);
 
         //5.informa ao usuario que o cadastro foi realizado
 
@@ -98,13 +93,8 @@ public class CadastroController {
         //6. limpa os campos de texto
         txtNome.clear();
         txtEmail.clear();
-        txtCargo.clear();
         txtSenha.clear();
         txtConfirmarSenha.clear();
-
-        //MainApplication.trocadorDeTelas("hello-view.fxml");
-
-
     }
 
 
