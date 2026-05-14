@@ -60,7 +60,7 @@ public class LoginController {
 
     @FXML
     public void Cadastrarme() throws IOException {
-        //MainApplication.trocadorDeTelas("cadastro.fxml");
+        MainApplication.trocadorDeTelas("cadastro.fxml");
     }
 }
 

@@ -2,6 +2,7 @@ package com.example.desktop_cozinha.controller;
 
 import com.example.desktop_cozinha.MainApplication;
 import com.example.desktop_cozinha.model.CadastroDAO;
+import com.sun.tools.javac.Main;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -12,10 +13,10 @@ import java.util.Objects;
 
 public class CadastroController {
     @FXML
-    private TextField txtNome ;
+    private TextField txtNome;
 
     @FXML
-    private   TextField txtEmail ;
+    private   TextField txtEmail;
 
     @FXML
     private PasswordField txtSenha;
@@ -90,11 +91,14 @@ public class CadastroController {
         sucesso.setContentText("Cadastro realizado com sucesso!");
         sucesso.showAndWait();
 
+
         //6. limpa os campos de texto
         txtNome.clear();
         txtEmail.clear();
         txtSenha.clear();
         txtConfirmarSenha.clear();
+
+        MainApplication.trocadorDeTelas("login.fxml");
     }
 
 
