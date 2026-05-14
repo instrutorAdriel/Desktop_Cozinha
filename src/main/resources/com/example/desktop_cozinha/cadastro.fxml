@@ -16,7 +16,7 @@
                   <Image url="@Imagens/Logo%20colorida%20Senac.png" />
                </image>
                <VBox.margin>
-                  <Insets />
+                  <Insets bottom="3.0" />
                </VBox.margin>
             </ImageView>
             <Label text="CADASTRO">
@@ -27,15 +27,14 @@
                   <Insets />
                </VBox.margin>
             </Label>
-            <HBox>
+            <HBox alignment="CENTER" prefHeight="192.0" prefWidth="450.0">
                <VBox.margin>
-                  <Insets left="125.0" right="125.0" />
+                  <Insets left="150.0" right="150.0" />
                </VBox.margin>
                <children>
-                  <Region HBox.hgrow="ALWAYS" />
-                  <VBox>
+                  <VBox alignment="CENTER_LEFT">
                      <children>
-                        <Label alignment="CENTER" contentDisplay="CENTER" text="Nome Completo">
+                        <Label alignment="CENTER" contentDisplay="CENTER" text="Nome">
                            <font>
                               <Font name="Arial Bold" size="13.0" />
                            </font>
@@ -43,20 +42,7 @@
                               <Insets top="7.5" />
                            </VBox.margin>
                         </Label>
-                        <TextField maxWidth="450.0" prefHeight="24.0" prefWidth="452.0">
-                           <font>
-                              <Font name="Arial Bold" size="13.0" />
-                           </font>
-                        </TextField>
-                        <Label text="Cargo">
-                           <font>
-                              <Font name="Arial Bold" size="13.0" />
-                           </font>
-                           <VBox.margin>
-                              <Insets top="7.5" />
-                           </VBox.margin>
-                        </Label>
-                        <TextField maxWidth="450.0">
+                        <TextField maxWidth="450.0" prefWidth="450.0">
                            <font>
                               <Font name="Arial Bold" size="13.0" />
                            </font>
@@ -102,7 +88,6 @@
                         </PasswordField>
                      </children>
                   </VBox>
-                  <Region HBox.hgrow="ALWAYS" />
                </children>
             </HBox>
             <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" styleClass="btn-laranja" text="CADASTRAR">
@@ -121,7 +106,7 @@
    <top>
       <AnchorPane prefHeight="50.0" prefWidth="800.0" style="-fx-background-color: #054685;" BorderPane.alignment="CENTER">
          <children>
-            <ImageView fitHeight="40.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="5.0">
+            <ImageView fitHeight="40.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="5.0">
                <image>
                   <Image url="@Imagens/Logo%20branca%20Senac.png" />
                </image></ImageView>
@@ -133,7 +118,7 @@
          </children></AnchorPane>
    </top>
    <left>
-      <VBox alignment="TOP_CENTER" prefHeight="542.0" prefWidth="60.0" BorderPane.alignment="CENTER">
+      <VBox alignment="TOP_CENTER" prefWidth="60.0" BorderPane.alignment="CENTER">
          <children>
             <Hyperlink prefHeight="23.0" prefWidth="71.0" text="Voltar">
                <font>
@@ -147,6 +132,6 @@
       </VBox>
    </left>
    <right>
-      <Region prefHeight="550.0" prefWidth="60.0" BorderPane.alignment="CENTER" />
+      <VBox prefWidth="60.0" BorderPane.alignment="CENTER" />
    </right>
 </BorderPane>
