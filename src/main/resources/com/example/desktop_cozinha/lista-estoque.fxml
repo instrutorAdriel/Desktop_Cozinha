@@ -154,7 +154,7 @@
                                     <graphic>
                                         <ImageView fitHeight="15.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
-                                                <Image url="@imagens/imagem.png" />
+                                                <Image url="@imagens/mais.png" />
                                             </image>
                                         </ImageView>
                                     </graphic>
@@ -172,7 +172,7 @@
                                     <HBox.margin>
                                         <Insets right="5.0" />
                                     </HBox.margin></Button>
-                                <Button fx:id="remover" mnemonicParsing="false" onAction="#onRemoverProduto" prefHeight="25.0" prefWidth="95.0" styleClass="btn-padrao-2" text="Excluir">
+                                <Button fx:id="remover" mnemonicParsing="false" onAction="#onRemoverProdutoClick" prefHeight="25.0" prefWidth="95.0" styleClass="btn-padrao-2" text="Excluir">
                                     <font>
                                         <Font name="Arial" size="15.0" />
                                     </font></Button>
@@ -209,18 +209,13 @@
                         <Insets bottom="2.0" left="20.0" right="20.0" top="2.0" />
                      </VBox.margin>
                   </HBox>
-                        <TableView fx:id="ListaEstoque" prefHeight="187.0" prefWidth="517.0" VBox.vgrow="ALWAYS">
+                        <TableView fx:id="ListaEstoque" prefHeight="187.0" prefWidth="517.0" styleClass="list-view" VBox.vgrow="ALWAYS">
                             <columns>
                                 <TableColumn fx:id="nomeProduto" prefWidth="200.0" text="Produtos" />
                                 <TableColumn fx:id="tipoProduto" prefWidth="150.0" text="Tipo" />
                                 <TableColumn fx:id="quantidadeProduto" prefWidth="50.0" text="Quantidades" />
                         <TableColumn fx:id="unidadeProduto" prefWidth="75.0" text="Unidades" />
                             </columns>
-                            <styleClass>
-                                <String fx:value="table-cell" />
-                                <String fx:value="table-view" />
-                                <String fx:value="table-row-cell" />
-                            </styleClass>
                             <columnResizePolicy>
                                 <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                             </columnResizePolicy>

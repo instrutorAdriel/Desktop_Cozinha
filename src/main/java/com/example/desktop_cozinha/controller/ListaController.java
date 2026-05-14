@@ -2,6 +2,7 @@ package com.example.desktop_cozinha.controller;
 
 import com.example.desktop_cozinha.model.ListaEstoqueDAO;
 import com.example.desktop_cozinha.model.ProdutoListaEstoque;
+import com.example.desktop_cozinha.model.removerDAO;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -11,6 +12,10 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
+
+import java.util.Optional;
+
+import static com.example.desktop_cozinha.MainApplication.abrirPopUp;
 
 /**
  * Controller da tela principal de listagem do estoque.
@@ -57,13 +62,26 @@ public class ListaController {
 
     @FXML
     private Button remover;
+    private Integer idProdutoEmRemover;
 
     // ── Estado e DAO ───────────────────────────────────────────────────────────
 
     private final ListaEstoqueDAO dao = new ListaEstoqueDAO();
 
-    // ── Inicialização ──────────────────────────────────────────────────────────
 
+//-------método remover -----------
+
+    /**
+     * Recebe o produto selecionado na tela anterior e salva seu ID.
+     */
+    public void preencherDadosParaRemocao(ProdutoListaEstoque produto) {
+        if (produto != null) {
+            this.idProdutoEmRemover = produto.getId();
+            IO.println("ID: " + this.idProdutoEmRemover);
+        }
+    }
+
+    // ── Inicialização ──────────────────────────────────────────────────────────
     @FXML
     public void initialize() {
         configurarColunas();
@@ -88,8 +106,10 @@ public class ListaController {
 
     // ── Ações de filtro ────────────────────────────────────────────────────────
 
+
     /** Chamado pelo botão "Buscar" e pelos listeners internos. */
     @FXML
+
     protected void onHelloButtonClick() {
         filtrar();
     }
@@ -108,6 +128,62 @@ public class ListaController {
                 FXCollections.observableArrayList(dao.filtrarProdutos(textoBusca, naoPereciveis, perecivel, utensilio));
         ListaEstoque.setItems(lista);
     }
+
+
+
+
+
+
+    /**
+     * Executa a remoção do produto após confirmação do usuário.
+     */
+    @FXML
+    protected void onRemoverProdutoClick() {
+        if (idProdutoEmRemover == null) {
+            mostrarAlerta(Alert.AlertType.WARNING, "Atenção", "Nenhum produto selecionado para remoção.");
+            return;
+        }
+
+         ListaController.
+        // Pede confirmação antes de deletar
+        Optional<ButtonType> resultado = mostrarConfirmacao(
+                "Confirmar Remoção",
+                "Tem certeza que deseja remover este produto?\nEssa ação não pode ser desfeita."
+        );
+
+        if (resultado.isEmpty() || resultado.get() != ButtonType.OK) {
+            return; // Usuário cancelou
+        }
+
+        removerDAO dao = new removerDAO();
+        boolean sucesso = dao.deletarProduto(idProdutoEmRemover);
+
+        if (sucesso) {
+            mostrarAlerta(Alert.AlertType.INFORMATION, "Sucesso", "Produto removido com sucesso!");
+            // Retorna para a lista após remover
+        } else {
+            mostrarAlerta(Alert.AlertType.ERROR, "Erro", "Não foi possível remover o produto. Tente novamente.");
+        }
+    }
+
+    // ── Utilitários de UI ──────────────────────────────────────────────────────
+
+    private void mostrarAlerta(Alert.AlertType tipo, String titulo, String mensagem) {
+        Alert alerta = new Alert(tipo);
+        alerta.setTitle(titulo);
+        alerta.setHeaderText(null);
+        alerta.setContentText(mensagem);
+        alerta.showAndWait();
+    }
+
+    private Optional<ButtonType> mostrarConfirmacao(String titulo, String mensagem) {
+        Alert confirmacao = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmacao.setTitle(titulo);
+        confirmacao.setHeaderText(null);
+        confirmacao.setContentText(mensagem);
+        return confirmacao.showAndWait();
+    }
+
 
     // ── Ação: Editar ───────────────────────────────────────────────────────────
 
@@ -137,40 +213,6 @@ public class ListaController {
             mostrarErro("Erro ao abrir a tela de edição. Tente novamente.");
         }
     }
-
-    // ── Ação: Remover ──────────────────────────────────────────────────────────
-
-    /**
-     * CORRIGIDO: era referenciado no FXML como "#onRemoverProduto" mas o método
-     * não existia no controller. Agora está implementado corretamente.
-     */
-    @FXML
-    protected void onRemoverProduto(javafx.event.ActionEvent actionEvent) {
-        ProdutoListaEstoque produtoSelecionado = ListaEstoque.getSelectionModel().getSelectedItem();
-
-        if (produtoSelecionado == null) {
-            mostrarAviso("Por favor, selecione um produto na lista para remover.");
-            return;
-        }
-
-        try {
-            FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/com/example/desktop_cozinha/remover-Lista.fxml"));
-            Parent root = loader.load();
-
-            RemoverProdutosController controllerRemover = loader.getController();
-            controllerRemover.preencherDadosParaRemocao(produtoSelecionado);
-
-            Stage stage = (Stage) ListaEstoque.getScene().getWindow();
-            stage.setScene(new Scene(root));
-            stage.show();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            mostrarErro("Erro ao abrir a tela de remoção. Tente novamente.");
-        }
-    }
-
     // ── Utilitários de UI ──────────────────────────────────────────────────────
 
     private void mostrarAviso(String mensagem) {
