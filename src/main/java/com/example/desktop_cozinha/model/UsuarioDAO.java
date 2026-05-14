@@ -74,14 +74,4 @@ public class UsuarioDAO {
             throw new RuntimeException("Erro ao atualizar senha");
         }
     }
-
-
-
-
-
-
-
-
-
-
 }
