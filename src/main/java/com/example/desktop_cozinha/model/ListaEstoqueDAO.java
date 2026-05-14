@@ -25,10 +25,11 @@ public class ListaEstoqueDAO {
                 "SELECT id, nome, tipo, quantidade_atual, unidade_medida, estoque_minimo, data_validade " +
                         "FROM estoque_geral WHERE nome LIKE ?");
 
+        // ALtere as strings para refletir exatamente como estão gravadas no banco de dados
         List<String> filtros = new ArrayList<>();
-        if (naoPereciveis) filtros.add("tipo = 'Não_Perecível'");
-        if (pereciveis)    filtros.add("tipo = 'Perecível'");
-        if (utensilios)    filtros.add("tipo = 'Utensílio'");
+        if (naoPereciveis) filtros.add("tipo = 'NAO_PERECIVEL'");
+        if (pereciveis)    filtros.add("tipo = 'PERECIVEL'");
+        if (utensilios)    filtros.add("tipo = 'UTENSILIO'");
 
         if (!filtros.isEmpty()) {
             sql.append(" AND (").append(String.join(" OR ", filtros)).append(")");

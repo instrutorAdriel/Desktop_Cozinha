@@ -15,11 +15,6 @@ import javafx.stage.Stage;
 
 import java.util.Optional;
 
-import static com.example.desktop_cozinha.MainApplication.abrirPopUp;
-
-/**
- * Controller da tela principal de listagem do estoque.
- */
 public class ListaController {
 
     // ── TableView ──────────────────────────────────────────────────────────────
@@ -55,8 +50,6 @@ public class ListaController {
     @FXML
     private Button pesquisar;
 
-    // ── Hyperlinks ─────────────────────────────────────────────────────────────
-
     @FXML
     private Button editar;
 
@@ -69,17 +62,7 @@ public class ListaController {
     private final ListaEstoqueDAO dao = new ListaEstoqueDAO();
 
 
-//-------método remover -----------
 
-    /**
-     * Recebe o produto selecionado na tela anterior e salva seu ID.
-     */
-    public void preencherDadosParaRemocao(ProdutoListaEstoque produto) {
-        if (produto != null) {
-            this.idProdutoEmRemover = produto.getId();
-            IO.println("ID: " + this.idProdutoEmRemover);
-        }
-    }
 
     // ── Inicialização ──────────────────────────────────────────────────────────
     @FXML
@@ -92,7 +75,7 @@ public class ListaController {
         chkUtensilios.setOnAction(event -> filtrar());
 
         // Listener do campo de texto para filtrar ao digitar (UX melhorado)
-        //FiltrarProdutos.textProperty().addListener((obs, antigo, novo) -> filtrar());
+
 
         carregarDados("", false, false, false);
     }
@@ -104,10 +87,6 @@ public class ListaController {
         unidadeProduto.setCellValueFactory(new PropertyValueFactory<>("unidade"));
     }
 
-    // ── Ações de filtro ────────────────────────────────────────────────────────
-
-
-    /** Chamado pelo botão "Buscar" e pelos listeners internos. */
     @FXML
 
     protected void onHelloButtonClick() {
@@ -137,32 +116,39 @@ public class ListaController {
     /**
      * Executa a remoção do produto após confirmação do usuário.
      */
+
+    // metodo para injetar o id do produto no pop-up para remover produto
     @FXML
-    protected void onRemoverProdutoClick() {
-        if (idProdutoEmRemover == null) {
-            mostrarAlerta(Alert.AlertType.WARNING, "Atenção", "Nenhum produto selecionado para remoção.");
+    protected void onRemoverProdutoClick  (javafx.event.ActionEvent actionEvent) {
+        // 1. Recupera o produto selecionado na TableView
+        ProdutoListaEstoque produtoSelecionado = ListaEstoque.getSelectionModel().getSelectedItem();
+
+        if (produtoSelecionado == null) {
+            mostrarAviso("Por favor, selecione um produto na lista para remover.");
             return;
         }
 
-         ListaController.
-        // Pede confirmação antes de deletar
-        Optional<ButtonType> resultado = mostrarConfirmacao(
-                "Confirmar Remoção",
-                "Tem certeza que deseja remover este produto?\nEssa ação não pode ser desfeita."
-        );
+        // 2. Cria o pop-up de confirmação nativo do JavaFX
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Confirmar Exclusão");
+        alert.setHeaderText("Excluir Produto: " + produtoSelecionado.getNome());
+        alert.setContentText("Tem certeza que deseja remover este item? Esta ação não pode ser desfeita.");
 
-        if (resultado.isEmpty() || resultado.get() != ButtonType.OK) {
-            return; // Usuário cancelou
-        }
+        // 3. Exibe o pop-up e aguarda a resposta (showAndWait trava a execução até o clique)
+        Optional<ButtonType> result = alert.showAndWait();
 
-        removerDAO dao = new removerDAO();
-        boolean sucesso = dao.deletarProduto(idProdutoEmRemover);
+        // 4. Se o usuário clicou em OK, prossegue com a remoção
+        if (result.isPresent() && result.get() == ButtonType.OK) {
+            removerDAO daoRemover = new removerDAO();
+            // Chama o metodo deletarProduto passando o ID do produto
+            boolean sucesso = daoRemover.deletarProduto(produtoSelecionado.getId());
 
-        if (sucesso) {
-            mostrarAlerta(Alert.AlertType.INFORMATION, "Sucesso", "Produto removido com sucesso!");
-            // Retorna para a lista após remover
-        } else {
-            mostrarAlerta(Alert.AlertType.ERROR, "Erro", "Não foi possível remover o produto. Tente novamente.");
+            if (sucesso) {
+                mostrarAlerta(Alert.AlertType.INFORMATION, "Sucesso", "Produto removido com sucesso!");
+                filtrar(); // Atualiza a tabela para refletir a mudança
+            } else {
+                mostrarErro("Erro ao tentar remover o produto do sistema.");
+            }
         }
     }
 
@@ -176,13 +162,6 @@ public class ListaController {
         alerta.showAndWait();
     }
 
-    private Optional<ButtonType> mostrarConfirmacao(String titulo, String mensagem) {
-        Alert confirmacao = new Alert(Alert.AlertType.CONFIRMATION);
-        confirmacao.setTitle(titulo);
-        confirmacao.setHeaderText(null);
-        confirmacao.setContentText(mensagem);
-        return confirmacao.showAndWait();
-    }
 
 
     // ── Ação: Editar ───────────────────────────────────────────────────────────
@@ -229,5 +208,6 @@ public class ListaController {
         alerta.setHeaderText(null);
         alerta.setContentText(mensagem);
         alerta.showAndWait();
-    }
-}
+    }}
+
+
