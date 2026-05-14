@@ -57,6 +57,11 @@ public class LoginController {
     public void EsqueciSenha() throws IOException {
         MainApplication.trocadorDeTelas("esqueceu-senha.fxml");
     }
+
+    @FXML
+    public void Cadastrarme() throws IOException {
+        //MainApplication.trocadorDeTelas("cadastro.fxml");
+    }
 }
 
 
