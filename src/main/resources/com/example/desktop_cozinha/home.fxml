@@ -111,7 +111,7 @@
                                     </HBox.margin>
                                 </Label>
                                 <Region prefHeight="50.0" prefWidth="70.0" HBox.hgrow="ALWAYS" />
-                                <Label fx:id="usuarioLabel" alignment="CENTER" contentDisplay="CENTER" prefHeight="50.0" prefWidth="200.0">
+                                <Label fx:id="usuarioLabel" alignment="CENTER" contentDisplay="CENTER" prefHeight="49.0" prefWidth="233.0">
                                     <font>
                                         <Font name="Arial Bold Italic" size="18.0" />
                                     </font>
