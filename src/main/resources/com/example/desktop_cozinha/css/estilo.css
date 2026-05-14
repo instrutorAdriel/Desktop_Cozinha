@@ -244,3 +244,34 @@
     -fx-background-color: transparent, -fx-box-border, -fx-control-inner-background;
     -fx-background-insets: -1.4, 0, 1;
 }
+.btn-remover {
+    -fx-background-color: #e53935;
+    -fx-text-fill: white;
+    -fx-background-radius: 10;
+    -fx-cursor: hand;
+}
+
+/* Quando passa o mouse */
+.btn-remover:hover {
+    -fx-background-color: #c62828;
+}
+
+/* Quando clica */
+.btn-remover:pressed {
+    -fx-background-color: #b71c1c;
+}
+
+.btn-cancelar {
+    -fx-background-color: #d9d9d9;
+    -fx-text-fill: black;
+    -fx-background-radius: 10;
+    -fx-cursor: hand;
+}
+
+.btn-cancelar:hover {
+    -fx-background-color: #bfbfbf;
+}
+
+.btn-cancelar:pressed {
+    -fx-background-color: #a6a6a6;
+}

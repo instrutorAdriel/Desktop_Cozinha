@@ -26,7 +26,7 @@ public class MainApplication extends Application {
                 MainApplication.class.getResource(fxml)
         );
 
-        Scene scene = new Scene(fxmlLoader.load(), 1366,768);
+        Scene scene = new Scene(fxmlLoader.load(), 500,400);
 
         primaryStage.setScene(scene);
     }
