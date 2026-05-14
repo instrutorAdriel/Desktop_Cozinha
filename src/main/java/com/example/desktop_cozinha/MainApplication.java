@@ -2,6 +2,7 @@ package com.example.desktop_cozinha;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
@@ -29,5 +30,24 @@ public class MainApplication extends Application {
         Scene scene = new Scene(fxmlLoader.load());
 
         primaryStage.setScene(scene);
+    }
+    public static void abrirPopUp(String fxml) throws IOException {
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(MainApplication.class.getResource(fxml));
+            Parent root = fxmlLoader.load();
+
+            Stage popupStage = new Stage();
+
+            Scene scene = new Scene(root);
+
+            popupStage.setScene(scene);
+            popupStage.initModality(javafx.stage.Modality.WINDOW_MODAL);
+            popupStage.initOwner(primaryStage);
+            popupStage.setResizable(false);
+            popupStage.showAndWait();
+        }
+        catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
     }
 }

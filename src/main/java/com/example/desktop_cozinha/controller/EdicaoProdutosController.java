@@ -12,8 +12,9 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.stage.Stage;
 
-        import java.net.URL;
+import java.net.URL;
 import java.sql.Date;
 import java.util.ResourceBundle;
 import java.time.LocalDate;
@@ -94,13 +95,13 @@ public class  EdicaoProdutosController implements Initializable {
 
         }
     }
-
-
     @FXML
-    protected void voltarTela () throws Exception {
-        // ao cliclar no botão volta para tela de login
-        trocadorDeTelas("lista-estoque.fxml");
+    protected void voltarTela() throws Exception {
+        // Pega a janela (Stage) atual através do botão e a fecha
+        Stage stage = (Stage) btnVoltar.getScene().getWindow();
+        stage.close();
     }
+
 
     @FXML
     protected void onEditar () throws Exception {
@@ -208,10 +209,10 @@ public class  EdicaoProdutosController implements Initializable {
             txtTipoProduto.setValue(null);
             txtDataValidade.setValue(null);
 
-            // volta para tela da lista
-            // volta para a tela da lista de produtos
-            trocadorDeTelas("lista-estoque.fxml");
 
+            // Fecha o pop-up de editar produtos e volta para lista de estoque
+            Stage stage = (Stage) btnCadastro.getScene().getWindow();
+            stage.close();
 
             } else {
             Alert erro = new Alert(Alert.AlertType.ERROR);
