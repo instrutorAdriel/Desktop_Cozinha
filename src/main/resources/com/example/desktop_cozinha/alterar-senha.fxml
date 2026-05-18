@@ -20,7 +20,7 @@
             </ImageView>
             <Label text="ALTERAR SENHA">
                <font>
-                  <Font name="System Bold" size="12.0" />
+                  <Font name="Arial Bold" size="20.0" />
                </font>
                <VBox.margin>
                   <Insets bottom="-11.0" top="13.0" />
@@ -42,7 +42,7 @@
                   <Insets bottom="4.0" left="-420.0" />
                </padding>
                <font>
-                  <Font name="SansSerif Bold" size="12.0" />
+                  <Font name="Arial Bold" size="12.0" />
                </font>
             </Label>
             <PasswordField maxHeight="25.0" maxWidth="500.0" minHeight="25.0" minWidth="250.0" prefHeight="25.0" prefWidth="500.0">
@@ -55,7 +55,7 @@
                   <Insets bottom="4.0" left="-344.0" />
                </padding>
                <font>
-                  <Font name="SansSerif Bold" size="12.0" />
+                  <Font name="Arial Bold" size="12.0" />
                </font>
                <VBox.margin>
                   <Insets bottom="2.0" left="5.0" right="2.0" top="5.0" />
@@ -66,10 +66,13 @@
                   <Insets bottom="120.0" left="150.0" right="150.0" />
                </VBox.margin>
             </PasswordField>
-            <Button mnemonicParsing="false" prefHeight="26.0" prefWidth="195.0" styleClass="btn-laranja" text="CONFIRMAR ALTERAÇÄO">
+            <Button mnemonicParsing="false" prefHeight="26.0" prefWidth="195.0" styleClass="btn-laranja" text="CONFIRMAR ALTERAÇÃO">
                <VBox.margin>
                   <Insets bottom="45.0" top="-70.0" />
                </VBox.margin>
+               <font>
+                  <Font name="Arial Bold" size="12.0" />
+               </font>
             </Button>
          </children>
       </VBox>
