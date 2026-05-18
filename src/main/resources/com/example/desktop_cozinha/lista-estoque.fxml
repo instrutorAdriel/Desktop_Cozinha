@@ -150,7 +150,7 @@
                                     </HBox.margin>
                                 </Button>
                                 <Region prefHeight="30.0" prefWidth="8.0" HBox.hgrow="ALWAYS" />
-                                <Button alignment="CENTER" graphicTextGap="5.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="112.0" styleClass="btn-padrao-2" text="Adicionar">
+                                <Button alignment="CENTER" graphicTextGap="5.0" mnemonicParsing="false" onAction="#onClickAddProduto" prefHeight="27.0" prefWidth="112.0" styleClass="btn-padrao-2" text="Adicionar">
                                     <graphic>
                                         <ImageView fitHeight="15.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
