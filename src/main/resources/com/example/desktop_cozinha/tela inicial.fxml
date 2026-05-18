@@ -28,7 +28,7 @@
                            </HBox.margin>
                         </Label>
                         <Region HBox.hgrow="ALWAYS" />
-                        <Label text="Olá, Rosicleia!">
+                        <Label prefHeight="25.0" prefWidth="347.0" text="Olá, Rosicleia!">
                            <opaqueInsets>
                               <Insets />
                            </opaqueInsets>
@@ -42,6 +42,9 @@
                            <font>
                               <Font name="System Bold" size="12.0" />
                            </font>
+                           <HBox.margin>
+                              <Insets />
+                           </HBox.margin>
                         </Label>
                         <Region layoutX="168.0" layoutY="10.0" HBox.hgrow="ALWAYS" />
                         <Label text="08:30:00">
