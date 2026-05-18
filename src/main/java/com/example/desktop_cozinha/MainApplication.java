@@ -27,9 +27,17 @@ public class MainApplication extends Application {
                 MainApplication.class.getResource(fxml)
         );
 
+        if(primaryStage.isMaximized()){
+            Scene scene = new Scene(fxmlLoader.load());
+            primaryStage.setScene(scene);
+            primaryStage.setMaximized(false);
+            primaryStage.setMaximized(true);
+        }
+        else{
         Scene scene = new Scene(fxmlLoader.load(), 1366,768);
 
         primaryStage.setScene(scene);
+        }
     }
 
     public static void abrirPopUp(String fxml) throws IOException {
