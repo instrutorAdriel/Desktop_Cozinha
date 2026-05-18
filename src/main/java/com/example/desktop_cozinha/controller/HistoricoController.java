@@ -57,6 +57,21 @@ public class HistoricoController {
         nome_usuario.setCellValueFactory(new PropertyValueFactory<>("nome_usuario"));
     }
 
+    public String choiceboxmarcado(){
+        if (filtro.getValue() == "Ambos") {
+            IO.println("entrou");
+            return "Ambos";
+
+        }
+        else  if (filtro.getValue() == "Entrada") {
+            IO.println("entrou la ele ");
+            return "Entrada";
+        }
+        else {
+            return "Saída";
+        }
+    }
+
     @FXML
     public void filtrarHistorico() {
         String tipoFiltro = filtro.getValue().toLowerCase();
@@ -65,7 +80,7 @@ public class HistoricoController {
 
         // Se houver texto no campo de pesquisa, prioriza a busca por produto
         if (pesquisa != null && !pesquisa.isEmpty()) {
-            filtro.setValue("Ambos");
+            filtro.setValue(tipoFiltro);
             resultado = HistoricoDAO.buscarPorProduto(pesquisa);
         } else {
             // Caso contrário, usa o filtro do ChoiceBox
