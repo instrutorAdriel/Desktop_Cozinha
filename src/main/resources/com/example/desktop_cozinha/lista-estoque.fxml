@@ -199,10 +199,13 @@
                               <Font name="Arial" size="12.0" />
                            </font>
                         </CheckBox>
-                        <CheckBox fx:id="chkUtensilios" layoutX="83.0" layoutY="10.0" mnemonicParsing="false" text="Utencílios">
+                        <CheckBox fx:id="chkUtensilios" layoutX="83.0" layoutY="10.0" mnemonicParsing="false" text="Utensílios">
                            <HBox.margin>
                               <Insets right="5.0" />
                            </HBox.margin>
+                           <font>
+                              <Font name="Arial" size="12.0" />
+                           </font>
                         </CheckBox>
                      </children>
                      <VBox.margin>
