@@ -50,11 +50,10 @@ public class CadastroController {
         String nome = txtNome.getText();
         String email = txtEmail.getText();
         String senha = txtSenha.getText();
-        String cargo = txtCargo.getText();
         String confirmarSenha = txtConfirmarSenha.getText();
 
         //2. Validar se tem um campo vazio
-        if (nome.isBlank () || senha.isBlank () || email.isBlank () || confirmarSenha.isBlank () || cargo.isBlank () ) {
+        if (nome.isBlank () || senha.isBlank () || email.isBlank () || confirmarSenha.isBlank () ) {
             //  exibe uma janela de aviso para o usuario
             Alert alerta = new Alert(Alert.AlertType.WARNING);
             alerta.setTitle("Campos obrigatorios!");
@@ -96,7 +95,7 @@ public class CadastroController {
         }
 
         //4. Chama o metodo de cadastro do cliente
-        dao.cadastrarUsuario(nome, email, senha, cargo);
+        dao.cadastrarUsuario(nome, email, senha);
 
         //5.informa ao usuario que o cadastro foi realizado
 
@@ -109,7 +108,6 @@ public class CadastroController {
         //6. limpa os campos de texto
         txtNome.clear();
         txtEmail.clear();
-        txtCargo.clear();
         txtSenha.clear();
         txtConfirmarSenha.clear();
 

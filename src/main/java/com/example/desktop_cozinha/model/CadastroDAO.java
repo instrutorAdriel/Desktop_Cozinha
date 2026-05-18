@@ -11,15 +11,14 @@ import java.sql.SQLException;
 public class CadastroDAO {
     // CREATE
 
-    public void cadastrarUsuario(String nome, String email, String senhaPura, String cargo) {
-        String sql = "INSERT INTO usuarios (nome, email, senha,Cargo) VALUES (?, ?, ?,?)";
+    public void cadastrarUsuario(String nome, String email, String senhaPura) {
+        String sql = "INSERT INTO usuarios (nome, email, senha) VALUES (?, ?, ?)";
         String senhaCriptografada = BCrypt.hashpw(senhaPura, BCrypt.gensalt());
         try (Connection conn = DatabaseConfig.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, nome);
             stmt.setString(2, email);
             stmt.setString(3, senhaCriptografada);
-            stmt.setString(4, cargo);
             stmt.executeUpdate();
             IO.println("Usuário criado!");
         } catch (SQLException e) {

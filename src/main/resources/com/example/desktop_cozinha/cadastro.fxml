@@ -7,16 +7,16 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" stylesheets="@css/estilo.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.desktop_cozinha.controller.CadastroController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" stylesheets="@css/estilo.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1">
    <center>
-      <VBox alignment="CENTER" prefHeight="446.0" prefWidth="600.0" BorderPane.alignment="CENTER">
+      <VBox alignment="CENTER" prefHeight="550.0" prefWidth="404.0" BorderPane.alignment="CENTER">
          <children>
             <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@../../../Imagens/Logo%20colorida%20Senac.png" />
                </image>
                <VBox.margin>
-                  <Insets />
+                  <Insets bottom="3.0" />
                </VBox.margin>
             </ImageView>
             <Label text="CADASTRO">
@@ -27,87 +27,70 @@
                   <Insets />
                </VBox.margin>
             </Label>
-            <Label text="Nome Completo">
-               <font>
-                  <Font name="Arial Bold" size="13.0" />
-               </font>
+            <HBox alignment="CENTER" prefHeight="192.0" prefWidth="450.0">
                <VBox.margin>
-                  <Insets right="350.0" />
+                  <Insets left="150.0" right="150.0" />
                </VBox.margin>
-            </Label>
-            <TextField fx:id="txtNome" maxWidth="450.0">
-               <VBox.margin>
-                  <Insets left="175.0" right="175.0" top="1.0" />
-               </VBox.margin>
-               <font>
-                  <Font name="Arial Bold" size="13.0" />
-               </font>
-            </TextField>
-            <Label layoutX="187.0" layoutY="245.0" text="Cargo">
-               <font>
-                  <Font name="Arial Bold" size="13.0" />
-               </font>
-               <VBox.margin>
-                  <Insets right="407.5" top="7.5" />
-               </VBox.margin>
-            </Label>
-            <TextField fx:id="txtCargo" layoutX="185.0" layoutY="256.0" maxWidth="450.0">
-               <VBox.margin>
-                  <Insets left="175.0" right="175.0" />
-               </VBox.margin>
-               <font>
-                  <Font name="Arial Bold" size="13.0" />
-               </font>
-            </TextField>
-            <Label text="E-mail">
-               <font>
-                  <Font name="Arial Bold" size="13.0" />
-               </font>
-               <VBox.margin>
-                  <Insets right="405.0" top="7.5" />
-               </VBox.margin>
-            </Label>
-            <TextField fx:id="txtEmail" maxWidth="450.0">
-               <VBox.margin>
-                  <Insets left="175.0" right="175.0" top="1.0" />
-               </VBox.margin>
-               <font>
-                  <Font name="Arial Bold" size="13.0" />
-               </font>
-            </TextField>
-            <Label layoutX="185.0" layoutY="244.0" text="Senha">
-               <font>
-                  <Font name="Arial Bold" size="13.0" />
-               </font>
-               <VBox.margin>
-                  <Insets right="407.5" top="7.5" />
-               </VBox.margin>
-            </Label>
-            <PasswordField fx:id="txtSenha" maxWidth="450.0">
-               <VBox.margin>
-                  <Insets left="175.0" right="175.0" />
-               </VBox.margin>
-               <font>
-                  <Font name="Arial Bold" size="13.0" />
-               </font>
-            </PasswordField>
-            <Label layoutX="185.0" layoutY="298.0" text="Confirmar Senha">
-               <font>
-                  <Font name="Arial Bold" size="13.0" />
-               </font>
-               <VBox.margin>
-                  <Insets right="342.5" top="7.5" />
-               </VBox.margin>
-            </Label>
-            <PasswordField fx:id="txtConfirmarSenha" maxWidth="450.0">
-               <VBox.margin>
-                  <Insets left="175.0" right="175.0" />
-               </VBox.margin>
-               <font>
-                  <Font name="Arial Bold" size="13.0" />
-               </font>
-            </PasswordField>
-            <Button fx:id="btnCadastrar" mnemonicParsing="false" onAction="#onCadastrar" styleClass="btn-laranja" text="CADASTRAR">
+               <children>
+                  <VBox alignment="CENTER_LEFT">
+                     <children>
+                        <Label alignment="CENTER" contentDisplay="CENTER" text="Nome">
+                           <font>
+                              <Font name="Arial Bold" size="13.0" />
+                           </font>
+                           <VBox.margin>
+                              <Insets top="7.5" />
+                           </VBox.margin>
+                        </Label>
+                        <TextField maxWidth="450.0" prefWidth="450.0">
+                           <font>
+                              <Font name="Arial Bold" size="13.0" />
+                           </font>
+                        </TextField>
+                        <Label text="E-mail">
+                           <font>
+                              <Font name="Arial Bold" size="13.0" />
+                           </font>
+                           <VBox.margin>
+                              <Insets top="7.5" />
+                           </VBox.margin>
+                        </Label>
+                        <TextField maxWidth="450.0">
+                           <font>
+                              <Font name="Arial Bold" size="13.0" />
+                           </font>
+                        </TextField>
+                        <Label text="Senha">
+                           <font>
+                              <Font name="Arial Bold" size="13.0" />
+                           </font>
+                           <VBox.margin>
+                              <Insets top="7.5" />
+                           </VBox.margin>
+                        </Label>
+                        <PasswordField maxWidth="450.0">
+                           <font>
+                              <Font name="Arial Bold" size="13.0" />
+                           </font>
+                        </PasswordField>
+                        <Label text="Confirmar Senha">
+                           <font>
+                              <Font name="Arial Bold" size="13.0" />
+                           </font>
+                           <VBox.margin>
+                              <Insets top="7.5" />
+                           </VBox.margin>
+                        </Label>
+                        <PasswordField maxWidth="450.0">
+                           <font>
+                              <Font name="Arial Bold" size="13.0" />
+                           </font>
+                        </PasswordField>
+                     </children>
+                  </VBox>
+               </children>
+            </HBox>
+            <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" styleClass="btn-laranja" text="CADASTRAR">
                <VBox.margin>
                   <Insets top="25.0" />
                </VBox.margin>
@@ -123,9 +106,9 @@
    <top>
       <AnchorPane prefHeight="50.0" prefWidth="800.0" style="-fx-background-color: #054685;" BorderPane.alignment="CENTER">
          <children>
-            <ImageView fitHeight="40.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="5.0">
+            <ImageView fitHeight="40.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="5.0">
                <image>
-                  <Image url="@imagem/Logo%20branca%20Senac.png" />
+                  <Image url="@../../../Imagens/Logo%20branca%20Senac.png" />
                </image></ImageView>
             <Label alignment="CENTER" layoutX="212.0" layoutY="15.0" text="Sistema de Gerenciamento de Estoque da Cozinha" textFill="WHITE" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
                <font>
@@ -134,4 +117,21 @@
             </Label>
          </children></AnchorPane>
    </top>
+   <left>
+      <VBox alignment="TOP_CENTER" prefWidth="60.0" BorderPane.alignment="CENTER">
+         <children>
+            <Hyperlink prefHeight="23.0" prefWidth="71.0" text="Voltar">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Hyperlink>
+         </children>
+         <BorderPane.margin>
+            <Insets top="7.5" />
+         </BorderPane.margin>
+      </VBox>
+   </left>
+   <right>
+      <VBox prefWidth="60.0" BorderPane.alignment="CENTER" />
+   </right>
 </BorderPane>
