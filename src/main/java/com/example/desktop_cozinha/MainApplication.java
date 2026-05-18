@@ -16,7 +16,8 @@ public class MainApplication extends Application {
     public void start(Stage stage) throws IOException {
         primaryStage = stage;
 
-        trocadorDeTelas("lista-estoque.fxml");
+        // Adicione a pasta "view/" antes do nome do arquivo
+        trocadorDeTelas("view/lista-estoque.fxml");
 
         primaryStage.setTitle("Sistema Cozinha");
         primaryStage.show();

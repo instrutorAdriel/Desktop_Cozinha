@@ -7,6 +7,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.stage.Stage;
 
 import java.util.Objects;
 
@@ -35,9 +36,15 @@ public class CadastroController {
     private Button btnCadastrar;
 
     @FXML
-    protected void voltarTela () throws Exception {
-        // ao cliclar no botão volta para tela de login
-        MainApplication.trocadorDeTelas("login.fxml");
+
+        public void voltarTela() {
+            // Pega a janela (Stage) onde este botão está e fecha ela
+            Stage stage = (Stage) btnVoltar.getScene().getWindow();
+            stage.close();
+        }
+
+    @FXML
+    protected void cadastrar() throws Exception {
 
     }
 

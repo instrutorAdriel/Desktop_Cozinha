@@ -1,29 +1,18 @@
 package com.example.desktop_cozinha.controller;
 
-import com.example.desktop_cozinha.model.ProdutoListaEstoque;
-import javafx.fxml.Initializable;
-
-
 import com.example.desktop_cozinha.MainApplication;
-import com.example.desktop_cozinha.model.EdicaoProdutosDAO;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import com.example.desktop_cozinha.model.CadastroProdutoDAO;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.stage.Stage;
 
 import java.net.URL;
 import java.sql.Date;
 import java.util.ResourceBundle;
 import java.time.LocalDate;
-import java.sql.Date;
-
-import static com.example.desktop_cozinha.MainApplication.trocadorDeTelas;
 
 
-public class  EdicaoProdutosController implements Initializable {
+public class CadastroProdutoController  implements Initializable {
 
     @FXML
     private TextField txtNomeProduto;
@@ -44,15 +33,11 @@ public class  EdicaoProdutosController implements Initializable {
     private DatePicker txtDataValidade;
 
 
-
     @FXML
     private Button btnCadastro;
 
     @FXML
     private Button btnVoltar;
-
-    private Integer idProdutoEmEdicao;
-
 
     public void initialize(URL url, ResourceBundle rb) {
         txtUnidadeDeMedida.getItems().addAll("KG", "LITRO", "UNIDADE");
@@ -74,39 +59,18 @@ public class  EdicaoProdutosController implements Initializable {
             }
         });
 
-    }
 
-
-
-   // 2. Metodo para a tela  injetar os dados nesta tela
-
-    public void preencherDadosParaEdicao(ProdutoListaEstoque p) {
-        this.idProdutoEmEdicao = p.getId(); // Salva o ID para usar no momento do UPDATE
-
-        // Preenche os TextFields e ChoiceBoxes
-        txtNomeProduto.setText(p.getNome());
-        txtQtdAtual.setText(String.valueOf(p.getQuantidade()));
-        txtEstoqueMinimo.setText(String.valueOf(p.getEstoqueMinimo()));
-
-        txtUnidadeDeMedida.setValue(p.getUnidade());
-        txtTipoProduto.setValue(p.getTipo());
-        if (p.getDataValidade() != null) {
-            txtDataValidade.setValue(p.getDataValidade());
-
-        }
     }
 
 
     @FXML
-    protected void voltarTela() throws Exception {
-        // Pega a janela (Stage) atual através do botão e a fecha
-        Stage stage = (Stage) btnVoltar.getScene().getWindow();
-        stage.close();
+    protected void voltarTela () throws Exception {
+        // ao cliclar no botão volta para tela de login
+        MainApplication.trocadorDeTelas("login.fxml");
     }
 
-
     @FXML
-    protected void onEditar () throws Exception {
+    protected void onCadastrar () throws Exception {
         //1. Le os valores digitados nos campos de tela
         // getText () retorna o conteudo atual do campo como String
 
@@ -118,7 +82,7 @@ public class  EdicaoProdutosController implements Initializable {
         // Pega o valor do calendário (pode ser a data ou pode ser null se estiver vazio)
         LocalDate dataSelecionada = txtDataValidade.getValue();
 
-        // Verifica se o usuário escolheu uma data e se ela é anterior a hoje  
+        // Verifica se o usuário escolheu uma data e se ela é anterior a hoje
         if (dataSelecionada != null && dataSelecionada.isBefore(LocalDate.now())) {
             Alert alerta = new Alert(Alert.AlertType.WARNING);
             alerta.setTitle("Data de Validade Inválida");
@@ -179,52 +143,30 @@ public class  EdicaoProdutosController implements Initializable {
         }
 
         // 3. Cria uma instancia do CadastroDAO
-        EdicaoProdutosDAO dao = new EdicaoProdutosDAO();
+        CadastroProdutoDAO dao = new CadastroProdutoDAO();
 
-        // --- INÍCIO DO CÓDIGO DE TESTE ---
-
-        /* MOCK: Forçando um ID de um produto que você TEM CERTEZA que existe no seu MySQL.
-        Integer idTemporarioParaTeste = 3;
-
-        // 4. Chama o metodo de edição passando o ID de teste
-        dao.editarProduto(idTemporarioParaTeste, nomeProduto, tipoProduto, qtdAtual, unidadeDeMedida, estoqueMinimo, dataValidade);
-
-        // --- FIM DO CÓDIGO DE TESTE --- */
+        //4. Chama o metodo de cadastro do cliente
 
 
-        //4. Chama o metodo de editar do cliente
-        if (idProdutoEmEdicao != null) {
-            dao.editarProduto(idProdutoEmEdicao, nomeProduto, tipoProduto, qtdAtual, unidadeDeMedida, estoqueMinimo, dataValidade);
+        dao.cadastrarProduto(nomeProduto, tipoProduto, qtdAtual, unidadeDeMedida, estoqueMinimo, dataValidade);
 
-            //informa ao usuario que o cadastro foi realizado
-            Alert sucesso = new Alert(Alert.AlertType.CONFIRMATION);
-            sucesso.setTitle("Atualização realizada!");
-            sucesso.setHeaderText(null);
-            sucesso.setContentText("Produto editado com sucesso!");
-            sucesso.showAndWait();
+        //5.informa ao usuario que o cadastro foi realizado
 
-            //6. limpa os campos de texto
-            txtNomeProduto.clear();
-            txtQtdAtual.clear();
-            txtEstoqueMinimo.clear();
-            txtUnidadeDeMedida.setValue(null);
-            txtTipoProduto.setValue(null);
-            txtDataValidade.setValue(null);
+        Alert sucesso = new Alert(Alert.AlertType.CONFIRMATION);
+        sucesso.setTitle("Cadastro realizado!");
+        sucesso.setHeaderText(null);
+        sucesso.setContentText("Cadastro realizado com sucesso!");
+        sucesso.showAndWait();
 
-            // volta para tela da lista
-            // volta para a tela da lista de produtos
-            trocadorDeTelas("lista-estoque.fxml");
+        //6. limpa os campos de texto
+        txtNomeProduto.clear();
+        txtQtdAtual.clear();
+        txtEstoqueMinimo.clear();
+        txtUnidadeDeMedida.setValue(null);
+        txtTipoProduto.setValue(null);
+        txtDataValidade.setValue(null);
 
 
-            } else {
-            Alert erro = new Alert(Alert.AlertType.ERROR);
-            erro.setTitle("Erro");
-            erro.setContentText("Nenhum produto foi selecionado para edição.");
-            erro.showAndWait();
-
-    }}
-
-    public Scene getScene() {
-        return null;
     }
+
 }

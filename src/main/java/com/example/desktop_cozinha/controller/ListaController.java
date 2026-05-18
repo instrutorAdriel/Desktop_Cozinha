@@ -1,5 +1,6 @@
 package com.example.desktop_cozinha.controller;
 
+import com.example.desktop_cozinha.MainApplication;
 import com.example.desktop_cozinha.model.ListaEstoqueDAO;
 import com.example.desktop_cozinha.model.ProdutoListaEstoque;
 import com.example.desktop_cozinha.model.removerDAO;
@@ -14,6 +15,8 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 
 import java.util.Optional;
+
+import static com.example.desktop_cozinha.MainApplication.abrirPopUp;
 
 public class ListaController {
 
@@ -49,6 +52,9 @@ public class ListaController {
     private TextField FiltrarProdutos;
     @FXML
     private Button pesquisar;
+
+    @FXML
+    private Button cadastrar;
 
     @FXML
     private Button editar;
@@ -109,6 +115,10 @@ public class ListaController {
     }
 
 
+    @FXML
+    protected void cadastrarProduto() throws Exception {
+        MainApplication.abrirPopUp("view/CadastroProduto.fxml");
+    }
 
 
 
@@ -171,27 +181,47 @@ public class ListaController {
         ProdutoListaEstoque produtoSelecionado = ListaEstoque.getSelectionModel().getSelectedItem();
 
         if (produtoSelecionado == null) {
-            mostrarAviso("Por favor, selecione um produto na lista para editar.");
+            Alert alerta = new Alert(Alert.AlertType.WARNING);
+            alerta.setTitle("Atenção");
+            alerta.setContentText("Por favor, selecione um produto na lista para editar.");
+            alerta.showAndWait();
             return;
         }
 
         try {
-            FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/com/example/desktop_cozinha/edicaoProdutos.fxml"));
-            Parent root = loader.load();
+            // 1. Instanciamos o FXMLLoader para carregar a tela de edição
+            FXMLLoader fxmlLoader = new FXMLLoader(MainApplication.class.getResource("edicaoProdutos.fxml"));
+            Parent root = fxmlLoader.load();
 
-            EdicaoProdutosController controllerEdicao = loader.getController();
+            // 2. Recuperamos o controller da tela de edição pelo fxmlLoader
+            EdicaoProdutosController controllerEdicao = fxmlLoader.getController();
+
+            // 3. Passamos o produto selecionado para o controller ANTES de abrir a janela
             controllerEdicao.preencherDadosParaEdicao(produtoSelecionado);
 
-            Stage stage = (Stage) ListaEstoque.getScene().getWindow();
-            stage.setScene(new Scene(root));
-            stage.show();
+            // 4. Criamos e configuramos o Stage (Janela) do Pop-up
+            Stage popupStage = new Stage();
+            popupStage.setScene(new Scene(root));
+
+            // Define que é um Pop-up (Modal)
+            popupStage.initModality(javafx.stage.Modality.WINDOW_MODAL);
+
+            // Trava o Pop-up na janela atual da lista de estoque
+            popupStage.initOwner(ListaEstoque.getScene().getWindow());
+            popupStage.setResizable(false);
+
+            // 5. Exibe o Pop-up e trava a execução desta tela até ele ser fechado
+            popupStage.showAndWait();
+
+            // 6. Opcional (Mas recomendado): Recarrega a lista para mostrar a edição que acabou de ser feita
+            onHelloButtonClick();
 
         } catch (Exception e) {
             e.printStackTrace();
-            mostrarErro("Erro ao abrir a tela de edição. Tente novamente.");
+            System.err.println("Erro ao abrir a tela de edição!");
         }
     }
+
     // ── Utilitários de UI ──────────────────────────────────────────────────────
 
     private void mostrarAviso(String mensagem) {
