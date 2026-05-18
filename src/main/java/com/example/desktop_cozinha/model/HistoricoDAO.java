@@ -94,5 +94,34 @@ public class HistoricoDAO {
         }
         return itens;
     }
+
+    public static  List<Historico> buscarPorData (String dataDE,String dataATE){
+        String sql = """
+        SELECT e.nome AS nome_produto, u.nome AS nome_usuario,
+        h.tipo_movimentacao, h.quantidade_movimentada,
+        h.observacao, h.data_hora
+        FROM historico_movimentacoes h
+        JOIN estoque_geral e ON h.produto_id = e.id
+        JOIN usuarios u ON h.usuario_id = u.id WHERE data_hora BETWEEN ? AND ?
+        """;
+
+        List<Historico> itens = new ArrayList<>();
+        try (Connection conn = DatabaseConfig.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, dataDE);
+            stmt.setString(2, dataATE);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    itens.add(mapearHistorico(rs));
+                }
+            }
+        }
+        catch (SQLException e) {
+            System.err.println("Erro na consulta SQL: " + e.getMessage());
+        }
+        return itens;
+
+    }
 }
 

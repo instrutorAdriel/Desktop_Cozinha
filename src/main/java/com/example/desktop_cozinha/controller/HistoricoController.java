@@ -11,7 +11,9 @@ import javafx.scene.control.cell.PropertyValueFactory;
 
 import javax.swing.*;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class HistoricoController {
     @FXML private Button btnbuscar;
@@ -25,6 +27,10 @@ public class HistoricoController {
     @FXML private TableColumn<Historico, String> data_hora;
     @FXML private ChoiceBox<String> filtro;
     @FXML private Button btnsair;
+    @FXML private DatePicker dataDE;
+    @FXML private DatePicker dataATE;
+    @FXML private Button btnbuscardata;
+
     @FXML
     public void initialize() {
         configurarColunas();
@@ -80,5 +86,25 @@ public class HistoricoController {
     @FXML
     public void botaoSair () throws IOException {
         MainApplication.sair();
+    }
+    @FXML
+    public void buscarDataHora () throws  IOException {
+        String de = String.valueOf(dataDE.getValue());
+        String ate = String.valueOf(dataATE.getValue());
+        List<Historico> resultado;
+
+
+        if (dataDE.getValue() == null || dataATE.getValue() == null) {
+            Alert alerta = new Alert(Alert.AlertType.WARNING);
+            alerta.setTitle("Alerta de busca");
+            alerta.setHeaderText(null);
+            alerta.setContentText("Por favor insira as datas de busca");
+            alerta.showAndWait();
+        }
+        else {
+            resultado = HistoricoDAO.buscarPorData(de,ate);
+            atualizarTabela(resultado);
+
+        }
     }
 }

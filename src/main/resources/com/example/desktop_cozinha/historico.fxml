@@ -131,7 +131,22 @@
                                         <Insets left="5.0" />
                                     </HBox.margin>
                                 </Button>
-                                <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
+                                <Region prefHeight="25.0" prefWidth="20.0" HBox.hgrow="ALWAYS" />
+                        <DatePicker fx:id="dataDE" prefWidth="100.0" promptText="De">
+                           <HBox.margin>
+                              <Insets right="5.0" />
+                           </HBox.margin>
+                        </DatePicker>
+                        <DatePicker fx:id="dataATE" layoutX="340.0" layoutY="10.0" prefWidth="100.0" promptText="Até">
+                           <HBox.margin>
+                              <Insets right="5.0" />
+                           </HBox.margin>
+                        </DatePicker>
+                        <Button fx:id="btnbuscardata" graphicTextGap="0.0" layoutX="188.0" layoutY="10.0" mnemonicParsing="false" onAction="#buscarDataHora" prefWidth="100.0" styleClass="btn-padrao-2" text="Buscar">
+                           <HBox.margin>
+                              <Insets right="5.0" />
+                           </HBox.margin>
+                        </Button>
                                 <ChoiceBox fx:id="filtro" prefHeight="25.0" prefWidth="150.0" styleClass="btn-padrao-2">
                                     <HBox.margin>
                                         <Insets />
