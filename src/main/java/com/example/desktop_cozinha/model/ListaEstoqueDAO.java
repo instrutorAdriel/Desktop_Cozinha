@@ -11,9 +11,10 @@ import java.util.List;
 
 public class ListaEstoqueDAO {
 
-    public List<ProdutoListaEstoque> filtrarProdutos(String nomeBusca, boolean naoPereciveis,boolean pereciveis, boolean utensilios) {
-        String sql = "SELECT nome, tipo, quantidade_atual, unidade_medida FROM estoque_geral WHERE nome LIKE ?";
-
+    // FILTRAR PRODUTO
+    public List<ProdutoListaEstoque> filtrarProdutos(String nomeBusca, boolean naoPereciveis,boolean pereciveis, boolean utensilios){
+        String sql = "SELECT ID, nome, tipo, quantidade_atual, unidade_medida " +
+                "FROM estoque_geral WHERE nome LIKE ?";
         List<String> filtros = new ArrayList<>();
 
         if (naoPereciveis) filtros.add("tipo = 'Não-Perecível'");
@@ -38,6 +39,7 @@ public class ListaEstoqueDAO {
                 while (rs.next()) {
 
                     ProdutoListaEstoque p = new ProdutoListaEstoque(
+                            rs.getString("ID"),
                             rs.getString("nome"),
                             rs.getString("tipo"),
                             rs.getString("quantidade_atual"),
@@ -53,4 +55,21 @@ public class ListaEstoqueDAO {
 
         return itens;
     }
+
+    // DELETAR PRODUTO
+public void deletar(String id) {
+
+    String sql = "DELETE FROM estoque_geral WHERE id = ?";
+
+    try (Connection conn = DatabaseConfig.getConnection();
+         PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+        stmt.setString(1, id);
+
+        stmt.executeUpdate();
+
+    } catch (SQLException e) {
+        System.err.println("Erro ao deletar produto: " + e.getMessage());
+    }
+}
 }

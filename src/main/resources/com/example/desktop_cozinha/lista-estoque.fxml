@@ -4,20 +4,18 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<Pane fx:id="painelFrame" prefHeight="485.0" prefWidth="303.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.desktop_cozinha.controller.ListaController">
+<Pane fx:id="painelFrame" prefHeight="485.0" prefWidth="300.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.desktop_cozinha.controller.ListaController">
     <children>
-        <Button fx:id="btnBuscar" layoutX="50.0" layoutY="4.0" mnemonicParsing="false" onAction="#onHelloButtonClick" text="Buscar">
+        <TextField fx:id="FiltrarProdutos" layoutX="6.0" layoutY="5.0" prefHeight="25.0" prefWidth="179.0" />
+        <Button fx:id="btnBuscar" layoutX="200.0" layoutY="5.0" mnemonicParsing="false" onAction="#onHelloButtonClick" prefHeight="25.0" prefWidth="92.0" text="Buscar">
             <opaqueInsets>
                 <Insets />
             </opaqueInsets>
-         <graphic>
-              <TextField fx:id="FiltrarProdutos" />
-         </graphic>
         </Button>
-      <CheckBox fx:id="chkNaoPereciveis" layoutX="195.0" layoutY="37.0" mnemonicParsing="false" text="Não-perecíveis" />
-      <CheckBox fx:id="chkPereciveis" layoutX="105.0" layoutY="37.0" mnemonicParsing="false" text="Perecíveis" />
-      <CheckBox fx:id="chkUtensilios" layoutX="21.0" layoutY="37.0" mnemonicParsing="false" text="Utensilios" />
-        <TableView fx:id="ListaEstoque" layoutY="54.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="433.0" prefWidth="303.0">
+      <CheckBox fx:id="chkNaoPereciveis" layoutX="180.0" layoutY="37.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="114.0" text="Não-perecíveis" />
+      <CheckBox fx:id="chkPereciveis" layoutX="98.0" layoutY="37.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="84.0" text="Perecíveis" />
+      <CheckBox fx:id="chkUtensilios" layoutX="16.0" layoutY="37.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="84.0" text="Utensilios" />
+        <TableView fx:id="ListaEstoque" layoutY="64.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="423.0" prefWidth="300.0">
             <columns>
                 <TableColumn fx:id="nomeProduto" prefWidth="75.0" text="Nome" />
                 <TableColumn fx:id="tipoProduto" prefWidth="75.0" text="Tipo" />
