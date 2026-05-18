@@ -23,7 +23,7 @@
                   <Insets top="15.0" />
                </VBox.margin>
                <font>
-                  <Font name="SansSerif Bold" size="18.0" />
+                  <Font name="Arial Bold" size="20.0" />
                </font>
             </Label>
             <Label alignment="TOP_CENTER" graphicTextGap="0.0" prefHeight="19.0" prefWidth="500.0" text="E-mail" textOverrun="CENTER_ELLIPSIS">
@@ -41,6 +41,9 @@
                <VBox.margin>
                   <Insets left="150.0" right="150.0" />
                </VBox.margin>
+               <font>
+                  <Font name="Arial" size="12.0" />
+               </font>
             </TextField>
             <Label alignment="TOP_CENTER" graphicTextGap="0.0" layoutX="160.0" layoutY="207.0" prefHeight="19.0" prefWidth="500.0" text="Senha" textOverrun="CENTER_ELLIPSIS">
                <padding>
@@ -57,6 +60,9 @@
                <VBox.margin>
                   <Insets left="150.0" right="150.0" />
                </VBox.margin>
+               <font>
+                  <Font name="Arial" size="12.0" />
+               </font>
             </PasswordField>
             <HBox alignment="CENTER" prefHeight="27.0" prefWidth="800.0">
                <children>
@@ -76,6 +82,9 @@
                <VBox.margin>
                   <Insets top="17.0" />
                </VBox.margin>
+               <font>
+                  <Font name="Arial Bold" size="12.0" />
+               </font>
             </Button>
             <HBox alignment="CENTER" prefHeight="43.0" prefWidth="800.0">
                <children>
