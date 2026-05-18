@@ -30,7 +30,7 @@
                   <String fx:value="btn-click" />
                   <String fx:value="btn-padrao" />
                </styleClass></Button>
-                <Button alignment="BASELINE_LEFT" mnemonicParsing="false" styleClass="btn-padrao" text="Estoque">
+                <Button alignment="BASELINE_LEFT" mnemonicParsing="false" onAction="#onClickEstoque" styleClass="btn-padrao" text="Estoque">
                     <font>
                         <Font name="Arial" size="17.0" />
                     </font>
@@ -44,7 +44,7 @@
                         <Insets bottom="25.0" />
                     </VBox.margin>
                 </Button>
-                <Button alignment="BASELINE_LEFT" graphicTextGap="10.0" layoutX="18.0" layoutY="61.0" mnemonicParsing="false" styleClass="btn-padrao" text="Relatório      ">
+                <Button alignment="BASELINE_LEFT" graphicTextGap="10.0" layoutX="18.0" layoutY="61.0" mnemonicParsing="false" onAction="#onClickRelatorio" styleClass="btn-padrao" text="Relatório      ">
                     <font>
                         <Font name="Arial" size="17.0" />
                     </font>
@@ -97,7 +97,7 @@
                 </ImageView>
                 <VBox alignment="TOP_CENTER" prefHeight="550.0" prefWidth="600.0" style="-fx-border-color: #054584; -fx-border-width: 1 2 2 0;">
                     <children>
-                        <HBox alignment="CENTER" prefHeight="50.0" style="-fx-background-color: #ff914d; -fx-border-color: #054584; -fx-border-width: 1 0 0 0;">
+                        <HBox alignment="CENTER" prefHeight="50.0" styleClass="painel-secundario">
                             <children>
                                 <Label fx:id="dataLabel" alignment="BOTTOM_LEFT" graphicTextGap="0.0" prefWidth="200.0">
                                     <font>

@@ -243,3 +243,7 @@
     -fx-background-color: transparent, -fx-box-border, -fx-control-inner-background;
     -fx-background-insets: -1.4, 0, 1;
 }
+
+.painel-secundario {
+    -fx-background-color: #e4891b;
+}

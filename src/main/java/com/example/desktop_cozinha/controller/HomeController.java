@@ -1,5 +1,6 @@
 package com.example.desktop_cozinha.controller;
 
+import com.example.desktop_cozinha.MainApplication;
 import com.example.desktop_cozinha.model.HomeDAO;
 import com.example.desktop_cozinha.services.SessaoService;
 import javafx.animation.KeyFrame;
@@ -8,6 +9,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.util.Duration;
+
+import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -56,5 +59,13 @@ public class HomeController implements Initializable {
             String nome = user.bucarNome(email);
             usuarioLabel.setText("Bem vindo, " + nome);
         }
+    }
+
+    public void onClickEstoque() throws IOException {
+        MainApplication.trocadorDeTelas("lista-estoque.fxml");
+    }
+
+    public void onClickRelatorio() throws IOException {
+        //MainApplication.trocadorDeTelas("relatorio.fxml");
     }
 }

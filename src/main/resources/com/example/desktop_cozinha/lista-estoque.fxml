@@ -7,13 +7,13 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" stylesheets="@css/estilo.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.desktop_cozinha.controller.ListaController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" stylesheets="@css/estilo2.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.desktop_cozinha.controller.ListaController">
     <top>
         <AnchorPane prefHeight="50.0" style="-fx-background-color: #054685;" BorderPane.alignment="CENTER">
             <children>
                 <ImageView fitHeight="40.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="5.0">
                     <image>
-                        <Image url="@imagens/Logo%20branca%20Senac.png" />
+                        <Image url="@imagens/LogobrancaSenac.png" />
                     </image></ImageView>
                 <Label alignment="CENTER" layoutX="212.0" layoutY="15.0" text="Sistema de Gerenciamento de Estoque da Cozinha" textFill="WHITE" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
                     <font>
@@ -25,7 +25,7 @@
     <left>
         <VBox alignment="TOP_CENTER" prefHeight="482.0" prefWidth="200.0" style="-fx-background-color: #8daccb;;" styleClass="painel-lateral" BorderPane.alignment="CENTER">
             <children>
-                <Button alignment="BASELINE_LEFT" graphicTextGap="10.0" mnemonicParsing="false" styleClass="btn-padrao-home" text="Pagina Inicial">
+                <Button alignment="BASELINE_LEFT" graphicTextGap="10.0" mnemonicParsing="false" onAction="#onClickHome" styleClass="btn-padrao-home" text="Pagina Inicial">
                     <font>
                         <Font name="Arial" size="17.0" />
                     </font>
@@ -58,7 +58,7 @@
                         <String fx:value="btn-padrao" />
                         <String fx:value="btn-click" />
                     </styleClass></Button>
-                <Button alignment="BASELINE_LEFT" graphicTextGap="10.0" mnemonicParsing="false" styleClass="btn-padrao" text="Relatório">
+                <Button alignment="BASELINE_LEFT" graphicTextGap="10.0" mnemonicParsing="false" onAction="#onClickRelatorio" styleClass="btn-padrao" text="Relatório">
                     <VBox.margin>
                         <Insets />
                     </VBox.margin>
@@ -90,12 +90,12 @@
             <children>
                 <ImageView fitHeight="550.0" fitWidth="600.0" opacity="0.2" pickOnBounds="true" preserveRatio="true">
                     <image>
-                        <Image url="@imagens/Logo%20colorida%20Senac.png" />
+                        <Image url="@imagens/LogocoloridaSenac.png" />
                     </image>
                 </ImageView>
                 <VBox alignment="TOP_CENTER" prefHeight="400.0" prefWidth="600.0">
                     <children>
-                        <HBox alignment="CENTER" prefHeight="50.0" style="-fx-background-color: #e4891b;">
+                        <HBox alignment="CENTER" prefHeight="50.0" prefWidth="600.0" styleClass="painel-secundario">
                             <children>
                                 <Label prefHeight="27.0" prefWidth="259.0" text="Quinta, 01/01/2026">
                                     <font>
