@@ -125,7 +125,7 @@
                         </HBox>
                         <HBox alignment="CENTER" layoutX="60.0" layoutY="244.0" prefHeight="20.0" prefWidth="600.0">
                             <children>
-                                <TextField fx:id="txtpesquisa" prefWidth="200.0" promptText="🔍 Pesquisar">
+                                <TextField fx:id="txtpesquisa" prefHeight="25.0" prefWidth="200.0" promptText="🔍 Pesquisar">
                            <font>
                               <Font name="Arial" size="12.0" />
                            </font></TextField>
@@ -138,7 +138,7 @@
                            </font>
                                 </Button>
                                 <Region prefHeight="25.0" prefWidth="20.0" HBox.hgrow="ALWAYS" />
-                        <DatePicker fx:id="dataDE" prefWidth="100.0" promptText="De">
+                        <DatePicker fx:id="dataDE" prefWidth="100.0" promptText="De" styleClass="date-picker">
                            <HBox.margin>
                               <Insets right="5.0" />
                            </HBox.margin>

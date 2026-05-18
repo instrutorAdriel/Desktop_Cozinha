@@ -252,3 +252,7 @@
 .btn-laranja:hover{
     -fx-background-color: #ba7119;
 }
+
+.date-picker > .arrow-button {
+    -fx-background-color:  #aecae6;
+}
