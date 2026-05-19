@@ -17,6 +17,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ResourceBundle;
 
+import static com.example.desktop_cozinha.MainApplication.sair;
 import static com.example.desktop_cozinha.MainApplication.trocadorDeTelas;
 
 public class HomeController implements Initializable {
@@ -68,6 +69,6 @@ public class HomeController implements Initializable {
     }
 
     public void botaoSairAction( ) throws IOException {
-        trocadorDeTelas("login.fxml");
+        sair();
     }
 }
