@@ -75,23 +75,4 @@ public class UsuarioDAO {
             throw new RuntimeException("Erro ao atualizar senha");
         }
     }
-
-
-public static List<Relatorio> relatorioProduto (String nomeProduto) throws SQLException{
-
-
-
-
-
-
-
-
-}
-
-
-
-
-
-
-
 }

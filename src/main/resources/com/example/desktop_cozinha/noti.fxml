@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.desktop_cozinha.controller.notificacaoController">
+   <center>
+      <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+         <children>
+            <TableView fx:id="tabelaNotificacao" editable="true" prefHeight="200.0" prefWidth="200.0">
+              <columns>
+                  <TableColumn fx:id="colId" prefWidth="75.0" text="Id Produto" />
+                  <TableColumn fx:id="colNome" prefWidth="75.0" text="Nome" />
+                  <TableColumn fx:id="colTipo" prefWidth="75.0" text="Tipo" />
+                <TableColumn fx:id="colQuantidade" prefWidth="75.0" text="Quantidade Atual" />
+                <TableColumn fx:id="colUnidade" prefWidth="75.0" text="Unidade_Medida" />
+                  <TableColumn fx:id="colValidade" prefWidth="75.0" text="Data_Validade" />
+                  <TableColumn fx:id="colEstoqueMin" prefWidth="75.0" text="Estoque_Minimo" />
+                  <TableColumn fx:id="colStatus" prefWidth="75.0" text="Status" />
+              </columns>
+            </TableView>
+         </children>
+      </VBox>
+   </center>
+</BorderPane>
