@@ -85,6 +85,7 @@ public class notificacaoController {
                 // IF 2: Perto de vencer
                 if (diasRestantes >= 0 && diasRestantes <= DIAS_AVISO_VALIDADE) {
                     mensagemValidade.append("• ").append(item.getNomeProduto())
+                            .append(colStatus)
                             .append(" — vence em ").append(diasRestantes).append(" dia(s)\n");
 
                 }
