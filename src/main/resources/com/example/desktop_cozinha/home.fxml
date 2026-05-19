@@ -30,7 +30,7 @@
                   <String fx:value="btn-click" />
                   <String fx:value="btn-padrao" />
                </styleClass></Button>
-                <Button alignment="BASELINE_LEFT" mnemonicParsing="false" styleClass="btn-padrao" text="Estoque">
+                <Button alignment="BASELINE_LEFT" mnemonicParsing="false" onAction="#botaoEstoqueAction" styleClass="btn-padrao" text="Estoque">
                     <font>
                         <Font name="Arial" size="17.0" />
                     </font>

@@ -68,6 +68,10 @@ public class HomeController implements Initializable {
         }
     }
 
+    public void botaoEstoqueAction() throws IOException {
+        trocadorDeTelas("lista-estoque.fxml");
+    }
+
     public void botaoSairAction( ) throws IOException {
         sair();
     }
