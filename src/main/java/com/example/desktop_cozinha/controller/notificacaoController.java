@@ -15,6 +15,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 
 public class notificacaoController {
@@ -23,14 +24,13 @@ public class notificacaoController {
 
     // --- Injeção da tabela e colunas ---
     @FXML private TableView<Notificacao> tabelaNotificacao;
-    @FXML private TableColumn<Notificacao, Integer> colId;
     @FXML private TableColumn<Notificacao, String>  colNome;
     @FXML private TableColumn<Notificacao, String>  colTipo;
     @FXML private TableColumn<Notificacao, Integer> colQuantidade;
     @FXML private TableColumn<Notificacao, String>  colUnidade;
     @FXML private TableColumn<Notificacao, String>  colValidade;
     @FXML private TableColumn<Notificacao, Integer> colEstoqueMin;
-    @FXML private TableColumn<Notificacao, Button> colStatus;
+    @FXML private TableColumn<Notificacao, String> colStatus;
 
     // --- Chamado automaticamente ao abrir a tela ---
     @FXML
@@ -41,14 +41,37 @@ public class notificacaoController {
     }
 
     private void configurarColunas() {
-        colId.setCellValueFactory(new PropertyValueFactory<>("id"));
         colNome.setCellValueFactory(new PropertyValueFactory<>("nomeProduto"));
         colTipo.setCellValueFactory(new PropertyValueFactory<>("tipo"));
         colQuantidade.setCellValueFactory(new PropertyValueFactory<>("quantidade_atual"));
         colUnidade.setCellValueFactory(new PropertyValueFactory<>("unidade_medida"));
         colValidade.setCellValueFactory(new PropertyValueFactory<>("data_validade"));
         colEstoqueMin.setCellValueFactory(new PropertyValueFactory<>("estoque_minimo"));
-        colStatus.setCellValueFactory(new PropertyValueFactory<>("status"));
+        colStatus.setCellValueFactory(cellData -> {
+            Notificacao item = cellData.getValue();
+            List<String> problemas = new ArrayList<>();
+
+            // Verifica se a quantidade atual está abaixo ou igual ao mínimo permitido
+            if (item.getQuantidade_atual() <= item.getEstoque_minimo()) {
+                problemas.add("Estoque Baixo");
+            }
+
+            // Tenta converter a data e calcular os dias restantes até o vencimento
+            try {
+                LocalDate validade = LocalDate.parse(item.getData_validade());
+                long dias = ChronoUnit.DAYS.between(LocalDate.now(), validade);
+
+                if (dias < 0)                        problemas.add(" Vencido");
+                else if (dias <= DIAS_AVISO_VALIDADE) problemas.add(" Vence em " + dias + " dia(s)");
+
+            } catch (Exception e) {
+                // Data em formato inválido ou nula
+                problemas.add("Data inválida");
+            }
+
+            // Une todos os problemas encontrados separados por " | "
+            return new javafx.beans.property.SimpleStringProperty(String.join(" | ", problemas));
+        });
     }
 
     @FXML
@@ -75,6 +98,9 @@ public class notificacaoController {
                         .append(" — ").append(item.getQuantidade_atual())
                         .append(" ").append(item.getUnidade_medida())
                         .append(" (mínimo: ").append(item.getEstoque_minimo()).append(")\n");
+
+                configurarColunas();
+                return;
             }
 
             // IF 2 e 3: Validade
@@ -85,9 +111,10 @@ public class notificacaoController {
                 // IF 2: Perto de vencer
                 if (diasRestantes >= 0 && diasRestantes <= DIAS_AVISO_VALIDADE) {
                     mensagemValidade.append("• ").append(item.getNomeProduto())
-                            .append(colStatus)
                             .append(" — vence em ").append(diasRestantes).append(" dia(s)\n");
 
+                    configurarColunas();
+                    return;
                 }
 
                 // IF 3: Já vencido
@@ -95,7 +122,8 @@ public class notificacaoController {
                     mensagemValidade.append("• ").append(item.getNomeProduto())
                             .append(" — VENCIDO há ").append(Math.abs(diasRestantes)).append(" dia(s)\n");
                 }
-
+                configurarColunas();
+                return;
             } catch (Exception e) {
                 System.out.println("Data inválida para o produto: " + item.getNomeProduto());
             }
@@ -124,9 +152,5 @@ public class notificacaoController {
             alert.setContentText("Nenhum produto com problema encontrado.");
             alert.showAndWait();
         }
-    }
-
-    public void OnNotificacaoClick() throws Exception {
-        MainApplication.trocadorDeTelas("noti.fxml");
     }
 }

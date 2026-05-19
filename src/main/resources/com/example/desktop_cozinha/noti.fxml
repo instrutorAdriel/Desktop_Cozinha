@@ -9,7 +9,6 @@
          <children>
             <TableView fx:id="tabelaNotificacao" editable="true" prefHeight="200.0" prefWidth="200.0">
               <columns>
-                  <TableColumn fx:id="colId" prefWidth="75.0" text="Id Produto" />
                   <TableColumn fx:id="colNome" prefWidth="75.0" text="Nome" />
                   <TableColumn fx:id="colTipo" prefWidth="75.0" text="Tipo" />
                 <TableColumn fx:id="colQuantidade" prefWidth="75.0" text="Quantidade Atual" />

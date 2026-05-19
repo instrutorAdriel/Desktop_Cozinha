@@ -11,7 +11,7 @@ import java.util.List;
 
 public class ProductDAO {
     public static List<Notificacao> relatorioProduto () throws SQLException {
-    String sql = "SELECT id, nome, tipo, quantidade_atual, unidade_medida, estoque_minimo FROM estoque_geral";
+    String sql = "SELECT nome, tipo, quantidade_atual, unidade_medida,data_validade, estoque_minimo FROM estoque_geral";
 
         List<Notificacao> itens = new ArrayList<>();
 
@@ -23,7 +23,6 @@ public class ProductDAO {
             while(rs.next()){
 
                 Notificacao r = new Notificacao(
-                        rs.getInt("id"),
                         rs.getString("nome"),
                         rs.getString("tipo"),
                         rs.getInt("quantidade_atual"),

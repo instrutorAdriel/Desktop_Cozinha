@@ -7,15 +7,13 @@ public class Usuario {
     private String nome;
     private String senha;
     private String email;
-    private String cargo;
     private String token;
 
-    public void User(int ID, String nome, String senha, String email, String cargo, String token ){
+    public void User(int ID, String nome, String senha, String email, String token ){
         this.ID = ID;
         this.nome = nome;
         this.senha = senha;
         this.email = email;
-        this.cargo = cargo;
         this.token = token;
 
 
@@ -32,9 +30,6 @@ public class Usuario {
 
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
-
-    public String getCargo() { return cargo; }
-    public void setCargo(String cargo) { this.cargo = cargo; }
 
     public String getToken() { return token; }
     public void setToken(String token) { this.token = token; }

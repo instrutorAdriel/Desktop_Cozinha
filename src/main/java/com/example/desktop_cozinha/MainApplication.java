@@ -3,14 +3,8 @@ package com.example.desktop_cozinha;
 import com.sun.tools.javac.Main;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.stage.Modality;
-import javafx.stage.Popup;
 import javafx.stage.Stage;
-
-import java.awt.event.ActionEvent;
 import java.io.IOException;
 
 public class MainApplication extends Application {
@@ -22,7 +16,7 @@ public class MainApplication extends Application {
         primaryStage = stage;
 
         // Carrega a tela inicial (carrega tela inicial)
-        trocadorDeTelas("dashboard.fxml");
+        trocadorDeTelas("confirmaEmail.fxml");
 
         primaryStage.setTitle("Sistema genérico");
         primaryStage.show();
@@ -44,32 +38,6 @@ public class MainApplication extends Application {
 
         // Define a cena no Stage principal
         primaryStage.setScene(scene);
-    }
-
-    public static Stage popUp(ActionEvent event, String telaFxml) throws IOException {
-        //carrega a telça fxml do pop pup
-        FXMLLoader loader = new FXMLLoader(MainApplication.class.getResource(telaFxml));
-        Parent root = loader.load();
-
-
-        //cria um novo stage para o pop up
-        Stage popup = new Stage();
-        popup.setTitle("Aviso!");
-        popup.setScene(new Scene(root));
-
-        //define a modalidade - bloqueia a janela root(pai)
-
-        popup.initModality(Modality.APPLICATION_MODAL);
-
-        Stage owner = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        popup.initOwner(owner);
-
-        popup.showAndWait();
-
-        return popup;
-
-
-
     }
 
     public static void main(String[] args) {

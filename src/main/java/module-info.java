@@ -6,7 +6,7 @@ module com.example.desktop_cozinha {
     requires jakarta.mail;
     requires jdk.compiler;
     requires java.desktop;
-    requires jdk.internal.le;
+
 
 
     opens com.example.desktop_cozinha to javafx.fxml;

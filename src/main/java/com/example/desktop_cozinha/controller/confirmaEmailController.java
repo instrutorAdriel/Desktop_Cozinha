@@ -100,29 +100,11 @@ public class confirmaEmailController {
             alert.showAndWait();
             
         }
-        
-        
+
 
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    public void OnNotificacaoClick() throws Exception {
+        MainApplication.trocadorDeTelas("noti.fxml");
+    }
 
 }
