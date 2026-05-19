@@ -4,9 +4,12 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.Optional;
 
 public class MainApplication extends Application {
 
@@ -57,6 +60,22 @@ public class MainApplication extends Application {
         }
         catch (IOException ex) {
             throw new RuntimeException(ex);
+        }
+    }
+    public static void sair () throws IOException {
+        Alert alerta = new Alert(Alert.AlertType.WARNING);
+        alerta.setTitle("Sair");
+        alerta.setHeaderText(null);
+        alerta.setContentText("Deseja realmente sair?");
+        ButtonType sim = new ButtonType("SIM");
+        ButtonType nao = new ButtonType("NÃO");
+        alerta.getButtonTypes().setAll(sim,nao);
+        Optional<ButtonType> escolha = alerta.showAndWait();
+        if (escolha.get() == sim) {
+            MainApplication.trocadorDeTelas("login.fxml");
+        }
+        else {
+            return;
         }
     }
 }

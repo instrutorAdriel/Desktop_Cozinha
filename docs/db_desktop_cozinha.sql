@@ -116,3 +116,6 @@ UNLOCK TABLES;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
 -- Dump completed on 2026-04-29  9:59:45
+
+/* Correção banco de dados ! */
+ALTER TABLE usuarios DROP COLUMN Cargo;

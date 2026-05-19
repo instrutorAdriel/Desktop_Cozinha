@@ -35,7 +35,6 @@ public class CadastroController {
     protected void voltarTela () throws Exception {
         // ao cliclar no botão volta para tela de login
         MainApplication.trocadorDeTelas("login.fxml");
-
     }
 
 
