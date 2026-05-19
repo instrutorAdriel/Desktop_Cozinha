@@ -6,12 +6,18 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.util.Duration;
+
+import java.awt.event.ActionEvent;
+import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ResourceBundle;
+
+import static com.example.desktop_cozinha.MainApplication.trocadorDeTelas;
 
 public class HomeController implements Initializable {
 
@@ -23,6 +29,9 @@ public class HomeController implements Initializable {
 
     @FXML
     private Label horaLabel;
+
+    @FXML
+    private Button botaoSair;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -56,5 +65,9 @@ public class HomeController implements Initializable {
             String nome = user.bucarNome(email);
             usuarioLabel.setText("Bem vindo, " + nome);
         }
+    }
+
+    public void botaoSairAction( ) throws IOException {
+        trocadorDeTelas("login.fxml");
     }
 }

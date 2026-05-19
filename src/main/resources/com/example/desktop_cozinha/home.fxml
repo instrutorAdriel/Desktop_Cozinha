@@ -60,7 +60,7 @@
                     </VBox.margin>
                 </Button>
                 <Region prefHeight="303.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
-                <Button alignment="CENTER" contentDisplay="CENTER" graphicTextGap="0.0" mnemonicParsing="false" styleClass="btn-sair" text="Sair">
+                <Button fx:id="botaoSair" alignment="CENTER" contentDisplay="CENTER" graphicTextGap="0.0" mnemonicParsing="false" onAction="#botaoSairAction" styleClass="btn-sair" text="Sair">
                     <font>
                         <Font name="Arial" size="12.0" />
                     </font>
