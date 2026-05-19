@@ -190,7 +190,7 @@ public class ListaController {
 
         try {
             // 1. Instanciamos o FXMLLoader para carregar a tela de edição
-            FXMLLoader fxmlLoader = new FXMLLoader(MainApplication.class.getResource("edicaoProdutos.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(MainApplication.class.getResource("view/edicaoProdutos.fxml"));
             Parent root = fxmlLoader.load();
 
             // 2. Recuperamos o controller da tela de edição pelo fxmlLoader

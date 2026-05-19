@@ -63,11 +63,13 @@ public class CadastroProdutoController  implements Initializable {
     }
 
 
-    @FXML
-    protected void voltarTela () throws Exception {
-        // ao cliclar no botão volta para tela de login
-        MainApplication.trocadorDeTelas("login.fxml");
-    }
+
+        @FXML
+        protected void voltarTela() {
+            // Pega a janela (Stage) onde este botão "btnVoltar" está e fecha ela
+            javafx.stage.Stage stage = (javafx.stage.Stage) btnVoltar.getScene().getWindow();
+            stage.close();
+        }
 
     @FXML
     protected void onCadastrar () throws Exception {
