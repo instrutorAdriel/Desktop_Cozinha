@@ -118,14 +118,10 @@ public class ListaController {
     @FXML
     protected void cadastrarProduto() throws Exception {
         MainApplication.abrirPopUp("view/CadastroProduto.fxml");
+        carregarDados("", false, false, false);
     }
 
 
-
-
-    /**
-     * Executa a remoção do produto após confirmação do usuário.
-     */
 
     // metodo para injetar o id do produto no pop-up para remover produto
     @FXML
@@ -213,9 +209,8 @@ public class ListaController {
             // 5. Exibe o Pop-up e trava a execução desta tela até ele ser fechado
             popupStage.showAndWait();
 
-            // 6. Opcional (Mas recomendado): Recarrega a lista para mostrar a edição que acabou de ser feita
-            onHelloButtonClick();
-
+            // 6. Recarrega a lista para mostrar a edição que acabou de ser feita
+            carregarDados("", false, false, false);
         } catch (Exception e) {
             e.printStackTrace();
             System.err.println("Erro ao abrir a tela de edição!");
