@@ -20,7 +20,6 @@ public class UsuarioDAO {
                 usuario.setNome(rs.getString("nome"));
                 usuario.setSenha(rs.getString("senha"));
                 usuario.setEmail(rs.getString("email"));
-                usuario.setCargo(rs.getString("cargo"));
                 usuario.setToken(rs.getString("token"));
                 return usuario;
             }
