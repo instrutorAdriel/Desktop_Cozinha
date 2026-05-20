@@ -62,6 +62,19 @@ public class CadastroController {
             return;
         }
 
+        //  Validar o formato do e-mail com Regex
+        // Esta regex verifica se tem caracteres antes do @, um domínio válido e um sufixo (ex: .com, .pt)
+        String emailRegex = "^[\\w-.]+@([\\w-]+\\.)+[\\w-]{2,4}$";
+
+        if (!email.matches(emailRegex)) {
+            Alert alerta = new Alert(Alert.AlertType.ERROR);
+            alerta.setTitle("E-mail Inválido");
+            alerta.setHeaderText(null);
+            alerta.setContentText("O formato do e-mail introduzido não é válido. Por favor, insira um e-mail correto (exemplo: usuario@email.com).");
+            alerta.showAndWait();
+            return; // Interrompe o metodo e não vai para a base de dados
+        }
+
 
 
         // Verificar se senha e confirmar senha são iguais
