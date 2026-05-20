@@ -1,10 +1,8 @@
 package com.example.desktop_cozinha.controller;
-
 import com.example.desktop_cozinha.MainApplication;
 import com.example.desktop_cozinha.model.ListaEstoqueDAO;
+import com.example.desktop_cozinha.model.RemoverDAO;
 import com.example.desktop_cozinha.model.ProdutoListaEstoque;
-import com.example.desktop_cozinha.model.removerDAO;
-import com.sun.tools.javac.Main;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -13,6 +11,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -20,13 +19,12 @@ import java.util.Optional;
 
 public class ListaController {
 
-    // ── TableView ──────────────────────────────────────────────────────────────
-
     @FXML
     private TableView<ProdutoListaEstoque> ListaEstoque;
 
     @FXML
     private TableColumn<ProdutoListaEstoque, String> nomeProduto;
+
 
     @FXML
     private TableColumn<ProdutoListaEstoque, String> tipoProduto;
@@ -36,8 +34,6 @@ public class ListaController {
 
     @FXML
     private TableColumn<ProdutoListaEstoque, String> unidadeProduto;
-
-    // ── Filtros ────────────────────────────────────────────────────────────────
 
     @FXML
     private CheckBox chkNaoPereciveis;
@@ -50,8 +46,6 @@ public class ListaController {
 
     @FXML
     private TextField FiltrarProdutos;
-    @FXML
-    private Button pesquisar;
 
     @FXML
     private Button editar;
@@ -64,26 +58,17 @@ public class ListaController {
 
     private final ListaEstoqueDAO dao = new ListaEstoqueDAO();
 
-
-
-
-    // ── Inicialização ──────────────────────────────────────────────────────────
     @FXML
     public void initialize() {
         configurarColunas();
-
-        // Listeners dos checkboxes acionam o filtro automaticamente
-        chkNaoPereciveis.setOnAction(event -> filtrar());
-        chkPereciveis.setOnAction(event -> filtrar());
-        chkUtensilios.setOnAction(event -> filtrar());
-
-        // Listener do campo de texto para filtrar ao digitar (UX melhorado)
-
-
-        carregarDados("", false, false, false);
+        chkNaoPereciveis.setOnAction(event -> onHelloButtonClick());
+        chkPereciveis.setOnAction(event -> onHelloButtonClick());
+        chkUtensilios.setOnAction(event -> onHelloButtonClick());
+        carregarDados("", false,false,false);
     }
 
     private void configurarColunas() {
+
         nomeProduto.setCellValueFactory(new PropertyValueFactory<>("nome"));
         tipoProduto.setCellValueFactory(new PropertyValueFactory<>("tipo"));
         quantidadeProduto.setCellValueFactory(new PropertyValueFactory<>("quantidade"));
@@ -91,23 +76,19 @@ public class ListaController {
     }
 
     @FXML
-
     protected void onHelloButtonClick() {
-        filtrar();
-    }
+        String textoBusca = FiltrarProdutos.getText();
+        boolean naoPereciveis = chkNaoPereciveis.isSelected();
+        boolean perecivel = chkPereciveis.isSelected();
+        boolean utensilio = chkUtensilios.isSelected();
+        carregarDados(textoBusca, naoPereciveis, perecivel, utensilio);
 
-    private void filtrar() {
-        carregarDados(
-                FiltrarProdutos.getText(),
-                chkNaoPereciveis.isSelected(),
-                chkPereciveis.isSelected(),
-                chkUtensilios.isSelected()
-        );
     }
+    private void carregarDados(String textoBusca, boolean naoPereciveis, boolean perecivel, boolean utensilio ) {
 
-    private void carregarDados(String textoBusca, boolean naoPereciveis, boolean perecivel, boolean utensilio) {
         ObservableList<ProdutoListaEstoque> lista =
-                FXCollections.observableArrayList(dao.filtrarProdutos(textoBusca, naoPereciveis, perecivel, utensilio));
+                FXCollections.observableArrayList(dao.filtrarProdutos(textoBusca,naoPereciveis, perecivel, utensilio));
+
         ListaEstoque.setItems(lista);
     }
 
@@ -142,13 +123,14 @@ public class ListaController {
 
         // 4. Se o usuário clicou em OK, prossegue com a remoção
         if (result.isPresent() && result.get() == ButtonType.OK) {
-            removerDAO daoRemover = new removerDAO();
+            RemoverDAO daoRemover = new RemoverDAO();
             // Chama o metodo deletarProduto passando o ID do produto
             boolean sucesso = daoRemover.deletarProduto(produtoSelecionado.getId());
 
             if (sucesso) {
                 mostrarAlerta(Alert.AlertType.INFORMATION, "Sucesso", "Produto removido com sucesso!");
-                filtrar(); // Atualiza a tabela para refletir a mudança
+                onHelloButtonClick();
+                //filtrar(); // Atualiza a tabela para refletir a mudança
             } else {
                 mostrarErro("Erro ao tentar remover o produto do sistema.");
             }

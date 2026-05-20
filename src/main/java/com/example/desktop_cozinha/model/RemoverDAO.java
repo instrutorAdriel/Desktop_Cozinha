@@ -9,7 +9,7 @@ import java.sql.SQLException;
 /**
  * DAO responsável por operações de remoção na tabela estoque_geral.
  */
-public class removerDAO {
+public class RemoverDAO {
 
     /**
      * Deleta um produto pelo seu ID.
