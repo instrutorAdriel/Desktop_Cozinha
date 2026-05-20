@@ -74,7 +74,7 @@
                     </font>
                 </Button>
                 <Region prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
-                <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="50.0" styleClass="btn-sair" text="Sair">
+                <Button fx:id="sair" mnemonicParsing="false" onAction="#botaoSairAction" prefHeight="25.0" prefWidth="50.0" styleClass="btn-sair" text="Sair">
                     <VBox.margin>
                         <Insets bottom="20.0" />
                     </VBox.margin>
@@ -97,17 +97,17 @@
                     <children>
                         <HBox alignment="CENTER" prefHeight="50.0" prefWidth="600.0" styleClass="painel-secundario">
                             <children>
-                                <Label prefHeight="27.0" prefWidth="259.0" text="Quinta, 01/01/2026">
+                                <Label fx:id="dataLabel" prefHeight="27.0" prefWidth="259.0">
                                     <font>
                                         <Font name="Arial Bold" size="20.0" />
                                     </font></Label>
                                 <Region prefHeight="50.0" prefWidth="70.0" HBox.hgrow="ALWAYS" />
-                                <Label prefHeight="27.0" prefWidth="234.0" text="Bem-Vindo, Maria">
+                                <Label fx:id="usuarioLabel" prefHeight="27.0" prefWidth="234.0">
                                     <font>
                                         <Font name="Arial Bold" size="20.0" />
                                     </font></Label>
                                 <Region prefHeight="50.0" prefWidth="70.0" HBox.hgrow="ALWAYS" />
-                                <Label alignment="CENTER_RIGHT" contentDisplay="RIGHT" graphicTextGap="0.0" prefHeight="25.0" prefWidth="130.0" text="08:30:00" textAlignment="RIGHT">
+                                <Label fx:id="horaLabel" alignment="CENTER_RIGHT" contentDisplay="RIGHT" graphicTextGap="0.0" prefHeight="25.0" prefWidth="130.0" textAlignment="RIGHT">
                                     <font>
                                         <Font name="Arial Bold" size="20.0" />
                                     </font>

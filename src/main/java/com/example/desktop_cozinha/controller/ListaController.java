@@ -1,8 +1,12 @@
 package com.example.desktop_cozinha.controller;
 import com.example.desktop_cozinha.MainApplication;
+import com.example.desktop_cozinha.model.HomeDAO;
 import com.example.desktop_cozinha.model.ListaEstoqueDAO;
 import com.example.desktop_cozinha.model.RemoverDAO;
 import com.example.desktop_cozinha.model.ProdutoListaEstoque;
+import com.example.desktop_cozinha.services.SessaoService;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -13,9 +17,14 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Optional;
+
+import static com.example.desktop_cozinha.MainApplication.sair;
 
 public class ListaController {
 
@@ -52,7 +61,21 @@ public class ListaController {
 
     @FXML
     private Button remover;
+    @FXML
     private Integer idProdutoEmRemover;
+
+    @FXML
+    private Label dataLabel;
+
+    @FXML
+    private Label usuarioLabel;
+
+    @FXML
+    private Label horaLabel;
+
+    @FXML
+    private Button sair;
+
 
     // ── Estado e DAO ───────────────────────────────────────────────────────────
 
@@ -65,6 +88,40 @@ public class ListaController {
         chkPereciveis.setOnAction(event -> onHelloButtonClick());
         chkUtensilios.setOnAction(event -> onHelloButtonClick());
         carregarDados("", false,false,false);
+        configurarRelogio();
+        usuarioAtual();
+    }
+
+    public void configurarRelogio() {
+        DateTimeFormatter formatadorData = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        DateTimeFormatter formatadorHora = DateTimeFormatter.ofPattern("HH:mm");
+
+        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(1), event -> {
+            LocalDateTime agora = LocalDateTime.now();
+            dataLabel.setText(agora.format(formatadorData));
+            horaLabel.setText(agora.format(formatadorHora));
+        }));
+
+        timeline.setCycleCount(Timeline.INDEFINITE);
+
+        LocalDateTime agoraInicial = LocalDateTime.now();
+        dataLabel.setText(agoraInicial.format(formatadorData));
+        horaLabel.setText(agoraInicial.format(formatadorHora));
+
+        timeline.play();
+    }
+
+    public void usuarioAtual() {
+        String email = SessaoService.getEmailAtual();
+        if (email != null) {
+            HomeDAO user = new HomeDAO();
+            String nome = user.bucarNome(email);
+            usuarioLabel.setText("Bem vindo, " + nome);
+        }
+    }
+
+    public void botaoSairAction( ) throws IOException {
+        sair();
     }
 
     private void configurarColunas() {
@@ -188,7 +245,7 @@ public class ListaController {
             // 5. Exibe o Pop-up e trava a execução desta tela até ele ser fechado
             popupStage.showAndWait();
 
-            // 6. Opcional (Mas recomendado): Recarrega a lista para mostrar a edição que acabou de ser feita
+            // 6.  Recarrega a lista para mostrar a edição que acabou de ser feita
             onHelloButtonClick();
 
         } catch (Exception e) {
