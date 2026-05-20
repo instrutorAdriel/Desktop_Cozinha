@@ -63,6 +63,7 @@ public class CadastroController {
         }
 
 
+
         // Verificar se senha e confirmar senha são iguais
         if (!Objects.equals(senha, confirmarSenha)) {
 
@@ -76,11 +77,25 @@ public class CadastroController {
 
         }
 
+
         // 3. Cria uma instancia do CadastroDAO
         CadastroDAO dao = new CadastroDAO();
 
-        //4. Chama o metodo de cadastro do cliente
-        dao.cadastrarUsuario(nome, email, senha);
+        // 4. Chama o metodo de cadastro do cliente e guarda o resultado
+        boolean cadastroComSucesso = dao.cadastrarUsuario(nome, email, senha);
+
+        // Verifica se o e-mail já existia
+        if (!cadastroComSucesso) {
+            // Exibe o alerta de e-mail duplicado
+            Alert alerta = new Alert(Alert.AlertType.WARNING);
+            alerta.setTitle("E-mail já cadastrado!");
+            alerta.setHeaderText(null);
+            alerta.setContentText("O e-mail '" + email + "' já está cadastrado no sistema. Por favor, utilize outro e-mail ou faça login.");
+            alerta.showAndWait();
+
+            // Interrompe o metodo para o usuário poder digitar um novo e-mail
+            return;
+        }
 
         //5.informa ao usuario que o cadastro foi realizado
 

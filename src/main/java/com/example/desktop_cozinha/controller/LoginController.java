@@ -20,37 +20,45 @@ public class LoginController {
     Label lbesquecisenha;
 
 
-
     @FXML
     public void onButtonLoginClick() throws IOException {
         LoginDAO loginDAO = new LoginDAO();
         String usuarioDigitado = txtemail.getText();
         String senhaDigitada = pswsenha.getText();
 
-
+        // 1. Validação prévia
+        if (usuarioDigitado.isBlank() || senhaDigitada.isBlank()) {
+            Alert alerta = new Alert(Alert.AlertType.WARNING);
+            alerta.setTitle("Aviso");
+            alerta.setHeaderText(null);
+            alerta.setContentText("Por favor, preencha o e-mail e a senha.");
+            alerta.showAndWait();
+            return; // Para a execução aqui
+        }
 
         String senhaHashDoBanco = loginDAO.obterSenhaHash(usuarioDigitado);
-
-        if (senhaHashDoBanco != null) {
-                if (BCrypt.checkpw(senhaDigitada, senhaHashDoBanco)){
-                    SessaoService.setEmailAtual(usuarioDigitado);
-                    MainApplication.trocadorDeTelas("home.fxml");
-                }
-                else {
-                    Alert alerta = new Alert(Alert.AlertType.WARNING);
-                    alerta.setTitle("As senhas não conferem.");
-                    alerta.setHeaderText(null);
-                    alerta.setContentText("A senha informada é inválida.");
-                    alerta.showAndWait();
-                }
-        } else {
-            Alert alerta = new Alert(Alert.AlertType.WARNING);
-            alerta.setTitle("Preencha os campos obrigatórios.");
+        // 2. Feedback correto de usuário não encontrado
+        if (senhaHashDoBanco == null) {
+            Alert alerta = new Alert(Alert.AlertType.ERROR);
+            alerta.setTitle("Erro");
             alerta.setHeaderText(null);
-            alerta.setContentText("Existem campos não preenchidos.");
+            alerta.setContentText("Usuário não encontrado.");
             alerta.showAndWait();
             return;
         }
+
+        // 3. Validação da senha
+        if (BCrypt.checkpw(senhaDigitada, senhaHashDoBanco)) {
+            SessaoService.setEmailAtual(usuarioDigitado);
+            MainApplication.trocadorDeTelas("home.fxml");
+        } else {
+            Alert alerta = new Alert(Alert.AlertType.WARNING);
+            alerta.setTitle("As senhas não conferem.");
+            alerta.setHeaderText(null);
+            alerta.setContentText("A senha informada é inválida.");
+            alerta.showAndWait();
+        }
+
     }
 
     @FXML
@@ -63,5 +71,6 @@ public class LoginController {
         MainApplication.trocadorDeTelas("cadastro.fxml");
     }
 }
+
 
 
