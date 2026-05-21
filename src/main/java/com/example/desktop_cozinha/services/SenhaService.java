@@ -1,4 +1,4 @@
-package com.example.desktop_cozinha.Services;
+package com.example.desktop_cozinha.services;
 
 import com.example.desktop_cozinha.model.Usuario;
 import com.example.desktop_cozinha.model.UsuarioDAO;
@@ -8,7 +8,7 @@ import java.sql.*;
 import java.security.SecureRandom;
 
 
-public class senhaService {
+public class SenhaService {
 
     public static void enviarEmail(String email) throws SQLException, MessagingException {
         Usuario usuario = UsuarioDAO.buscaEmail(email);
@@ -18,7 +18,7 @@ public class senhaService {
 
 
         String token = String.format("%06d", new SecureRandom().nextInt(999999));
-        String codigoHash = encryptService.encrypt(token);
+        String codigoHash = EncryptService.encrypt(token);
 
         UsuarioDAO.salvarToken(email, codigoHash);
 
@@ -28,7 +28,7 @@ public class senhaService {
 
 
 
-        emailService.estruturaEmail(email, "Recupercao de senha", corpo);
+        EmailService.estruturaEmail(email, "Recupercao de senha", corpo);
 
 
     }
@@ -41,7 +41,7 @@ public class senhaService {
             System.out.println("Sessao expirada");
         }
 
-        String novaSenhaHash = encryptService.encrypt(novaSenha);
+        String novaSenhaHash = EncryptService.encrypt(novaSenha);
         UsuarioDAO.recuperaSenha(novaSenhaHash, email);
         UsuarioDAO.deletaToken(email);
         sessaoService.setEmailAtual(null);

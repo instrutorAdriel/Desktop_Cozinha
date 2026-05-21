@@ -1,8 +1,7 @@
 package com.example.desktop_cozinha.controller;
 
 import com.example.desktop_cozinha.MainApplication;
-import com.example.desktop_cozinha.Services.regexService;
-import com.example.desktop_cozinha.Services.sessaoService;
+import com.example.desktop_cozinha.Services.SessaoService;
 import com.example.desktop_cozinha.Services.encryptService;
 import com.example.desktop_cozinha.Services.senhaService;
 import com.example.desktop_cozinha.model.Usuario;
@@ -10,6 +9,8 @@ import com.example.desktop_cozinha.model.UsuarioDAO;
 import jakarta.mail.MessagingException;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 
 import java.io.IOException;
@@ -35,14 +36,6 @@ public class confirmaEmailController {
             alert.showAndWait();
             return;
         }
-        if(!regexService.emailValidation(emailDigitado)){
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Erro");
-            alert.setHeaderText("Insira um email valido!");
-            alert.showAndWait();
-            return;
-        }
-
         Usuario usuario = UsuarioDAO.buscaEmail(emailDigitado);
 
         if(usuario == null || !usuario.getEmail().equals(emailDigitado)){
@@ -54,7 +47,7 @@ public class confirmaEmailController {
             return ;
         }
         else {
-            sessaoService.setEmailAtual(emailDigitado);
+            SessaoService.setEmailAtual(emailDigitado);
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Sucesso");
             alert.setHeaderText("Código confirmado com sucesso!");
@@ -65,7 +58,7 @@ public class confirmaEmailController {
 
     @FXML
     private void onVoltarClick() throws IOException {
-        MainApplication.trocadorDeTelas("noti.fxml");
+        MainApplication.trocadorDeTelas("Login.fxml");
     }
 
     @FXML
@@ -79,7 +72,7 @@ public class confirmaEmailController {
             alert.setHeaderText("Preencha o campo de código!");
             alert.showAndWait();
         }
-        if(sessaoService.getEmailAtual() == null || codigoDigitado.isBlank()){
+        if(SessaoService.getEmailAtual() == null || codigoDigitado.isBlank()){
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Erro");
             alert.setHeaderText("Código não encontrado!");
@@ -88,7 +81,7 @@ public class confirmaEmailController {
 
         }
 
-        boolean verifica = encryptService.checkPassword(codigoDigitado, UsuarioDAO.buscaEmail(sessaoService.getEmailAtual()).getToken());
+        boolean verifica = encryptService.checkPassword(codigoDigitado, UsuarioDAO.buscaEmail(SessaoService.getEmailAtual()).getToken());
 
         if(verifica){
             MainApplication.trocadorDeTelas("alteraSenha.fxml");
@@ -100,11 +93,29 @@ public class confirmaEmailController {
             alert.showAndWait();
             
         }
-
+        
+        
 
     }
-    public void OnNotificacaoClick() throws Exception {
-        MainApplication.trocadorDeTelas("noti.fxml");
-    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 }

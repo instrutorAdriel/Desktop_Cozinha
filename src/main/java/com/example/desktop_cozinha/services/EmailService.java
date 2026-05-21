@@ -1,11 +1,11 @@
-package com.example.desktop_cozinha.Services;
+package com.example.desktop_cozinha.services;
 
 import jakarta.mail.*;
 import jakarta.mail.internet.MimeMessage;
 
 import java.util.Properties;
 
-public class emailService {
+public class EmailService {
 
 private static final String email = "diegolopes13072007@gmail.com";
 private static final String senha = "zrvluuhnizyiscad";
@@ -35,7 +35,6 @@ private static final String senha = "zrvluuhnizyiscad";
             message.setSubject(assunto);
             message.setText(mensagem);
             Transport.send(message);
-            System.out.println("Email enviado com sucesso!");
 
     }catch (MessagingException e) {
             System.out.println("Erro ao enviar o email: " + e.getMessage());

@@ -5,7 +5,6 @@ module com.example.desktop_cozinha {
     requires jbcrypt;
     requires jakarta.mail;
     requires jdk.compiler;
-    requires java.desktop;
 
 
 

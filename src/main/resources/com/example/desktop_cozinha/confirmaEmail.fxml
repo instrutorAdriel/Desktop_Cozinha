@@ -10,6 +10,5 @@
       <Button layoutX="274.0" layoutY="237.0" mnemonicParsing="false" onAction="#onConfirmaToken" text="Confirmar Código" AnchorPane.leftAnchor="235.0" AnchorPane.rightAnchor="235.0" />
       <Button layoutX="274.0" layoutY="142.0" mnemonicParsing="false" onAction="#onConfirmaEmailClick" text="Confirma Email" AnchorPane.leftAnchor="235.0" AnchorPane.rightAnchor="235.0" />
       <Button fx:id="onVoltarClick" layoutX="14.0" layoutY="361.0" mnemonicParsing="false" text="Voltar" AnchorPane.leftAnchor="14.0" />
-      <Button layoutX="534.0" layoutY="361.0" mnemonicParsing="false" onAction="#OnNotificacaoClick" text="Notificacao" />
    </children>
 </AnchorPane>

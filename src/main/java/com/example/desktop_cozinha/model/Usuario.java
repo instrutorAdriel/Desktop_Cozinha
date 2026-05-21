@@ -1,6 +1,5 @@
 package com.example.desktop_cozinha.model;
 
-import java.nio.file.attribute.UserPrincipal;
 
 public class Usuario {
     private int ID;

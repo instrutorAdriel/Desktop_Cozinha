@@ -1,9 +1,9 @@
-package com.example.desktop_cozinha.Services;
+package com.example.desktop_cozinha.services;
 
 import org.mindrot.jbcrypt.BCrypt;
 
 
-public class encryptService {
+public class EncryptService {
     public static String encrypt(String codigo) {
 
         return BCrypt.hashpw(codigo, BCrypt.gensalt());
