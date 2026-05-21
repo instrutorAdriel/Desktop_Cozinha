@@ -13,21 +13,20 @@ public class AlertaProdutoDAO {
     public List<AlertaProduto> buscarProdutosEmAlerta() {
         List<AlertaProduto> alertas = new ArrayList<>();
         String sql = """
-            SELECT 
-                nome, 
-                IFNULL(DATE_FORMAT(data_validade, '%d/%m/%Y'), 'Sem data') AS validade,
-                CASE 
+            SELECT nome, IFNULL(DATE_FORMAT(data_validade, '%d/%m/%Y'), 'Sem data') AS validade,
+                CASE\s
                     WHEN data_validade IS NOT NULL AND data_validade < CURDATE() THEN 'Vencido'
                     WHEN data_validade IS NOT NULL AND data_validade = CURDATE() THEN 'Vence Hoje!'
-                    WHEN data_validade IS NOT NULL AND data_validade BETWEEN DATE_ADD(CURDATE(), INTERVAL 1 DAY) AND DATE_ADD(CURDATE(), INTERVAL 7 DAY) 
+                    WHEN data_validade IS NOT NULL AND data_validade BETWEEN DATE_ADD(CURDATE(), INTERVAL 1 DAY) AND DATE_ADD(CURDATE(), INTERVAL 7 DAY)\s
                         THEN CONCAT('Vencendo em ', DATEDIFF(data_validade, CURDATE()), ' dias')
                     WHEN quantidade_atual <= estoque_minimo THEN 'Estoque Baixo'
-                    ELSE 'OK'
-                END AS status_alerta,
-                CONCAT(TRUNCATE(quantidade_atual, 3), ' ', unidade_medida) AS quantidade_formatada
+            	ELSE 'OK'
+            END AS status_alerta,\s
+            CONCAT(REPLACE(CAST(quantidade_atual AS DOUBLE), '.', ','), ' ', unidade_medida) AS quantidade_formatada
             FROM estoque_geral
-            WHERE (tipo = 'PERECIVEL' AND data_validade <= DATE_ADD(CURDATE(), INTERVAL 7 DAY)) 
-               OR (quantidade_atual <= estoque_minimo);
+            WHERE (tipo = 'PERECIVEL'\s
+            AND data_validade <= DATE_ADD(CURDATE(), INTERVAL 7 DAY))\s
+            OR (quantidade_atual <= estoque_minimo);
         """;
         try(Connection conect = DatabaseConfig.getConnection();
             PreparedStatement cmd = conect.prepareStatement(sql);
