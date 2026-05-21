@@ -129,30 +129,23 @@
                            <font>
                               <Font name="Arial" size="12.0" />
                            </font></TextField>
-                                <Button fx:id="btnbuscar" graphicTextGap="0.0" mnemonicParsing="false" onAction="#filtrarHistorico" prefWidth="100.0" styleClass="btn-padrao-2" text="Buscar">
-                                    <HBox.margin>
-                                        <Insets left="5.0" />
-                                    </HBox.margin>
-                           <font>
-                              <Font name="Arial" size="12.0" />
-                           </font>
-                                </Button>
-                                <Region prefHeight="25.0" prefWidth="20.0" HBox.hgrow="ALWAYS" />
-                        <DatePicker fx:id="dataDE" prefWidth="100.0" promptText="De" styleClass="date-picker">
+                        <Button fx:id="btnbuscardata" graphicTextGap="0.0" layoutX="188.0" layoutY="10.0" mnemonicParsing="false" onAction="#filtrarHistorico" prefWidth="100.0" styleClass="btn-padrao-2" text="Buscar">
                            <HBox.margin>
-                              <Insets right="5.0" />
-                           </HBox.margin>
-                        </DatePicker>
-                        <DatePicker fx:id="dataATE" layoutX="340.0" layoutY="10.0" prefWidth="100.0" promptText="Até">
-                           <HBox.margin>
-                              <Insets right="5.0" />
-                           </HBox.margin>
-                        </DatePicker>
-                        <Button fx:id="btnbuscardata" graphicTextGap="0.0" layoutX="188.0" layoutY="10.0" mnemonicParsing="false" onAction="#buscarDataHora" prefWidth="100.0" styleClass="btn-padrao-2" text="Buscar">
-                           <HBox.margin>
-                              <Insets right="5.0" />
+                              <Insets left="15.0" />
                            </HBox.margin>
                         </Button>
+                                <Region HBox.hgrow="ALWAYS" />
+                        <DatePicker fx:id="dataDE" prefWidth="150.0" promptText="De" styleClass="date-picker">
+                           <HBox.margin>
+                              <Insets left="10.0" right="10.0" />
+                           </HBox.margin>
+                        </DatePicker>
+                        <DatePicker fx:id="dataATE" layoutX="340.0" layoutY="10.0" prefWidth="150.0" promptText="Até">
+                           <HBox.margin>
+                              <Insets right="10.0" />
+                           </HBox.margin>
+                        </DatePicker>
+                        <Region layoutX="261.0" layoutY="10.0" HBox.hgrow="ALWAYS" />
                                 <ChoiceBox fx:id="filtro" prefHeight="25.0" prefWidth="150.0" styleClass="btn-padrao-2">
                                     <HBox.margin>
                                         <Insets />
@@ -162,13 +155,13 @@
                                 <Insets bottom="10.0" left="50.0" right="50.0" top="30.0" />
                             </VBox.margin>
                         </HBox>
-                        <TableView fx:id="tableHistorico" layoutX="60.0" layoutY="317.0" prefWidth="600.0" styleClass="list-view" VBox.vgrow="ALWAYS">
+                        <TableView fx:id="tableHistorico" layoutX="60.0" layoutY="317.0" styleClass="list-view" VBox.vgrow="ALWAYS">
                             <columns>
                                 <TableColumn fx:id="data_hora" prefWidth="100.0" text="Data" />
                                 <TableColumn fx:id="nome_produto" prefWidth="200.0" text="Produto" />
-                                <TableColumn fx:id="tipo_movimentacao" prefWidth="100.0" text="Tipo" />
+                                <TableColumn fx:id="tipo_estoque" prefWidth="100.0" text="Tipo" />
                                 <TableColumn fx:id="quantidade" prefWidth="50.0" text="Qtd" />
-                                <TableColumn fx:id="observacao" prefWidth="100.0" text="Movimentação" />
+                                <TableColumn fx:id="tipo_movimentacao" prefWidth="100.0" text="Movimentação" />
                                 <TableColumn fx:id="nome_usuario" prefWidth="150.0" text="Usuário" />
                             </columns>
                             <columnResizePolicy>

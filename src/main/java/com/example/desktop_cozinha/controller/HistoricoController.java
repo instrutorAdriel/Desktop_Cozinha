@@ -9,11 +9,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 
-import javax.swing.*;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 public class HistoricoController {
     @FXML private Button btnbuscar;
@@ -23,7 +20,7 @@ public class HistoricoController {
     @FXML private TableColumn<Historico, String> nome_usuario;
     @FXML private TableColumn<Historico, String> tipo_movimentacao;
     @FXML private TableColumn<Historico, Integer> quantidade;
-    @FXML private TableColumn<Historico, String> observacao;
+    @FXML private TableColumn<Historico, String> tipo_estoque;
     @FXML private TableColumn<Historico, String> data_hora;
     @FXML private ChoiceBox<String> filtro;
     @FXML private Button btnsair;
@@ -34,17 +31,16 @@ public class HistoricoController {
     @FXML
     public void initialize() {
         configurarColunas();
-        // Adicionei "Produto" nas opções para bater com a busca nova
-        filtro.getItems().addAll("Ambos", "Entrada", "Saída");
-        filtro.setValue("Ambos");
 
-        // ADICIONE ISSO: Escuta as mudanças no ChoiceBox
-        filtro.valueProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue != null) {
-                filtrarHistorico(); // Chama o método de busca automaticamente
-            }
-        });
+        // 1. Adiciona as opções visíveis para o usuário (incluindo "Todos")
+        filtro.getItems().addAll("Todos", "Entrada", "Saída", "Descarte");
+// 2. Define "Todos" como valor padrão inicial
+        filtro.setValue("Todos");
+        // 3. Ovinte para disparar a busca sempre que o usuário mudar o filtro    filtro.setOnAction(event -> realizarBusca());
+        // Executa a busca automática sempre que mudar o ChoiceBox
+        filtro.valueProperty().addListener((observable, oldValue, newValue) -> filtrarHistorico());
 
+        // Busca inicial carregando tudo
         filtrarHistorico();
     }
 
@@ -52,74 +48,52 @@ public class HistoricoController {
         data_hora.setCellValueFactory(new PropertyValueFactory<>("data_hora"));
         nome_produto.setCellValueFactory(new PropertyValueFactory<>("nome_produto"));
         tipo_movimentacao.setCellValueFactory(new PropertyValueFactory<>("tipo_movimentacao"));
-        quantidade.setCellValueFactory(new PropertyValueFactory<>("quantidade_movimentada"));
-        observacao.setCellValueFactory(new PropertyValueFactory<>("observacao"));
+        quantidade.setCellValueFactory(new PropertyValueFactory<>("quantidade"));
+        tipo_estoque.setCellValueFactory(new PropertyValueFactory<>("tipo_estoque"));
         nome_usuario.setCellValueFactory(new PropertyValueFactory<>("nome_usuario"));
     }
 
-    public String choiceboxmarcado(){
-        if (filtro.getValue() == "Ambos") {
-            IO.println("entrou");
-            return "Ambos";
-
+    public String choiceboxmarcado() {
+        if (filtro.getValue() == null || filtro.getValue().equals("Todos")) {
+            return "Todos";
         }
-        else  if (filtro.getValue() == "Entrada") {
-            IO.println("entrou la ele ");
-            return "Entrada";
-        }
-        else {
-            return "Saída";
-        }
+        return filtro.getValue(); // Retorna "Entrada" ou "Saída" direto
     }
 
+    /**
+     * Método centralizador. Ele lê os inputs de texto, tipo e data e atualiza a tabela.
+     */
     @FXML
     public void filtrarHistorico() {
-        String tipoFiltro = filtro.getValue().toLowerCase();
         String pesquisa = txtpesquisa.getText();
-        List<Historico> resultado;
+        String tipoFiltro = choiceboxmarcado();
 
-        // Se houver texto no campo de pesquisa, prioriza a busca por produto
-        if (pesquisa != null && !pesquisa.isEmpty()) {
-            filtro.setValue(tipoFiltro);
-            resultado = HistoricoDAO.buscarPorProduto(pesquisa);
-        } else {
-            // Caso contrário, usa o filtro do ChoiceBox
-            resultado = switch (tipoFiltro) {
-                case "saída" -> HistoricoDAO.imprimirHistoricoporsaida();
-                case "entrada" -> HistoricoDAO.imprimirHistoricoporentrada();
-                default -> HistoricoDAO.imprimirHistoricoCompleto();
-            };
+        String stringDe = null;
+        String stringAte = null;
+
+        // Se ambas as datas estiverem preenchidas, nós passamos para o filtro
+        if (dataDE.getValue() != null && dataATE.getValue() != null) {
+            stringDe = String.valueOf(dataDE.getValue());
+            stringAte = String.valueOf(dataATE.getValue());
         }
 
+        // O DAO resolve a combinação de filtros que estiver ativa de forma limpa
+        List<Historico> resultado = HistoricoDAO.filtrar(pesquisa, tipoFiltro, stringDe, stringAte);
         atualizarTabela(resultado);
     }
+
+    /**
+     * Ação do botão de buscar data. Valida o preenchimento e dispara o filtro geral.
+     */
+
 
     private void atualizarTabela(List<Historico> lista) {
         ObservableList<Historico> observableList = FXCollections.observableArrayList(lista);
         tableHistorico.setItems(observableList);
     }
+
     @FXML
-    public void botaoSair () throws IOException {
+    public void botaoSair() throws IOException {
         MainApplication.sair();
-    }
-    @FXML
-    public void buscarDataHora () throws  IOException {
-        String de = String.valueOf(dataDE.getValue());
-        String ate = String.valueOf(dataATE.getValue());
-        List<Historico> resultado;
-
-
-        if (dataDE.getValue() == null || dataATE.getValue() == null) {
-            Alert alerta = new Alert(Alert.AlertType.WARNING);
-            alerta.setTitle("Alerta de busca");
-            alerta.setHeaderText(null);
-            alerta.setContentText("Por favor insira as datas de busca");
-            alerta.showAndWait();
-        }
-        else {
-            resultado = HistoricoDAO.buscarPorData(de,ate);
-            atualizarTabela(resultado);
-
-        }
     }
 }
