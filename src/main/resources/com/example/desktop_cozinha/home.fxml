@@ -43,7 +43,7 @@
                         <Insets bottom="25.0" />
                     </VBox.margin>
                 </Button>
-                <Button alignment="BASELINE_LEFT" graphicTextGap="10.0" layoutX="18.0" layoutY="61.0" mnemonicParsing="false" styleClass="btn-padrao" text="Relatório      ">
+                <Button alignment="BASELINE_LEFT" graphicTextGap="10.0" layoutX="18.0" layoutY="61.0" mnemonicParsing="false" onAction="#botaoRelatorio" styleClass="btn-padrao" text="Relatório      ">
                     <font>
                         <Font name="Arial" size="17.0" />
                     </font>

@@ -276,7 +276,7 @@ public class ListaController {
     }
 
     public void onClickRelatorio() throws IOException {
-        //MainApplication.trocadorDeTelas("relatorio.fxml");
+        MainApplication.trocadorDeTelas("historico.fxml");
     }
 
     public void onClickAddProduto() throws IOException {

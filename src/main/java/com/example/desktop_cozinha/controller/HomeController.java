@@ -1,5 +1,6 @@
 package com.example.desktop_cozinha.controller;
 
+import com.example.desktop_cozinha.MainApplication;
 import com.example.desktop_cozinha.model.AlertaProduto;
 import com.example.desktop_cozinha.model.AlertaProdutoDAO;
 import com.example.desktop_cozinha.model.HomeDAO;
@@ -109,6 +110,10 @@ public class HomeController implements Initializable {
 
     public void botaoEstoqueAction() throws IOException {
         trocadorDeTelas("lista-estoque.fxml");
+    }
+
+    public void botaoRelatorio() throws IOException {
+        MainApplication.trocadorDeTelas("historico.fxml");
     }
 
     public void botaoSairAction( ) throws IOException {
