@@ -6,13 +6,9 @@ import com.example.desktop_cozinha.services.EncryptService;
 import com.example.desktop_cozinha.services.SenhaService;
 import com.example.desktop_cozinha.model.Usuario;
 import com.example.desktop_cozinha.model.UsuarioDAO;
-import com.example.desktop_cozinha.services.EncryptService;
-import com.example.desktop_cozinha.services.SenhaService;
 import jakarta.mail.MessagingException;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 
 import java.io.IOException;
@@ -95,8 +91,5 @@ public class ConfirmaEmailController {
             alert.showAndWait();
             
         }
-        
-        
-
     }
 }

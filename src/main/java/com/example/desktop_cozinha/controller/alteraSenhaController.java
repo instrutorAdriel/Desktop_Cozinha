@@ -1,7 +1,7 @@
 package com.example.desktop_cozinha.controller;
 
 import com.example.desktop_cozinha.MainApplication;
-import com.example.desktop_cozinha.Services.senhaService;
+import com.example.desktop_cozinha.services.SenhaService;
 import javafx.animation.TranslateTransition;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -52,7 +52,7 @@ public class alteraSenhaController {
         alert.setHeaderText("Confirme sua senha!");
 
         }
-        else {senhaService.resetaSenha(senhaDigitada, senhaConfirmada);
+        else {SenhaService.resetaSenha(senhaDigitada, senhaConfirmada);
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Sucesso");
         alert.setHeaderText("Senha alterada com sucesso!");

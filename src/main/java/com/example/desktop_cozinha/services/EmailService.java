@@ -7,8 +7,8 @@ import java.util.Properties;
 
 public class EmailService {
 
-private static final String email = "diegolopes13072007@gmail.com";
-private static final String senha = "zrvluuhnizyiscad";
+private static final String email = "sigecsenac@gmail.com";
+private static final String senha = "cnmvnbgshzrxdllo";
 
     public static Session session() {
 
