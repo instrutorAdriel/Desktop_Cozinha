@@ -11,7 +11,7 @@
     <top>
         <AnchorPane prefHeight="50.0" style="-fx-background-color: #054685;" BorderPane.alignment="CENTER">
             <children>
-                <ImageView fitHeight="40.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="5.0">
+                <ImageView fitHeight="40.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="5.0">
                     <image>
                         <Image url="@imagens/LogobrancaSenac.png" />
                     </image></ImageView>
@@ -25,12 +25,12 @@
     <left>
         <VBox alignment="TOP_CENTER" prefHeight="482.0" prefWidth="200.0" style="-fx-background-color: #8daccb;;" styleClass="painel-lateral" BorderPane.alignment="CENTER">
             <children>
-                <Button alignment="BASELINE_LEFT" graphicTextGap="10.0" mnemonicParsing="false" onAction="#onClickHome" styleClass="btn-padrao-home" text="Pagina Inicial">
+                <Button alignment="BASELINE_LEFT" graphicTextGap="10.0" mnemonicParsing="false" onAction="#onClickHome" styleClass="btn-padrao-home" text="Pagina Inicial" textAlignment="RIGHT" wrapText="true">
                     <font>
                         <Font name="Arial" size="17.0" />
                     </font>
                     <graphic>
-                        <ImageView fitHeight="20.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fitHeight="20.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true" scaleZ="0.0" translateX="-5.0">
                             <image>
                                 <Image url="@imagens/home.png" />
                             </image>
@@ -42,7 +42,7 @@
                 </Button>
                 <Button alignment="BASELINE_LEFT" mnemonicParsing="false" prefHeight="40.0" prefWidth="185.0" text="Estoque">
                     <graphic>
-                        <ImageView fitHeight="20.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fitHeight="20.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true" translateX="-5.0">
                             <image>
                                 <Image url="@imagens/estoque.png" />
                             </image>
@@ -63,7 +63,7 @@
                         <Insets />
                     </VBox.margin>
                     <graphic>
-                        <ImageView fitHeight="20.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fitHeight="20.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true" translateX="-5.0">
                             <image>
                                 <Image url="@imagens/relatorio.png" />
                             </image>
@@ -95,27 +95,36 @@
                 </ImageView>
                 <VBox alignment="TOP_CENTER" prefHeight="400.0" prefWidth="600.0">
                     <children>
-                        <HBox alignment="CENTER" prefHeight="50.0" prefWidth="600.0" styleClass="painel-secundario">
+                        <HBox alignment="CENTER" prefHeight="48.0" prefWidth="600.0" styleClass="painel-secundario">
                             <children>
-                                <Label fx:id="dataLabel" prefHeight="27.0" prefWidth="259.0">
+                                <Label fx:id="dataLabel" prefWidth="200.0">
                                     <font>
                                         <Font name="Arial Bold" size="20.0" />
-                                    </font></Label>
+                                    </font>
+                           <HBox.margin>
+                              <Insets left="10.0" />
+                           </HBox.margin></Label>
                                 <Region prefHeight="50.0" prefWidth="70.0" HBox.hgrow="ALWAYS" />
-                                <Label fx:id="usuarioLabel" prefHeight="27.0" prefWidth="234.0">
+                                <Label fx:id="usuarioLabel" prefHeight="49.0" prefWidth="233.0">
                                     <font>
-                                        <Font name="Arial Bold" size="20.0" />
+                                        <Font name="Arial" size="20.0" />
                                     </font></Label>
-                                <Region prefHeight="50.0" prefWidth="70.0" HBox.hgrow="ALWAYS" />
+                                <Region prefHeight="50.0" prefWidth="100.0" HBox.hgrow="ALWAYS" />
                                 <Label fx:id="horaLabel" alignment="CENTER_RIGHT" contentDisplay="RIGHT" graphicTextGap="0.0" prefHeight="25.0" prefWidth="130.0" textAlignment="RIGHT">
                                     <font>
                                         <Font name="Arial Bold" size="20.0" />
                                     </font>
                                     <HBox.margin>
-                                        <Insets right="10.0" />
+                                        <Insets right="-5.0" />
                                     </HBox.margin>
+                           <padding>
+                              <Insets right="10.0" />
+                           </padding>
                                 </Label>
-                            </children></HBox>
+                            </children>
+                     <padding>
+                        <Insets right="10.0" />
+                     </padding></HBox>
                         <HBox alignment="CENTER" prefHeight="34.0" prefWidth="560.0">
                             <children>
                                 <Label alignment="CENTER" text="Lista de Itens:">
