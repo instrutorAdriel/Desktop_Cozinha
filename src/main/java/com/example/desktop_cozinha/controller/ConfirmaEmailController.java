@@ -1,11 +1,13 @@
 package com.example.desktop_cozinha.controller;
 
 import com.example.desktop_cozinha.MainApplication;
-import com.example.desktop_cozinha.Services.SessaoService;
-import com.example.desktop_cozinha.Services.encryptService;
-import com.example.desktop_cozinha.Services.senhaService;
+import com.example.desktop_cozinha.services.SessaoService;
+import com.example.desktop_cozinha.services.EncryptService;
+import com.example.desktop_cozinha.services.SenhaService;
 import com.example.desktop_cozinha.model.Usuario;
 import com.example.desktop_cozinha.model.UsuarioDAO;
+import com.example.desktop_cozinha.services.EncryptService;
+import com.example.desktop_cozinha.services.SenhaService;
 import jakarta.mail.MessagingException;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -16,7 +18,7 @@ import javafx.scene.control.TextField;
 import java.io.IOException;
 import java.sql.SQLException;
 
-public class confirmaEmailController {
+public class ConfirmaEmailController {
 
     @FXML
     private TextField emailDigitar;
@@ -51,7 +53,7 @@ public class confirmaEmailController {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Sucesso");
             alert.setHeaderText("Código confirmado com sucesso!");
-            senhaService.enviarEmail(emailDigitado);
+            SenhaService.enviarEmail(emailDigitado);
             return;
         }
     }
@@ -81,7 +83,7 @@ public class confirmaEmailController {
 
         }
 
-        boolean verifica = encryptService.checkPassword(codigoDigitado, UsuarioDAO.buscaEmail(SessaoService.getEmailAtual()).getToken());
+        boolean verifica = EncryptService.checkPassword(codigoDigitado, UsuarioDAO.buscaEmail(SessaoService.getEmailAtual()).getToken());
 
         if(verifica){
             MainApplication.trocadorDeTelas("alteraSenha.fxml");
@@ -97,25 +99,4 @@ public class confirmaEmailController {
         
 
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }

@@ -1,4 +1,4 @@
-package com.example.desktop_cozinha.Services;
+package com.example.desktop_cozinha.services;
 
 import jakarta.mail.*;
 
