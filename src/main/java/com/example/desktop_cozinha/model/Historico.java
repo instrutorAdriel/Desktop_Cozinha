@@ -27,4 +27,3 @@ public class Historico {
     public String getTipo_estoque() { return tipo_estoque; }
     public String getData_hora() { return data_hora; }
 }
-
