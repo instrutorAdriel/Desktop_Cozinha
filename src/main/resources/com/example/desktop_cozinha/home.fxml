@@ -16,7 +16,7 @@
                         <Font name="Arial" size="17.0" />
                     </font>
                     <graphic>
-                        <ImageView fitHeight="20.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fitHeight="20.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true" translateX="-5.0">
                             <image>
                                 <Image url="@imagens/home.png" />
                             </image>
@@ -96,9 +96,9 @@
                 </ImageView>
                 <VBox alignment="TOP_CENTER" prefHeight="550.0" prefWidth="600.0" style="-fx-border-color: #054584; -fx-border-width: 1 2 2 0;">
                     <children>
-                        <HBox alignment="CENTER" prefHeight="50.0" styleClass="painel-secundario">
+                        <HBox alignment="CENTER" prefHeight="48.0" prefWidth="600.0" styleClass="painel-secundario">
                             <children>
-                                <Label fx:id="dataLabel" alignment="BOTTOM_LEFT" graphicTextGap="0.0" prefWidth="200.0">
+                                <Label fx:id="dataLabel" alignment="BOTTOM_LEFT" graphicTextGap="0.0" prefHeight="23.0" prefWidth="163.0">
                                     <font>
                                         <Font name="Arial Bold" size="20.0" />
                                     </font>
@@ -109,14 +109,14 @@
                                         <Insets left="10.0" />
                                     </HBox.margin>
                                 </Label>
-                                <Region prefHeight="50.0" prefWidth="70.0" HBox.hgrow="ALWAYS" />
+                                <Region prefHeight="48.0" prefWidth="40.0" HBox.hgrow="ALWAYS" />
                                 <Label fx:id="usuarioLabel" alignment="CENTER" contentDisplay="CENTER" prefHeight="49.0" prefWidth="233.0">
                                     <font>
-                                        <Font name="Arial Bold Italic" size="18.0" />
+                                        <Font name="Arial" size="20.0" />
                                     </font>
                                 </Label>
-                                <Region layoutX="192.0" layoutY="10.0" prefHeight="50.0" prefWidth="100.0" HBox.hgrow="ALWAYS" />
-                                <Label fx:id="horaLabel" alignment="CENTER_RIGHT" contentDisplay="RIGHT" graphicTextGap="0.0" prefHeight="25.0" prefWidth="130.0" textAlignment="RIGHT">
+                                <Region layoutX="192.0" layoutY="10.0" prefHeight="48.0" prefWidth="70.0" HBox.hgrow="ALWAYS" />
+                                <Label fx:id="horaLabel" alignment="CENTER_RIGHT" contentDisplay="RIGHT" graphicTextGap="0.0" prefHeight="25.0" prefWidth="108.0" textAlignment="RIGHT">
                                     <font>
                                         <Font name="Arial Bold" size="20.0" />
                                     </font>
