@@ -11,7 +11,7 @@
     <left>
         <VBox alignment="TOP_CENTER" prefHeight="601.0" prefWidth="200.0" style="-fx-background-color: #8daccb; -fx-border-color: #054685; -fx-border-width: 2;" BorderPane.alignment="CENTER">
             <children>
-                <Button alignment="BASELINE_LEFT" graphicTextGap="10.0" mnemonicParsing="false" text="Pagina Inical">
+                <Button alignment="BASELINE_LEFT" graphicTextGap="10.0" mnemonicParsing="false" text="Pagina Inicial">
                     <font>
                         <Font name="Arial" size="17.0" />
                     </font>
@@ -48,7 +48,7 @@
                         <Font name="Arial" size="17.0" />
                     </font>
                     <graphic>
-                        <ImageView disable="true" fitHeight="20.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true" translateX="-5.0">
+                        <ImageView disable="true" fitHeight="20.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
                             <image>
                                 <Image url="@imagens/relatorio.png" />
                             </image>
@@ -112,7 +112,7 @@
                                 <Region prefHeight="50.0" prefWidth="70.0" HBox.hgrow="ALWAYS" />
                                 <Label fx:id="usuarioLabel" alignment="CENTER" contentDisplay="CENTER" prefHeight="49.0" prefWidth="233.0">
                                     <font>
-                                        <Font name="Arial Bold Italic" size="18.0" />
+                                        <Font name="Arial Bold" size="20.0" />
                                     </font>
                                 </Label>
                                 <Region layoutX="192.0" layoutY="10.0" prefHeight="50.0" prefWidth="100.0" HBox.hgrow="ALWAYS" />

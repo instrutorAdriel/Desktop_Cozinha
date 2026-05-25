@@ -16,7 +16,7 @@
                         <Font name="Arial" size="14.0" />
                     </font>
                     <graphic>
-                        <ImageView fitHeight="20.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fitHeight="20.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true" translateX="-5.0">
                             <image>
                                 <Image url="@imagens/home.png" />
                             </image>
@@ -27,7 +27,7 @@
                     </VBox.margin></Button>
                 <Button alignment="BASELINE_LEFT" graphicTextGap="5.0" mnemonicParsing="false" onAction="#onClickEstoque" prefHeight="40.0" prefWidth="185.0" styleClass="btn-padrao" text="Estoque">
                     <font>
-                        <Font name="Arial" size="17.0" />
+                        <Font name="Arial" size="19.0" />
                     </font>
                     <graphic>
                         <ImageView disable="true" fitHeight="20.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true" translateX="-5.0">
@@ -44,7 +44,7 @@
                         <Font name="Arial" size="17.0" />
                     </font>
                     <graphic>
-                        <ImageView disable="true" fitHeight="20.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView disable="true" fitHeight="20.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true" translateX="-5.0">
                             <image>
                                 <Image url="@imagens/relatorio.png" />
                             </image>
@@ -98,9 +98,9 @@
                     <children>
                         <HBox alignment="CENTER" prefHeight="50.0" styleClass="painel-secundario">
                             <children>
-                                <Label fx:id="dataLabel" alignment="BOTTOM_LEFT" graphicTextGap="0.0" prefHeight="23.0" prefWidth="120.0" text="01/01/01">
+                                <Label fx:id="dataLabel" alignment="BOTTOM_LEFT" graphicTextGap="0.0" prefWidth="200.0">
                                     <font>
-                                        <Font name="Arial Bold Italic" size="20.0" />
+                                        <Font name="Arial Bold" size="20.0" />
                                     </font>
                                     <opaqueInsets>
                                         <Insets />
@@ -109,14 +109,14 @@
                                         <Insets left="10.0" />
                                     </HBox.margin>
                                 </Label>
-                                <Region prefHeight="50.0" prefWidth="45.0" HBox.hgrow="ALWAYS" />
-                        <Label fx:id="usuarioLabel" text="BEM VINDO">
-                           <font>
-                              <Font name="Arial Bold" size="20.0" />
-                           </font>
-                        </Label>
-                        <Region prefHeight="50.0" prefWidth="150.0" />
-                                <Label fx:id="horaLabel" alignment="CENTER_RIGHT" contentDisplay="RIGHT" graphicTextGap="0.0" prefHeight="20.0" text="08:30:00" textAlignment="RIGHT">
+                                <Region prefHeight="50.0" prefWidth="70.0" HBox.hgrow="ALWAYS" />
+                                <Label fx:id="usuarioLabel" alignment="CENTER" contentDisplay="CENTER" prefHeight="49.0" prefWidth="233.0">
+                                    <font>
+                                        <Font name="Arial Bold" size="20.0" />
+                                    </font>
+                                </Label>
+                                <Region layoutX="192.0" layoutY="10.0" prefHeight="50.0" prefWidth="100.0" HBox.hgrow="ALWAYS" />
+                                <Label fx:id="horaLabel" alignment="CENTER_RIGHT" contentDisplay="RIGHT" graphicTextGap="0.0" prefHeight="25.0" prefWidth="130.0" textAlignment="RIGHT">
                                     <font>
                                         <Font name="Arial Bold" size="20.0" />
                                     </font>
