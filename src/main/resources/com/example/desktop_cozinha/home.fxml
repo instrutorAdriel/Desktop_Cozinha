@@ -48,7 +48,7 @@
                         <Font name="Arial" size="17.0" />
                     </font>
                     <graphic>
-                        <ImageView disable="true" fitHeight="20.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true" translateX="-4.0">
+                        <ImageView disable="true" fitHeight="20.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true" translateX="-5.0">
                             <image>
                                 <Image url="@imagens/relatorio.png" />
                             </image>

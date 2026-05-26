@@ -12,7 +12,7 @@ public class HistoricoDAO {
                 rs.getString("nome_produto"),
                 rs.getString("nome_usuario"),
                 rs.getString("tipo_movimentacao"),
-                rs.getInt("quantidade_movimentada"),
+                rs.getInt("quantidade"),
                 rs.getString("tipo"),
                 rs.getString("data_hora")
         );
@@ -25,7 +25,7 @@ public class HistoricoDAO {
         // Base da Query
         StringBuilder sql = new StringBuilder("""
                 SELECT e.nome AS nome_produto, u.nome AS nome_usuario,\s
-                                            h.tipo_movimentacao, h.quantidade_movimentada,\s
+                                            h.tipo_movimentacao, h.quantidade,\s
                                             e.tipo, h.data_hora
                                      FROM historico_movimentacao h
                                      JOIN estoque_geral e ON h.produto_id = e.id
