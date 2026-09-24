@@ -53,11 +53,24 @@
                         <Insets top="20.0" />
                     </VBox.margin>
                 </Label>
-                <PasswordField fx:id="pswsenha" maxHeight="25.0" maxWidth="500.0" minHeight="25.0" minWidth="250.0" prefHeight="25.0" prefWidth="500.0">
+                <HBox alignment="CENTER" maxHeight="25.0" maxWidth="500.0" minHeight="25.0" minWidth="250.0" prefHeight="25.0" prefWidth="500.0">
                     <VBox.margin>
                         <Insets left="150.0" right="150.0" />
                     </VBox.margin>
-                </PasswordField>
+                    <children>
+                        <StackPane HBox.hgrow="ALWAYS">
+                            <children>
+                                <PasswordField fx:id="pswsenha" maxHeight="25.0" minHeight="25.0" prefHeight="25.0" />
+                                <TextField fx:id="txtsenhaRevelada" maxHeight="25.0" minHeight="25.0" prefHeight="25.0" managed="false" visible="false" />
+                            </children>
+                        </StackPane>
+                        <ToggleButton fx:id="btnMostrarSenha" maxHeight="25.0" minHeight="25.0" minWidth="35.0" onAction="#toggleMostrarSenha" text="👁">
+                            <HBox.margin>
+                                <Insets left="5.0" />
+                            </HBox.margin>
+                        </ToggleButton>
+                    </children>
+                </HBox>
             <HBox alignment="CENTER" prefHeight="27.0" prefWidth="800.0">
                <children>
                       <Hyperlink alignment="CENTER" onAction="#EsqueciSenha" prefHeight="23.0" prefWidth="504.0" text="Esqueceu a senha?" textFill="#1b7ee3" textOverrun="CLIP">

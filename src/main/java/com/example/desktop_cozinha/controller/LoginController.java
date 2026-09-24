@@ -10,34 +10,44 @@ import org.mindrot.jbcrypt.BCrypt;
 import java.io.IOException;
 
 public class LoginController {
-    @FXML
-    TextField txtemail;
-    @FXML
-    PasswordField pswsenha;
-    @FXML
-    Button btnlogin;
-    @FXML
-    Label lbesquecisenha;
+    @FXML private TextField txtemail;
+    @FXML private PasswordField pswsenha;
+    @FXML private TextField txtsenhaRevelada;
+    @FXML private ToggleButton btnMostrarSenha;
+    @FXML private Button btnlogin;
+    @FXML private Label lbesquecisenha;
 
+    @FXML
+    public void initialize() {
+        // Vincula bidirecionalmente o texto digitado no PasswordField com o TextField visível
+        txtsenhaRevelada.textProperty().bindBidirectional(pswsenha.textProperty());
+    }
+
+    @FXML
+    private void toggleMostrarSenha() {
+        boolean mostrar = btnMostrarSenha.isSelected();
+        txtsenhaRevelada.setVisible(mostrar);
+        txtsenhaRevelada.setManaged(mostrar);
+        pswsenha.setVisible(!mostrar);
+        pswsenha.setManaged(!mostrar);
+    }
 
     @FXML
     public void onButtonLoginClick() throws IOException {
         LoginDAO loginDAO = new LoginDAO();
         String usuarioDigitado = txtemail.getText();
-        String senhaDigitada = pswsenha.getText();
+        String senhaDigitada = pswsenha.getText(); // Pega a senha normalmente via pswsenha
 
-        // 1. Validação prévia
         if (usuarioDigitado.isBlank() || senhaDigitada.isBlank()) {
             Alert alerta = new Alert(Alert.AlertType.WARNING);
             alerta.setTitle("Aviso");
             alerta.setHeaderText(null);
             alerta.setContentText("Por favor, preencha o e-mail e a senha.");
             alerta.showAndWait();
-            return; // Para a execução aqui
+            return;
         }
 
         String senhaHashDoBanco = loginDAO.obterSenhaHash(usuarioDigitado);
-        // 2. Feedback correto de usuário não encontrado
         if (senhaHashDoBanco == null) {
             Alert alerta = new Alert(Alert.AlertType.ERROR);
             alerta.setTitle("Erro");
@@ -47,7 +57,6 @@ public class LoginController {
             return;
         }
 
-        // 3. Validação da senha
         if (BCrypt.checkpw(senhaDigitada, senhaHashDoBanco)) {
             SessaoService.setEmailAtual(usuarioDigitado);
             MainApplication.trocadorDeTelas("home.fxml");
@@ -58,7 +67,6 @@ public class LoginController {
             alerta.setContentText("A senha informada é inválida.");
             alerta.showAndWait();
         }
-
     }
 
     @FXML
@@ -71,6 +79,3 @@ public class LoginController {
         MainApplication.trocadorDeTelas("cadastro.fxml");
     }
 }
-
-
-
