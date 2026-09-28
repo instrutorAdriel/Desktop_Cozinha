@@ -1,6 +1,8 @@
 package com.sigec.system.sigec.Controllers;
 
+import com.sigec.system.sigec.Constructors.Laboratorio;
 import com.sigec.system.sigec.Constructors.User;
+import com.sigec.system.sigec.DAOS.TurmaDAO;
 import com.sigec.system.sigec.DAOS.UserDAO;
 import com.sigec.system.sigec.MainApplication;
 import com.sigec.system.sigec.Services.SessaoService;
@@ -34,6 +36,7 @@ import javafx.util.Duration;
 
 import java.io.IOException;
 import java.net.URL;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -174,14 +177,36 @@ public class CadastroTurmaController implements Initializable {
     private void configurarFormularioTurma() {
         if (laboratorioSelect != null) {
             laboratorioSelect.getItems().clear();
-            laboratorioSelect.getItems().addAll(
-                    "Cozinha Pedagógica 01",
-                    "Cozinha Pedagógica 02 (Panificação e Confeitaria)",
-                    "Cozinha Fria / Garde Manger",
-                    "Laboratório de Bebidas e Barismo",
-                    "Cozinha Demonstrativa"
-            );
-            laboratorioSelect.getSelectionModel().selectFirst();
+            // Carrega os laboratórios ativos do banco de dados em segundo plano
+            Thread bgLabLoader = new Thread(() -> {
+                try {
+                    List<Laboratorio> labsDb = TurmaDAO.listarLaboratoriosAtivos();
+                    javafx.application.Platform.runLater(() -> {
+                        laboratorioSelect.getItems().clear();
+                        if (labsDb != null && !labsDb.isEmpty()) {
+                            for (Laboratorio lab : labsDb) {
+                                laboratorioSelect.getItems().add(lab.getNomeLaboratorio());
+                            }
+                        } else {
+                            // Fallback caso não haja nenhum cadastrado
+                            laboratorioSelect.getItems().addAll(
+                                    "Cozinha Quente Principal",
+                                    "Cozinha Pedagógica 01",
+                                    "Cozinha Pedagógica 02 (Panificação e Confeitaria)",
+                                    "Cozinha Fria / Garde Manger",
+                                    "Laboratório de Bebidas e Barismo",
+                                    "Cozinha Demonstrativa"
+                            );
+                        }
+                        laboratorioSelect.getSelectionModel().selectFirst();
+                    });
+                } catch (Exception e) {
+                    System.err.println("Aviso: Falha ao carregar laboratórios: " + e.getMessage());
+                }
+            });
+            bgLabLoader.setDaemon(true);
+            bgLabLoader.setName("SIGEC-LabLoader");
+            bgLabLoader.start();
         }
 
         if (situacaoSelect != null) {
@@ -335,24 +360,43 @@ public class CadastroTurmaController implements Initializable {
             return;
         }
 
-        if (professor == null || professor.trim().isEmpty()) {
+        if (professor == null || professor.trim().isEmpty() || instrutorSelecionado == null) {
             exibirAlerta(Alert.AlertType.WARNING, "Professor Não Selecionado",
                     "Por favor, selecione um Professor Responsável na lista de instrutores ao lado para vincular à turma.");
             return;
         }
 
-        // Sucesso no cadastro
-        String mensagem = String.format(
-                "Turma cadastrada com sucesso!\n\n" +
-                "• Turma: %s\n" +
-                "• Laboratório: %s\n" +
-                "• Professor: %s\n" +
-                "• Situação: %s",
-                nomeTurma.trim(), laboratorio, professor.trim(), situacao
-        );
+        try {
+            int idLaboratorio = TurmaDAO.buscarIdLaboratorioPorNome(laboratorio);
+            if (idLaboratorio <= 0) {
+                exibirAlerta(Alert.AlertType.ERROR, "Laboratório Inválido",
+                        "Não foi possível identificar o laboratório selecionado no banco de dados.");
+                return;
+            }
 
-        exibirAlerta(Alert.AlertType.INFORMATION, "Turma Cadastrada", mensagem);
-        limparFormulario();
+            int idProfessor = instrutorSelecionado.getIdUsuario();
+            int idTurmaCriada = TurmaDAO.cadastrarTurma(nomeTurma, situacao, idLaboratorio, idProfessor);
+
+            // Sucesso no cadastro com ID gerado
+            String mensagem = String.format(
+                    "Turma cadastrada com sucesso! (Código: #%d)\n\n" +
+                    "• Turma: %s\n" +
+                    "• Laboratório: %s (ID: %d)\n" +
+                    "• Professor Responsável: %s\n" +
+                    "• Situação: %s",
+                    idTurmaCriada, nomeTurma.trim(), laboratorio, idLaboratorio, professor.trim(), situacao
+            );
+
+            exibirAlerta(Alert.AlertType.INFORMATION, "Turma Cadastrada", mensagem);
+            limparFormulario();
+
+        } catch (SQLException ex) {
+            exibirAlerta(Alert.AlertType.ERROR, "Erro no Banco de Dados",
+                    "Falha ao cadastrar a turma no banco de dados: " + ex.getMessage());
+        } catch (Exception ex) {
+            exibirAlerta(Alert.AlertType.ERROR, "Erro Inesperado",
+                    "Ocorreu um erro ao processar o cadastro: " + ex.getMessage());
+        }
     }
 
     @FXML
