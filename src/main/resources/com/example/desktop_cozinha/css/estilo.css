@@ -26,7 +26,7 @@
     -fx-min-height: 25px;
 
     /* IMAGEM DO OLHO FECHADO */
-    -fx-background-image: url("../imagens/olho-fechado.png");
+    -fx-background-image: url("../imagens/olho-aberto.png");
     -fx-background-repeat: no-repeat;
     -fx-background-position: center;
     -fx-background-size: 18px 18px; /* Tamanho do ícone dentro do botão */
@@ -38,5 +38,5 @@
 
 /* QUANDO O BOTÃO É CLICADO (OLHO ABERTO) */
 .btn-olho:selected {
-    -fx-background-image: url("../imagens/olho-aberto.png");
+    -fx-background-image: url("../imagens/olho-fechado.png");
 }
