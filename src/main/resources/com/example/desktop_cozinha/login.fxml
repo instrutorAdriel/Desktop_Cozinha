@@ -64,7 +64,7 @@
                                 <TextField fx:id="txtsenhaRevelada" maxHeight="25.0" minHeight="25.0" prefHeight="25.0" managed="false" visible="false" />
                             </children>
                         </StackPane>
-                        <ToggleButton fx:id="btnMostrarSenha" maxHeight="25.0" minHeight="25.0" minWidth="35.0" onAction="#toggleMostrarSenha" text="👁">
+                        <ToggleButton fx:id="btnMostrarSenha" maxHeight="25.0" minHeight="25.0" minWidth="35.0" onAction="#toggleMostrarSenha" styleClass="btn-olho">
                             <HBox.margin>
                                 <Insets left="5.0" />
                             </HBox.margin>

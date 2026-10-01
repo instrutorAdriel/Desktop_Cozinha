@@ -82,8 +82,7 @@
                                     </TextField>
                                  </children>
                               </StackPane>
-                              <ToggleButton fx:id="btnMostrarSenha" minWidth="35.0" onAction="#toggleMostrarSenha" text="👁" />
-                           </children>
+                              <ToggleButton fx:id="btnMostrarSenha" minWidth="35.0" onAction="#toggleMostrarSenha" styleClass="btn-olho" />                           </children>
                         </HBox>
 
                         <Label text="Confirmar Senha">
@@ -106,8 +105,7 @@
                                     </TextField>
                                  </children>
                               </StackPane>
-                              <ToggleButton fx:id="btnMostrarConfirmarSenha" minWidth="35.0" onAction="#toggleMostrarConfirmarSenha" text="👁" />
-                           </children>
+                              <ToggleButton fx:id="btnMostrarConfirmarSenha" minWidth="35.0" onAction="#toggleMostrarConfirmarSenha" styleClass="btn-olho" />                           </children>
                         </HBox>
                      </children>
                   </VBox>
