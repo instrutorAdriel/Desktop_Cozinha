@@ -9,20 +9,20 @@
 <?import javafx.scene.text.*?>
 
 <StackPane fx:id="rootPane" prefHeight="600.0" prefWidth="800.0" stylesheets="@CSS/StyleSheet.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sigec.system.sigec.Controllers.LoginController">
-    
+
     <!-- Fundo animado que cobre toda a tela de login -->
     <AnchorPane fx:id="animatedBackground" prefHeight="600.0" prefWidth="800.0" styleClass="fundo-login">
         <children>
             <!-- Onda baseada no novo design em CSS -->
             <Group fx:id="waveGroup" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
-                
+
                 <!-- Forma da onda azul marinho escuro -->
                 <SVGPath fx:id="bgAzul" content="M -5 650 L -5 540 Q 200 620, 500 500 T 805 350 L 805 650 Z" styleClass="onda-azul" />
-                
+
                 <!-- Linha laranja divisória (solida, sem strokeDashArray) -->
                 <SVGPath fx:id="linhaLaranja" content="M -5 540 Q 200 620, 500 500 T 805 350" styleClass="onda-laranja" />
             </Group>
-            
+
             <!-- Logo colorida Senac no topo à esquerda -->
             <ImageView fx:id="logoSenac" fitHeight="130.0" fitWidth="180.0" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="50.0" AnchorPane.topAnchor="50.0">
                 <image>
@@ -58,6 +58,7 @@
                             <Font name="Arial" size="14.0" />
                         </font>
                     </TextField>
+
                     <Label text="Senha">
                         <font>
                             <Font name="Arial Bold" size="14.0" />
@@ -66,11 +67,33 @@
                             <Insets top="15.0" />
                         </VBox.margin>
                     </Label>
-                    <PasswordField fx:id="pswsenha" prefHeight="40.0" promptText="Digite sua senha">
-                        <font>
-                            <Font name="Arial" size="14.0" />
-                        </font>
-                    </PasswordField>
+
+                    <!-- ESTRUTURA NOVA DA SENHA COM O OLHO -->
+                    <HBox alignment="CENTER_LEFT">
+                        <children>
+                            <StackPane HBox.hgrow="ALWAYS">
+                                <children>
+                                    <PasswordField fx:id="pswsenha" prefHeight="40.0" promptText="Digite sua senha">
+                                        <font>
+                                            <Font name="Arial" size="14.0" />
+                                        </font>
+                                    </PasswordField>
+                                    <TextField fx:id="txtsenhaRevelada" managed="false" prefHeight="40.0" promptText="Digite sua senha" visible="false">
+                                        <font>
+                                            <Font name="Arial" size="14.0" />
+                                        </font>
+                                    </TextField>
+                                </children>
+                            </StackPane>
+                            <ToggleButton fx:id="btnMostrarSenha" onAction="#toggleMostrarSenha" styleClass="btn-olho">
+                                <HBox.margin>
+                                    <Insets left="-35.0" />
+                                </HBox.margin>
+                            </ToggleButton>
+                        </children>
+                    </HBox>
+                    <!-- FIM DA ESTRUTURA DA SENHA -->
+
                     <HBox alignment="CENTER_RIGHT" prefHeight="30.0">
                         <children>
                             <Hyperlink fx:id="lbesquecisenha" onAction="#EsqueciSenha" text="Esqueceu a senha?" textFill="#054685">

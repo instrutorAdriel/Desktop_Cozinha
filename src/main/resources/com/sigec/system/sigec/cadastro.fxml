@@ -8,6 +8,7 @@
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.effect.ColorAdjust?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
@@ -112,7 +113,7 @@
                                     <children>
                                         <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
-                                               <Image url="@imagens/cadastroIMG.png" />
+                                                <Image url="@imagens/cadastroIMG.png" />
                                             </image>
                                             <effect>
                                                 <ColorAdjust brightness="1.0" />
@@ -286,13 +287,47 @@
                                                                 <VBox spacing="5.0" HBox.hgrow="ALWAYS">
                                                                     <children>
                                                                         <Label styleClass="form-label" text="Senha *" />
-                                                                        <PasswordField fx:id="txtSenha" prefHeight="36.0" promptText="Crie uma senha" styleClass="form-field-input" />
+
+                                                                        <!-- ESTRUTURA NOVA DA SENHA DO CADASTRO -->
+                                                                        <HBox alignment="CENTER_LEFT" spacing="0.0">
+                                                                            <children>
+                                                                                <StackPane HBox.hgrow="ALWAYS">
+                                                                                    <children>
+                                                                                        <PasswordField fx:id="txtSenha" prefHeight="36.0" promptText="Crie uma senha" styleClass="form-field-input" />
+                                                                                        <TextField fx:id="txtSenhaRevelada" managed="false" prefHeight="36.0" promptText="Crie uma senha" styleClass="form-field-input" visible="false" />
+                                                                                    </children>
+                                                                                </StackPane>
+                                                                                <ToggleButton fx:id="btnMostrarSenha" onAction="#toggleMostrarSenha" styleClass="btn-olho">
+                                                                                    <HBox.margin>
+                                                                                        <Insets left="-36.0" />
+                                                                                    </HBox.margin>
+                                                                                </ToggleButton>
+                                                                            </children>
+                                                                        </HBox>
+
                                                                     </children>
                                                                 </VBox>
                                                                 <VBox spacing="5.0" HBox.hgrow="ALWAYS">
                                                                     <children>
                                                                         <Label styleClass="form-label" text="Confirmar Senha *" />
-                                                                        <PasswordField fx:id="txtConfirmarSenha" prefHeight="36.0" promptText="Confirme a senha" styleClass="form-field-input" />
+
+                                                                        <!-- ESTRUTURA NOVA DA CONFIRMAÇÃO DE SENHA DO CADASTRO -->
+                                                                        <HBox alignment="CENTER_LEFT" spacing="0.0">
+                                                                            <children>
+                                                                                <StackPane HBox.hgrow="ALWAYS">
+                                                                                    <children>
+                                                                                        <PasswordField fx:id="txtConfirmarSenha" prefHeight="36.0" promptText="Confirme a senha" styleClass="form-field-input" />
+                                                                                        <TextField fx:id="txtConfirmarSenhaRevelada" managed="false" prefHeight="36.0" promptText="Confirme a senha" styleClass="form-field-input" visible="false" />
+                                                                                    </children>
+                                                                                </StackPane>
+                                                                                <ToggleButton fx:id="btnMostrarConfirmarSenha" onAction="#toggleMostrarConfirmarSenha" styleClass="btn-olho">
+                                                                                    <HBox.margin>
+                                                                                        <Insets left="-36.0" />
+                                                                                    </HBox.margin>
+                                                                                </ToggleButton>
+                                                                            </children>
+                                                                        </HBox>
+
                                                                     </children>
                                                                 </VBox>
                                                             </children>

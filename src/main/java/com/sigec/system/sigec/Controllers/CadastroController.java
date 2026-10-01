@@ -21,6 +21,7 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
@@ -36,64 +37,38 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ResourceBundle;
 
-/**
- * Controlador responsável pelo cadastro e gerenciamento de novos usuários.
- */
 public class CadastroController implements Initializable {
 
-    @FXML
-    private AnchorPane topBarPane;
+    @FXML private AnchorPane topBarPane;
+    @FXML private Label dataLabel;
+    @FXML private Label usuarioLabel;
+    @FXML private Label horaLabel;
+    @FXML private Button btnNavCadastro;
+    @FXML private VBox submenuCadastro;
+    @FXML private Label setaCadastro;
+    @FXML private Button btnSubNavUsuario;
+    @FXML private Button btnSubNavTurma;
+    @FXML private Button botaoSair;
 
-    @FXML
-    private Label dataLabel;
+    @FXML private TextField txtNome;
+    @FXML private TextField txtEmail;
+    @FXML private TextField txtAcesso;
+    @FXML private ChoiceBox<String> acessoSelect;
 
-    @FXML
-    private Label usuarioLabel;
+    @FXML private PasswordField txtSenha;
 
-    @FXML
-    private Label horaLabel;
+    // --- NOVOS CAMPOS DO OLHO (SENHA) ---
+    @FXML private TextField txtSenhaRevelada;
+    @FXML private ToggleButton btnMostrarSenha;
 
-    @FXML
-    private Button btnNavCadastro;
+    @FXML private PasswordField txtConfirmarSenha;
 
-    @FXML
-    private VBox submenuCadastro;
+    // --- NOVOS CAMPOS DO OLHO (CONFIRMAR SENHA) ---
+    @FXML private TextField txtConfirmarSenhaRevelada;
+    @FXML private ToggleButton btnMostrarConfirmarSenha;
 
-    @FXML
-    private Label setaCadastro;
-
-    @FXML
-    private Button btnSubNavUsuario;
-
-    @FXML
-    private Button btnSubNavTurma;
-
-    @FXML
-    private Button botaoSair;
-
-    @FXML
-    private TextField txtNome;
-
-    @FXML
-    private TextField txtEmail;
-
-    @FXML
-    private TextField txtAcesso;
-
-    @FXML
-    private ChoiceBox<String> acessoSelect;
-
-    @FXML
-    private PasswordField txtSenha;
-
-    @FXML
-    private PasswordField txtConfirmarSenha;
-
-    @FXML
-    private Button btnCadastrar;
-
-    @FXML
-    private Button btnLimpar;
+    @FXML private Button btnCadastrar;
+    @FXML private Button btnLimpar;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -104,8 +79,49 @@ public class CadastroController implements Initializable {
         configurarDataHora();
         configurarUsuario();
         configurarMenuInicial();
+
+        // Sincroniza os textos entre os campos ocultos e revelados
+        if(txtSenhaRevelada != null && txtSenha != null){
+            txtSenhaRevelada.textProperty().bindBidirectional(txtSenha.textProperty());
+        }
+        if(txtConfirmarSenhaRevelada != null && txtConfirmarSenha != null){
+            txtConfirmarSenhaRevelada.textProperty().bindBidirectional(txtConfirmarSenha.textProperty());
+        }
+
         configurarNavegacaoCampos();
         configurarSeletorAcesso();
+    }
+
+    // --- MÉTODO DO OLHO (SENHA) ---
+    @FXML
+    public void toggleMostrarSenha() {
+        if (btnMostrarSenha.isSelected()) {
+            txtSenhaRevelada.setVisible(true);
+            txtSenhaRevelada.setManaged(true);
+            txtSenha.setVisible(false);
+            txtSenha.setManaged(false);
+        } else {
+            txtSenha.setVisible(true);
+            txtSenha.setManaged(true);
+            txtSenhaRevelada.setVisible(false);
+            txtSenhaRevelada.setManaged(false);
+        }
+    }
+
+    // --- MÉTODO DO OLHO (CONFIRMAR SENHA) ---
+    @FXML
+    public void toggleMostrarConfirmarSenha() {
+        if (btnMostrarConfirmarSenha.isSelected()) {
+            txtConfirmarSenhaRevelada.setVisible(true);
+            txtConfirmarSenhaRevelada.setManaged(true);
+            txtConfirmarSenha.setVisible(false);
+            txtConfirmarSenha.setManaged(false);
+        } else {
+            txtConfirmarSenha.setVisible(true);
+            txtConfirmarSenha.setManaged(true);
+            txtConfirmarSenhaRevelada.setVisible(false);
+            txtConfirmarSenhaRevelada.setManaged(false);
+        }
     }
 
     private void configurarUsuario() {
@@ -137,8 +153,6 @@ public class CadastroController implements Initializable {
             acessoSelect.getItems().clear();
             acessoSelect.getItems().addAll("Instrutor", "Gestor");
             acessoSelect.setValue("Instrutor");
-
-            // Sincroniza a largura do menu suspenso com a largura do seletor
             acessoSelect.showingProperty().addListener((obs, wasShowing, isShowing) -> {
                 if (isShowing) {
                     Platform.runLater(() -> {
@@ -183,10 +197,6 @@ public class CadastroController implements Initializable {
             timeline.play();
         }
     }
-
-    // =========================================================================
-    // NAVEGAÇÃO DA BARRA LATERAL
-    // =========================================================================
 
     @FXML
     public void onClickHome(ActionEvent event) {
@@ -241,7 +251,6 @@ public class CadastroController implements Initializable {
         if (txtNome != null) {
             txtNome.requestFocus();
         }
-
     }
 
     @FXML
@@ -263,10 +272,6 @@ public class CadastroController implements Initializable {
         }
     }
 
-    // =========================================================================
-    // AÇÕES DO FORMULÁRIO DE CADASTRO
-    // =========================================================================
-
     @FXML
     public void onCadastrar(ActionEvent event) {
         String nome = txtNome != null ? txtNome.getText() : null;
@@ -278,7 +283,6 @@ public class CadastroController implements Initializable {
                 email == null || email.trim().isEmpty() ||
                 senha == null || senha.isEmpty() ||
                 confirmarSenha == null || confirmarSenha.isEmpty()) {
-
             exibirAlerta(Alert.AlertType.WARNING, "Campos Obrigatórios", "Por favor, preencha todos os campos obrigatórios para continuar.");
             return;
         }
