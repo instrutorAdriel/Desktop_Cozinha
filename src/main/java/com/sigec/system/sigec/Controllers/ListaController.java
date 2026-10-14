@@ -258,10 +258,13 @@ public class ListaController implements Initializable {
         onPesquisarClick(event);
     }
 
+    public static ListaEstoque produtoSelecionadoParaEdicao;
+
     @FXML
     public void onClickAddProduto(ActionEvent event) {
         try {
             MainApplication.abrirPopUp("CadastroProduto.fxml");
+            carregarTabelaEstoque();
         } catch (IOException e) {
             exibirAlerta(Alert.AlertType.ERROR, "Erro", "Erro ao abrir modal de cadastro de produto: " + e.getMessage());
         }
@@ -269,8 +272,17 @@ public class ListaController implements Initializable {
 
     @FXML
     public void onEditarProduto(ActionEvent event) {
+        ListaEstoque selecionado = ListaEstoque.getSelectionModel().getSelectedItem();
+
+        if (selecionado == null) {
+            exibirAlerta(Alert.AlertType.WARNING, "Atenção", "Por favor, selecione um produto na lista para editar.");
+            return;
+        }
+        produtoSelecionadoParaEdicao = selecionado;
+
         try {
             MainApplication.abrirPopUp("edicaoProdutos.fxml");
+            carregarTabelaEstoque();
         } catch (IOException e) {
             exibirAlerta(Alert.AlertType.ERROR, "Erro", "Erro ao abrir modal de edição de produto: " + e.getMessage());
         }
@@ -278,6 +290,13 @@ public class ListaController implements Initializable {
 
     @FXML
     public void onRemoverProdutoClick(ActionEvent event) {
+        ListaEstoque selecionado = ListaEstoque.getSelectionModel().getSelectedItem();
+
+        if (selecionado == null) {
+            exibirAlerta(Alert.AlertType.WARNING, "Atenção", "Por favor, selecione um produto na lista para excluir.");
+            return;
+        }
+
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Confirmar Exclusão");
         alert.setHeaderText("Exclusão de Produto");
@@ -285,7 +304,16 @@ public class ListaController implements Initializable {
 
         Optional<ButtonType> resultado = alert.showAndWait();
         if (resultado.isPresent() && resultado.get() == ButtonType.OK) {
-            exibirAlerta(Alert.AlertType.INFORMATION, "Sucesso", "Produto removido com sucesso!");
+
+            ProductStorageDAO dao = new ProductStorageDAO();
+            boolean sucesso = dao.excluirProduto(selecionado.getIdProduto());
+
+            if (sucesso) {
+                exibirAlerta(Alert.AlertType.INFORMATION, "Sucesso", "Produto removido com sucesso!");
+                carregarTabelaEstoque(); // Atualiza a tabela para o item sumir da tela
+            } else {
+                exibirAlerta(Alert.AlertType.ERROR, "Erro", "Ocorreu um problema ao excluir o produto do banco.");
+            }
         }
     }
 

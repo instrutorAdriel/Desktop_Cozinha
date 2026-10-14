@@ -40,4 +40,71 @@ public class ProductStorageDAO {
         }
         return lista;
     }
+
+    // -------------------------------------------------------------------------
+    // EXCLUIR PRODUTO (Exclusão Lógica: Muda situação para Inativo)
+    // -------------------------------------------------------------------------
+    public boolean excluirProduto(int idProduto) {
+        String sql = "UPDATE produto SET situacao = 'I' WHERE id_produto = ?";
+        try (Connection conn = ConfigDataBase.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, idProduto);
+            return stmt.executeUpdate() > 0;
+
+        } catch (Exception e) {
+            System.err.println("Erro ao excluir produto: " + e.getMessage());
+            return false;
+        }
+    }
+
+    // -------------------------------------------------------------------------
+    // ADICIONAR PRODUTO NOVO
+    // -------------------------------------------------------------------------
+    public boolean adicionarProduto(String nome, String nomeCategoria, double quantidade, String unidade) {
+        // Usa um sub-select para achar o ID da categoria com base no nome selecionado no Dropdown
+        String sql = "INSERT INTO produto (nome_produto, id_categoria, quantidade, unidade, situacao) " +
+                "VALUES (?, (SELECT id_categoria FROM categoria WHERE nome_categoria = ? LIMIT 1), ?, ?, 'A')";
+
+        try (Connection conn = ConfigDataBase.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, nome);
+            stmt.setString(2, nomeCategoria);
+            stmt.setDouble(3, quantidade);
+            stmt.setString(4, unidade);
+
+            return stmt.executeUpdate() > 0;
+
+        } catch (Exception e) {
+            System.err.println("Erro ao adicionar produto: " + e.getMessage());
+            return false;
+        }
+    }
+
+    // -------------------------------------------------------------------------
+    // ATUALIZAR PRODUTO EXISTENTE
+    // -------------------------------------------------------------------------
+    public boolean atualizarProduto(int idProduto, String nome, String nomeCategoria, double quantidade, String unidade) {
+        String sql = "UPDATE produto SET nome_produto = ?, " +
+                "id_categoria = (SELECT id_categoria FROM categoria WHERE nome_categoria = ? LIMIT 1), " +
+                "quantidade = ?, unidade = ? " +
+                "WHERE id_produto = ?";
+
+        try (Connection conn = ConfigDataBase.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, nome);
+            stmt.setString(2, nomeCategoria);
+            stmt.setDouble(3, quantidade);
+            stmt.setString(4, unidade);
+            stmt.setInt(5, idProduto);
+
+            return stmt.executeUpdate() > 0;
+
+        } catch (Exception e) {
+            System.err.println("Erro ao atualizar produto: " + e.getMessage());
+            return false;
+        }
+    }
 }
