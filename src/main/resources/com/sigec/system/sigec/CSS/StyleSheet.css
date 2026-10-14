@@ -13,15 +13,6 @@
 }
 
 .btn-padrao:hover{
-    /*
-       Parâmetros do dropshadow:
-       - three-pass-box: algoritmo de blur suave
-       - rgba(0,0,0,0.4): cor preta com 40% de opacidade
-       - 10: raio do blur (espalhamento)
-       - 0.5: quanto a sombra se espalha além do blur
-       - 5: deslocamento em X (move para a direita)
-       - 5: deslocamento em Y (move para baixo)
-    */
     -fx-background-color: #0c569e;
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.4), 10, 0.5, 5, 5);
 }
@@ -68,19 +59,11 @@
     -fx-text-alignment: left;
 }
 
-.btn-padrao-transparent:hover { /* botão configuração */
-    /*
-       Parâmetros do dropshadow:
-       - three-pass-box: algoritmo de blur suave
-       - rgba(0,0,0,0.4): cor preta com 40% de opacidade
-       - 10: raio do blur (espalhamento)
-       - 0.5: quanto a sombra se espalha além do blur
-       - 5: deslocamento em X (move para a direita)
-       - 5: deslocamento em Y (move para baixo)
-    */
+.btn-padrao-transparent:hover {
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.4), 10, 0.5, 5, 5);
 }
-.btn-padrao-home { /* botão controle de estoque*/
+
+.btn-padrao-home {
     -fx-background-color: #054685;
     -fx-background-radius: 10;
     -fx-pref-width: 185;
@@ -91,16 +74,8 @@
     -fx-cursor: hand;
     -fx-text-alignment: left;
 }
+
 .btn-padrao-home:hover {
-    /*
-       Parâmetros do dropshadow:
-       - three-pass-box: algoritmo de blur suave
-       - rgba(0,0,0,0.4): cor preta com 40% de opacidade
-       - 10: raio do blur (espalhamento)
-       - 0.5: quanto a sombra se espalha além do blur
-       - 5: deslocamento em X (move para a direita)
-       - 5: deslocamento em Y (move para baixo)
-    */
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.4), 10, 0.5, 5, 5);
 }
 
@@ -110,7 +85,6 @@
     -fx-border-width: 0 1 0 0;
 }
 
-/* Garante que o menu lateral e seus botões permaneçam 100% nítidos, opacos e sem escurecer */
 .painel-lateral:disabled,
 .painel-lateral .button:disabled,
 .painel-lateral .btn-padrao:disabled,
@@ -128,6 +102,7 @@
 .painel-superior {
     -fx-background-color: #f6f8fb;
 }
+
 .btn-sair {
     -fx-background-color: #e4891b;
     -fx-background-radius: 8;
@@ -140,23 +115,17 @@
     -fx-cursor: hand;
     -fx-text-alignment: center;
 }
+
 .btn-sair:hover,
 .btn-sair-adimin:hover {
-    /*
-       Parâmetros do dropshadow:
-       - three-pass-box: algoritmo de blur suave
-       - rgba(0,0,0,0.4): cor preta com 40% de opacidade
-       - 10: raio do blur (espalhamento)
-       - 0.5: quanto a sombra se espalha além do blur
-       - 5: deslocamento em X (move para a direita)
-       - 5: deslocamento em Y (move para baixo)
-    */
     -fx-background-color: #ba7119;
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.4), 10, 0.5, 5, 5);
 }
+
 .btn-sair:pressed {
     -fx-background-color: #9c5c14;
 }
+
 .btn-padrao-transparent-2 {
     -fx-background-color:  transparent;
     -fx-background-radius: 10;
@@ -167,61 +136,84 @@
     -fx-text-alignment: CENTER_LEFT;
 }
 
-.btn-padrao-transparent-2:hover { /* botão configuração */
-    /*
-       Parâmetros do dropshadow:
-       - three-pass-box: algoritmo de blur suave
-       - rgba(0,0,0,0.4): cor preta com 40% de opacidade
-       - 10: raio do blur (espalhamento)
-       - 0.5: quanto a sombra se espalha além do blur
-       - 5: deslocamento em X (move para a direita)
-       - 5: deslocamento em Y (move para baixo)
-    */
+.btn-padrao-transparent-2:hover {
     -fx-effect: dropshadow(three-pass-box, rgba(225,225,225,0.5), 10, 0.5, 5, 5);
 }
+
+/* ==========================================================================
+   ESTILIZAÇÃO DA TABELA (TABLEVIEW) - FUNDO CLARO E CABEÇALHO ESCURO
+   ========================================================================== */
+
 .table-view {
-    -fx-font-family: "Arial"; /* Sua fonte preferida */
-    -fx-control-inner-background:  #054584; /* Cor de fundo das células */
     -fx-font-family: "Arial";
-    -fx-font-size: 15px;
-    -fx-background-color: transparent; /* Fundo transparente */
-
-    /* Borda externa de tamanho 3 e cor #054584 */
+    -fx-font-size: 14px;
+    -fx-background-color: #ffffff;
+    -fx-control-inner-background: #ffffff;
+    -fx-control-inner-background-alt: #f8fafc;
     -fx-border-color: #054584;
-    -fx-border-width: 3px;
-    -fx-border-radius: 5px; /* Opcional: deixa a borda levemente arredondada */
+    -fx-border-width: 2px;
+    -fx-border-radius: 6px;
+    -fx-background-radius: 6px;
 }
 
-/* Muda a cor do texto das células */
-.table-cell {
-    -fx-text-fill: #000000;
+/* Estilo das Células e Linhas */
+.table-view .table-cell {
+    -fx-text-fill: #1e293b;
     -fx-font-family: "Arial";
-    -fx-control-inner-background:  #054584;
+    -fx-padding: 8px 12px;
+    -fx-alignment: CENTER_LEFT;
 }
 
-/* 2. Estilização dos Cabeçalhos das Colunas (TableColumn) */
+.table-view .table-row-cell {
+    -fx-background-color: #ffffff;
+    -fx-border-color: transparent transparent #e2e8f0 transparent;
+    -fx-border-width: 0 0 1px 0;
+}
+
+/* Linhas alternadas (Zebra) em cinza muito claro */
+.table-view .table-row-cell:odd {
+    -fx-background-color: #f8fafc;
+}
+
+/* Destaque ao passar o mouse sobre a linha */
+.table-view .table-row-cell:hover {
+    -fx-background-color: #f1f5f9;
+}
+
+/* Linha Selecionada */
+.table-view .table-row-cell:filled:selected {
+    -fx-background-color: #054584;
+    -fx-text-background-color: #ffffff;
+}
+
+.table-view .table-row-cell:filled:selected .table-cell {
+    -fx-text-fill: #ffffff;
+}
+
+/* Cabeçalho das Colunas (Azul Institucional) */
+.table-view .column-header-background,
 .table-view .column-header,
 .table-view .column-header-background .filler {
-    -fx-background-color: #054584; /* Cor de fundo das colunas */
-    -fx-border-width: 1;
-    -fx-border-color: #ffffff;
-}
-
-/* Cor do texto do cabeçalho */
-.table-view .column-header .label {
-    -fx-text-fill: white;
-    -fx-font-weight: bold;
-}
-/* 4. Estilização das Linhas quando selecionadas (Opcional, para não sumir o texto) */
-.table-row-cell:selected {
     -fx-background-color: #054584;
-    -fx-background-insets: 0;
+    -fx-border-color: transparent #ffffff #054584 transparent;
+    -fx-border-width: 0 1px 0 0;
+    -fx-size: 38px;
 }
 
-/* 5. Remove aquela borda extra quando a tabela ganha foco */
-.table-view:focused {
-    -fx-background-color: transparent, transparent, transparent;
+/* Rótulo / Texto do Cabeçalho */
+.table-view .column-header .label {
+    -fx-text-fill: #ffffff;
+    -fx-font-family: "Arial Bold";
+    -fx-font-size: 13px;
+    -fx-alignment: CENTER;
 }
+
+/* Remove a borda azul ao focar na tabela */
+.table-view:focused {
+    -fx-background-color: #ffffff;
+}
+
+/* ========================================================================== */
 
 .btn-relatorio {
     -fx-background-color:  #aecae6;
@@ -233,18 +225,11 @@
     -fx-text-fill: black;
     -fx-cursor: hand;
 }
+
 .btn-relatorio:hover{
-    /*
-       Parâmetros do dropshadow:
-       - three-pass-box: algoritmo de blur suave
-       - rgba(0,0,0,0.4): cor preta com 40% de opacidade
-       - 10: raio do blur (espalhamento)
-       - 0.5: quanto a sombra se espalha além do blur
-       - 5: deslocamento em X (move para a direita)
-       - 5: deslocamento em Y (move para baixo)
-    */
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.4), 10, 0.5, 5, 5);
 }
+
 /* ==========================================================================
    CONTEÚDO DA PÁGINA (ESTOQUE, HISTÓRICO/RELATÓRIOS E CONSULTAS)
    Padronização visual e de dimensões com o novo design do SIGEC (Senac)
@@ -488,7 +473,6 @@
     -fx-background-color: #ffffff;
 }
 
-/* Calendário popup do DatePicker */
 .date-picker-popup {
     -fx-background-color: #ffffff;
     -fx-border-color: #054685;
@@ -620,7 +604,6 @@
     -fx-font-size: 13px;
 }
 
-/* O menu suspenso (caixa de opções) com o tamanho exato do botão onde o usuário clica */
 .choice-box-cadastro .context-menu,
 #acessoSelect .context-menu {
     -fx-min-width: 400px;
@@ -679,19 +662,18 @@
 
 /* Configura as cores de fundo alternadas (Zebra) */
 .list-view {
-    -fx-control-inner-background: #aecae6;      /* Cor 1 (Ímpar) */
-    -fx-control-inner-background-alt: #f3ad50;  /* Cor 2 (Par) */
+    -fx-control-inner-background: #aecae6;
+    -fx-control-inner-background-alt: #f3ad50;
 }
 
 /* Configura as linhas divisórias */
 .list-cell {
-    -fx-border-color: #054584;      /* Cor da linha */
+    -fx-border-color: #054584;
     -fx-border-width: 1;
     -fx-alignment: CENTER;
-    -fx-padding: 30px;              /* Espaçamento interno */
+    -fx-padding: 30px;
 }
 
-/* Remove a borda azul chata que aparece quando clicamos na lista */
 .list-view:focused {
     -fx-background-color: transparent, -fx-box-border, -fx-control-inner-background;
     -fx-background-insets: -1.4, 0, 1;
@@ -738,7 +720,6 @@
    SUBMENU DROPDOWN DE NAVEGAÇÃO LATERAL (CADASTROS)
    ========================================================================== */
 
-/* Estado ativo do botão Dropdown (com borda esquerda laranja de 6px conectada perfeitamente ao submenu) */
 .btn-padrao.btn-dropdown-ativo,
 .btn-dropdown-ativo {
     -fx-background-color: linear-gradient(to right, #005bb5, #1877f2);
@@ -770,7 +751,6 @@
     -fx-background-color: transparent;
 }
 
-/* Container do submenu quando ativo */
 .submenu-lateral-ativo {
     -fx-pref-width: 185;
     -fx-max-width: 185;
@@ -876,7 +856,6 @@
     -fx-effect: dropshadow(three-pass-box, rgba(5, 70, 133, 0.25), 6, 0.25, 0, 1);
 }
 
-/* Botões de Ação de Formulário */
 .btn-action-primary {
     -fx-background-color: linear-gradient(to right, #e4891b, #f59e0b);
     -fx-background-radius: 8px;
@@ -940,7 +919,6 @@
     -fx-text-fill: #64748b;
 }
 
-/* Lista de Instrutores */
 .lista-instrutores-view {
     -fx-background-color: transparent;
     -fx-background-insets: 0;
@@ -987,5 +965,3 @@
     -fx-font-size: 11px;
     -fx-text-fill: #64748b;
 }
-
-

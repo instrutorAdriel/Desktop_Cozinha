@@ -1,5 +1,7 @@
 package com.sigec.system.sigec.Controllers;
 
+import com.sigec.system.sigec.Constructors.ListaEstoque;
+import com.sigec.system.sigec.DAOS.ProductStorageDAO;
 import com.sigec.system.sigec.MainApplication;
 import com.sigec.system.sigec.Services.SessaoService;
 import com.sigec.system.sigec.Utils.BackgroundAnimator;
@@ -21,6 +23,9 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.util.Duration;
 
 import java.io.IOException;
@@ -30,10 +35,8 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.List;
 
-/**
- * Controlador da tela de Gerenciamento e Consulta do Estoque de Produtos.
- */
 public class ListaController implements Initializable {
 
     @FXML
@@ -61,19 +64,19 @@ public class ListaController implements Initializable {
     private CheckBox chkUtensilios;
 
     @FXML
-    private TableView<?> ListaEstoque;
+    private TableView<ListaEstoque> ListaEstoque;
 
     @FXML
-    private TableColumn<?, ?> nomeProduto;
+    private TableColumn<ListaEstoque, String> nomeProduto;
 
     @FXML
-    private TableColumn<?, ?> tipoProduto;
+    private TableColumn<ListaEstoque, String> tipoProduto;
 
     @FXML
-    private TableColumn<?, ?> quantidadeProduto;
+    private TableColumn<ListaEstoque, Double> quantidadeProduto;
 
     @FXML
-    private TableColumn<?, ?> unidadeProduto;
+    private TableColumn<ListaEstoque, String> unidadeProduto;
 
     @FXML
     private Button editar;
@@ -104,6 +107,22 @@ public class ListaController implements Initializable {
         if (FiltrarProdutos != null) {
             FiltrarProdutos.setOnAction(this::onPesquisarClick);
         }
+
+        // Configuração das colunas
+        nomeProduto.setCellValueFactory(new PropertyValueFactory<>("nomeProduto"));
+        tipoProduto.setCellValueFactory(new PropertyValueFactory<>("tipoProduto"));
+        quantidadeProduto.setCellValueFactory(new PropertyValueFactory<>("quantidadeProduto"));
+        unidadeProduto.setCellValueFactory(new PropertyValueFactory<>("unidadeProduto"));
+
+        // Carrega os dados do banco
+        carregarTabelaEstoque();
+    }
+
+    private void carregarTabelaEstoque() {
+        ProductStorageDAO dao = new ProductStorageDAO();
+        List<ListaEstoque> produtos = dao.buscarTodosProdutosEstoque();
+        ObservableList<ListaEstoque> obsLista = FXCollections.observableArrayList(produtos);
+        ListaEstoque.setItems(obsLista);
     }
 
     private void configurarUsuario() {
