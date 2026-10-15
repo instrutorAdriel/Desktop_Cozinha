@@ -36,11 +36,20 @@ public class CadastroProdutoController implements Initializable {
 
     private void configurarSeletores() {
         if (txtTipoProduto != null) {
-            txtTipoProduto.setItems(FXCollections.observableArrayList("Perecível", "Não Perecível", "Utensílio"));
+            // Aqui estão os novos tipos de produtos!
+            txtTipoProduto.setItems(FXCollections.observableArrayList(
+                    "Hortifruti",
+                    "Proteína",
+                    "Frios",
+                    "Mercearia"
+            ));
             txtTipoProduto.getSelectionModel().selectFirst();
         }
+
         if (txtUnidadeDeMedida != null) {
-            txtUnidadeDeMedida.setItems(FXCollections.observableArrayList("kg", "g", "L", "ml", "un", "pct", "cx"));
+            txtUnidadeDeMedida.setItems(FXCollections.observableArrayList(
+                    "kg", "g", "L", "ml", "un", "pct", "cx"
+            ));
             txtUnidadeDeMedida.getSelectionModel().selectFirst();
         }
     }
