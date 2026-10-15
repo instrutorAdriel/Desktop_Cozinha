@@ -45,7 +45,7 @@ public class ProductStorageDAO {
     // EXCLUIR PRODUTO (Exclusão Lógica: Muda situação para Inativo)
     // -------------------------------------------------------------------------
     public boolean excluirProduto(int idProduto) {
-        String sql = "UPDATE produto SET situacao = 'I' WHERE id_produto = ?";
+        String sql = "UPDATE produto SET situacao = 'I', quantidade = 0 WHERE id_produto = ?";
         try (Connection conn = ConfigDataBase.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
@@ -106,5 +106,28 @@ public class ProductStorageDAO {
             System.err.println("Erro ao atualizar produto: " + e.getMessage());
             return false;
         }
+    }
+
+    // -------------------------------------------------------------------------
+    // VERIFICAR SE O PRODUTO JÁ EXISTE (Evitar Duplicação)
+    // -------------------------------------------------------------------------
+    public boolean verificarProdutoExisteAtivo(String nomeProduto) {
+        // Busca se existe algum produto com o mesmo nome (ignorando maiúsculas/minúsculas) que esteja ativo
+        String sql = "SELECT COUNT(*) FROM produto WHERE LOWER(nome_produto) = LOWER(?) AND situacao = 'A'";
+
+        try (Connection conn = ConfigDataBase.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, nomeProduto.trim());
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0; // Retorna true se a contagem for maior que zero
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Erro ao verificar duplicidade: " + e.getMessage());
+        }
+        return false; // Se der erro, assume que não existe para não travar o sistema inteiro
     }
 }

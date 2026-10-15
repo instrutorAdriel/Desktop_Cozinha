@@ -59,15 +59,24 @@ public class CadastroProdutoController implements Initializable {
 
         double quantidadeFormatada;
         try {
-            // Substitui vírgula por ponto caso o usuário digite "50,5" em vez de "50.5"
             quantidadeFormatada = Double.parseDouble(qtd.trim().replace(",", "."));
         } catch (NumberFormatException e) {
             exibirAlerta(Alert.AlertType.ERROR, "Formato Inválido", "A quantidade deve ser um número válido.");
             return;
         }
 
-        // Envia para o banco de dados
         ProductStorageDAO dao = new ProductStorageDAO();
+
+        // -------------------------------------------------------------------
+        // TRAVA DE DUPLICIDADE: Verifica antes de adicionar
+        // -------------------------------------------------------------------
+        if (dao.verificarProdutoExisteAtivo(nome)) {
+            exibirAlerta(Alert.AlertType.WARNING, "Produto Duplicado",
+                    "O produto '" + nome.trim() + "' já existe no estoque! Se precisar, altere a quantidade na opção 'Editar'.");
+            return; // Interrompe o cadastro aqui
+        }
+
+        // Se passou pela trava, envia para o banco de dados
         boolean sucesso = dao.adicionarProduto(nome, tipo, quantidadeFormatada, unidade);
 
         if (sucesso) {
