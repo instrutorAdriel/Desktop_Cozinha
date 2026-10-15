@@ -102,7 +102,6 @@
 .painel-superior {
     -fx-background-color: #f6f8fb;
 }
-
 .btn-sair {
     -fx-background-color: #e4891b;
     -fx-background-radius: 8;
@@ -751,6 +750,7 @@
     -fx-background-color: transparent;
 }
 
+/* Container do submenu quando ativo */
 .submenu-lateral-ativo {
     -fx-pref-width: 185;
     -fx-max-width: 185;
@@ -856,6 +856,7 @@
     -fx-effect: dropshadow(three-pass-box, rgba(5, 70, 133, 0.25), 6, 0.25, 0, 1);
 }
 
+/* Botões de Ação de Formulário */
 .btn-action-primary {
     -fx-background-color: linear-gradient(to right, #e4891b, #f59e0b);
     -fx-background-radius: 8px;
@@ -919,6 +920,7 @@
     -fx-text-fill: #64748b;
 }
 
+/* Lista de Instrutores */
 .lista-instrutores-view {
     -fx-background-color: transparent;
     -fx-background-insets: 0;
@@ -964,4 +966,32 @@
     -fx-font-family: "Arial Bold";
     -fx-font-size: 11px;
     -fx-text-fill: #64748b;
+}
+
+/* ==========================================================================
+   BOTÃO DE REVELAR SENHA (OLHO)
+   ========================================================================== */
+.btn-olho {
+    -fx-background-color: transparent;
+    -fx-cursor: hand;
+    -fx-pref-width: 32px;
+    -fx-min-width: 32px;
+    -fx-pref-height: 25px;
+    -fx-min-height: 25px;
+
+    /* Imagem Padrão: Olho Aberto */
+    -fx-background-image: url("../imagens/olho-aberto.png");
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center;
+    -fx-background-size: 20px 20px;
+}
+
+.btn-olho:hover {
+    -fx-background-color: #f1f5f9; /* Fundo cinza bem clarinho ao passar o mouse */
+    -fx-background-radius: 4px;
+}
+
+.btn-olho:selected {
+    /* Quando o botão estiver pressionado: Olho Fechado */
+    -fx-background-image: url("../imagens/olho-fechado.png");
 }

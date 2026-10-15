@@ -25,6 +25,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
@@ -36,40 +37,23 @@ import javafx.util.Duration;
 import java.io.IOException;
 import java.sql.SQLException;
 
-/**
- * Controlador da tela de Login e Autenticação de Usuários.
- */
 public class LoginController {
 
-    @FXML
-    private TextField txtemail;
+    @FXML private TextField txtemail;
+    @FXML private PasswordField pswsenha;
 
-    @FXML
-    private PasswordField pswsenha;
+    // --- NOVOS CAMPOS DO OLHO (SENHA) ---
+    @FXML private TextField txtsenhaRevelada;
+    @FXML private ToggleButton btnMostrarSenha;
 
-    @FXML
-    private Button btnlogin;
-
-    @FXML
-    private Hyperlink lbesquecisenha;
-
-    @FXML
-    private SVGPath linhaLaranja;
-
-    @FXML
-    private VBox loginForm;
-
-    @FXML
-    private AnchorPane animatedBackground;
-
-    @FXML
-    private StackPane rootPane;
-
-    @FXML
-    private ImageView logoSenac;
-
-    @FXML
-    private Group waveGroup;
+    @FXML private Button btnlogin;
+    @FXML private Hyperlink lbesquecisenha;
+    @FXML private SVGPath linhaLaranja;
+    @FXML private VBox loginForm;
+    @FXML private AnchorPane animatedBackground;
+    @FXML private StackPane rootPane;
+    @FXML private ImageView logoSenac;
+    @FXML private Group waveGroup;
 
     @FXML
     public void initialize() {
@@ -82,20 +66,37 @@ public class LoginController {
             iniciarAnimacaoLogo();
         }
 
-        // Navegação por tecla Enter através dos campos de formulário
+        // Sincroniza o texto digitado entre o campo oculto e o revelado (se existirem)
+        if (txtsenhaRevelada != null && pswsenha != null) {
+            txtsenhaRevelada.textProperty().bindBidirectional(pswsenha.textProperty());
+        }
+
         FormNavigationUtil.encadearCampos(btnlogin, txtemail, pswsenha);
+    }
+
+    // --- MÉTODO DO OLHO (SENHA) ---
+    @FXML
+    public void toggleMostrarSenha() {
+        if (btnMostrarSenha.isSelected()) {
+            txtsenhaRevelada.setVisible(true);
+            txtsenhaRevelada.setManaged(true);
+            pswsenha.setVisible(false);
+            pswsenha.setManaged(false);
+        } else {
+            pswsenha.setVisible(true);
+            pswsenha.setManaged(true);
+            txtsenhaRevelada.setVisible(false);
+            txtsenhaRevelada.setManaged(false);
+        }
     }
 
     private void iniciarAnimacaoLogo() {
         logoSenac.setOpacity(0.0);
         logoSenac.setTranslateY(50.0);
-
         FadeTransition fadeLogo = new FadeTransition(Duration.millis(1200), logoSenac);
         fadeLogo.setToValue(1.0);
-
         TranslateTransition moveLogo = new TranslateTransition(Duration.millis(1200), logoSenac);
         moveLogo.setToY(0);
-
         ParallelTransition ptLogo = new ParallelTransition(fadeLogo, moveLogo);
         ptLogo.setInterpolator(Interpolator.EASE_OUT);
         ptLogo.setDelay(Duration.millis(300));
@@ -115,7 +116,6 @@ public class LoginController {
         try {
             boolean autenticado = UserDAO.autenticar(email.trim(), senha);
             if (autenticado) {
-                // Registra usuário logado na sessão ativa
                 User userLogado = UserDAO.buscarPorEmail(email.trim());
                 if (userLogado != null) {
                     SessaoService.setUsuarioLogado(userLogado);
@@ -140,7 +140,6 @@ public class LoginController {
 
             FXMLLoader loader = new FXMLLoader(MainApplication.class.getResource("home.fxml"));
             Parent homeRoot = loader.load();
-
             HomeController homeController = loader.getController();
             if (homeController != null) {
                 homeController.prepararAnimacao();
@@ -149,14 +148,11 @@ public class LoginController {
             rootPane.getChildren().remove(homeRoot);
             rootPane.getChildren().add(0, homeRoot);
 
-            // Animação de fade-out do formulário de login e logo
             FadeTransition ftForm = new FadeTransition(Duration.millis(350), loginForm);
             ftForm.setToValue(0);
-
             FadeTransition ftLogo = new FadeTransition(Duration.millis(350), logoSenac);
             ftLogo.setToValue(0);
 
-            // Recolhimento suave do fundo até a altura do topo (50px)
             double currentHeight = rootPane.getHeight() > 0 ? rootPane.getHeight() : 600.0;
             Rectangle clipRect = new Rectangle();
             clipRect.widthProperty().bind(rootPane.widthProperty());
