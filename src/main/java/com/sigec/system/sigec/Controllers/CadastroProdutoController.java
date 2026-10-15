@@ -1,5 +1,6 @@
 package com.sigec.system.sigec.Controllers;
 
+import com.sigec.system.sigec.DAOS.ProductStorageDAO;
 import com.sigec.system.sigec.Utils.FormNavigationUtil;
 
 import javafx.collections.FXCollections;
@@ -16,34 +17,16 @@ import javafx.stage.Stage;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-/**
- * Controlador do modal/janela de cadastro de novo produto no estoque.
- */
 public class CadastroProdutoController implements Initializable {
 
-    @FXML
-    private TextField txtNomeProduto;
-
-    @FXML
-    private TextField txtQtdAtual;
-
-    @FXML
-    private TextField txtEstoqueMinimo;
-
-    @FXML
-    private ChoiceBox<String> txtTipoProduto;
-
-    @FXML
-    private ChoiceBox<String> txtUnidadeDeMedida;
-
-    @FXML
-    private DatePicker txtDataValidade;
-
-    @FXML
-    private Button btnVoltar;
-
-    @FXML
-    private Button btnCadastro;
+    @FXML private TextField txtNomeProduto;
+    @FXML private TextField txtQtdAtual;
+    @FXML private TextField txtEstoqueMinimo;
+    @FXML private ChoiceBox<String> txtTipoProduto;
+    @FXML private ChoiceBox<String> txtUnidadeDeMedida;
+    @FXML private DatePicker txtDataValidade;
+    @FXML private Button btnVoltar;
+    @FXML private Button btnCadastro;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -53,52 +36,46 @@ public class CadastroProdutoController implements Initializable {
 
     private void configurarSeletores() {
         if (txtTipoProduto != null) {
-            txtTipoProduto.setItems(FXCollections.observableArrayList(
-                    "Perecível",
-                    "Não Perecível",
-                    "Utensílio"
-            ));
+            txtTipoProduto.setItems(FXCollections.observableArrayList("Perecível", "Não Perecível", "Utensílio"));
             txtTipoProduto.getSelectionModel().selectFirst();
         }
-
         if (txtUnidadeDeMedida != null) {
-            txtUnidadeDeMedida.setItems(FXCollections.observableArrayList(
-                    "KG",
-                    "G",
-                    "L",
-                    "ML",
-                    "UN",
-                    "PCT",
-                    "CX"
-            ));
+            txtUnidadeDeMedida.setItems(FXCollections.observableArrayList("kg", "g", "L", "ml", "un", "pct", "cx"));
             txtUnidadeDeMedida.getSelectionModel().selectFirst();
         }
     }
 
     @FXML
     public void onCadastrar(ActionEvent event) {
-        String nome = txtNomeProduto != null ? txtNomeProduto.getText() : null;
-        String qtd = txtQtdAtual != null ? txtQtdAtual.getText() : null;
-        String min = txtEstoqueMinimo != null ? txtEstoqueMinimo.getText() : null;
+        String nome = txtNomeProduto != null ? txtNomeProduto.getText() : "";
+        String qtd = txtQtdAtual != null ? txtQtdAtual.getText() : "";
+        String tipo = txtTipoProduto != null ? txtTipoProduto.getValue() : "";
+        String unidade = txtUnidadeDeMedida != null ? txtUnidadeDeMedida.getValue() : "";
 
-        if (nome == null || nome.trim().isEmpty() ||
-                qtd == null || qtd.trim().isEmpty() ||
-                min == null || min.trim().isEmpty()) {
-
-            exibirAlerta(Alert.AlertType.WARNING, "Campos Obrigatórios", "Preencha todos os campos obrigatórios do produto.");
+        if (nome.trim().isEmpty() || qtd.trim().isEmpty()) {
+            exibirAlerta(Alert.AlertType.WARNING, "Campos Obrigatórios", "Preencha o nome e a quantidade do produto.");
             return;
         }
 
+        double quantidadeFormatada;
         try {
-            Double.parseDouble(qtd.trim());
-            Double.parseDouble(min.trim());
+            // Substitui vírgula por ponto caso o usuário digite "50,5" em vez de "50.5"
+            quantidadeFormatada = Double.parseDouble(qtd.trim().replace(",", "."));
         } catch (NumberFormatException e) {
-            exibirAlerta(Alert.AlertType.ERROR, "Formato Inválido", "Quantidade e estoque mínimo devem ser valores numéricos válidos.");
+            exibirAlerta(Alert.AlertType.ERROR, "Formato Inválido", "A quantidade deve ser um número válido.");
             return;
         }
 
-        exibirAlerta(Alert.AlertType.INFORMATION, "Sucesso", "Produto '" + nome.trim() + "' cadastrado com sucesso no estoque!");
-        fecharJanela();
+        // Envia para o banco de dados
+        ProductStorageDAO dao = new ProductStorageDAO();
+        boolean sucesso = dao.adicionarProduto(nome, tipo, quantidadeFormatada, unidade);
+
+        if (sucesso) {
+            exibirAlerta(Alert.AlertType.INFORMATION, "Sucesso", "Produto '" + nome.trim() + "' cadastrado com sucesso no estoque!");
+            fecharJanela();
+        } else {
+            exibirAlerta(Alert.AlertType.ERROR, "Erro", "Não foi possível salvar o produto no banco de dados.");
+        }
     }
 
     @FXML

@@ -1,5 +1,7 @@
 package com.sigec.system.sigec.Controllers;
 
+import com.sigec.system.sigec.DAOS.ProductStorageDAO;
+import com.sigec.system.sigec.Constructors.ListaEstoque;
 import com.sigec.system.sigec.Utils.FormNavigationUtil;
 
 import javafx.collections.FXCollections;
@@ -16,89 +18,95 @@ import javafx.stage.Stage;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-/**
- * Controlador do modal/janela de edição e atualização de produtos do estoque.
- */
 public class EdicaoProdutosController implements Initializable {
 
-    @FXML
-    private TextField txtNomeProduto;
+    @FXML private TextField txtNomeProduto;
+    @FXML private TextField txtQtdAtual;
+    @FXML private TextField txtEstoqueMinimo;
+    @FXML private ChoiceBox<String> txtTipoProduto;
+    @FXML private ChoiceBox<String> txtUnidadeDeMedida;
+    @FXML private DatePicker txtDataValidade;
+    @FXML private Button btnVoltar;
+    @FXML private Button btnCadastro;
 
-    @FXML
-    private TextField txtQtdAtual;
-
-    @FXML
-    private TextField txtEstoqueMinimo;
-
-    @FXML
-    private ChoiceBox<String> txtTipoProduto;
-
-    @FXML
-    private ChoiceBox<String> txtUnidadeDeMedida;
-
-    @FXML
-    private DatePicker txtDataValidade;
-
-    @FXML
-    private Button btnVoltar;
-
-    @FXML
-    private Button btnCadastro;
+    private int idProdutoEditando;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         configurarSeletores();
         FormNavigationUtil.encadearCampos(btnCadastro, txtNomeProduto, txtQtdAtual, txtEstoqueMinimo);
+
+        // Puxa os dados da tabela e preenche os campos automaticamente
+        carregarDadosDoProdutoSelecionado();
     }
 
     private void configurarSeletores() {
         if (txtTipoProduto != null) {
-            txtTipoProduto.setItems(FXCollections.observableArrayList(
-                    "Perecível",
-                    "Não Perecível",
-                    "Utensílio"
-            ));
-            txtTipoProduto.getSelectionModel().selectFirst();
+            txtTipoProduto.setItems(FXCollections.observableArrayList("Perecível", "Não Perecível", "Utensílio"));
         }
-
         if (txtUnidadeDeMedida != null) {
-            txtUnidadeDeMedida.setItems(FXCollections.observableArrayList(
-                    "KG",
-                    "G",
-                    "L",
-                    "ML",
-                    "UN",
-                    "PCT",
-                    "CX"
-            ));
-            txtUnidadeDeMedida.getSelectionModel().selectFirst();
+            txtUnidadeDeMedida.setItems(FXCollections.observableArrayList("kg", "g", "L", "ml", "un", "pct", "cx"));
+        }
+    }
+
+    private void carregarDadosDoProdutoSelecionado() {
+        ListaEstoque produto = ListaController.produtoSelecionadoParaEdicao;
+
+        if (produto != null) {
+            idProdutoEditando = produto.getIdProduto();
+
+            if (txtNomeProduto != null) txtNomeProduto.setText(produto.getNomeProduto());
+            if (txtQtdAtual != null) txtQtdAtual.setText(String.valueOf(produto.getQuantidadeProduto()));
+
+            // Tratamento especial para o tipo de produto, caso o que venha do banco não esteja na lista inicial
+            if (txtTipoProduto != null) {
+                String tipo = produto.getTipoProduto();
+                if (!txtTipoProduto.getItems().contains(tipo)) {
+                    txtTipoProduto.getItems().add(tipo);
+                }
+                txtTipoProduto.setValue(tipo);
+            }
+
+            if (txtUnidadeDeMedida != null) {
+                String unidade = produto.getUnidadeProduto();
+                if (!txtUnidadeDeMedida.getItems().contains(unidade)) {
+                    txtUnidadeDeMedida.getItems().add(unidade);
+                }
+                txtUnidadeDeMedida.setValue(unidade);
+            }
         }
     }
 
     @FXML
     public void onEditar(ActionEvent event) {
-        String nome = txtNomeProduto != null ? txtNomeProduto.getText() : null;
-        String qtd = txtQtdAtual != null ? txtQtdAtual.getText() : null;
-        String min = txtEstoqueMinimo != null ? txtEstoqueMinimo.getText() : null;
+        String nome = txtNomeProduto != null ? txtNomeProduto.getText() : "";
+        String qtd = txtQtdAtual != null ? txtQtdAtual.getText() : "";
+        String tipo = txtTipoProduto != null ? txtTipoProduto.getValue() : "";
+        String unidade = txtUnidadeDeMedida != null ? txtUnidadeDeMedida.getValue() : "";
 
-        if (nome == null || nome.trim().isEmpty() ||
-                qtd == null || qtd.trim().isEmpty() ||
-                min == null || min.trim().isEmpty()) {
-
-            exibirAlerta(Alert.AlertType.WARNING, "Campos Obrigatórios", "Preencha todos os campos obrigatórios para editar.");
+        if (nome.trim().isEmpty() || qtd.trim().isEmpty()) {
+            exibirAlerta(Alert.AlertType.WARNING, "Campos Obrigatórios", "Preencha o nome e a quantidade do produto.");
             return;
         }
 
+        double quantidadeFormatada;
         try {
-            Double.parseDouble(qtd.trim());
-            Double.parseDouble(min.trim());
+            quantidadeFormatada = Double.parseDouble(qtd.trim().replace(",", "."));
         } catch (NumberFormatException e) {
-            exibirAlerta(Alert.AlertType.ERROR, "Formato Inválido", "Quantidade e estoque mínimo devem ser valores numéricos válidos.");
+            exibirAlerta(Alert.AlertType.ERROR, "Formato Inválido", "A quantidade deve ser um número válido.");
             return;
         }
 
-        exibirAlerta(Alert.AlertType.INFORMATION, "Sucesso", "Produto '" + nome.trim() + "' atualizado com sucesso!");
-        fecharJanela();
+        // Envia atualização para o banco
+        ProductStorageDAO dao = new ProductStorageDAO();
+        boolean sucesso = dao.atualizarProduto(idProdutoEditando, nome, tipo, quantidadeFormatada, unidade);
+
+        if (sucesso) {
+            exibirAlerta(Alert.AlertType.INFORMATION, "Sucesso", "Produto '" + nome.trim() + "' atualizado com sucesso!");
+            fecharJanela();
+        } else {
+            exibirAlerta(Alert.AlertType.ERROR, "Erro", "Não foi possível atualizar o produto no banco.");
+        }
     }
 
     @FXML
