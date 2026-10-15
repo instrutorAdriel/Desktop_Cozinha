@@ -13,12 +13,14 @@ import javafx.scene.shape.StrokeLineJoin;
 
 /**
  * Utilitário responsável pelo ciclo de vida e pela animação fluida do contorno
- * laranja (Border Lap) ao selecionar uma opção no menu lateral.
+ * (Border Lap) ao selecionar uma opção no menu lateral ou ao clicar em Sair.
  *
  * Para botões padrão, a linha laranja dá uma volta completa no botão em direção
- * à direita, contorna o topo e finaliza na lateral esquerda, expandindo sua
- * espessura
+ * à direita, contorna o topo e finaliza na lateral esquerda, expandindo sua espessura
  * para 6px e fixando-se no estado ativo (.btn-ativo).
+ *
+ * Para o botão Sair, a linha azul dá uma volta completa de 360 graus contornando
+ * o botão com efeito de clique azul iluminado, mantendo a cor laranja do botão.
  *
  * Para botões dropdown, delega a execução especializada para
  * {@link DropdownBorderLapAnimator}.
@@ -47,7 +49,7 @@ public final class ButtonBorderLapAnimator {
     }
 
     /**
-     * Registra o estado da animação ativa em andamento (padrão ou dropdown).
+     * Registra o estado da animação ativa em andamento (padrão, dropdown ou sair).
      */
     static void registrarAnimacaoAtiva(Canvas canvas, Button btn, AnimationTimer timer, Runnable cleanup) {
         activeCanvas = canvas;
@@ -208,6 +210,136 @@ public final class ButtonBorderLapAnimator {
     }
 
     /**
+     * Inicia a animação de contorno da linha azul ao redor do botão Sair (efeito de clique),
+     * mantendo o botão na cor laranja e acionando a ação ao concluir o contorno.
+     *
+     * @param btn        Botão Sair a ser animado
+     * @param onFinished Ação a ser executada ao concluir (ex: efetuar logout)
+     */
+    public static void animarSair(Button btn, Runnable onFinished) {
+        if (btn == null) {
+            if (onFinished != null) {
+                onFinished.run();
+            }
+            return;
+        }
+
+        if (isAnimating(btn)) {
+            return;
+        }
+
+        cancelarAnimacaoAtiva();
+
+        Pane parent = (btn.getParent() instanceof Pane p) ? p : null;
+        if (parent == null) {
+            if (onFinished != null) {
+                onFinished.run();
+            }
+            return;
+        }
+
+        double w = btn.getWidth() > 0 ? btn.getWidth() : (btn.getPrefWidth() > 0 ? btn.getPrefWidth() : 185.0);
+        double h = btn.getHeight() > 0 ? btn.getHeight() : (btn.getPrefHeight() > 0 ? btn.getPrefHeight() : 40.0);
+        double r = CORNER_RADIUS;
+
+        double canvasW = w + PAD * 2;
+        double canvasH = h + PAD * 2;
+
+        Canvas canvas = new Canvas(canvasW, canvasH);
+        canvas.setManaged(false);
+        canvas.setMouseTransparent(true);
+
+        canvas.layoutXProperty().bind(btn.layoutXProperty().subtract(PAD));
+        canvas.layoutYProperty().bind(btn.layoutYProperty().subtract(PAD));
+
+        parent.getChildren().add(canvas);
+
+        GraphicsContext gc = canvas.getGraphicsContext2D();
+
+        // O botão de sair deve permanecer na cor laranja com glow azul sutil
+        btn.setStyle(
+                "-fx-background-color: #d17810; -fx-background-radius: 10; -fx-text-fill: white; -fx-effect: dropshadow(three-pass-box, rgba(0, 180, 255, 0.45), 14, 0.4, 0, 0);");
+
+        double insetLeft = 3.0;
+        double insetBottom = 1.0;
+        double insetRight = 1.5;
+        double insetTop = 1.5;
+
+        double x0 = PAD + insetLeft;
+        double y0 = PAD + insetTop;
+        double x1 = PAD + w - insetRight;
+        double y1 = PAD + h - insetBottom;
+
+        double l1 = (x1 - x0) - 2 * r;
+        double l2 = (Math.PI / 2) * r;
+        double l3 = (y1 - y0) - 2 * r;
+        double l4 = (Math.PI / 2) * r;
+        double l5 = (x1 - x0) - 2 * r;
+        double l6 = (Math.PI / 2) * r;
+        double l7 = (y1 - y0) - 2 * r;
+        double l8 = (Math.PI / 2) * r;
+
+        double totalPerimeter = l1 + l2 + l3 + l4 + l5 + l6 + l7 + l8;
+
+        // A linha azul circula completamente o contorno do botão
+        double sStartTail = 0.0;
+        double sEndTail = totalPerimeter;
+        double sStartHead = l1;
+        double sEndHead = totalPerimeter + l1;
+
+        long startNano = System.nanoTime();
+
+        Runnable cleanup = () -> {
+            if (canvas.getParent() instanceof Pane p) {
+                p.getChildren().remove(canvas);
+            }
+            btn.setStyle(null);
+        };
+
+        AnimationTimer timer = new AnimationTimer() {
+            @Override
+            public void handle(long now) {
+                try {
+                    double elapsedSeconds = (now - startNano) / 1_000_000_000.0;
+                    double t = Math.max(0.0, Math.min(1.0, elapsedSeconds / DURATION_SECONDS));
+                    double easeT = EASE.interpolate(0.0, 1.0, t);
+
+                    gc.clearRect(0, 0, canvasW, canvasH);
+
+                    double sTail = sStartTail + easeT * (sEndTail - sStartTail);
+                    double sHead = sStartHead + easeT * (sEndHead - sStartHead);
+
+                    double thickness = 2.6 + easeT * 1.0;
+
+                    // Cor azul vibrante com efeito neon
+                    Color coreColor = Color.web("#00d4ff").interpolate(Color.web("#1877f2"), easeT);
+                    Color glowColor = Color.color(coreColor.getRed(), coreColor.getGreen(), coreColor.getBlue(), 0.50);
+
+                    drawStrokeSegment(gc, sTail, sHead, thickness + 4.0, glowColor, x0, y0, x1, y1, r);
+                    drawStrokeSegment(gc, sTail, sHead, thickness, coreColor, x0, y0, x1, y1, r);
+
+                    if (t >= 1.0) {
+                        stop();
+                        finalizarAnimacaoAtiva();
+                        if (onFinished != null) {
+                            onFinished.run();
+                        }
+                    }
+                } catch (Exception ex) {
+                    stop();
+                    finalizarAnimacaoAtiva();
+                    if (onFinished != null) {
+                        onFinished.run();
+                    }
+                }
+            }
+        };
+
+        registrarAnimacaoAtiva(canvas, btn, timer, cleanup);
+        timer.start();
+    }
+
+    /**
      * Ponto de entrada compatível para a animação dropdown, delegando para
      * {@link DropdownBorderLapAnimator#animarDropdown(Button, Pane)}.
      */
@@ -251,6 +383,15 @@ public final class ButtonBorderLapAnimator {
         double l5 = (x1 - x0) - 2 * r;
         double l6 = (Math.PI / 2) * r;
         double l7 = (y1 - y0) - 2 * r;
+        double l8 = (Math.PI / 2) * r;
+        double totalLength = l1 + l2 + l3 + l4 + l5 + l6 + l7 + l8;
+
+        if (totalLength > 0) {
+            s = s % totalLength;
+            if (s < 0) {
+                s += totalLength;
+            }
+        }
 
         // 1. Base
         if (s <= l1) {
@@ -301,7 +442,16 @@ public final class ButtonBorderLapAnimator {
         s -= l6;
 
         // 7. Lateral esquerda
-        double u = Math.min(1.0, Math.max(0.0, s / l7));
-        return new Point2D(x0, (y0 + r) + u * l7);
+        if (s <= l7) {
+            double u = Math.min(1.0, Math.max(0.0, s / l7));
+            return new Point2D(x0, (y0 + r) + u * l7);
+        }
+        s -= l7;
+
+        // 8. Canto inferior esquerdo (conectando de volta à base)
+        double angle = -Math.PI - (Math.min(s, l8) / r);
+        double cx = x0 + r;
+        double cy = y1 - r;
+        return new Point2D(cx + r * Math.cos(angle), cy + r * Math.sin(angle));
     }
 }

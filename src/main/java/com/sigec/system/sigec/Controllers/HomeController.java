@@ -4,6 +4,7 @@ import com.sigec.system.sigec.MainApplication;
 import com.sigec.system.sigec.Services.SessaoService;
 import com.sigec.system.sigec.Utils.BackgroundAnimator;
 import com.sigec.system.sigec.Utils.ButtonBorderLapAnimator;
+import com.sigec.system.sigec.Utils.SidebarNavigationManager;
 
 import javafx.animation.Animation;
 import javafx.animation.FadeTransition;
@@ -227,11 +228,12 @@ public class HomeController implements Initializable {
 
     @FXML
     public void botaoSairAction(ActionEvent event) {
-        try {
-            SessaoService.encerrarSessao();
-            MainApplication.trocadorDeTelas("login.fxml");
-        } catch (IOException e) {
-            exibirErroNavegacao("Login", e);
+        if (event != null && event.getSource() instanceof Button btn) {
+            SidebarNavigationManager.executarLogoutComAnimacao(btn);
+        } else if (botaoSair != null) {
+            SidebarNavigationManager.executarLogoutComAnimacao(botaoSair);
+        } else {
+            SidebarNavigationManager.executarLogout();
         }
     }
 

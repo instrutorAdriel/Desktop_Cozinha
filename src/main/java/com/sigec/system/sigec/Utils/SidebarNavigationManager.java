@@ -1,6 +1,7 @@
 package com.sigec.system.sigec.Utils;
 
 import com.sigec.system.sigec.MainApplication;
+import com.sigec.system.sigec.Services.SessaoService;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Alert;
@@ -60,7 +61,7 @@ public final class SidebarNavigationManager {
 
         Node btnSair = lateralParent.lookup(".btn-sair");
         if (btnSair instanceof Button btn) {
-            btn.setOnAction(e -> executarLogout());
+            btn.setOnAction(e -> executarLogoutComAnimacao(btn));
         }
     }
 
@@ -226,9 +227,27 @@ public final class SidebarNavigationManager {
         }
     }
 
-    private static void executarLogout() {
+    /**
+     * Executa o logout disparando o efeito de clique (linha azul contornando o botão Sair)
+     * antes de realizar a transição para a tela de login.
+     *
+     * @param btn Botão Sair clicado
+     */
+    public static void executarLogoutComAnimacao(Button btn) {
+        if (btn != null && !ButtonBorderLapAnimator.isAnimating(btn)) {
+            ButtonBorderLapAnimator.animarSair(btn, () -> executarLogout());
+        } else {
+            executarLogout();
+        }
+    }
+
+    /**
+     * Executa o logout do sistema, encerrando a sessão e redirecionando para a tela de login.
+     */
+    public static void executarLogout() {
         try {
             ButtonBorderLapAnimator.cancelarAnimacaoAtiva();
+            SessaoService.encerrarSessao();
             MainApplication.trocadorDeTelas("login.fxml");
         } catch (Exception ex) {
             exibirAlertaErro("Logout", "Erro ao retornar à tela de login", ex);

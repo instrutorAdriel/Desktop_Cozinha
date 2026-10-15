@@ -6,6 +6,7 @@ import com.sigec.system.sigec.Services.SessaoService;
 import com.sigec.system.sigec.Utils.BackgroundAnimator;
 import com.sigec.system.sigec.Utils.ButtonBorderLapAnimator;
 import com.sigec.system.sigec.Utils.FormNavigationUtil;
+import com.sigec.system.sigec.Utils.SidebarNavigationManager;
 
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
@@ -264,11 +265,12 @@ public class CadastroController implements Initializable {
 
     @FXML
     public void botaoSairAction(ActionEvent event) {
-        try {
-            SessaoService.encerrarSessao();
-            MainApplication.trocadorDeTelas("login.fxml");
-        } catch (IOException e) {
-            exibirAlerta(Alert.AlertType.ERROR, "Erro", "Erro ao sair: " + e.getMessage());
+        if (event != null && event.getSource() instanceof Button btn) {
+            SidebarNavigationManager.executarLogoutComAnimacao(btn);
+        } else if (botaoSair != null) {
+            SidebarNavigationManager.executarLogoutComAnimacao(botaoSair);
+        } else {
+            SidebarNavigationManager.executarLogout();
         }
     }
 
