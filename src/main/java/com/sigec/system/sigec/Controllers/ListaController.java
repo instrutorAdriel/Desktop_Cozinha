@@ -123,6 +123,7 @@ public class ListaController implements Initializable {
         List<ListaEstoque> produtos = dao.buscarTodosProdutosEstoque();
         ObservableList<ListaEstoque> obsLista = FXCollections.observableArrayList(produtos);
         ListaEstoque.setItems(obsLista);
+        ListaEstoque.refresh();
     }
 
     private void configurarUsuario() {
