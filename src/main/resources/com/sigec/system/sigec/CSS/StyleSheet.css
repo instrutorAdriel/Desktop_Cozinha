@@ -231,14 +231,12 @@
 
 /* ==========================================================================
    CONTEÚDO DA PÁGINA (ESTOQUE, HISTÓRICO/RELATÓRIOS E CONSULTAS)
-   Padronização visual e de dimensões com o novo design do SIGEC (Senac)
    ========================================================================== */
 
 .conteudo-pagina {
     -fx-background-color: #f6f8fb;
 }
 
-/* --- Botões de Ação Padronizados --- */
 .btn-padrao-2 {
     -fx-background-color: #054685;
     -fx-background-radius: 8;
@@ -966,6 +964,34 @@
     -fx-font-family: "Arial Bold";
     -fx-font-size: 11px;
     -fx-text-fill: #64748b;
+}
+
+/* ==========================================================================
+   BOTÃO DE REVELAR SENHA (OLHO)
+   ========================================================================== */
+.btn-olho {
+    -fx-background-color: transparent;
+    -fx-cursor: hand;
+    -fx-pref-width: 32px;
+    -fx-min-width: 32px;
+    -fx-pref-height: 25px;
+    -fx-min-height: 25px;
+
+    /* Imagem Padrão: Olho Aberto */
+    -fx-background-image: url("../imagens/olho-aberto.png");
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center;
+    -fx-background-size: 20px 20px;
+}
+
+.btn-olho:hover {
+    -fx-background-color: #f1f5f9;
+    -fx-background-radius: 4px;
+}
+
+.btn-olho:selected {
+    /* Quando o botão estiver pressionado: Olho Fechado */
+    -fx-background-image: url("../imagens/olho-fechado.png");
 }
 
 /* ==========================================================================
