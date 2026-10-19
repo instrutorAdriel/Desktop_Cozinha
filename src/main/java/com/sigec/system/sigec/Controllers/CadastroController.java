@@ -54,6 +54,7 @@ public class CadastroController implements Initializable {
     @FXML private TextField txtEmail;
     @FXML private TextField txtAcesso;
     @FXML private ChoiceBox<String> acessoSelect;
+    @FXML private ChoiceBox<String> unidadeSelect;
 
     @FXML private PasswordField txtSenha;
 
@@ -90,7 +91,34 @@ public class CadastroController implements Initializable {
 
         configurarNavegacaoCampos();
         configurarSeletorAcesso();
+        configurarSeletorUnidade();
     }
+    private void configurarSeletorUnidade() {
+        if (unidadeSelect != null) {
+
+            unidadeSelect.getItems().clear();
+
+            unidadeSelect.getItems().addAll(
+                    "07 - CEP ENNIUS MUNIZ",
+                    "08 - CEP JÓ - TAGUATINGA",
+                    "09 - CEP TALAL CEILÂNDIA",
+                    "10 - CEP JOAQUIM - GAMA",
+                    "11 - CEP SOBRADINHO",
+                    "12 - CEP MS GASTRONOMIA",
+                    "24 - CEP AÇÕES MÓVEIS",
+                    "25 - POLO SÃO SEBASTIÃO",
+                    "26 - POLO PÁTIO BRASIL",
+                    "27 - POLO BRAZLÂNDIA",
+                    "28 - POLO SANTA MARIA",
+                    "29 - POLO RECANTO",
+                    "32 - POLO SENAC BELEZA",
+                    "34 - CEP CORPORATIVO"
+            );
+
+            unidadeSelect.setValue("34 - CEP CORPORATIVO");
+        }
+    }
+
 
     // --- MÉTODO DO OLHO (SENHA) ---
     @FXML
