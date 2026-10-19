@@ -1,0 +1,433 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.effect.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<BorderPane prefHeight="768.0" prefWidth="1366.0" stylesheets="@CSS/StyleSheet.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sigec.system.sigec.Controllers.HomeController">
+    <top>
+        <AnchorPane fx:id="topBarPane" prefHeight="50.0" styleClass="top-bar-pane" BorderPane.alignment="CENTER">
+            <children>
+                <HBox alignment="CENTER_LEFT" prefHeight="50.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="35.0" AnchorPane.topAnchor="0.0">
+                    <children>
+                        <ImageView fx:id="logoSenac" fitHeight="42.0" fitWidth="130.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@imagens/LogocoloridaSenac.png" />
+                            </image>
+                        </ImageView>
+                    </children>
+                </HBox>
+                <HBox alignment="CENTER_RIGHT" prefHeight="50.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="40.0" AnchorPane.topAnchor="0.0">
+                    <children>
+                        <Label fx:id="logoSigec" text="S.I.G.E.C" textFill="WHITE">
+                            <font>
+                                <Font name="Arial Bold" size="24.0" />
+                            </font>
+                        </Label>
+                    </children>
+                </HBox>
+            </children>
+        </AnchorPane>
+    </top>
+    <left>
+        <VBox alignment="TOP_CENTER" prefHeight="550.0" prefWidth="200.0" styleClass="painel-lateral" BorderPane.alignment="CENTER">
+            <children>
+                <Button id="btnNavHome" alignment="BASELINE_LEFT" graphicTextGap="12.0" mnemonicParsing="false" text="Página Inicial">
+                    <styleClass>
+                        <String fx:value="btn-padrao" />
+                        <String fx:value="btn-ativo" />
+                    </styleClass>
+                    <font>
+                        <Font name="Arial Bold" size="15.0" />
+                    </font>
+                    <graphic>
+                        <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@imagens/home.png" />
+                            </image>
+                            <effect>
+                                <ColorAdjust brightness="1.0" />
+                            </effect>
+                        </ImageView>
+                    </graphic>
+                    <VBox.margin>
+                        <Insets bottom="15.0" top="20.0" />
+                    </VBox.margin>
+                </Button>
+                <Button id="btnNavEstoque" alignment="BASELINE_LEFT" graphicTextGap="12.0" mnemonicParsing="false" onAction="#botaoEstoqueAction" styleClass="btn-padrao" text="Estoque">
+                    <font>
+                        <Font name="Arial Bold" size="15.0" />
+                    </font>
+                    <graphic>
+                        <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@imagens/estoque.png" />
+                            </image>
+                            <effect>
+                                <ColorAdjust brightness="1.0" />
+                            </effect>
+                        </ImageView>
+                    </graphic>
+                    <VBox.margin>
+                        <Insets bottom="15.0" />
+                    </VBox.margin>
+                </Button>
+                <Button id="btnNavRelatorio" alignment="BASELINE_LEFT" graphicTextGap="12.0" mnemonicParsing="false" onAction="#botaoRelatorio" styleClass="btn-padrao" text="Relatório">
+                    <font>
+                        <Font name="Arial Bold" size="15.0" />
+                    </font>
+                    <graphic>
+                        <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@imagens/relatorio.png" />
+                            </image>
+                            <effect>
+                                <ColorAdjust brightness="1.0" />
+                            </effect>
+                        </ImageView>
+                    </graphic>
+                    <VBox.margin>
+                        <Insets bottom="15.0" />
+                    </VBox.margin>
+                </Button>
+                <!-- Container do Menu Dropdown de Cadastro -->
+                <VBox alignment="TOP_CENTER" spacing="0.0">
+                    <children>
+                        <Button id="btnNavCadastro" fx:id="btnNavCadastro" alignment="CENTER_LEFT" mnemonicParsing="false" onAction="#toggleDropdownCadastro" styleClass="btn-padrao">
+                            <graphic>
+                                <HBox alignment="CENTER_LEFT" prefWidth="160.0" spacing="10.0">
+                                    <children>
+                                        <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@imagens/cadastroIMG.png" />
+                                            </image>
+                                            <effect>
+                                                <ColorAdjust brightness="1.0" />
+                                            </effect>
+                                        </ImageView>
+                                        <Label text="Cadastros" textFill="WHITE">
+                                            <font>
+                                                <Font name="Arial Bold" size="15.0" />
+                                            </font>
+                                        </Label>
+                                        <Region HBox.hgrow="ALWAYS" />
+                                        <Label fx:id="setaCadastro" text="▼" textFill="WHITE">
+                                            <font>
+                                                <Font name="Arial Bold" size="11.0" />
+                                            </font>
+                                        </Label>
+                                    </children>
+                                </HBox>
+                            </graphic>
+                        </Button>
+                        <VBox fx:id="submenuCadastro" alignment="TOP_CENTER" managed="false" spacing="0.0" styleClass="submenu-lateral" visible="false">
+                            <children>
+                                <Button id="btnSubNavUsuario" fx:id="btnSubNavUsuario" alignment="BASELINE_LEFT" graphicTextGap="8.0" mnemonicParsing="false" onAction="#onClickCadastroUsuario" styleClass="btn-sub-opcao" text="Cadastro Usuário">
+                                    <graphic>
+                                        <Label text="•" textFill="#94a3b8">
+                                            <font>
+                                                <Font name="Arial Bold" size="14.0" />
+                                            </font>
+                                        </Label>
+                                    </graphic>
+                                </Button>
+                                <Button id="btnSubNavTurma" fx:id="btnSubNavTurma" alignment="BASELINE_LEFT" graphicTextGap="8.0" mnemonicParsing="false" onAction="#onClickCadastroTurma" styleClass="btn-sub-opcao" text="Cadastro Turma">
+                                    <graphic>
+                                        <Label text="•" textFill="#94a3b8">
+                                            <font>
+                                                <Font name="Arial Bold" size="14.0" />
+                                            </font>
+                                        </Label>
+                                    </graphic>
+                                </Button>
+                            </children>
+                        </VBox>
+                    </children>
+                    <VBox.margin>
+                        <Insets bottom="15.0" />
+                    </VBox.margin>
+                </VBox>
+                <Button id="btnNavCalendario" fx:id="btnNavCalendario" alignment="BASELINE_LEFT" graphicTextGap="12.0" mnemonicParsing="false" onAction="#botaoCalendarioAction" styleClass="btn-padrao" text="Calendário">
+                    <font>
+                        <Font name="Arial Bold" size="15.0" />
+                    </font>
+                    <graphic>
+                        <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@imagens/calendario.png" />
+                            </image>
+                            <effect>
+                                <ColorAdjust brightness="1.0" />
+                            </effect>
+                        </ImageView>
+                    </graphic>
+                    <VBox.margin>
+                        <Insets bottom="15.0" />
+                    </VBox.margin>
+                </Button>
+                <Region VBox.vgrow="ALWAYS" />
+                <HBox alignment="CENTER_LEFT">
+                    <children>
+                        <Button fx:id="botaoSair" alignment="CENTER" mnemonicParsing="false" onAction="#botaoSairAction" styleClass="btn-sair" text="Sair">
+                            <font>
+                                <Font name="Arial Bold" size="13.0" />
+                            </font>
+                        </Button>
+                    </children>
+                    <VBox.margin>
+                        <Insets bottom="20.0" left="15.0" />
+                    </VBox.margin>
+                </HBox>
+            </children>
+        </VBox>
+    </left>
+    <center>
+        <StackPane prefHeight="550.0" prefWidth="600.0" styleClass="workspace-bg" BorderPane.alignment="CENTER">
+            <children>
+                <ImageView fitHeight="400.0" fitWidth="400.0" opacity="0.05" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="@imagens/LogocoloridaSenac.png" />
+                    </image>
+                </ImageView>
+                <VBox alignment="TOP_CENTER" prefHeight="550.0" prefWidth="600.0" styleClass="borda-separadora-lateral">
+                    <children>
+                        <!-- Banner Laranja de Status -->
+                        <HBox alignment="CENTER" prefHeight="40.0" styleClass="status-orange-banner">
+                            <children>
+                                <Label fx:id="dataLabel" textFill="WHITE">
+                                    <font>
+                                        <Font name="Arial Bold" size="14.0" />
+                                    </font>
+                                    <HBox.margin>
+                                        <Insets left="20.0" />
+                                    </HBox.margin>
+                                </Label>
+                                <Region HBox.hgrow="ALWAYS" />
+                                <Label fx:id="usuarioLabel" text="Administrador" textFill="WHITE">
+                                    <font>
+                                        <Font name="Arial Bold" size="15.0" />
+                                    </font>
+                                </Label>
+                                <Region HBox.hgrow="ALWAYS" />
+                                <Label fx:id="horaLabel" textFill="#fffbeb">
+                                    <font>
+                                        <Font name="Arial Bold" size="15.0" />
+                                    </font>
+                                    <HBox.margin>
+                                        <Insets right="20.0" />
+                                    </HBox.margin>
+                                </Label>
+                            </children>
+                        </HBox>
+
+                        <VBox fx:id="conteudoPagina" styleClass="bg-transparent" VBox.vgrow="ALWAYS">
+                            <children>
+                                <!-- Cabeçalho da Página com Sino de Notificação -->
+                                <HBox alignment="CENTER_LEFT" prefHeight="65.0" styleClass="header-alertas-border">
+                                    <children>
+                                        <VBox alignment="CENTER_LEFT">
+                                            <children>
+                                                <HBox alignment="CENTER_LEFT" spacing="8.0">
+                                                    <children>
+                                                        <Label text="Alertas e Notificações" textFill="#0c356a">
+                                                            <font>
+                                                                <Font name="Arial Bold" size="20.0" />
+                                                            </font>
+                                                        </Label>
+                                                    </children>
+                                                </HBox>
+                                                <Label textFill="#64748b">
+                                                    <font>
+                                                        <Font name="Arial" size="12.0" />
+                                                    </font>
+                                                    <VBox.margin>
+                                                        <Insets left="32.0" top="2.0" />
+                                                    </VBox.margin>
+                                                </Label>
+                                            </children>
+                                        </VBox>
+                                        <Region HBox.hgrow="ALWAYS" />
+
+                                        <!-- Filtro de Laboratório e Sino de Notificações -->
+                                        <HBox alignment="CENTER_RIGHT" spacing="15.0">
+                                            <children>
+                                                <HBox alignment="CENTER_LEFT" spacing="5.0" style="-fx-background-color: #ffffff; -fx-border-color: #cbd5e1; -fx-border-radius: 6; -fx-background-radius: 6; -fx-padding: 2 10;">
+                                                    <children>
+                                                        <Label text="LABORATÓRIO:" textFill="#94a3b8">
+                                                            <font>
+                                                                <Font name="Arial Bold" size="12.0" />
+                                                            </font>
+                                                        </Label>
+                                                        <ChoiceBox prefHeight="25.0" prefWidth="180.0" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-font-family: 'Arial'; -fx-font-size: 12px; -fx-text-fill: #1e293b;" />
+                                                    </children>
+                                                </HBox>
+                                                <Button mnemonicParsing="false" styleClass="btn-notificacao" text="🔔 " textFill="#004b93">
+                                                    <font>
+                                                        <Font name="Arial Bold" size="14.0" />
+                                                    </font>
+                                                </Button>
+                                            </children>
+                                        </HBox>
+                                    </children>
+                                    <VBox.margin>
+                                        <Insets bottom="10.0" left="25.0" right="25.0" top="10.0" />
+                                    </VBox.margin>
+                                </HBox>
+
+                                <!-- Grid Principal 2x2 com os 4 Blocos de Alerta -->
+                                <GridPane hgap="15.0" vgap="15.0" VBox.vgrow="ALWAYS">
+                                    <columnConstraints>
+                                        <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" percentWidth="50.0" />
+                                        <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" percentWidth="50.0" />
+                                    </columnConstraints>
+                                    <rowConstraints>
+                                        <RowConstraints minHeight="10.0" vgrow="ALWAYS" />
+                                        <RowConstraints minHeight="10.0" vgrow="ALWAYS" />
+                                    </rowConstraints>
+                                    <VBox.margin>
+                                        <Insets bottom="20.0" left="25.0" right="25.0" top="5.0" />
+                                    </VBox.margin>
+
+                                    <!-- BLOCO 1: PRODUTOS VENCIDOS (Tabela Original) -->
+                                    <VBox styleClass="card-alertas" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                                        <children>
+                                            <HBox alignment="CENTER_LEFT" prefHeight="40.0" styleClass="card-alertas-header">
+                                                <padding>
+                                                    <Insets left="15.0" right="15.0" />
+                                                </padding>
+                                                <children>
+                                                    <Label text="PRODUTOS VENCIDOS" textFill="WHITE">
+                                                        <font>
+                                                            <Font name="Arial Bold" size="13.0" />
+                                                        </font>
+                                                    </Label>
+                                                </children>
+                                            </HBox>
+                                            <TableView fx:id="tabelaAlertas" VBox.vgrow="ALWAYS">
+                                                <styleClass>
+                                                    <String fx:value="table-view" />
+                                                    <String fx:value="tabela-alertas-custom" />
+                                                </styleClass>
+                                                <columns>
+                                                    <TableColumn fx:id="colProduto" prefWidth="150.0" text="Produto" />
+                                                    <TableColumn fx:id="colValidade" prefWidth="100.0" text="Validade" />
+                                                    <TableColumn fx:id="colStatus" prefWidth="100.0" text="Categoria" />
+                                                </columns>
+                                                <columnResizePolicy>
+                                                    <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                                                </columnResizePolicy>
+                                            </TableView>
+                                        </children>
+                                    </VBox>
+
+                                    <!-- BLOCO 2: PRÓXIMOS AO VENCIMENTO -->
+                                    <VBox styleClass="card-alertas" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                                        <children>
+                                            <HBox alignment="CENTER_LEFT" prefHeight="40.0" styleClass="card-alertas-header">
+                                                <padding>
+                                                    <Insets left="15.0" right="15.0" />
+                                                </padding>
+                                                <children>
+                                                    <Label text="PRÓXIMOS AO VENCIMENTO" textFill="WHITE">
+                                                        <font>
+                                                            <Font name="Arial Bold" size="13.0" />
+                                                        </font>
+                                                    </Label>
+                                                </children>
+                                            </HBox>
+                                            <TableView fx:id="tabelaProximos" VBox.vgrow="ALWAYS">
+                                                <styleClass>
+                                                    <String fx:value="table-view" />
+                                                    <String fx:value="tabela-alertas-custom" />
+                                                </styleClass>
+                                                <columns>
+                                                    <TableColumn prefWidth="160.0" text="Código / Produto" />
+                                                    <TableColumn prefWidth="100.0" text="Vencimento" />
+                                                    <TableColumn prefWidth="80.0" text="Lote" />
+                                                    <TableColumn prefWidth="60.0" text="Qtd." />
+                                                </columns>
+                                                <columnResizePolicy>
+                                                    <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                                                </columnResizePolicy>
+                                            </TableView>
+                                        </children>
+                                    </VBox>
+
+                                    <!-- BLOCO 3: ESTOQUE BAIXO -->
+                                    <VBox styleClass="card-alertas" GridPane.columnIndex="0" GridPane.rowIndex="1">
+                                        <children>
+                                            <HBox alignment="CENTER_LEFT" prefHeight="40.0" styleClass="card-alertas-header">
+                                                <padding>
+                                                    <Insets left="15.0" right="15.0" />
+                                                </padding>
+                                                <children>
+                                                    <Label text="PRODUTOS COM ESTOQUE BAIXO" textFill="WHITE">
+                                                        <font>
+                                                            <Font name="Arial Bold" size="13.0" />
+                                                        </font>
+                                                    </Label>
+                                                </children>
+                                            </HBox>
+                                            <TableView fx:id="tabelaEstoqueBaixo" VBox.vgrow="ALWAYS">
+                                                <styleClass>
+                                                    <String fx:value="table-view" />
+                                                    <String fx:value="tabela-alertas-custom" />
+                                                </styleClass>
+                                                <columns>
+                                                    <TableColumn prefWidth="160.0" text="Item / Especificação" />
+                                                    <TableColumn prefWidth="100.0" text="Qtd. Estoque" />
+                                                    <TableColumn prefWidth="90.0" text="Mín. Sugerido" />
+                                                    <TableColumn prefWidth="90.0" text="Pedido" />
+                                                </columns>
+                                                <columnResizePolicy>
+                                                    <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                                                </columnResizePolicy>
+                                            </TableView>
+                                        </children>
+                                    </VBox>
+
+                                    <!-- BLOCO 4: ESTOQUE ZERADO -->
+                                    <VBox styleClass="card-alertas" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                        <children>
+                                            <HBox alignment="CENTER_LEFT" prefHeight="40.0" styleClass="card-alertas-header">
+                                                <padding>
+                                                    <Insets left="15.0" right="15.0" />
+                                                </padding>
+                                                <children>
+                                                    <Label text="PRODUTOS COM ESTOQUE ZERADO" textFill="WHITE">
+                                                        <font>
+                                                            <Font name="Arial Bold" size="13.0" />
+                                                        </font>
+                                                    </Label>
+                                                </children>
+                                            </HBox>
+                                            <TableView fx:id="tabelaEstoqueZerado" VBox.vgrow="ALWAYS">
+                                                <styleClass>
+                                                    <String fx:value="table-view" />
+                                                    <String fx:value="tabela-alertas-custom" />
+                                                </styleClass>
+                                                <columns>
+                                                    <TableColumn prefWidth="200.0" text="Item sem Saldo" />
+                                                    <TableColumn prefWidth="120.0" text="Categoria" />
+                                                    <TableColumn prefWidth="100.0" text="Pedido" />
+                                                </columns>
+                                                <columnResizePolicy>
+                                                    <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                                                </columnResizePolicy>
+                                            </TableView>
+                                        </children>
+                                    </VBox>
+
+                                </GridPane>
+                            </children>
+                        </VBox>
+                    </children>
+                </VBox>
+            </children>
+        </StackPane>
+    </center>
+</BorderPane>

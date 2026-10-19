@@ -77,6 +77,9 @@ public class HomeController implements Initializable {
     private Label setaCadastro;
 
     @FXML
+    private Button btnNavCalendario;
+
+    @FXML
     private Button botaoSair;
 
     @Override
@@ -223,6 +226,20 @@ public class HomeController implements Initializable {
         } catch (IOException e) {
             exibirErroNavegacao("Cadastro de Usuário", e);
         }
+    }
+
+    @FXML
+    public void botaoCalendarioAction(ActionEvent event) {
+        navegarParaCalendario();
+    }
+
+    @FXML
+    public void onClickCalendario(ActionEvent event) {
+        navegarParaCalendario();
+    }
+
+    private void navegarParaCalendario() {
+        // Ponto de integração para tela ou módulo de Calendário
     }
 
     @FXML

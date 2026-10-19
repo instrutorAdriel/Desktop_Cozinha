@@ -140,8 +140,8 @@
 }
 
 /* ==========================================================================
-   ESTILIZAÇÃO DA TABELA (TABLEVIEW) - FUNDO CLARO E CABEÇALHO ESCURO
-   ========================================================================== */
+ESTILIZAÇÃO DA TABELA (TABLEVIEW) - FUNDO CLARO E CABEÇALHO ESCURO
+========================================================================== */
 
 .table-view {
     -fx-font-family: "Arial";
@@ -230,8 +230,8 @@
 }
 
 /* ==========================================================================
-   CONTEÚDO DA PÁGINA (ESTOQUE, HISTÓRICO/RELATÓRIOS E CONSULTAS)
-   ========================================================================== */
+CONTEÚDO DA PÁGINA (ESTOQUE, HISTÓRICO/RELATÓRIOS E CONSULTAS)
+========================================================================== */
 
 .conteudo-pagina {
     -fx-background-color: #f6f8fb;
@@ -714,8 +714,8 @@
 }
 
 /* ==========================================================================
-   SUBMENU DROPDOWN DE NAVEGAÇÃO LATERAL (CADASTROS)
-   ========================================================================== */
+SUBMENU DROPDOWN DE NAVEGAÇÃO LATERAL (CADASTROS)
+========================================================================== */
 
 .btn-padrao.btn-dropdown-ativo,
 .btn-dropdown-ativo {
@@ -812,8 +812,8 @@
 }
 
 /* ==========================================================================
-   CARTÃO E FORMULÁRIO DE CADASTRO (PADRÃO SENAC)
-   ========================================================================== */
+CARTÃO E FORMULÁRIO DE CADASTRO (PADRÃO SENAC)
+========================================================================== */
 
 .card-form-cadastro {
     -fx-background-color: #ffffff;
@@ -893,8 +893,8 @@
 }
 
 /* ==========================================================================
-   TELA DE CADASTRO DE TURMAS (SEÇÕES LADO A LADO)
-   ========================================================================== */
+TELA DE CADASTRO DE TURMAS (SEÇÕES LADO A LADO)
+========================================================================== */
 
 .card-turma-section {
     -fx-background-color: #ffffff;
@@ -967,8 +967,8 @@
 }
 
 /* ==========================================================================
-   BOTÃO DE REVELAR SENHA (OLHO)
-   ========================================================================== */
+BOTÃO DE REVELAR SENHA (OLHO)
+========================================================================== */
 .btn-olho {
     -fx-background-color: transparent;
     -fx-cursor: hand;
@@ -982,34 +982,8 @@
     -fx-background-repeat: no-repeat;
     -fx-background-position: center;
     -fx-background-size: 20px 20px;
-}
 
-.btn-olho:hover {
-    -fx-background-color: #f1f5f9;
-    -fx-background-radius: 4px;
-}
 
-.btn-olho:selected {
-    /* Quando o botão estiver pressionado: Olho Fechado */
-    -fx-background-image: url("../imagens/olho-fechado.png");
-}
-
-/* ==========================================================================
-   BOTÃO DE REVELAR SENHA (OLHO)
-   ========================================================================== */
-.btn-olho {
-    -fx-background-color: transparent;
-    -fx-cursor: hand;
-    -fx-pref-width: 32px;
-    -fx-min-width: 32px;
-    -fx-pref-height: 25px;
-    -fx-min-height: 25px;
-
-    /* Imagem Padrão: Olho Aberto */
-    -fx-background-image: url("../imagens/olho-aberto.png");
-    -fx-background-repeat: no-repeat;
-    -fx-background-position: center;
-    -fx-background-size: 20px 20px;
 }
 
 .btn-olho:hover {
@@ -1020,4 +994,96 @@
 .btn-olho:selected {
     /* Quando o botão estiver pressionado: Olho Fechado */
     -fx-background-image: url("../imagens/olho-fechado.png");
+}
+
+/* ==========================================================================
+ESTILOS DA PÁGINA INICIAL (HOME)
+========================================================================== */
+
+/* Fundo da área de trabalho */
+.workspace-bg {
+    -fx-background-color: #f4f7fb;
+}
+
+/* Borda que separa o menu lateral do conteúdo */
+.borda-separadora-lateral {
+    -fx-border-color: #054584;
+    -fx-border-width: 0 0 0 1;
+}
+
+/* Faixa laranja de status no topo */
+.status-orange-banner {
+    -fx-background-color: #ea7a04;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.15), 4, 0, 0, 2);
+}
+
+/* Fundo transparente para o VBox principal */
+.bg-transparent {
+    -fx-background-color: transparent;
+}
+
+/* Linha sutil separando o título da página */
+.header-alertas-border {
+    -fx-border-color: transparent transparent #e2e8f0 transparent;
+    -fx-border-width: 0 0 1 0;
+}
+
+/* Botão de notificações (Sino) */
+.btn-notificacao {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #cbd5e1;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-cursor: hand;
+}
+
+.btn-notificacao:hover {
+    -fx-background-color: #f8fafc;
+    -fx-border-color: #94a3b8;
+}
+
+/* Card que engloba a tabela de alertas */
+.card-alertas {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 8px;
+    -fx-border-color: #004b93;
+    -fx-border-radius: 8px;
+    -fx-border-width: 2px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 10, 0, 0, 4);
+}
+
+/* Cabeçalho azul escuro do Card */
+.card-alertas-header {
+    -fx-background-color: #003768;
+    -fx-background-radius: 5px 5px 0 0;
+}
+
+/* Remove a borda padrão da tabela e ajusta o raio no rodapé do card */
+.tabela-alertas-custom {
+    -fx-background-radius: 0 0 5px 5px;
+    -fx-border-color: transparent;
+}
+
+/* teste */
+/* Estado de Célula Selecionada (Para múltipla seleção) */
+.calendar-cell-selected {
+    -fx-background-color: #005ea6;
+    -fx-border-color: #002f6c;
+    -fx-border-width: 2px;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-cursor: hand;
+}
+
+/* Força o texto do dia a ficar branco quando selecionado */
+.calendar-cell-selected .label {
+    -fx-text-fill: #ffffff;
+}
+
+/* Força a cor dos pontos quando o fundo é azul escuro */
+.calendar-cell-selected .dot-aula {
+    -fx-fill: #ffb74d;
+}
+.calendar-cell-selected .dot-feriado {
+    -fx-fill: #fca5a5;
 }
