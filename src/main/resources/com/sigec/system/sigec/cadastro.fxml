@@ -258,16 +258,6 @@
                                                 <VBox maxWidth="520.0" spacing="12.0" styleClass="card-form-cadastro">
                                                     <children>
 
-                                                        <!-- Campo Unidade de Atuação -->
-                                                        <VBox spacing="5.0">
-                                                            <children>
-                                                                <Label styleClass="form-label" text="Unidade de Atuação *" />
-                                                                <ChoiceBox fx:id="unidadeSelect"
-                                                                           maxWidth="1.7976931348623157E308"
-                                                                           prefHeight="36.0"
-                                                                           styleClass="choice-box-cadastro" />
-                                                            </children>
-                                                        </VBox>
                                                         <!-- Campo Nome -->
                                                         <VBox spacing="5.0">
                                                             <children>
@@ -281,6 +271,17 @@
                                                             <children>
                                                                 <Label styleClass="form-label" text="E-mail Institucional *" />
                                                                 <TextField fx:id="txtEmail" prefHeight="36.0" promptText="exemplo@senac.br" styleClass="form-field-input" />
+                                                            </children>
+                                                        </VBox>
+
+                                                        <!-- Campo Unidade de Atuação -->
+                                                        <VBox spacing="5.0">
+                                                            <children>
+                                                                <Label styleClass="form-label" text="Unidade de Atuação *" />
+                                                                <ChoiceBox fx:id="unidadeSelect"
+                                                                           maxWidth="1.7976931348623157E308"
+                                                                           prefHeight="36.0"
+                                                                           styleClass="choice-box-cadastro" />
                                                             </children>
                                                         </VBox>
 
