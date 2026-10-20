@@ -7,6 +7,7 @@ import com.sigec.system.sigec.Utils.BackgroundAnimator;
 import com.sigec.system.sigec.Utils.ButtonBorderLapAnimator;
 import com.sigec.system.sigec.Utils.FormNavigationUtil;
 
+import com.sigec.system.sigec.Utils.ScreenTransitionManager;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -24,6 +25,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.PopupWindow;
 import javafx.stage.Window;
@@ -226,6 +228,15 @@ public class CadastroController implements Initializable {
     }
 
     @FXML
+    protected void botaoCalendarioAction(javafx.event.ActionEvent event) {
+        try {
+            com.sigec.system.sigec.MainApplication.trocadorDeTelas("calendario.fxml");
+        } catch (java.io.IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
     public void toggleDropdownCadastro(ActionEvent event) {
         if (submenuCadastro != null) {
             boolean expandido = !submenuCadastro.isVisible();
@@ -269,6 +280,24 @@ public class CadastroController implements Initializable {
             MainApplication.trocadorDeTelas("login.fxml");
         } catch (IOException e) {
             exibirAlerta(Alert.AlertType.ERROR, "Erro", "Erro ao sair: " + e.getMessage());
+        }
+    }
+
+    @FXML
+    public void onClickUtensilios(ActionEvent event) {
+        try {
+            MainApplication.trocadorDeTelas("gestao-utensilios.fxml");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    public void onClickSolicitacoes(ActionEvent event) {
+        try {
+            MainApplication.trocadorDeTelas("solicitacoes-extras.fxml");
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

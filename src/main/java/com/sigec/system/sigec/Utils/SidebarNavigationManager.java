@@ -116,7 +116,7 @@ public final class SidebarNavigationManager {
 
         boolean isAlreadyInCadastro = ScreenTransitionManager.getCurrentFxml() != null &&
                 (ScreenTransitionManager.getCurrentFxml().equalsIgnoreCase("cadastro.fxml") ||
-                 ScreenTransitionManager.getCurrentFxml().equalsIgnoreCase("cadastro-turma.fxml"));
+                        ScreenTransitionManager.getCurrentFxml().equalsIgnoreCase("cadastro-turma.fxml"));
 
         if (btnCadNode instanceof Button btnCad && subCadNode instanceof Pane subPane) {
             if (isCadastroTela) {
@@ -178,9 +178,15 @@ public final class SidebarNavigationManager {
 
         String destino = null;
         if (id.contains("home") || text.contains("inicial") || text.contains("home")) {
-            destino = "home.fxml";
+            destino = "homeTest.fxml";
+        } else if (id.contains("calendario") || text.contains("calendário") || text.contains("calendario")) {
+            destino = "calendario.fxml";
         } else if (id.contains("estoque") || text.contains("estoque")) {
             destino = "lista-estoque.fxml";
+        } else if (id.contains("utensilio") || text.contains("utensílio") || text.contains("utensilio")) {
+            destino = "gestao-utensilios.fxml"; // Nova rota de Utensílios
+        } else if (id.contains("solicitacao") || text.contains("solicitação") || text.contains("solicitações") || text.contains("solicitacoes")) {
+            destino = "solicitacoes-extras.fxml"; // Nova rota de Solicitações Extras
         } else if (id.contains("relatorio") || id.contains("historico") || text.contains("relat") || text.contains("hist")) {
             destino = "historico.fxml";
         }
@@ -192,7 +198,7 @@ public final class SidebarNavigationManager {
     }
 
     /**
-     * Verifica se o botão corresponde à tela indicada pelo FXML.
+     * Verifica se o botão corresponde à tela indicada pelo FXML para ativar o visual.
      */
     private static boolean isBotaoCorrespondente(Button btn, String fxml) {
         String id = btn.getId() != null ? btn.getId().toLowerCase() : "";
@@ -207,12 +213,24 @@ public final class SidebarNavigationManager {
         if (target.contains("home")) {
             return id.contains("home") || text.contains("inicial") || text.contains("home");
         }
+        if (target.contains("calendario")) {
+            return id.contains("calendario") || text.contains("calendário") || text.contains("calendario");
+        }
         if (target.contains("estoque")) {
             return id.contains("estoque") || text.contains("estoque");
+        }
+        // Nova verificação visual para Utensílios
+        if (target.contains("utensilios") || target.contains("utensilio")) {
+            return id.contains("utensilio") || text.contains("utensílio") || text.contains("utensilio");
+        }
+        // Nova verificação visual para Solicitações
+        if (target.contains("solicitacoes") || target.contains("solicitacao")) {
+            return id.contains("solicitacao") || text.contains("solicitação") || text.contains("solicitações") || text.contains("solicitacoes");
         }
         if (target.contains("historico") || target.contains("relatorio")) {
             return id.contains("relatorio") || id.contains("historico") || text.contains("relat") || text.contains("hist");
         }
+
         return false;
     }
 

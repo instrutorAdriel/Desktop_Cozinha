@@ -470,6 +470,33 @@ public class CadastroTurmaController implements Initializable {
     }
 
     @FXML
+    protected void botaoCalendarioAction(javafx.event.ActionEvent event) {
+        try {
+            com.sigec.system.sigec.MainApplication.trocadorDeTelas("calendario.fxml");
+        } catch (java.io.IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    public void onClickUtensilios(ActionEvent event) {
+        try {
+            MainApplication.trocadorDeTelas("gestao-utensilios.fxml");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    public void onClickSolicitacoes(ActionEvent event) {
+        try {
+            MainApplication.trocadorDeTelas("solicitacoes-extras.fxml");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
     public void toggleDropdownCadastro(ActionEvent event) {
         if (submenuCadastro != null) {
             boolean expandido = !submenuCadastro.isVisible();

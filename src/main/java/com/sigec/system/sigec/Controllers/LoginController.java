@@ -134,11 +134,11 @@ public class LoginController {
     private void transicaoParaHome() throws IOException {
         try {
             if (rootPane == null || animatedBackground == null || loginForm == null) {
-                MainApplication.trocadorDeTelas("home.fxml");
+                MainApplication.trocadorDeTelas("homeTest.fxml");
                 return;
             }
 
-            FXMLLoader loader = new FXMLLoader(MainApplication.class.getResource("home.fxml"));
+            FXMLLoader loader = new FXMLLoader(MainApplication.class.getResource("homeTest.fxml"));
             Parent homeRoot = loader.load();
             HomeController homeController = loader.getController();
             if (homeController != null) {
@@ -176,7 +176,7 @@ public class LoginController {
             }
             pt.play();
         } catch (Exception e) {
-            MainApplication.trocadorDeTelas("home.fxml");
+            MainApplication.trocadorDeTelas("homeTest.fxml");
         }
     }
 
@@ -198,14 +198,14 @@ public class LoginController {
             if (homeController != null) {
                 homeController.iniciarAnimacaoLogos();
             }
-            ScreenTransitionManager.setCurrentFxml("home.fxml");
+            ScreenTransitionManager.setCurrentFxml("homeTest.fxml");
         } catch (Exception ex) {
             ex.printStackTrace();
             if (MainApplication.getRootContainer() != null) {
                 MainApplication.getRootContainer().getChildren().setAll(homeRoot);
                 MainApplication.getRootContainer().setDisable(false);
             }
-            ScreenTransitionManager.setCurrentFxml("home.fxml");
+            ScreenTransitionManager.setCurrentFxml("homeTest.fxml");
         }
     }
 

@@ -26,7 +26,7 @@ public class MainApplication extends Application {
         primaryStage.setScene(scene);
 
         // Carrega a primeira tela
-        trocadorDeTelas("calendario.fxml");
+        trocadorDeTelas("login.fxml");
 
         primaryStage.setTitle("Sistema Cozinha");
         primaryStage.setMaximized(true);

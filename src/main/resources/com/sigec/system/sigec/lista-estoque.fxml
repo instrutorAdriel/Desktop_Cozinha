@@ -78,6 +78,26 @@
                         <Insets bottom="15.0" />
                     </VBox.margin>
                 </Button>
+
+                <Button id="btnNavUtensilios" alignment="BASELINE_LEFT" graphicTextGap="12.0" mnemonicParsing="false" onAction="#onClickUtensilios" styleClass="btn-padrao" text="Utensílios">
+                    <font>
+                        <Font name="Arial Bold" size="15.0" />
+                    </font>
+                    <graphic>
+                        <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@imagens/estoque.png" />
+                            </image>
+                            <effect>
+                                <ColorAdjust brightness="1.0" />
+                            </effect>
+                        </ImageView>
+                    </graphic>
+                    <VBox.margin>
+                        <Insets bottom="15.0" />
+                    </VBox.margin>
+                </Button>
+
                 <Button id="btnNavRelatorio" alignment="BASELINE_LEFT" graphicTextGap="12.0" mnemonicParsing="false" onAction="#onClickRelatorio" styleClass="btn-padrao" text="Relatório">
                     <font>
                         <Font name="Arial Bold" size="15.0" />
@@ -96,6 +116,45 @@
                         <Insets bottom="15.0" />
                     </VBox.margin>
                 </Button>
+
+                <Button id="btnNavSolicitacoes" alignment="BASELINE_LEFT" graphicTextGap="12.0" mnemonicParsing="false" onAction="#onClickSolicitacoes" styleClass="btn-padrao" text="Solicitações">
+                    <font>
+                        <Font name="Arial Bold" size="15.0" />
+                    </font>
+                    <graphic>
+                        <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@imagens/relatorio.png" />
+                            </image>
+                            <effect>
+                                <ColorAdjust brightness="1.0" />
+                            </effect>
+                        </ImageView>
+                    </graphic>
+                    <VBox.margin>
+                        <Insets bottom="15.0" />
+                    </VBox.margin>
+                </Button>
+
+                <Button id="btnNavCalendario" fx:id="btnNavCalendario" alignment="BASELINE_LEFT" graphicTextGap="12.0" mnemonicParsing="false" onAction="#botaoCalendarioAction" styleClass="btn-padrao" text="Calendário">
+                    <font>
+                        <Font name="Arial Bold" size="15.0" />
+                    </font>
+                    <graphic>
+                        <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@imagens/calendario.png" />
+                            </image>
+                            <effect>
+                                <ColorAdjust brightness="1.0" />
+                            </effect>
+                        </ImageView>
+                    </graphic>
+                    <VBox.margin>
+                        <Insets bottom="15.0" />
+                    </VBox.margin>
+                </Button>
+
                 <!-- Container do Menu Dropdown de Cadastro -->
                 <VBox alignment="TOP_CENTER" spacing="0.0">
                     <children>
@@ -182,7 +241,7 @@
                 </ImageView>
                 <VBox alignment="TOP_CENTER" prefHeight="550.0" prefWidth="600.0" style="-fx-border-color: #054584; -fx-border-width: 0 0 0 1;">
                     <children>
-                        <HBox alignment="CENTER" prefHeight="50.0" styleClass="painel-secundario">
+                        <HBox alignment="CENTER" prefHeight="40.0" minHeight="40.0" maxHeight="40.0" styleClass="status-orange-banner">
                             <children>
                                 <Label fx:id="dataLabel" textFill="WHITE">
                                     <font>

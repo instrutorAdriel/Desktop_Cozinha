@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.effect.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<BorderPane prefHeight="768.0" prefWidth="1366.0" stylesheets="@CSS/StyleSheet.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sigec.system.sigec.Controllers.SolicitacoesController">
+    <!-- TOP BAR -->
+    <top>
+        <AnchorPane fx:id="topBarPane" prefHeight="50.0" styleClass="top-bar-pane" BorderPane.alignment="CENTER">
+            <children>
+                <HBox alignment="CENTER_LEFT" prefHeight="50.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="35.0" AnchorPane.topAnchor="0.0">
+                    <children>
+                        <ImageView fx:id="logoSenac" fitHeight="42.0" fitWidth="130.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@imagens/LogocoloridaSenac.png" />
+                            </image>
+                        </ImageView>
+                    </children>
+                </HBox>
+                <HBox alignment="CENTER_RIGHT" prefHeight="50.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="40.0" AnchorPane.topAnchor="0.0">
+                    <children>
+                        <Label fx:id="logoSigec" text="S.I.G.E.C" textFill="WHITE">
+                            <font>
+                                <Font name="Arial Bold" size="24.0" />
+                            </font>
+                        </Label>
+                    </children>
+                </HBox>
+            </children>
+        </AnchorPane>
+    </top>
+
+    <!-- MENU LATERAL -->
+    <left>
+        <VBox alignment="TOP_CENTER" prefHeight="550.0" prefWidth="200.0" styleClass="painel-lateral" BorderPane.alignment="CENTER">
+            <children>
+                <Button id="btnNavHome" alignment="BASELINE_LEFT" graphicTextGap="12.0" mnemonicParsing="false" onAction="#onClickHome" styleClass="btn-padrao" text="Página Inicial">
+                    <font><Font name="Arial Bold" size="15.0" /></font>
+                    <graphic>
+                        <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
+                            <image><Image url="@imagens/home.png" /></image>
+                            <effect><ColorAdjust brightness="1.0" /></effect>
+                        </ImageView>
+                    </graphic>
+                    <VBox.margin><Insets bottom="15.0" top="20.0" /></VBox.margin>
+                </Button>
+
+
+                <Button id="btnNavEstoque" alignment="BASELINE_LEFT" graphicTextGap="12.0" mnemonicParsing="false" onAction="#onClickEstoque" styleClass="btn-padrao" text="Estoque">
+                    <font><Font name="Arial Bold" size="15.0" /></font>
+                    <graphic>
+                        <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
+                            <image><Image url="@imagens/estoque.png" /></image>
+                            <effect><ColorAdjust brightness="1.0" /></effect>
+                        </ImageView>
+                    </graphic>
+                    <VBox.margin><Insets bottom="15.0" /></VBox.margin>
+                </Button>
+
+                <Button id="btnNavUtensilios" alignment="BASELINE_LEFT" graphicTextGap="12.0" mnemonicParsing="false" onAction="#onClickUtensilios" styleClass="btn-padrao" text="Utensílios">
+                    <font>
+                        <Font name="Arial Bold" size="15.0" />
+                    </font>
+                    <graphic>
+                        <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@imagens/estoque.png" />
+                            </image>
+                            <effect>
+                                <ColorAdjust brightness="1.0" />
+                            </effect>
+                        </ImageView>
+                    </graphic>
+                    <VBox.margin>
+                        <Insets bottom="15.0" />
+                    </VBox.margin>
+                </Button>
+
+                <Button id="btnNavRelatorio" alignment="BASELINE_LEFT" graphicTextGap="12.0" mnemonicParsing="false" onAction="#onClickRelatorio" styleClass="btn-padrao" text="Relatório">
+                    <font>
+                        <Font name="Arial Bold" size="15.0" />
+                    </font>
+                    <graphic>
+                        <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@imagens/relatorio.png" />
+                            </image>
+                            <effect>
+                                <ColorAdjust brightness="1.0" />
+                            </effect>
+                        </ImageView>
+                    </graphic>
+                    <VBox.margin>
+                        <Insets bottom="15.0" />
+                    </VBox.margin>
+                </Button>
+
+                <Button id="btnNavSolicitacoes" alignment="BASELINE_LEFT" graphicTextGap="12.0" mnemonicParsing="false" onAction="#onClickSolicitacoes" styleClass="btn-padrao" text="Solicitações">
+                    <font>
+                        <Font name="Arial Bold" size="15.0" />
+                    </font>
+                    <graphic>
+                        <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@imagens/relatorio.png" />
+                            </image>
+                            <effect>
+                                <ColorAdjust brightness="1.0" />
+                            </effect>
+                        </ImageView>
+                    </graphic>
+                    <VBox.margin>
+                        <Insets bottom="15.0" />
+                    </VBox.margin>
+                </Button>
+
+                <Button id="btnNavCalendario" fx:id="btnNavCalendario" alignment="BASELINE_LEFT" graphicTextGap="12.0" mnemonicParsing="false" onAction="#botaoCalendarioAction" styleClass="btn-padrao" text="Calendário">
+                    <font>
+                        <Font name="Arial Bold" size="15.0" />
+                    </font>
+                    <graphic>
+                        <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@imagens/calendario.png" />
+                            </image>
+                            <effect>
+                                <ColorAdjust brightness="1.0" />
+                            </effect>
+                        </ImageView>
+                    </graphic>
+                    <VBox.margin>
+                        <Insets bottom="15.0" />
+                    </VBox.margin>
+                </Button>
+
+                <!-- Container Cadastros -->
+                <VBox alignment="TOP_CENTER" spacing="0.0">
+                    <children>
+                        <Button id="btnNavCadastro" fx:id="btnNavCadastro" alignment="CENTER_LEFT" mnemonicParsing="false" onAction="#toggleDropdownCadastro" styleClass="btn-padrao">
+                            <graphic>
+                                <HBox alignment="CENTER_LEFT" prefWidth="160.0" spacing="10.0">
+                                    <children>
+                                        <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
+                                            <image><Image url="@imagens/cadastroIMG.png" /></image>
+                                            <effect><ColorAdjust brightness="1.0" /></effect>
+                                        </ImageView>
+                                        <Label text="Cadastros" textFill="WHITE">
+                                            <font><Font name="Arial Bold" size="15.0" /></font>
+                                        </Label>
+                                        <Region HBox.hgrow="ALWAYS" />
+                                        <Label fx:id="setaCadastro" text="▼" textFill="WHITE">
+                                            <font><Font name="Arial Bold" size="11.0" /></font>
+                                        </Label>
+                                    </children>
+                                </HBox>
+                            </graphic>
+                        </Button>
+                        <VBox fx:id="submenuCadastro" alignment="TOP_CENTER" managed="false" spacing="0.0" styleClass="submenu-lateral" visible="false">
+                            <children>
+                                <Button alignment="BASELINE_LEFT" graphicTextGap="8.0" mnemonicParsing="false" styleClass="btn-sub-opcao" text="Cadastro Usuário">
+                                    <graphic><Label text="•" textFill="#94a3b8"><font><Font name="Arial Bold" size="14.0" /></font></Label></graphic>
+                                </Button>
+                                <Button alignment="BASELINE_LEFT" graphicTextGap="8.0" mnemonicParsing="false" styleClass="btn-sub-opcao" text="Cadastro Turma">
+                                    <graphic><Label text="•" textFill="#94a3b8"><font><Font name="Arial Bold" size="14.0" /></font></Label></graphic>
+                                </Button>
+                            </children>
+                        </VBox>
+                    </children>
+                    <VBox.margin><Insets bottom="15.0" /></VBox.margin>
+                </VBox>
+                <Region VBox.vgrow="ALWAYS" />
+                <HBox alignment="CENTER_LEFT">
+                    <children>
+                        <Button fx:id="botaoSair" alignment="CENTER" mnemonicParsing="false" onAction="#botaoSairAction" styleClass="btn-sair" text="Sair">
+                            <font><Font name="Arial Bold" size="13.0" /></font>
+                        </Button>
+                    </children>
+                    <VBox.margin><Insets bottom="20.0" left="15.0" /></VBox.margin>
+                </HBox>
+            </children>
+        </VBox>
+    </left>
+
+    <!-- ÁREA CENTRAL -->
+    <center>
+        <StackPane prefHeight="550.0" prefWidth="600.0" styleClass="workspace-bg" BorderPane.alignment="CENTER">
+            <children>
+                <ImageView fitHeight="400.0" fitWidth="400.0" opacity="0.05" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="@imagens/LogocoloridaSenac.png" />
+                    </image>
+                </ImageView>
+                <VBox alignment="TOP_CENTER" prefHeight="550.0" prefWidth="600.0" styleClass="borda-separadora-lateral">
+                    <children>
+
+                        <!-- Banner Laranja de Status Corrigido -->
+                        <HBox alignment="CENTER" maxHeight="40.0" minHeight="40.0" prefHeight="40.0" styleClass="status-orange-banner">
+                            <children>
+                                <Label fx:id="dataLabel" textFill="WHITE">
+                                    <font><Font name="Arial Bold" size="14.0" /></font>
+                                    <HBox.margin><Insets left="20.0" /></HBox.margin>
+                                </Label>
+                                <Region HBox.hgrow="ALWAYS" />
+                                <Label fx:id="usuarioLabel" text="Administrador" textFill="WHITE">
+                                    <font><Font name="Arial Bold" size="15.0" /></font>
+                                </Label>
+                                <Region HBox.hgrow="ALWAYS" />
+                                <Label fx:id="horaLabel" textFill="#fffbeb">
+                                    <font><Font name="Arial Bold" size="15.0" /></font>
+                                    <HBox.margin><Insets right="20.0" /></HBox.margin>
+                                </Label>
+                            </children>
+                        </HBox>
+
+                        <VBox fx:id="conteudoPagina" spacing="15.0" styleClass="bg-transparent" VBox.vgrow="ALWAYS">
+                            <padding>
+                                <Insets bottom="25.0" left="25.0" right="25.0" top="20.0" />
+                            </padding>
+                            <children>
+
+                                <!-- Header da Página -->
+                                <HBox alignment="CENTER_LEFT" prefHeight="45.0" styleClass="header-alertas-border">
+                                    <children>
+                                        <Label text="SOLICITAÇÕES DE INSUMOS EXTRAS (WEB)" textFill="#0c356a">
+                                            <font><Font name="Arial Bold" size="18.0" /></font>
+                                        </Label>
+                                    </children>
+                                    <VBox.margin><Insets bottom="5.0" /></VBox.margin>
+                                </HBox>
+
+                                <!-- Barra de Ferramentas / Filtros / Botões de Ação -->
+                                <HBox alignment="CENTER_LEFT" prefHeight="45.0" spacing="12.0">
+                                    <children>
+                                        <TextField fx:id="txtPesquisa" prefHeight="35.0" prefWidth="220.0" promptText="🔍 Buscar insumo ou professor..." styleClass="search-field">
+                                            <font><Font name="Arial" size="13.0" /></font>
+                                        </TextField>
+
+                                        <ChoiceBox fx:id="cbStatusFiltro" prefHeight="35.0" prefWidth="140.0" styleClass="custom-choice-box" />
+
+                                        <Button mnemonicParsing="false" onAction="#onFiltrarClick" prefHeight="35.0" prefWidth="85.0" styleClass="btn-action-primary" text="Filtrar">
+                                            <font><Font name="Arial Bold" size="13.0" /></font>
+                                        </Button>
+
+                                        <Region HBox.hgrow="ALWAYS" />
+
+                                        <!-- Botões de Aprovar e Recusar -->
+                                        <Button fx:id="btnRecusar" mnemonicParsing="false" onAction="#onRecusarClick" prefHeight="35.0" prefWidth="110.0" styleClass="btn-action-danger" text=" Recusar">
+                                            <font><Font name="Arial Bold" size="13.0" /></font>
+                                        </Button>
+
+                                        <!-- Usando a classe secundária (azul do Senac) para aprovar -->
+                                        <Button fx:id="btnAprovar" mnemonicParsing="false" onAction="#onAprovarClick" prefHeight="35.0" prefWidth="110.0" styleClass="btn-action-secondary" text=" Aprovar">
+                                            <font><Font name="Arial Bold" size="13.0" /></font>
+                                        </Button>
+                                    </children>
+                                </HBox>
+
+                                <!-- Tabela de Solicitações -->
+                                <TableView fx:id="tabelaSolicitacoes" styleClass="table-view" VBox.vgrow="ALWAYS">
+                                    <columns>
+                                        <TableColumn fx:id="colData" prefWidth="100.0" text="Data/Hora" />
+                                        <TableColumn fx:id="colSolicitante" prefWidth="160.0" text="Professor / Solicitante" />
+                                        <TableColumn fx:id="colTurma" prefWidth="120.0" text="Turma" />
+                                        <TableColumn fx:id="colInsumo" prefWidth="180.0" text="Insumo Solicitado" />
+                                        <TableColumn fx:id="colQtd" prefWidth="80.0" text="Qtd." />
+                                        <TableColumn fx:id="colJustificativa" prefWidth="200.0" text="Justificativa" />
+                                        <TableColumn fx:id="colStatus" prefWidth="100.0" text="Status" />
+                                    </columns>
+                                    <columnResizePolicy>
+                                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                                    </columnResizePolicy>
+                                </TableView>
+
+                            </children>
+                        </VBox>
+                    </children>
+                </VBox>
+            </children>
+        </StackPane>
+    </center>
+</BorderPane>

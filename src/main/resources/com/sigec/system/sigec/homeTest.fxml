@@ -76,6 +76,26 @@
                         <Insets bottom="15.0" />
                     </VBox.margin>
                 </Button>
+
+                <Button id="btnNavUtensilios" alignment="BASELINE_LEFT" graphicTextGap="12.0" mnemonicParsing="false" onAction="#onClickUtensilios" styleClass="btn-padrao" text="Utensílios">
+                    <font>
+                        <Font name="Arial Bold" size="15.0" />
+                    </font>
+                    <graphic>
+                        <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@imagens/estoque.png" />
+                            </image>
+                            <effect>
+                                <ColorAdjust brightness="1.0" />
+                            </effect>
+                        </ImageView>
+                    </graphic>
+                    <VBox.margin>
+                        <Insets bottom="15.0" />
+                    </VBox.margin>
+                </Button>
+
                 <Button id="btnNavRelatorio" alignment="BASELINE_LEFT" graphicTextGap="12.0" mnemonicParsing="false" onAction="#botaoRelatorio" styleClass="btn-padrao" text="Relatório">
                     <font>
                         <Font name="Arial Bold" size="15.0" />
@@ -84,6 +104,44 @@
                         <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
                             <image>
                                 <Image url="@imagens/relatorio.png" />
+                            </image>
+                            <effect>
+                                <ColorAdjust brightness="1.0" />
+                            </effect>
+                        </ImageView>
+                    </graphic>
+                    <VBox.margin>
+                        <Insets bottom="15.0" />
+                    </VBox.margin>
+                </Button>
+
+                <Button id="btnNavSolicitacoes" alignment="BASELINE_LEFT" graphicTextGap="12.0" mnemonicParsing="false" onAction="#onClickSolicitacoes" styleClass="btn-padrao" text="Solicitações">
+                    <font>
+                        <Font name="Arial Bold" size="15.0" />
+                    </font>
+                    <graphic>
+                        <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@imagens/relatorio.png" />
+                            </image>
+                            <effect>
+                                <ColorAdjust brightness="1.0" />
+                            </effect>
+                        </ImageView>
+                    </graphic>
+                    <VBox.margin>
+                        <Insets bottom="15.0" />
+                    </VBox.margin>
+                </Button>
+
+                <Button id="btnNavCalendario" fx:id="btnNavCalendario" alignment="BASELINE_LEFT" graphicTextGap="12.0" mnemonicParsing="false" onAction="#botaoCalendarioAction" styleClass="btn-padrao" text="Calendário">
+                    <font>
+                        <Font name="Arial Bold" size="15.0" />
+                    </font>
+                    <graphic>
+                        <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@imagens/calendario.png" />
                             </image>
                             <effect>
                                 <ColorAdjust brightness="1.0" />
@@ -151,24 +209,7 @@
                         <Insets bottom="15.0" />
                     </VBox.margin>
                 </VBox>
-                <Button id="btnNavCalendario" fx:id="btnNavCalendario" alignment="BASELINE_LEFT" graphicTextGap="12.0" mnemonicParsing="false" onAction="#botaoCalendarioAction" styleClass="btn-padrao" text="Calendário">
-                    <font>
-                        <Font name="Arial Bold" size="15.0" />
-                    </font>
-                    <graphic>
-                        <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
-                            <image>
-                                <Image url="@imagens/calendario.png" />
-                            </image>
-                            <effect>
-                                <ColorAdjust brightness="1.0" />
-                            </effect>
-                        </ImageView>
-                    </graphic>
-                    <VBox.margin>
-                        <Insets bottom="15.0" />
-                    </VBox.margin>
-                </Button>
+
                 <Region VBox.vgrow="ALWAYS" />
                 <HBox alignment="CENTER_LEFT">
                     <children>
@@ -196,7 +237,7 @@
                 <VBox alignment="TOP_CENTER" prefHeight="550.0" prefWidth="600.0" styleClass="borda-separadora-lateral">
                     <children>
                         <!-- Banner Laranja de Status -->
-                        <HBox alignment="CENTER" prefHeight="40.0" styleClass="status-orange-banner">
+                        <HBox alignment="CENTER" prefHeight="40.0" minHeight="40.0" maxHeight="40.0" styleClass="status-orange-banner">
                             <children>
                                 <Label fx:id="dataLabel" textFill="WHITE">
                                     <font>
@@ -255,16 +296,6 @@
                                         <!-- Filtro de Laboratório e Sino de Notificações -->
                                         <HBox alignment="CENTER_RIGHT" spacing="15.0">
                                             <children>
-                                                <HBox alignment="CENTER_LEFT" spacing="5.0" style="-fx-background-color: #ffffff; -fx-border-color: #cbd5e1; -fx-border-radius: 6; -fx-background-radius: 6; -fx-padding: 2 10;">
-                                                    <children>
-                                                        <Label text="LABORATÓRIO:" textFill="#94a3b8">
-                                                            <font>
-                                                                <Font name="Arial Bold" size="12.0" />
-                                                            </font>
-                                                        </Label>
-                                                        <ChoiceBox prefHeight="25.0" prefWidth="180.0" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-font-family: 'Arial'; -fx-font-size: 12px; -fx-text-fill: #1e293b;" />
-                                                    </children>
-                                                </HBox>
                                                 <Button mnemonicParsing="false" styleClass="btn-notificacao" text="🔔 " textFill="#004b93">
                                                     <font>
                                                         <Font name="Arial Bold" size="14.0" />

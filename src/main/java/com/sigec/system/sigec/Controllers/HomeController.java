@@ -5,6 +5,7 @@ import com.sigec.system.sigec.Services.SessaoService;
 import com.sigec.system.sigec.Utils.BackgroundAnimator;
 import com.sigec.system.sigec.Utils.ButtonBorderLapAnimator;
 
+import com.sigec.system.sigec.Utils.ScreenTransitionManager;
 import javafx.animation.Animation;
 import javafx.animation.FadeTransition;
 import javafx.animation.KeyFrame;
@@ -19,6 +20,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 
@@ -154,6 +156,24 @@ public class HomeController implements Initializable {
             MainApplication.trocadorDeTelas("lista-estoque.fxml");
         } catch (IOException e) {
             exibirErroNavegacao("Estoque", e);
+        }
+    }
+
+    @FXML
+    public void onClickUtensilios(ActionEvent event) {
+        try {
+            MainApplication.trocadorDeTelas("gestao-utensilios.fxml");
+        } catch (IOException e) {
+            exibirErroNavegacao("Utensílios", e);
+        }
+    }
+
+    @FXML
+    public void onClickSolicitacoes(ActionEvent event) {
+        try {
+            MainApplication.trocadorDeTelas("solicitacoes-extras.fxml");
+        } catch (IOException e) {
+            exibirErroNavegacao("Solicitações", e);
         }
     }
 

@@ -55,7 +55,24 @@ public class CalendarioController {
 
     @FXML
     public void onClickHome(ActionEvent event) throws IOException {
-        MainApplication.trocadorDeTelas("home.fxml", ScreenTransitionManager.Direction.BACKWARD);
+        MainApplication.trocadorDeTelas("homeTest.fxml", ScreenTransitionManager.Direction.BACKWARD);
+    }
+    @FXML
+    public void onClickUtensilios(ActionEvent event) {
+        try {
+            MainApplication.trocadorDeTelas("gestao-utensilios.fxml");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    public void onClickSolicitacoes(ActionEvent event) {
+        try {
+            MainApplication.trocadorDeTelas("solicitacoes-extras.fxml");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
