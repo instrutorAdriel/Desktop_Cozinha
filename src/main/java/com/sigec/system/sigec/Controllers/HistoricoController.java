@@ -96,6 +96,12 @@ public class HistoricoController implements Initializable {
     @FXML
     private Button botaoSair;
 
+    @FXML
+    private VBox submenuEstoque;
+
+    @FXML
+    private Label setaEstoque;
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         if (topBarPane != null) {
@@ -160,37 +166,12 @@ public class HistoricoController implements Initializable {
         }
     }
 
-    @FXML
-    public void onClickEstoque(ActionEvent event) {
-        navegarParaEstoque();
-    }
-
-    @FXML
-    public void botaoEstoqueAction(ActionEvent event) {
-        navegarParaEstoque();
-    }
-
-    private void navegarParaEstoque() {
-        try {
-            MainApplication.trocadorDeTelas("lista-estoque.fxml");
-        } catch (IOException e) {
-            exibirAlerta(Alert.AlertType.ERROR, "Erro", "Erro ao navegar para a tela de estoque: " + e.getMessage());
-        }
-    }
 
     @FXML
     protected void botaoCalendarioAction(javafx.event.ActionEvent event) {
         try {
             com.sigec.system.sigec.MainApplication.trocadorDeTelas("calendario.fxml");
         } catch (java.io.IOException e) {
-            e.printStackTrace();
-        }
-    }
-    @FXML
-    public void onClickUtensilios(ActionEvent event) {
-        try {
-            MainApplication.trocadorDeTelas("gestao-utensilios.fxml");
-        } catch (IOException e) {
             e.printStackTrace();
         }
     }
@@ -226,6 +207,45 @@ public class HistoricoController implements Initializable {
     }
 
     @FXML
+    public void toggleDropdownEstoque() {
+        boolean estaAberto = submenuEstoque.isVisible();
+        System.out.println("Botão Estoque clicado! O menu estava aberto? " + estaAberto);
+
+        // Inverte o estado atual
+        submenuEstoque.setVisible(!estaAberto);
+        submenuEstoque.setManaged(!estaAberto);
+
+        // Atualiza a seta indicativa
+        if (!estaAberto) {
+            setaEstoque.setText("▲");
+        } else {
+            setaEstoque.setText("▼");
+        }
+
+        System.out.println("Novo estado do menu: " + submenuEstoque.isVisible());
+    }
+
+    @FXML
+    public void onClickInsumos(javafx.event.ActionEvent event) {
+        try {
+            com.sigec.system.sigec.MainApplication.trocadorDeTelas("lista-estoque.fxml");
+        } catch (java.io.IOException e) {
+            e.printStackTrace();
+            System.out.println("Erro ao carregar a tela de Insumos: " + e.getMessage());
+        }
+    }
+
+    @FXML
+    public void onClickUtensilios(javafx.event.ActionEvent event) {
+        try {
+            com.sigec.system.sigec.MainApplication.trocadorDeTelas("gestao-utensilios.fxml");
+        } catch (java.io.IOException e) {
+            e.printStackTrace();
+            System.out.println("Erro ao carregar a tela de Utensílios: " + e.getMessage());
+        }
+    }
+
+    @FXML
     public void onClickCadastroUsuario(ActionEvent event) {
         navegarParaCadastro();
     }
@@ -237,16 +257,6 @@ public class HistoricoController implements Initializable {
         } catch (IOException e) {
             exibirAlerta(Alert.AlertType.ERROR, "Erro", "Não foi possível carregar a tela de Cadastro de Turma: " + e.getMessage());
         }
-    }
-
-    @FXML
-    public void onClickCadastro(ActionEvent event) {
-        toggleDropdownCadastro(event);
-    }
-
-    @FXML
-    public void botaoCadastroAction(ActionEvent event) {
-        toggleDropdownCadastro(event);
     }
 
     private void navegarParaCadastro() {

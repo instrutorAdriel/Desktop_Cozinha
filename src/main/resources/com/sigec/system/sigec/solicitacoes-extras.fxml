@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.effect.*?>
@@ -50,36 +49,71 @@
                     <VBox.margin><Insets bottom="15.0" top="20.0" /></VBox.margin>
                 </Button>
 
+                <!-- Container do Menu Dropdown de Estoque -->
+                <VBox alignment="TOP_CENTER" spacing="0.0">
+                    <children>
+                        <!-- Botão Principal: Estoque -->
+                        <Button id="btnNavEstoque" fx:id="btnNavEstoque" alignment="CENTER_LEFT" mnemonicParsing="false" onAction="#toggleDropdownEstoque" styleClass="btn-padrao">
+                            <graphic>
+                                <HBox alignment="CENTER_LEFT" prefWidth="160.0" spacing="10.0">
+                                    <children>
+                                        <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@imagens/estoque.png" />
+                                            </image>
+                                            <effect>
+                                                <ColorAdjust brightness="1.0" />
+                                            </effect>
+                                        </ImageView>
+                                        <Label text="Estoque" textFill="WHITE">
+                                            <font>
+                                                <Font name="Arial Bold" size="15.0" />
+                                            </font>
+                                        </Label>
+                                        <Region HBox.hgrow="ALWAYS" />
+                                        <Label fx:id="setaEstoque" text="▼" textFill="WHITE">
+                                            <font>
+                                                <Font name="Arial Bold" size="11.0" />
+                                            </font>
+                                        </Label>
+                                    </children>
+                                </HBox>
+                            </graphic>
+                        </Button>
 
-                <Button id="btnNavEstoque" alignment="BASELINE_LEFT" graphicTextGap="12.0" mnemonicParsing="false" onAction="#onClickEstoque" styleClass="btn-padrao" text="Estoque">
-                    <font><Font name="Arial Bold" size="15.0" /></font>
-                    <graphic>
-                        <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
-                            <image><Image url="@imagens/estoque.png" /></image>
-                            <effect><ColorAdjust brightness="1.0" /></effect>
-                        </ImageView>
-                    </graphic>
-                    <VBox.margin><Insets bottom="15.0" /></VBox.margin>
-                </Button>
+                        <!-- Submenu com Insumos e Utensílios -->
 
-                <Button id="btnNavUtensilios" alignment="BASELINE_LEFT" graphicTextGap="12.0" mnemonicParsing="false" onAction="#onClickUtensilios" styleClass="btn-padrao" text="Utensílios">
-                    <font>
-                        <Font name="Arial Bold" size="15.0" />
-                    </font>
-                    <graphic>
-                        <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
-                            <image>
-                                <Image url="@imagens/estoque.png" />
-                            </image>
-                            <effect>
-                                <ColorAdjust brightness="1.0" />
-                            </effect>
-                        </ImageView>
-                    </graphic>
+                        <VBox fx:id="submenuEstoque" alignment="TOP_CENTER" managed="false" spacing="0.0" styleClass="submenu-lateral" visible="false">
+                            <children>
+                                <!-- Botão Insumos (Antiga tela de Estoque) -->
+                                <Button id="btnSubNavInsumos" fx:id="btnSubNavInsumos" alignment="BASELINE_LEFT" graphicTextGap="8.0" mnemonicParsing="false" onAction="#onClickInsumos" styleClass="btn-sub-opcao" text="Insumos">
+                                    <graphic>
+                                        <Label text="•" textFill="#94a3b8">
+                                            <font>
+                                                <Font name="Arial Bold" size="14.0" />
+                                            </font>
+                                        </Label>
+                                    </graphic>
+                                </Button>
+
+                                <!-- Botão Utensílios -->
+                                <Button id="btnSubNavUtensilios" fx:id="btnSubNavUtensilios" alignment="BASELINE_LEFT" graphicTextGap="8.0" mnemonicParsing="false" onAction="#onClickUtensilios" styleClass="btn-sub-opcao" text="Utensílios">
+                                    <graphic>
+                                        <Label text="•" textFill="#94a3b8">
+                                            <font>
+                                                <Font name="Arial Bold" size="14.0" />
+                                            </font>
+                                        </Label>
+                                    </graphic>
+                                </Button>
+                            </children>
+                        </VBox>
+                    </children>
                     <VBox.margin>
                         <Insets bottom="15.0" />
                     </VBox.margin>
-                </Button>
+                </VBox>
+
 
                 <Button id="btnNavRelatorio" alignment="BASELINE_LEFT" graphicTextGap="12.0" mnemonicParsing="false" onAction="#onClickRelatorio" styleClass="btn-padrao" text="Relatório">
                     <font>
@@ -264,9 +298,9 @@
                                 <TableView fx:id="tabelaSolicitacoes" styleClass="table-view" VBox.vgrow="ALWAYS">
                                     <columns>
                                         <TableColumn fx:id="colData" prefWidth="100.0" text="Data/Hora" />
-                                        <TableColumn fx:id="colSolicitante" prefWidth="160.0" text="Professor / Solicitante" />
+                                        <TableColumn fx:id="colSolicitante" prefWidth="160.0" text=" Solicitante" />
                                         <TableColumn fx:id="colTurma" prefWidth="120.0" text="Turma" />
-                                        <TableColumn fx:id="colInsumo" prefWidth="180.0" text="Insumo Solicitado" />
+                                        <TableColumn fx:id="colInsumo" prefWidth="180.0" text="Item Solicitado" />
                                         <TableColumn fx:id="colQtd" prefWidth="80.0" text="Qtd." />
                                         <TableColumn fx:id="colJustificativa" prefWidth="200.0" text="Justificativa" />
                                         <TableColumn fx:id="colStatus" prefWidth="100.0" text="Status" />

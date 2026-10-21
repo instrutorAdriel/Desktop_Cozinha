@@ -1,13 +1,17 @@
 package com.sigec.system.sigec.Controllers;
 
 import com.sigec.system.sigec.MainApplication;
+import com.sigec.system.sigec.Utils.ButtonBorderLapAnimator;
 import com.sigec.system.sigec.Utils.ScreenTransitionManager;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 
 import java.io.IOException;
@@ -22,6 +26,21 @@ public class CalendarioController {
 
     @FXML
     private Label horaLabel;
+
+    @FXML
+    private VBox submenuEstoque;
+
+    @FXML
+    private Label setaEstoque;
+
+    @FXML
+    private Button btnNavCadastro;
+
+    @FXML
+    private VBox submenuCadastro;
+
+    @FXML
+    private Label setaCadastro;
 
     @FXML
     public void initialize() {
@@ -57,14 +76,7 @@ public class CalendarioController {
     public void onClickHome(ActionEvent event) throws IOException {
         MainApplication.trocadorDeTelas("homeTest.fxml", ScreenTransitionManager.Direction.BACKWARD);
     }
-    @FXML
-    public void onClickUtensilios(ActionEvent event) {
-        try {
-            MainApplication.trocadorDeTelas("gestao-utensilios.fxml");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+
 
     @FXML
     public void onClickSolicitacoes(ActionEvent event) {
@@ -80,10 +92,7 @@ public class CalendarioController {
         // Já está na tela de calendário
     }
 
-    @FXML
-    public void onClickEstoque(ActionEvent event) throws IOException {
-        MainApplication.trocadorDeTelas("lista-estoque.fxml", ScreenTransitionManager.Direction.FORWARD);
-    }
+
 
     @FXML
     public void onClickRelatorio(ActionEvent event) throws IOException {
@@ -92,8 +101,59 @@ public class CalendarioController {
 
     @FXML
     public void toggleDropdownCadastro(ActionEvent event) {
-        // O gerenciamento visual do dropdown é feito pelo SidebarNavigationManager
+        if (submenuCadastro != null) {
+            boolean expandido = !submenuCadastro.isVisible();
+            submenuCadastro.setVisible(expandido);
+            submenuCadastro.setManaged(expandido);
+            if (setaCadastro != null) {
+                setaCadastro.setText(expandido ? "▶" : "▼");
+            }
+            if (expandido && btnNavCadastro != null) {
+                ButtonBorderLapAnimator.animarDropdown(btnNavCadastro, submenuCadastro);
+            } else if (!expandido && btnNavCadastro != null) {
+                ButtonBorderLapAnimator.cancelarAnimacaoAtiva();
+                btnNavCadastro.getStyleClass().remove("btn-dropdown-ativo");
+                btnNavCadastro.setStyle(null);
+                submenuCadastro.getStyleClass().remove("submenu-lateral-ativo");
+                submenuCadastro.setStyle(null);
+            }
+        }
     }
+
+    @FXML
+    public void toggleDropdownEstoque() {
+        // 1. Lê o estado diretamente do componente da tela
+        boolean estadoAtual = submenuEstoque.isVisible();
+
+        // 2. Inverte o estado de visibilidade e gerenciamento de layout
+        submenuEstoque.setVisible(!estadoAtual);
+        submenuEstoque.setManaged(!estadoAtual);
+
+        // 3. Atualiza a seta indicativa (opcional)
+        if (setaEstoque != null) {
+            setaEstoque.setText(!estadoAtual ? "▲" : "▼");
+        }
+    }
+    @FXML
+    public void onClickInsumos(javafx.event.ActionEvent event) {
+        try {
+            com.sigec.system.sigec.MainApplication.trocadorDeTelas("lista-estoque.fxml");
+        } catch (java.io.IOException e) {
+            e.printStackTrace();
+            System.out.println("Erro ao carregar a tela de Insumos: " + e.getMessage());
+        }
+    }
+
+    @FXML
+    public void onClickUtensilios(javafx.event.ActionEvent event) {
+        try {
+            com.sigec.system.sigec.MainApplication.trocadorDeTelas("gestao-utensilios.fxml");
+        } catch (java.io.IOException e) {
+            e.printStackTrace();
+            System.out.println("Erro ao carregar a tela de Utensílios: " + e.getMessage());
+        }
+    }
+
 
     @FXML
     public void onClickCadastroUsuario(ActionEvent event) throws IOException {
@@ -109,4 +169,6 @@ public class CalendarioController {
     public void botaoSairAction(ActionEvent event) throws IOException {
         MainApplication.trocadorDeTelas("login.fxml");
     }
+
+
 }

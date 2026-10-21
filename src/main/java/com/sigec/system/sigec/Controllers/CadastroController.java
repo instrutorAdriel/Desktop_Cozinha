@@ -52,6 +52,13 @@ public class CadastroController implements Initializable {
     @FXML private Button btnSubNavTurma;
     @FXML private Button botaoSair;
 
+
+    @FXML
+    private VBox submenuEstoque;
+
+    @FXML
+    private Label setaEstoque;
+
     @FXML private TextField txtNome;
     @FXML private TextField txtEmail;
     @FXML private TextField txtAcesso;
@@ -209,14 +216,7 @@ public class CadastroController implements Initializable {
         }
     }
 
-    @FXML
-    public void onClickEstoque(ActionEvent event) {
-        try {
-            MainApplication.trocadorDeTelas("lista-estoque.fxml");
-        } catch (IOException e) {
-            exibirAlerta(Alert.AlertType.ERROR, "Erro", "Erro ao navegar para o Estoque: " + e.getMessage());
-        }
-    }
+
 
     @FXML
     public void onClickRelatorio(ActionEvent event) {
@@ -258,6 +258,36 @@ public class CadastroController implements Initializable {
     }
 
     @FXML
+    public void toggleDropdownEstoque() {
+        boolean estadoAtual = submenuEstoque.isVisible();
+        submenuEstoque.setVisible(!estadoAtual);
+        submenuEstoque.setManaged(!estadoAtual);
+        if (setaEstoque != null) {
+            setaEstoque.setText(!estadoAtual ? "▲" : "▼");
+        }
+    }
+
+    @FXML
+    public void onClickInsumos(javafx.event.ActionEvent event) {
+        try {
+            com.sigec.system.sigec.MainApplication.trocadorDeTelas("lista-estoque.fxml");
+        } catch (java.io.IOException e) {
+            e.printStackTrace();
+            System.out.println("Erro ao carregar a tela de Insumos: " + e.getMessage());
+        }
+    }
+
+    @FXML
+    public void onClickUtensilios(javafx.event.ActionEvent event) {
+        try {
+            com.sigec.system.sigec.MainApplication.trocadorDeTelas("gestao-utensilios.fxml");
+        } catch (java.io.IOException e) {
+            e.printStackTrace();
+            System.out.println("Erro ao carregar a tela de Utensílios: " + e.getMessage());
+        }
+    }
+
+    @FXML
     public void onClickCadastroUsuario(ActionEvent event) {
         if (txtNome != null) {
             txtNome.requestFocus();
@@ -283,14 +313,7 @@ public class CadastroController implements Initializable {
         }
     }
 
-    @FXML
-    public void onClickUtensilios(ActionEvent event) {
-        try {
-            MainApplication.trocadorDeTelas("gestao-utensilios.fxml");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+
 
     @FXML
     public void onClickSolicitacoes(ActionEvent event) {
@@ -363,4 +386,8 @@ public class CadastroController implements Initializable {
         alert.setContentText(mensagem);
         alert.showAndWait();
     }
+
+
+
 }
+

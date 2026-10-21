@@ -4,8 +4,8 @@ import com.sigec.system.sigec.MainApplication;
 import com.sigec.system.sigec.Services.SessaoService;
 import com.sigec.system.sigec.Utils.BackgroundAnimator;
 import com.sigec.system.sigec.Utils.ButtonBorderLapAnimator;
-
 import com.sigec.system.sigec.Utils.ScreenTransitionManager;
+
 import javafx.animation.Animation;
 import javafx.animation.FadeTransition;
 import javafx.animation.KeyFrame;
@@ -20,7 +20,6 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 
@@ -77,6 +76,17 @@ public class HomeController implements Initializable {
 
     @FXML
     private Label setaCadastro;
+
+    // --- VARIÁVEIS DO MENU DROPDOWN DE ESTOQUE ---
+    @FXML
+    private Button btnNavEstoque;
+
+    @FXML
+    private VBox submenuEstoque;
+
+    @FXML
+    private Label setaEstoque;
+    // ----------------------------------------------
 
     @FXML
     private Button btnNavCalendario;
@@ -141,21 +151,30 @@ public class HomeController implements Initializable {
     // NAVEGAÇÃO
     // =========================================================================
 
+    // MÉTODOS DO MENU DE ESTOQUE
     @FXML
-    public void botaoEstoqueAction(ActionEvent event) {
-        navegarParaEstoque();
+    public void toggleDropdownEstoque() {
+        // Verifica se o submenu já está visível no momento do clique
+        boolean estaAberto = submenuEstoque.isVisible();
+
+        // Inverte os estados: se estiver true, vira false; se estiver false, vira true
+        submenuEstoque.setVisible(!estaAberto);
+        submenuEstoque.setManaged(!estaAberto);
+
+        // Atualiza o texto/ícone da seta com base no novo estado
+        if (!estaAberto) {
+            setaEstoque.setText("▲"); // Menu expandido
+        } else {
+            setaEstoque.setText("▼"); // Menu recolhido
+        }
     }
 
     @FXML
-    public void onClickEstoque(ActionEvent event) {
-        navegarParaEstoque();
-    }
-
-    private void navegarParaEstoque() {
+    public void onClickInsumos(ActionEvent event) {
         try {
             MainApplication.trocadorDeTelas("lista-estoque.fxml");
         } catch (IOException e) {
-            exibirErroNavegacao("Estoque", e);
+            exibirErroNavegacao("Insumos", e);
         }
     }
 
@@ -168,6 +187,18 @@ public class HomeController implements Initializable {
         }
     }
 
+
+    @FXML
+    public void botaoEstoqueAction(ActionEvent event) {
+        toggleDropdownEstoque();
+    }
+
+    @FXML
+    public void onClickEstoque(ActionEvent event) {
+        toggleDropdownEstoque();
+    }
+
+    // DEMAIS BOTÕES
     @FXML
     public void onClickSolicitacoes(ActionEvent event) {
         try {
@@ -202,7 +233,7 @@ public class HomeController implements Initializable {
             submenuCadastro.setVisible(expandido);
             submenuCadastro.setManaged(expandido);
             if (setaCadastro != null) {
-                setaCadastro.setText(expandido ? "▶" : "▼");
+                setaCadastro.setText(expandido ? "▲" : "▼");
             }
             if (expandido && btnNavCadastro != null) {
                 ButtonBorderLapAnimator.animarDropdown(btnNavCadastro, submenuCadastro);
@@ -259,7 +290,11 @@ public class HomeController implements Initializable {
     }
 
     private void navegarParaCalendario() {
-        // Ponto de integração para tela ou módulo de Calendário
+        try {
+            MainApplication.trocadorDeTelas("calendario.fxml");
+        } catch (IOException e) {
+            exibirErroNavegacao("Calendário", e);
+        }
     }
 
     @FXML

@@ -82,6 +82,12 @@ public class CadastroTurmaController implements Initializable {
     @FXML
     private Button botaoSair;
 
+    @FXML
+    private VBox submenuEstoque;
+
+    @FXML
+    private Label setaEstoque;
+
     // =========================================================================
     // SEÇÃO 1: FORMULÁRIO DE CADASTRO DA TURMA
     // =========================================================================
@@ -451,14 +457,6 @@ public class CadastroTurmaController implements Initializable {
         }
     }
 
-    @FXML
-    public void onClickEstoque(ActionEvent event) {
-        try {
-            MainApplication.trocadorDeTelas("lista-estoque.fxml");
-        } catch (IOException e) {
-            exibirAlerta(Alert.AlertType.ERROR, "Erro", "Erro ao navegar para o Estoque: " + e.getMessage());
-        }
-    }
 
     @FXML
     public void onClickRelatorio(ActionEvent event) {
@@ -478,14 +476,6 @@ public class CadastroTurmaController implements Initializable {
         }
     }
 
-    @FXML
-    public void onClickUtensilios(ActionEvent event) {
-        try {
-            MainApplication.trocadorDeTelas("gestao-utensilios.fxml");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
     @FXML
     public void onClickSolicitacoes(ActionEvent event) {
@@ -514,6 +504,42 @@ public class CadastroTurmaController implements Initializable {
                 submenuCadastro.getStyleClass().remove("submenu-lateral-ativo");
                 submenuCadastro.setStyle(null);
             }
+        }
+    }
+
+
+    @FXML
+    public void toggleDropdownEstoque() {
+        // 1. Lê o estado diretamente do componente da tela
+        boolean estadoAtual = submenuEstoque.isVisible();
+
+        // 2. Inverte o estado de visibilidade e gerenciamento de layout
+        submenuEstoque.setVisible(!estadoAtual);
+        submenuEstoque.setManaged(!estadoAtual);
+
+        // 3. Atualiza a seta indicativa (opcional)
+        if (setaEstoque != null) {
+            setaEstoque.setText(!estadoAtual ? "▲" : "▼");
+        }
+    }
+
+    @FXML
+    public void onClickInsumos(javafx.event.ActionEvent event) {
+        try {
+            com.sigec.system.sigec.MainApplication.trocadorDeTelas("lista-estoque.fxml");
+        } catch (java.io.IOException e) {
+            e.printStackTrace();
+            System.out.println("Erro ao carregar a tela de Insumos: " + e.getMessage());
+        }
+    }
+
+    @FXML
+    public void onClickUtensilios(javafx.event.ActionEvent event) {
+        try {
+            com.sigec.system.sigec.MainApplication.trocadorDeTelas("gestao-utensilios.fxml");
+        } catch (java.io.IOException e) {
+            e.printStackTrace();
+            System.out.println("Erro ao carregar a tela de Utensílios: " + e.getMessage());
         }
     }
 
@@ -551,4 +577,5 @@ public class CadastroTurmaController implements Initializable {
         alert.setContentText(mensagem);
         alert.showAndWait();
     }
+
 }

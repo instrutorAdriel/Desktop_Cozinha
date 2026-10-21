@@ -32,6 +32,11 @@ public class UtensiliosController {
     // ==========================================
     @FXML private VBox submenuCadastro;
     @FXML private Label setaCadastro;
+    @FXML
+    private VBox submenuEstoque;
+
+    @FXML
+    private Label setaEstoque;
 
     // ==========================================
     // ELEMENTOS DA TELA CENTRAL
@@ -101,15 +106,6 @@ public class UtensiliosController {
         try { MainApplication.trocadorDeTelas("homeTest.fxml"); } catch (Exception e) { e.printStackTrace(); }
     }
 
-    @FXML
-    public void onClickEstoque(ActionEvent event) {
-        try { MainApplication.trocadorDeTelas("lista-estoque.fxml"); } catch (Exception e) { e.printStackTrace(); }
-    }
-
-    @FXML
-    public void onClickUtensilios(ActionEvent event) {
-        try { MainApplication.trocadorDeTelas("gestao-utensilios.fxml"); } catch (Exception e) { e.printStackTrace(); }
-    }
 
     @FXML
     public void onClickRelatorio(ActionEvent event) {
@@ -147,6 +143,43 @@ public class UtensiliosController {
         submenuCadastro.setVisible(!isVisible);
         submenuCadastro.setManaged(!isVisible);
         setaCadastro.setText(isVisible ? "▼" : "▲");
+    }
+
+    @FXML
+    public void toggleDropdownEstoque() {
+        // Verifica se o submenu já está visível no momento do clique
+        boolean estaAberto = submenuEstoque.isVisible();
+
+        // Inverte os estados: se estiver true, vira false; se estiver false, vira true
+        submenuEstoque.setVisible(!estaAberto);
+        submenuEstoque.setManaged(!estaAberto);
+
+        // Atualiza o texto/ícone da seta com base no novo estado
+        if (!estaAberto) {
+            setaEstoque.setText("▲"); // Menu expandido
+        } else {
+            setaEstoque.setText("▼"); // Menu recolhido
+        }
+    }
+
+    @FXML
+    public void onClickInsumos(javafx.event.ActionEvent event) {
+        try {
+            com.sigec.system.sigec.MainApplication.trocadorDeTelas("lista-estoque.fxml");
+        } catch (java.io.IOException e) {
+            e.printStackTrace();
+            System.out.println("Erro ao carregar a tela de Insumos: " + e.getMessage());
+        }
+    }
+
+    @FXML
+    public void onClickUtensilios(javafx.event.ActionEvent event) {
+        try {
+            com.sigec.system.sigec.MainApplication.trocadorDeTelas("gestao-utensilios.fxml");
+        } catch (java.io.IOException e) {
+            e.printStackTrace();
+            System.out.println("Erro ao carregar a tela de Utensílios: " + e.getMessage());
+        }
     }
 
     // ==========================================

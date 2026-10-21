@@ -58,48 +58,74 @@
                     </VBox.margin>
                 </Button>
 
-                <Button id="btnNavEstoque" alignment="BASELINE_LEFT" graphicTextGap="12.0" mnemonicParsing="false" onAction="#onClickEstoque" styleClass="btn-padrao" text="Estoque">
-                    <font>
-                        <Font name="Arial Bold" size="15.0" />
-                    </font>
-                    <graphic>
-                        <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
-                            <image>
-                                <Image url="@imagens/estoque.png" />
-                            </image>
-                            <effect>
-                                <ColorAdjust brightness="1.0" />
-                            </effect>
-                        </ImageView>
-                    </graphic>
-                    <VBox.margin>
-                        <Insets bottom="15.0" />
-                    </VBox.margin>
-                </Button>
+                <!-- Container do Menu Dropdown de Estoque -->
+                <VBox alignment="TOP_CENTER" spacing="0.0">
+                    <children>
+                        <Button id="btnNavEstoque" fx:id="btnNavEstoque" alignment="CENTER_LEFT" mnemonicParsing="false" onAction="#toggleDropdownEstoque" styleClass="btn-padrao">
+                            <graphic>
+                                <HBox alignment="CENTER_LEFT" prefWidth="160.0" spacing="10.0">
+                                    <children>
+                                        <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@imagens/estoque.png" />
+                                            </image>
+                                            <effect>
+                                                <ColorAdjust brightness="1.0" />
+                                            </effect>
+                                        </ImageView>
+                                        <Label text="Estoque" textFill="WHITE">
+                                            <font>
+                                                <Font name="Arial Bold" size="15.0" />
+                                            </font>
+                                        </Label>
+                                        <Region HBox.hgrow="ALWAYS" />
+                                        <!-- Como a tela de utensílios está ativa, o menu começa aberto (seta pra cima) -->
+                                        <Label fx:id="setaEstoque" text="▲" textFill="WHITE">
+                                            <font>
+                                                <Font name="Arial Bold" size="11.0" />
+                                            </font>
+                                        </Label>
+                                    </children>
+                                </HBox>
+                            </graphic>
+                        </Button>
 
-                <!-- Botão Utensílios Ativo -->
-                <Button id="btnNavUtensilios" alignment="BASELINE_LEFT" graphicTextGap="12.0" mnemonicParsing="false" text="Utensílios">
-                    <styleClass>
-                        <String fx:value="btn-padrao" />
-                        <String fx:value="btn-ativo" />
-                    </styleClass>
-                    <font>
-                        <Font name="Arial Bold" size="15.0" />
-                    </font>
-                    <graphic>
-                        <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
-                            <image>
-                                <Image url="@imagens/estoque.png" />
-                            </image>
-                            <effect>
-                                <ColorAdjust brightness="1.0" />
-                            </effect>
-                        </ImageView>
-                    </graphic>
+                        <!-- Submenu com Insumos e Utensílios -->
+                        <VBox fx:id="submenuEstoque" alignment="TOP_CENTER" managed="true" spacing="0.0" styleClass="submenu-lateral" visible="true">
+                            <children>
+                                <!-- Botão Insumos NORMAL -->
+                                <Button id="btnSubNavInsumos" fx:id="btnSubNavInsumos" alignment="BASELINE_LEFT" graphicTextGap="8.0" mnemonicParsing="false" onAction="#onClickInsumos" styleClass="btn-sub-opcao" text="Insumos">
+                                    <graphic>
+                                        <Label text="•" textFill="#94a3b8">
+                                            <font>
+                                                <Font name="Arial Bold" size="14.0" />
+                                            </font>
+                                        </Label>
+                                    </graphic>
+                                </Button>
+
+                                <!-- Botão Utensílios ATIVO -->
+                                <Button id="btnSubNavUtensilios" fx:id="btnSubNavUtensilios" alignment="BASELINE_LEFT" graphicTextGap="8.0" mnemonicParsing="false" onAction="#onClickUtensilios" text="Utensílios">
+                                    <styleClass>
+                                        <String fx:value="btn-sub-opcao" />
+                                        <String fx:value="btn-sub-ativo" />
+                                    </styleClass>
+                                    <graphic>
+                                        <Label text="•" textFill="#ff9800">
+                                            <font>
+                                                <Font name="Arial Bold" size="14.0" />
+                                            </font>
+                                        </Label>
+                                    </graphic>
+                                </Button>
+                            </children>
+                        </VBox>
+                    </children>
                     <VBox.margin>
                         <Insets bottom="15.0" />
                     </VBox.margin>
-                </Button>
+                </VBox>
+
 
                 <Button id="btnNavRelatorio" alignment="BASELINE_LEFT" graphicTextGap="12.0" mnemonicParsing="false" onAction="#onClickRelatorio" styleClass="btn-padrao" text="Relatório">
                     <font>

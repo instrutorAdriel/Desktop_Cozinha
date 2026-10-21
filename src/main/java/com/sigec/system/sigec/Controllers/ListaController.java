@@ -94,6 +94,12 @@ public class ListaController implements Initializable {
     private Label setaCadastro;
 
     @FXML
+    private VBox submenuEstoque;
+
+    @FXML
+    private Label setaEstoque;
+
+    @FXML
     private Button botaoSair;
 
     @Override
@@ -168,11 +174,6 @@ public class ListaController implements Initializable {
         navegarParaRelatorio();
     }
 
-    @FXML
-    public void botaoRelatorio(ActionEvent event) {
-        navegarParaRelatorio();
-    }
-
     private void navegarParaRelatorio() {
         try {
             MainApplication.trocadorDeTelas("historico.fxml");
@@ -190,14 +191,6 @@ public class ListaController implements Initializable {
         }
     }
 
-    @FXML
-    public void onClickUtensilios(ActionEvent event) {
-        try {
-            MainApplication.trocadorDeTelas("gestao-utensilios.fxml");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
     @FXML
     public void onClickSolicitacoes(ActionEvent event) {
@@ -230,6 +223,43 @@ public class ListaController implements Initializable {
     }
 
     @FXML
+    public void toggleDropdownEstoque() {
+        // Verifica se o submenu já está visível no momento do clique
+        boolean estaAberto = submenuEstoque.isVisible();
+
+        // Inverte os estados: se estiver true, vira false; se estiver false, vira true
+        submenuEstoque.setVisible(!estaAberto);
+        submenuEstoque.setManaged(!estaAberto);
+
+        // Atualiza o texto/ícone da seta com base no novo estado
+        if (!estaAberto) {
+            setaEstoque.setText("▲"); // Menu expandido
+        } else {
+            setaEstoque.setText("▼"); // Menu recolhido
+        }
+    }
+
+    @FXML
+    public void onClickInsumos(javafx.event.ActionEvent event) {
+        try {
+            com.sigec.system.sigec.MainApplication.trocadorDeTelas("lista-estoque.fxml");
+        } catch (java.io.IOException e) {
+            e.printStackTrace();
+            System.out.println("Erro ao carregar a tela de Insumos: " + e.getMessage());
+        }
+    }
+
+    @FXML
+    public void onClickUtensilios(javafx.event.ActionEvent event) {
+        try {
+            com.sigec.system.sigec.MainApplication.trocadorDeTelas("gestao-utensilios.fxml");
+        } catch (java.io.IOException e) {
+            e.printStackTrace();
+            System.out.println("Erro ao carregar a tela de Utensílios: " + e.getMessage());
+        }
+    }
+
+    @FXML
     public void onClickCadastroUsuario(ActionEvent event) {
         navegarParaCadastro();
     }
@@ -243,15 +273,6 @@ public class ListaController implements Initializable {
         }
     }
 
-    @FXML
-    public void onClickCadastro(ActionEvent event) {
-        toggleDropdownCadastro(event);
-    }
-
-    @FXML
-    public void botaoCadastroAction(ActionEvent event) {
-        toggleDropdownCadastro(event);
-    }
 
     private void navegarParaCadastro() {
         try {
@@ -279,11 +300,6 @@ public class ListaController implements Initializable {
     public void onPesquisarClick(ActionEvent event) {
         String termo = FiltrarProdutos != null ? FiltrarProdutos.getText() : "";
         System.out.println("Pesquisando produtos com termo: " + termo);
-    }
-
-    @FXML
-    public void onHelloButtonClick(ActionEvent event) {
-        onPesquisarClick(event);
     }
 
     public static ListaEstoque produtoSelecionadoParaEdicao;
