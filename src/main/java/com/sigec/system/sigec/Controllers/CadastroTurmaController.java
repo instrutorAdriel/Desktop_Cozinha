@@ -8,6 +8,7 @@ import com.sigec.system.sigec.MainApplication;
 import com.sigec.system.sigec.Services.SessaoService;
 import com.sigec.system.sigec.Utils.BackgroundAnimator;
 import com.sigec.system.sigec.Utils.ButtonBorderLapAnimator;
+import com.sigec.system.sigec.Utils.DropdownBorderLapAnimator;
 import com.sigec.system.sigec.Utils.FormNavigationUtil;
 
 import javafx.animation.Animation;
@@ -87,6 +88,9 @@ public class CadastroTurmaController implements Initializable {
 
     @FXML
     private Label setaEstoque;
+
+    @FXML
+    private Button btnNavEstoque;
 
     // =========================================================================
     // SEÇÃO 1: FORMULÁRIO DE CADASTRO DA TURMA
@@ -507,19 +511,32 @@ public class CadastroTurmaController implements Initializable {
         }
     }
 
-
     @FXML
-    public void toggleDropdownEstoque() {
-        // 1. Lê o estado diretamente do componente da tela
-        boolean estadoAtual = submenuEstoque.isVisible();
+    public void toggleDropdownEstoque(ActionEvent event) {
+        if (submenuEstoque != null && btnNavEstoque != null) {
+            boolean expandido = !submenuEstoque.isVisible();
 
-        // 2. Inverte o estado de visibilidade e gerenciamento de layout
-        submenuEstoque.setVisible(!estadoAtual);
-        submenuEstoque.setManaged(!estadoAtual);
+            if (setaEstoque != null) {
+                setaEstoque.setText(expandido ? "▲" : "▼");
+            }
 
-        // 3. Atualiza a seta indicativa (opcional)
-        if (setaEstoque != null) {
-            setaEstoque.setText(!estadoAtual ? "▲" : "▼");
+            if (expandido) {
+                submenuEstoque.setVisible(true);
+                submenuEstoque.setManaged(true);
+
+
+                DropdownBorderLapAnimator.animarDropdown(btnNavEstoque, submenuEstoque);
+            } else {
+                ButtonBorderLapAnimator.cancelarAnimacaoAtiva();
+
+                btnNavEstoque.getStyleClass().remove("btn-dropdown-ativo");
+                btnNavEstoque.setStyle(null);
+                submenuEstoque.getStyleClass().remove("submenu-lateral-ativo");
+                submenuEstoque.setStyle(null);
+
+                submenuEstoque.setVisible(false);
+                submenuEstoque.setManaged(false);
+            }
         }
     }
 

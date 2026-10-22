@@ -4,6 +4,7 @@ import com.sigec.system.sigec.MainApplication;
 import com.sigec.system.sigec.Services.SessaoService;
 import com.sigec.system.sigec.Utils.BackgroundAnimator;
 import com.sigec.system.sigec.Utils.ButtonBorderLapAnimator;
+import com.sigec.system.sigec.Utils.DropdownBorderLapAnimator;
 import com.sigec.system.sigec.Utils.ScreenTransitionManager;
 
 import javafx.animation.Animation;
@@ -151,21 +152,52 @@ public class HomeController implements Initializable {
     // NAVEGAÇÃO
     // =========================================================================
 
-    // MÉTODOS DO MENU DE ESTOQUE
     @FXML
-    public void toggleDropdownEstoque() {
-        // Verifica se o submenu já está visível no momento do clique
-        boolean estaAberto = submenuEstoque.isVisible();
+    public void toggleDropdownCadastro(ActionEvent event) {
+        if (submenuCadastro != null) {
+            boolean expandido = !submenuCadastro.isVisible();
+            submenuCadastro.setVisible(expandido);
+            submenuCadastro.setManaged(expandido);
+            if (setaCadastro != null) {
+                setaCadastro.setText(expandido ? "▲" : "▼");
+            }
+            if (expandido && btnNavCadastro != null) {
+                ButtonBorderLapAnimator.animarDropdown(btnNavCadastro, submenuCadastro);
+            } else if (!expandido && btnNavCadastro != null) {
+                ButtonBorderLapAnimator.cancelarAnimacaoAtiva();
+                btnNavCadastro.getStyleClass().remove("btn-dropdown-ativo");
+                btnNavCadastro.setStyle(null);
+                submenuCadastro.getStyleClass().remove("submenu-lateral-ativo");
+                submenuCadastro.setStyle(null);
+            }
+        }
+    }
 
-        // Inverte os estados: se estiver true, vira false; se estiver false, vira true
-        submenuEstoque.setVisible(!estaAberto);
-        submenuEstoque.setManaged(!estaAberto);
+    @FXML
+    public void toggleDropdownEstoque(ActionEvent event) {
+        if (submenuEstoque != null && btnNavEstoque != null) {
+            boolean expandido = !submenuEstoque.isVisible();
 
-        // Atualiza o texto/ícone da seta com base no novo estado
-        if (!estaAberto) {
-            setaEstoque.setText("▲"); // Menu expandido
-        } else {
-            setaEstoque.setText("▼"); // Menu recolhido
+            if (setaEstoque != null) {
+                setaEstoque.setText(expandido ? "▲" : "▼");
+            }
+
+            if (expandido) {
+                submenuEstoque.setVisible(true);
+                submenuEstoque.setManaged(true);
+
+                DropdownBorderLapAnimator.animarDropdown(btnNavEstoque, submenuEstoque);
+            } else {
+                ButtonBorderLapAnimator.cancelarAnimacaoAtiva();
+
+                btnNavEstoque.getStyleClass().remove("btn-dropdown-ativo");
+                btnNavEstoque.setStyle(null);
+                submenuEstoque.getStyleClass().remove("submenu-lateral-ativo");
+                submenuEstoque.setStyle(null);
+
+                submenuEstoque.setVisible(false);
+                submenuEstoque.setManaged(false);
+            }
         }
     }
 
@@ -190,12 +222,12 @@ public class HomeController implements Initializable {
 
     @FXML
     public void botaoEstoqueAction(ActionEvent event) {
-        toggleDropdownEstoque();
+        toggleDropdownEstoque(event);
     }
 
     @FXML
     public void onClickEstoque(ActionEvent event) {
-        toggleDropdownEstoque();
+        toggleDropdownEstoque(event);
     }
 
     // DEMAIS BOTÕES
@@ -226,26 +258,7 @@ public class HomeController implements Initializable {
         }
     }
 
-    @FXML
-    public void toggleDropdownCadastro(ActionEvent event) {
-        if (submenuCadastro != null) {
-            boolean expandido = !submenuCadastro.isVisible();
-            submenuCadastro.setVisible(expandido);
-            submenuCadastro.setManaged(expandido);
-            if (setaCadastro != null) {
-                setaCadastro.setText(expandido ? "▲" : "▼");
-            }
-            if (expandido && btnNavCadastro != null) {
-                ButtonBorderLapAnimator.animarDropdown(btnNavCadastro, submenuCadastro);
-            } else if (!expandido && btnNavCadastro != null) {
-                ButtonBorderLapAnimator.cancelarAnimacaoAtiva();
-                btnNavCadastro.getStyleClass().remove("btn-dropdown-ativo");
-                btnNavCadastro.setStyle(null);
-                submenuCadastro.getStyleClass().remove("submenu-lateral-ativo");
-                submenuCadastro.setStyle(null);
-            }
-        }
-    }
+
 
     @FXML
     public void onClickCadastroUsuario(ActionEvent event) {

@@ -5,6 +5,7 @@ import com.sigec.system.sigec.Services.SessaoService;
 import com.sigec.system.sigec.Utils.BackgroundAnimator;
 import com.sigec.system.sigec.Utils.ButtonBorderLapAnimator;
 
+import com.sigec.system.sigec.Utils.DropdownBorderLapAnimator;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -101,6 +102,9 @@ public class HistoricoController implements Initializable {
 
     @FXML
     private Label setaEstoque;
+
+    @FXML
+    private Button btnNavEstoque;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -207,22 +211,31 @@ public class HistoricoController implements Initializable {
     }
 
     @FXML
-    public void toggleDropdownEstoque() {
-        boolean estaAberto = submenuEstoque.isVisible();
-        System.out.println("Botão Estoque clicado! O menu estava aberto? " + estaAberto);
+    public void toggleDropdownEstoque(ActionEvent event) {
+        if (submenuEstoque != null && btnNavEstoque != null) {
+            boolean expandido = !submenuEstoque.isVisible();
 
-        // Inverte o estado atual
-        submenuEstoque.setVisible(!estaAberto);
-        submenuEstoque.setManaged(!estaAberto);
+            if (setaEstoque != null) {
+                setaEstoque.setText(expandido ? "▲" : "▼");
+            }
 
-        // Atualiza a seta indicativa
-        if (!estaAberto) {
-            setaEstoque.setText("▲");
-        } else {
-            setaEstoque.setText("▼");
+            if (expandido) {
+                submenuEstoque.setVisible(true);
+                submenuEstoque.setManaged(true);
+
+                DropdownBorderLapAnimator.animarDropdown(btnNavEstoque, submenuEstoque);
+            } else {
+                ButtonBorderLapAnimator.cancelarAnimacaoAtiva();
+
+                btnNavEstoque.getStyleClass().remove("btn-dropdown-ativo");
+                btnNavEstoque.setStyle(null);
+                submenuEstoque.getStyleClass().remove("submenu-lateral-ativo");
+                submenuEstoque.setStyle(null);
+
+                submenuEstoque.setVisible(false);
+                submenuEstoque.setManaged(false);
+            }
         }
-
-        System.out.println("Novo estado do menu: " + submenuEstoque.isVisible());
     }
 
     @FXML

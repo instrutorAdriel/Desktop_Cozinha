@@ -3,11 +3,8 @@ package com.sigec.system.sigec.Controllers;
 import com.sigec.system.sigec.DAOS.UserDAO;
 import com.sigec.system.sigec.MainApplication;
 import com.sigec.system.sigec.Services.SessaoService;
-import com.sigec.system.sigec.Utils.BackgroundAnimator;
-import com.sigec.system.sigec.Utils.ButtonBorderLapAnimator;
-import com.sigec.system.sigec.Utils.FormNavigationUtil;
+import com.sigec.system.sigec.Utils.*;
 
-import com.sigec.system.sigec.Utils.ScreenTransitionManager;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -52,12 +49,13 @@ public class CadastroController implements Initializable {
     @FXML private Button btnSubNavTurma;
     @FXML private Button botaoSair;
 
-
     @FXML
     private VBox submenuEstoque;
-
+    @FXML
+    private Button btnNavEstoque;
     @FXML
     private Label setaEstoque;
+
 
     @FXML private TextField txtNome;
     @FXML private TextField txtEmail;
@@ -258,12 +256,31 @@ public class CadastroController implements Initializable {
     }
 
     @FXML
-    public void toggleDropdownEstoque() {
-        boolean estadoAtual = submenuEstoque.isVisible();
-        submenuEstoque.setVisible(!estadoAtual);
-        submenuEstoque.setManaged(!estadoAtual);
-        if (setaEstoque != null) {
-            setaEstoque.setText(!estadoAtual ? "▲" : "▼");
+    public void toggleDropdownEstoque(ActionEvent event) {
+        if (submenuEstoque != null && btnNavEstoque != null) {
+            boolean expandido = !submenuEstoque.isVisible();
+
+            if (setaEstoque != null) {
+                setaEstoque.setText(expandido ? "▲" : "▼");
+            }
+
+            if (expandido) {
+                submenuEstoque.setVisible(true);
+                submenuEstoque.setManaged(true);
+
+                DropdownBorderLapAnimator.animarDropdown(btnNavEstoque, submenuEstoque);
+            } else {
+
+                ButtonBorderLapAnimator.cancelarAnimacaoAtiva();
+
+                btnNavEstoque.getStyleClass().remove("btn-dropdown-ativo");
+                btnNavEstoque.setStyle(null);
+                submenuEstoque.getStyleClass().remove("submenu-lateral-ativo");
+                submenuEstoque.setStyle(null);
+
+                submenuEstoque.setVisible(false);
+                submenuEstoque.setManaged(false);
+            }
         }
     }
 
