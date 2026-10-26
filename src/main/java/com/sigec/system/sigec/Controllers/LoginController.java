@@ -20,12 +20,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Group;
 import javafx.scene.Parent;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.Hyperlink;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
-import javafx.scene.control.ToggleButton;
+import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
@@ -54,9 +49,21 @@ public class LoginController {
     @FXML private StackPane rootPane;
     @FXML private ImageView logoSenac;
     @FXML private Group waveGroup;
-
     @FXML
+    private ComboBox<String> SelecionarUnidade;
+
+    public static String unidadeSelecionada;
+
+
     public void initialize() {
+
+
+
+
+
+
+
+
         if (waveGroup != null && animatedBackground != null && rootPane != null) {
             waveGroup.getChildren().clear();
             BackgroundAnimator.startAnimation(animatedBackground, rootPane);

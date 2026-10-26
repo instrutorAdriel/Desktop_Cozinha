@@ -88,6 +88,10 @@
                             <Insets top="4.0" />
                         </VBox.margin>
                     </Label>
+                    <ComboBox fx:id="SelecionarUnidade" maxHeight="35.0" minHeight="22.0" prefHeight="100.0" prefWidth="152.0">
+                        <HBox.margin>
+                            <Insets />
+                        </HBox.margin></ComboBox>
                     <TextField fx:id="codigoDigitar" prefHeight="35.0" promptText="Digite o código de verificação">
                         <font>
                             <Font name="Arial" size="13.0" />

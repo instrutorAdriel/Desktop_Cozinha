@@ -20,9 +20,11 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
+<?import javafx.scene.control.ComboBox?>
 <BorderPane prefHeight="600.0" prefWidth="800.0" stylesheets="@CSS/StyleSheet.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sigec.system.sigec.Controllers.CadastroController">
     <top>
         <AnchorPane fx:id="topBarPane" prefHeight="50.0" style="-fx-background-color: #f6f8fb;" BorderPane.alignment="CENTER">
+
             <children>
                 <HBox alignment="CENTER_LEFT" prefHeight="50.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="35.0" AnchorPane.topAnchor="0.0">
                     <children>
@@ -125,6 +127,10 @@
                                             </font>
                                         </Label>
                                         <Region HBox.hgrow="ALWAYS" />
+                                        <ComboBox fx:id="SelecionarUnidade" maxHeight="35.0" minHeight="22.0" prefHeight="100.0" prefWidth="152.0">
+                                            <HBox.margin>
+                                                <Insets />
+                                            </HBox.margin></ComboBox>
                                         <Label fx:id="setaCadastro" text="▶" textFill="WHITE">
                                             <font>
                                                 <Font name="Arial Bold" size="11.0" />

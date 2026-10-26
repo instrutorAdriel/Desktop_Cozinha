@@ -15,13 +15,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
-import javafx.scene.control.ToggleButton;
+import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
@@ -69,6 +63,10 @@ public class CadastroController implements Initializable {
 
     @FXML private Button btnCadastrar;
     @FXML private Button btnLimpar;
+    @FXML
+    private ComboBox<String> SelecionarUnidade;
+
+        public static String unidadeSelecionada;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -79,6 +77,35 @@ public class CadastroController implements Initializable {
         configurarDataHora();
         configurarUsuario();
         configurarMenuInicial();
+
+
+        if (SelecionarUnidade != null) {
+            SelecionarUnidade.getItems().addAll(
+                    "07 - CEP ENNIUS MUNIZ",
+                    "08 - CEP JÓ - TAGUATINGA",
+                    "09 - CEP TALAL CEILÂNDIA",
+                    "10 - CEP JOAQUIM - GAMA",
+                    "11 - CEP SOBRADINHO",
+                    "12 - CEP MS GASTRONOMIA",
+                    "24 - CEP AÇÕES MÓVEIS",
+                    "25 - POLO SÃO SEBASTIÃO",
+                    "26 - POLO PÁTIO BRASIL",
+                    "27 - POLO BRAZLÂNDIA",
+                    "28 - POLO SANTA MARIA",
+                    "29 - POLO RECANTO",
+                    "32 - POLO SENAC BELEZA",
+                    "34 - CEP CORPORATIVO"
+            );
+
+            SelecionarUnidade.getSelectionModel().selectFirst();
+            unidadeSelecionada = SelecionarUnidade.getValue();
+
+            SelecionarUnidade.setOnAction(e -> {
+                unidadeSelecionada = SelecionarUnidade.getValue();
+            });
+        }
+
+
 
         // Sincroniza os textos entre os campos ocultos e revelados
         if(txtSenhaRevelada != null && txtSenha != null){

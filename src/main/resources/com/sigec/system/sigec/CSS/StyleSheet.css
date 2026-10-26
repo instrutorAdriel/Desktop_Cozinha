@@ -1021,3 +1021,10 @@
     /* Quando o botão estiver pressionado: Olho Fechado */
     -fx-background-image: url("../imagens/olho-fechado.png");
 }
+
+
+.combo-box .list-cell {
+    -fx-cell-size: 3px;
+    -fx-font-size: 12px;
+    -fx-padding: 10px;
+}

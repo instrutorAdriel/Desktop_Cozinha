@@ -13,14 +13,7 @@ import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -95,6 +88,10 @@ public class ListaController implements Initializable {
 
     @FXML
     private Button botaoSair;
+    @FXML
+    private ComboBox<String> SelecionarUnidade;
+
+    public static String unidadeSelecionada;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -103,6 +100,32 @@ public class ListaController implements Initializable {
         }
         configurarDataHora();
         configurarUsuario();
+
+        if (SelecionarUnidade != null) {
+            SelecionarUnidade.getItems().addAll(
+                    "07 - CEP ENNIUS MUNIZ",
+                    "08 - CEP JÓ - TAGUATINGA",
+                    "09 - CEP TALAL CEILÂNDIA",
+                    "10 - CEP JOAQUIM - GAMA",
+                    "11 - CEP SOBRADINHO",
+                    "12 - CEP MS GASTRONOMIA",
+                    "24 - CEP AÇÕES MÓVEIS",
+                    "25 - POLO SÃO SEBASTIÃO",
+                    "26 - POLO PÁTIO BRASIL",
+                    "27 - POLO BRAZLÂNDIA",
+                    "28 - POLO SANTA MARIA",
+                    "29 - POLO RECANTO",
+                    "32 - POLO SENAC BELEZA",
+                    "34 - CEP CORPORATIVO"
+            );
+
+            SelecionarUnidade.getSelectionModel().selectFirst();
+            unidadeSelecionada = SelecionarUnidade.getValue();
+
+            SelecionarUnidade.setOnAction(e -> {
+                unidadeSelecionada = SelecionarUnidade.getValue();
+            });
+        }
 
         if (FiltrarProdutos != null) {
             FiltrarProdutos.setOnAction(this::onPesquisarClick);

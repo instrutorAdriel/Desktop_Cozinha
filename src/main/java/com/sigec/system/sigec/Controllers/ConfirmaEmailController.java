@@ -7,6 +7,7 @@ import com.sigec.system.sigec.Utils.BackgroundAnimator;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
@@ -29,13 +30,40 @@ public class ConfirmaEmailController {
 
     @FXML
     private AnchorPane animatedBackground;
-
     @FXML
+    private ComboBox<String> SelecionarUnidade;
+
+    public static String unidadeSelecionada;
+
     public void initialize() {
         if (animatedBackground != null && rootPane != null) {
             BackgroundAnimator.startAnimation(animatedBackground, rootPane);
         }
+        if (SelecionarUnidade != null) {
+            SelecionarUnidade.getItems().addAll(
+                    "07 - CEP ENNIUS MUNIZ",
+                    "08 - CEP JÓ - TAGUATINGA",
+                    "09 - CEP TALAL CEILÂNDIA",
+                    "10 - CEP JOAQUIM - GAMA",
+                    "11 - CEP SOBRADINHO",
+                    "12 - CEP MS GASTRONOMIA",
+                    "24 - CEP AÇÕES MÓVEIS",
+                    "25 - POLO SÃO SEBASTIÃO",
+                    "26 - POLO PÁTIO BRASIL",
+                    "27 - POLO BRAZLÂNDIA",
+                    "28 - POLO SANTA MARIA",
+                    "29 - POLO RECANTO",
+                    "32 - POLO SENAC BELEZA",
+                    "34 - CEP CORPORATIVO"
+            );
 
+            SelecionarUnidade.getSelectionModel().selectFirst();
+            unidadeSelecionada = SelecionarUnidade.getValue();
+
+            SelecionarUnidade.setOnAction(e -> {
+                unidadeSelecionada = SelecionarUnidade.getValue();
+            });
+        }
         if (emailDigitar != null) {
             emailDigitar.setOnAction(e -> {
                 if (emailDigitar.getText() != null && !emailDigitar.getText().trim().isEmpty()) {

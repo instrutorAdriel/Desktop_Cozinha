@@ -200,7 +200,7 @@
                                     </font>
                                 </Label>
                                 <Region HBox.hgrow="ALWAYS" />
-                        <ComboBox fx:id="SelecionarUnidade" prefHeight="100.0" prefWidth="200.0">
+                        <ComboBox fx:id="SelecionarUnidade" maxHeight="35.0" minHeight="22.0" prefHeight="100.0" prefWidth="152.0">
                            <HBox.margin>
                               <Insets />
                            </HBox.margin></ComboBox>

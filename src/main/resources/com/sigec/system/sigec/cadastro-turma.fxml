@@ -19,6 +19,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
+<?import javafx.scene.control.ComboBox?>
 <BorderPane prefHeight="650.0" prefWidth="950.0" stylesheets="@CSS/StyleSheet.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sigec.system.sigec.Controllers.CadastroTurmaController">
     <top>
         <AnchorPane fx:id="topBarPane" prefHeight="50.0" style="-fx-background-color: #f6f8fb;" BorderPane.alignment="CENTER">
@@ -204,12 +205,10 @@
                                     </HBox.margin>
                                 </Label>
                                 <Region HBox.hgrow="ALWAYS" />
-                                <Label fx:id="usuarioLabel" text="Administrador" textFill="WHITE">
-                                    <font>
-                                        <Font name="Arial Bold" size="16.0" />
-                                    </font>
-                                </Label>
-                                <Region HBox.hgrow="ALWAYS" />
+                                <ComboBox fx:id="SelecionarUnidade" maxHeight="35.0" minHeight="22.0" prefHeight="100.0" prefWidth="152.0">
+                                    <HBox.margin>
+                                        <Insets />
+                                    </HBox.margin></ComboBox>
                                 <Label fx:id="horaLabel" textFill="WHITE">
                                     <font>
                                         <Font name="Arial Bold" size="16.0" />

@@ -8,6 +8,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.PasswordField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
@@ -33,9 +34,17 @@ public class AlteraSenhaController {
 
     @FXML
     private AnchorPane animatedBackground;
-
     @FXML
+    private ComboBox<String> SelecionarUnidade;
+
+        public static String unidadeSelecionada;
+    
     public void initialize() {
+
+
+
+
+
         if (animatedBackground != null && rootPane != null) {
             BackgroundAnimator.startAnimation(animatedBackground, rootPane);
         }

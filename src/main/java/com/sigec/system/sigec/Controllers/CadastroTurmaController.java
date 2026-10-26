@@ -20,13 +20,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -117,6 +111,10 @@ public class CadastroTurmaController implements Initializable {
 
     @FXML
     private Button btnDesmarcarInstrutor;
+    @FXML
+    private ComboBox<String> SelecionarUnidade;
+
+    public static String unidadeSelecionada;
 
     // Dados observáveis dos instrutores
     private final ObservableList<User> masterInstrutores = FXCollections.observableArrayList();
@@ -135,6 +133,33 @@ public class CadastroTurmaController implements Initializable {
         configurarFormularioTurma();
         configurarListaInstrutores();
         configurarPesquisaInstrutor();
+
+        if (SelecionarUnidade != null) {
+            SelecionarUnidade.getItems().addAll(
+                    "07 - CEP ENNIUS MUNIZ",
+                    "08 - CEP JÓ - TAGUATINGA",
+                    "09 - CEP TALAL CEILÂNDIA",
+                    "10 - CEP JOAQUIM - GAMA",
+                    "11 - CEP SOBRADINHO",
+                    "12 - CEP MS GASTRONOMIA",
+                    "24 - CEP AÇÕES MÓVEIS",
+                    "25 - POLO SÃO SEBASTIÃO",
+                    "26 - POLO PÁTIO BRASIL",
+                    "27 - POLO BRAZLÂNDIA",
+                    "28 - POLO SANTA MARIA",
+                    "29 - POLO RECANTO",
+                    "32 - POLO SENAC BELEZA",
+                    "34 - CEP CORPORATIVO"
+            );
+
+            SelecionarUnidade.getSelectionModel().selectFirst();
+            unidadeSelecionada = SelecionarUnidade.getValue();
+
+            SelecionarUnidade.setOnAction(e -> {
+                unidadeSelecionada = SelecionarUnidade.getValue();
+            });
+        }
+
 
         // Encadeamento de tecla Enter para navegação no formulário
         FormNavigationUtil.encadearCampos(btnCadastrarTurma, txtNomeTurma);

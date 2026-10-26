@@ -80,8 +80,7 @@ public class HomeController implements Initializable {
 @FXML
 private ComboBox<String> SelecionarUnidade;
 
-
-
+    public static String unidadeSelecionada;
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         if (topBarPane != null) {
@@ -109,9 +108,13 @@ private ComboBox<String> SelecionarUnidade;
             );
 
             SelecionarUnidade.getSelectionModel().selectFirst();
+            unidadeSelecionada = SelecionarUnidade.getValue();
+
+            SelecionarUnidade.setOnAction(e -> {
+                unidadeSelecionada = SelecionarUnidade.getValue();
+            });
         }
     }
-
 
 
     private void configurarUsuario() {
