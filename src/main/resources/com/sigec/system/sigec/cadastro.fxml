@@ -127,11 +127,9 @@
                                             </font>
                                         </Label>
                                         <Region HBox.hgrow="ALWAYS" />
-                                        <ComboBox fx:id="SelecionarUnidade" maxHeight="35.0" minHeight="22.0" prefHeight="100.0" prefWidth="152.0">
-                                            <HBox.margin>
-                                                <Insets />
-                                            </HBox.margin></ComboBox>
+
                                         <Label fx:id="setaCadastro" text="▶" textFill="WHITE">
+
                                             <font>
                                                 <Font name="Arial Bold" size="11.0" />
                                             </font>
@@ -151,9 +149,11 @@
                                     </styleClass>
                                     <graphic>
                                         <Label text="•" textFill="#ff9800">
+
                                             <font>
                                                 <Font name="Arial Bold" size="14.0" />
                                             </font>
+
                                         </Label>
                                     </graphic>
                                 </Button>
@@ -242,10 +242,12 @@
                                             </effect>
                                         </ImageView>
                                         <Label text="Cadastro de Usuário" textFill="#054685">
+
                                             <font>
                                                 <Font name="Arial Bold" size="18.0" />
                                             </font>
                                         </Label>
+
                                         <Label text="•  Acesso institucional ao sistema SIGEC" textFill="#64748b">
                                             <font>
                                                 <Font name="Arial" size="13.0" />
