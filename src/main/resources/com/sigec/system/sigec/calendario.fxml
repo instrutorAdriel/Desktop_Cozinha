@@ -252,6 +252,7 @@
                         <Insets bottom="15.0" />
                     </VBox.margin>
                 </VBox>
+
                 <Region VBox.vgrow="ALWAYS" />
                 <HBox alignment="CENTER_LEFT">
                     <children>
@@ -328,13 +329,34 @@
                                         </Label>
                                         <HBox alignment="CENTER_LEFT" spacing="15.0">
                                             <children>
+
+                                                <!-- NOVO: Seletor de Unidade -->
+                                                <VBox spacing="5.0">
+                                                    <children>
+                                                        <Label text="Unidade" textFill="#64748b">
+                                                            <font><Font name="Arial Bold" size="12.0" /></font>
+                                                        </Label>
+                                                        <ChoiceBox fx:id="cbUnidade" prefWidth="160.0" styleClass="custom-choice-box" />
+                                                    </children>
+                                                </VBox>
+
+                                                <!-- NOVO: Seletor de Curso -->
+                                                <VBox spacing="5.0">
+                                                    <children>
+                                                        <Label text="Curso" textFill="#64748b">
+                                                            <font><Font name="Arial Bold" size="12.0" /></font>
+                                                        </Label>
+                                                        <ChoiceBox fx:id="cbCurso" prefWidth="160.0" styleClass="custom-choice-box" />
+                                                    </children>
+                                                </VBox>
+
                                                 <!-- Seletor de Turma -->
                                                 <VBox spacing="5.0">
                                                     <children>
                                                         <Label text="Turma / Laboratório" textFill="#64748b">
                                                             <font><Font name="Arial Bold" size="12.0" /></font>
                                                         </Label>
-                                                        <ChoiceBox fx:id="cbTurmaLab" prefWidth="250.0" styleClass="custom-choice-box" />
+                                                        <ChoiceBox fx:id="cbTurmaLab" prefWidth="180.0" styleClass="custom-choice-box" />
                                                     </children>
                                                 </VBox>
 
@@ -344,7 +366,7 @@
                                                         <Label text="Data Inicial" textFill="#64748b">
                                                             <font><Font name="Arial Bold" size="12.0" /></font>
                                                         </Label>
-                                                        <DatePicker fx:id="dataInicio" prefWidth="150.0" promptText="De" styleClass="custom-date-picker" />
+                                                        <DatePicker fx:id="dataInicio" prefWidth="140.0" promptText="De" styleClass="custom-date-picker" />
                                                     </children>
                                                 </VBox>
 
@@ -354,7 +376,7 @@
                                                         <Label text="Data Final" textFill="#64748b">
                                                             <font><Font name="Arial Bold" size="12.0" /></font>
                                                         </Label>
-                                                        <DatePicker fx:id="dataFim" prefWidth="150.0" promptText="Até" styleClass="custom-date-picker" />
+                                                        <DatePicker fx:id="dataFim" prefWidth="140.0" promptText="Até" styleClass="custom-date-picker" />
                                                     </children>
                                                 </VBox>
 

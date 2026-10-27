@@ -184,8 +184,6 @@
                     </VBox.margin>
                 </Button>
 
-
-
                 <VBox alignment="TOP_CENTER" spacing="0.0">
                     <children>
                         <Button id="btnNavCadastro" fx:id="btnNavCadastro" alignment="CENTER_LEFT" mnemonicParsing="false" onAction="#toggleDropdownCadastro" styleClass="btn-padrao">
@@ -239,7 +237,6 @@
                     </VBox.margin>
                 </VBox>
 
-
                 <Region VBox.vgrow="ALWAYS" />
                 <HBox alignment="CENTER_LEFT">
                     <children>
@@ -268,8 +265,7 @@
                 </ImageView>
                 <VBox alignment="TOP_CENTER" prefHeight="550.0" prefWidth="600.0" styleClass="borda-separadora-lateral">
                     <children>
-
-                        <!-- Banner Laranja de Status (Com min/maxHeight corrigidos) -->
+                        <!-- Banner Laranja de Status -->
                         <HBox alignment="CENTER" maxHeight="40.0" minHeight="40.0" prefHeight="40.0" styleClass="status-orange-banner">
                             <children>
                                 <Label fx:id="dataLabel" textFill="WHITE">
@@ -304,40 +300,91 @@
                             </padding>
                             <children>
 
-                                <!-- Header da Página -->
-                                <HBox alignment="CENTER_LEFT" prefHeight="45.0" styleClass="header-alertas-border">
+                                <!-- Header da Página (Título e Novos Filtros Alinhados à Direita) -->
+                                <HBox alignment="CENTER_LEFT" prefHeight="55.0" styleClass="header-alertas-border">
                                     <children>
                                         <Label text="GESTÃO DE UTENSÍLIOS E EQUIPAMENTOS" textFill="#0c356a">
                                             <font>
                                                 <Font name="Arial Bold" size="18.0" />
                                             </font>
                                         </Label>
+
+                                        <!-- Espaço flexível para empurrar os ChoiceBoxes para o lado direito -->
+                                        <Region HBox.hgrow="ALWAYS" />
+
+                                        <!-- Container dos novos filtros na posição solicitada (Quadro Vermelho) -->
+                                        <HBox alignment="CENTER_RIGHT" spacing="15.0">
+                                            <children>
+                                                <!-- Filtro de Unidade -->
+                                                <HBox alignment="CENTER_LEFT" spacing="8.0">
+                                                    <children>
+                                                        <Label text="Unidade:" textFill="#475569">
+                                                            <font>
+                                                                <Font name="Arial Bold" size="13.0" />
+                                                            </font>
+                                                        </Label>
+                                                        <ChoiceBox fx:id="cbUnidade" prefHeight="35.0" prefWidth="160.0" styleClass="custom-choice-box" />
+                                                    </children>
+                                                </HBox>
+
+                                                <!-- Filtro de Curso -->
+                                                <HBox alignment="CENTER_LEFT" spacing="8.0">
+                                                    <children>
+                                                        <Label text="Curso:" textFill="#475569">
+                                                            <font>
+                                                                <Font name="Arial Bold" size="13.0" />
+                                                            </font>
+                                                        </Label>
+                                                        <ChoiceBox fx:id="cbCurso" prefHeight="35.0" prefWidth="160.0" styleClass="custom-choice-box" />
+                                                    </children>
+                                                </HBox>
+                                            </children>
+                                        </HBox>
                                     </children>
                                     <VBox.margin>
-                                        <Insets bottom="5.0" />
+                                        <Insets bottom="10.0" />
                                     </VBox.margin>
                                 </HBox>
 
-                                <!-- Barra de Ferramentas / Ações -->
+                                <!-- Barra de Ferramentas / Ações e os antigos filtros -->
                                 <HBox alignment="CENTER_LEFT" prefHeight="45.0" spacing="12.0">
                                     <children>
                                         <TextField fx:id="txtPesquisaUtensilio" prefHeight="35.0" prefWidth="250.0" promptText="🔍 Pesquisar utensílio..." styleClass="search-field">
                                             <font><Font name="Arial" size="13.0" /></font>
                                         </TextField>
 
-                                        <!-- Filtro de Laboratório -->
-                                        <ChoiceBox fx:id="cbLaboratorio" prefHeight="35.0" prefWidth="160.0" styleClass="custom-choice-box" />
+                                        <!-- Filtro de Laboratório com Label -->
+                                        <HBox alignment="CENTER_LEFT" spacing="8.0">
+                                            <children>
+                                                <Label text="Laboratório:" textFill="#475569">
+                                                    <font>
+                                                        <Font name="Arial Bold" size="13.0" />
+                                                    </font>
+                                                </Label>
+                                                <ChoiceBox fx:id="cbLaboratorio" prefHeight="35.0" prefWidth="160.0" styleClass="custom-choice-box" />
+                                            </children>
+                                        </HBox>
 
-                                        <!-- Filtro de Status (Disponível, Em uso, Conserto) -->
-                                        <ChoiceBox fx:id="cbStatus" prefHeight="35.0" prefWidth="130.0" styleClass="custom-choice-box" />
+                                        <!-- Filtro de Status com Label -->
+                                        <HBox alignment="CENTER_LEFT" spacing="8.0">
+                                            <children>
+                                                <Label text="Situação:" textFill="#475569">
+                                                    <font>
+                                                        <Font name="Arial Bold" size="13.0" />
+                                                    </font>
+                                                </Label>
+                                                <ChoiceBox fx:id="cbStatus" prefHeight="35.0" prefWidth="130.0" styleClass="custom-choice-box" />
+                                            </children>
+                                        </HBox>
 
+                                        <!-- Botão Filtrar -->
                                         <Button mnemonicParsing="false" onAction="#onFiltrarClick" prefHeight="35.0" prefWidth="90.0" styleClass="btn-action-secondary" text="Filtrar">
                                             <font><Font name="Arial Bold" size="13.0" /></font>
                                         </Button>
 
                                         <Region HBox.hgrow="ALWAYS" />
 
-                                        <!-- Botão Específico RF12 -->
+                                        <!-- Botões de Ação -->
                                         <Button fx:id="btnAvaria" mnemonicParsing="false" onAction="#onRegistrarAvariaClick" prefHeight="35.0" prefWidth="140.0" styleClass="btn-action-danger" text="⚠ Registrar Avaria">
                                             <font><Font name="Arial Bold" size="13.0" /></font>
                                         </Button>

@@ -92,10 +92,9 @@
                         </Button>
 
                         <!-- Submenu com Insumos e Utensílios -->
-
                         <VBox fx:id="submenuEstoque" alignment="TOP_CENTER" managed="false" spacing="0.0" styleClass="submenu-lateral" visible="false">
                             <children>
-                                <!-- Botão Insumos (Antiga tela de Estoque) -->
+                                <!-- Botão Insumos -->
                                 <Button id="btnSubNavInsumos" fx:id="btnSubNavInsumos" alignment="BASELINE_LEFT" graphicTextGap="8.0" mnemonicParsing="false" onAction="#onClickInsumos" styleClass="btn-sub-opcao" text="Insumos">
                                     <graphic>
                                         <Label text="•" textFill="#94a3b8">
@@ -180,6 +179,7 @@
                         <Insets bottom="15.0" />
                     </VBox.margin>
                 </Button>
+
                 <!-- Container do Menu Dropdown de Cadastro -->
                 <VBox alignment="TOP_CENTER" spacing="0.0">
                     <children>
@@ -324,6 +324,19 @@
                                         <!-- Filtro de Laboratório e Sino de Notificações -->
                                         <HBox alignment="CENTER_RIGHT" spacing="15.0">
                                             <children>
+                                                <!-- Container para o texto Unidade e o Dropdown -->
+                                                <HBox alignment="CENTER" spacing="10.0">
+                                                    <children>
+                                                        <Label text="Unidade:" textFill="#0c356a">
+                                                            <font>
+                                                                <Font name="Arial Bold" size="14.0" />
+                                                            </font>
+                                                        </Label>
+                                                        <!-- Dropdown de Unidade adicionado aqui -->
+                                                        <ChoiceBox fx:id="cbUnidade" prefHeight="35.0" prefWidth="180.0" styleClass="custom-choice-box" />
+                                                    </children>
+                                                </HBox>
+
                                                 <Button mnemonicParsing="false" styleClass="btn-notificacao" text="🔔 " textFill="#004b93">
                                                     <font>
                                                         <Font name="Arial Bold" size="14.0" />
@@ -489,4 +502,5 @@
             </children>
         </StackPane>
     </center>
+
 </BorderPane>

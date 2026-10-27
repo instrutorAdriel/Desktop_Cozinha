@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.String?>
+<?import java.lang.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.effect.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.shape.*?>
 <?import javafx.scene.text.*?>
 
 <BorderPane prefHeight="600.0" prefWidth="800.0" stylesheets="@CSS/StyleSheet.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sigec.system.sigec.Controllers.HistoricoController">
@@ -191,7 +190,7 @@
                                     <children>
                                         <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
-                                               <Image url="@imagens/cadastroIMG.png" />
+                                                <Image url="@imagens/cadastroIMG.png" />
                                             </image>
                                             <effect>
                                                 <ColorAdjust brightness="1.0" />
@@ -268,7 +267,7 @@
                 </ImageView>
                 <VBox alignment="TOP_CENTER" prefHeight="550.0" prefWidth="600.0" style="-fx-border-color: #054584; -fx-border-width: 0 0 0 1;">
                     <children>
-                        <HBox alignment="CENTER" prefHeight="40.0" minHeight="40.0" maxHeight="40.0" styleClass="status-orange-banner">
+                        <HBox alignment="CENTER" maxHeight="40.0" minHeight="40.0" prefHeight="40.0" styleClass="status-orange-banner">
                             <children>
                                 <Label fx:id="dataLabel" textFill="WHITE">
                                     <font>
@@ -297,9 +296,30 @@
                         </HBox>
                         <VBox fx:id="conteudoPagina" styleClass="conteudo-pagina" VBox.vgrow="ALWAYS">
                             <children>
+                                <!-- NOVO CABEÇALHO E BOTÃO DE EXPORTAÇÃO DE COMPRAS -->
                                 <HBox alignment="CENTER_LEFT" prefHeight="45.0" spacing="12.0">
                                     <children>
-                                        <TextField fx:id="txtpesquisa" prefHeight="35.0" prefWidth="220.0" promptText="🔍 Pesquisar..." styleClass="search-field">
+                                        <Label text=" Relatórios" textFill="#054685">
+                                            <font>
+                                                <Font name="Arial Bold" size="18.0" />
+                                            </font>
+                                        </Label>
+                                        <Region HBox.hgrow="ALWAYS" />
+                                        <Button fx:id="btnExportarCompras" mnemonicParsing="false" onAction="#onExportarComprasAction" prefHeight="35.0" styleClass="btn-laranja" text="Exportar Relatório de Compras" textFill="WHITE">
+                                            <font>
+                                                <Font name="Arial Bold" size="13.0" />
+                                            </font>
+                                        </Button>
+                                    </children>
+                                    <VBox.margin>
+                                        <Insets left="20.0" right="20.0" top="15.0" />
+                                    </VBox.margin>
+                                </HBox>
+
+                                <!-- BARRA DE FILTROS -->
+                                <HBox alignment="CENTER_LEFT" prefHeight="45.0" spacing="12.0">
+                                    <children>
+                                        <TextField fx:id="txtpesquisa" prefHeight="35.0" prefWidth="220.0" promptText="  Pesquisar..." styleClass="search-field">
                                             <font>
                                                 <Font name="Arial" size="13.0" />
                                             </font>
@@ -309,15 +329,42 @@
                                                 <Font name="Arial Bold" size="13.0" />
                                             </font>
                                         </Button>
+
+                                        <!-- NOVO: Filtro de Unidade -->
+                                        <HBox alignment="CENTER_LEFT" spacing="8.0">
+                                            <children>
+                                                <Label text="Unidade:" textFill="#475569">
+                                                    <font>
+                                                        <Font name="Arial Bold" size="13.0" />
+                                                    </font>
+                                                </Label>
+                                                <ChoiceBox fx:id="cbUnidade" prefHeight="35.0" prefWidth="130.0" styleClass="custom-choice-box" />
+                                            </children>
+                                        </HBox>
+
+                                        <!-- NOVO: Filtro de Curso -->
+                                        <HBox alignment="CENTER_LEFT" spacing="8.0">
+                                            <children>
+                                                <Label text="Curso:" textFill="#475569">
+                                                    <font>
+                                                        <Font name="Arial Bold" size="13.0" />
+                                                    </font>
+                                                </Label>
+                                                <ChoiceBox fx:id="cbCurso" prefHeight="35.0" prefWidth="130.0" styleClass="custom-choice-box" />
+                                            </children>
+                                        </HBox>
+
                                         <Region HBox.hgrow="ALWAYS" />
                                         <DatePicker fx:id="dataDE" prefHeight="35.0" prefWidth="140.0" promptText="De" styleClass="custom-date-picker" />
                                         <DatePicker fx:id="dataATE" prefHeight="35.0" prefWidth="140.0" promptText="Até" styleClass="custom-date-picker" />
                                         <ChoiceBox fx:id="filtro" prefHeight="35.0" prefWidth="135.0" styleClass="custom-choice-box" />
                                     </children>
                                     <VBox.margin>
-                                        <Insets left="20.0" right="20.0" top="15.0" />
+                                        <Insets left="20.0" right="20.0" top="5.0" />
                                     </VBox.margin>
                                 </HBox>
+
+                                <!-- TABELA ORIGINAL -->
                                 <TableView fx:id="tableHistorico" prefHeight="390.0" prefWidth="560.0" styleClass="table-view" VBox.vgrow="ALWAYS">
                                     <columns>
                                         <TableColumn fx:id="data_hora" prefWidth="100.0" text="Data/Hora" />
@@ -342,4 +389,3 @@
         </StackPane>
     </center>
 </BorderPane>
-

@@ -106,6 +106,9 @@ public class HistoricoController implements Initializable {
     @FXML
     private Button btnNavEstoque;
 
+    @FXML
+    private Button btnExportarCompras;
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         if (topBarPane != null) {
@@ -118,6 +121,12 @@ public class HistoricoController implements Initializable {
         if (txtpesquisa != null) {
             txtpesquisa.setOnAction(this::filtrarHistorico);
         }
+    }
+
+    @FXML
+    public void onExportarComprasAction(ActionEvent event) {
+        // A lógica de exportação (CSV/Excel/PDF) será implementada aqui
+        System.out.println("Iniciando a exportação de compras...");
     }
 
     private void configurarUsuario() {

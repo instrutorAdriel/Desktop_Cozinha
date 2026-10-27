@@ -82,7 +82,6 @@
                         </Button>
 
                         <!-- Submenu com Insumos e Utensílios -->
-
                         <VBox fx:id="submenuEstoque" alignment="TOP_CENTER" managed="false" spacing="0.0" styleClass="submenu-lateral" visible="false">
                             <children>
                                 <!-- Botão Insumos (Antiga tela de Estoque) -->
@@ -231,7 +230,6 @@
                 </ImageView>
                 <VBox alignment="TOP_CENTER" prefHeight="550.0" prefWidth="600.0" styleClass="borda-separadora-lateral">
                     <children>
-
                         <!-- Banner Laranja de Status Corrigido -->
                         <HBox alignment="CENTER" maxHeight="40.0" minHeight="40.0" prefHeight="40.0" styleClass="status-orange-banner">
                             <children>
@@ -257,12 +255,40 @@
                             </padding>
                             <children>
 
-                                <!-- Header da Página -->
-                                <HBox alignment="CENTER_LEFT" prefHeight="45.0" styleClass="header-alertas-border">
+                                <!-- Header da Página (AGORA COM OS NOVOS FILTROS MOVIDOS PRA CÁ) -->
+                                <HBox alignment="CENTER_LEFT" prefHeight="45.0" spacing="12.0" styleClass="header-alertas-border">
                                     <children>
                                         <Label text="SOLICITAÇÕES DE INSUMOS EXTRAS (WEB)" textFill="#0c356a">
                                             <font><Font name="Arial Bold" size="18.0" /></font>
                                         </Label>
+
+                                        <!-- Empurra os filtros para a direita -->
+                                        <Region HBox.hgrow="ALWAYS" />
+
+                                        <!-- Filtro de Unidade -->
+                                        <HBox alignment="CENTER_LEFT" spacing="8.0">
+                                            <children>
+                                                <Label text="Unidade:" textFill="#475569">
+                                                    <font>
+                                                        <Font name="Arial Bold" size="13.0" />
+                                                    </font>
+                                                </Label>
+                                                <ChoiceBox fx:id="cbUnidade" prefHeight="35.0" prefWidth="130.0" styleClass="custom-choice-box" />
+                                            </children>
+                                        </HBox>
+
+                                        <!-- Filtro de Curso -->
+                                        <HBox alignment="CENTER_LEFT" spacing="8.0">
+                                            <children>
+                                                <Label text="Curso:" textFill="#475569">
+                                                    <font>
+                                                        <Font name="Arial Bold" size="13.0" />
+                                                    </font>
+                                                </Label>
+                                                <ChoiceBox fx:id="cbCurso" prefHeight="35.0" prefWidth="130.0" styleClass="custom-choice-box" />
+                                            </children>
+                                        </HBox>
+
                                     </children>
                                     <VBox.margin><Insets bottom="5.0" /></VBox.margin>
                                 </HBox>
@@ -274,7 +300,17 @@
                                             <font><Font name="Arial" size="13.0" /></font>
                                         </TextField>
 
-                                        <ChoiceBox fx:id="cbStatusFiltro" prefHeight="35.0" prefWidth="140.0" styleClass="custom-choice-box" />
+                                        <!-- Filtro de Status -->
+                                        <HBox alignment="CENTER_LEFT" spacing="8.0">
+                                            <children>
+                                                <Label text="Status:" textFill="#475569">
+                                                    <font>
+                                                        <Font name="Arial Bold" size="13.0" />
+                                                    </font>
+                                                </Label>
+                                                <ChoiceBox fx:id="cbStatusFiltro" prefHeight="35.0" prefWidth="130.0" styleClass="custom-choice-box" />
+                                            </children>
+                                        </HBox>
 
                                         <Button mnemonicParsing="false" onAction="#onFiltrarClick" prefHeight="35.0" prefWidth="85.0" styleClass="btn-action-primary" text="Filtrar">
                                             <font><Font name="Arial Bold" size="13.0" /></font>

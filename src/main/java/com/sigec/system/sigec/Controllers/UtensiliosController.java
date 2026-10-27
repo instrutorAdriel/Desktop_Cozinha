@@ -1,5 +1,7 @@
 package com.sigec.system.sigec.Controllers;
 
+import com.sigec.system.sigec.Constructors.Utensilio;
+import com.sigec.system.sigec.DAOS.UtensilioDAO;
 import com.sigec.system.sigec.MainApplication;
 import com.sigec.system.sigec.Utils.ButtonBorderLapAnimator;
 import com.sigec.system.sigec.Utils.DropdownBorderLapAnimator;
@@ -10,87 +12,83 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 
 import java.io.IOException;
+import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.ResourceBundle;
 
-public class UtensiliosController {
+public class UtensiliosController implements Initializable {
 
-    // ==========================================
-    // ELEMENTOS DO CABEÇALHO (STATUS BAR)
-    // ==========================================
     @FXML private Label dataLabel;
     @FXML private Label horaLabel;
     @FXML private Label usuarioLabel;
 
-    // ==========================================
-    // ELEMENTOS DO MENU LATERAL
-    // ==========================================
     @FXML private VBox submenuCadastro;
     @FXML private Label setaCadastro;
-    @FXML
-    private Button btnNavCadastro;
+    @FXML private Button btnNavCadastro;
 
-    @FXML
-    private VBox submenuEstoque;
-
-    @FXML
-    private Label setaEstoque;
-
-    @FXML
-    private Button btnNavEstoque;
-
-    // ==========================================
-    // ELEMENTOS DA TELA CENTRAL
-    // ==========================================
+    // IDs corrigidos para bater exatamente com o gestao-utensilios.fxml
     @FXML private TextField txtPesquisaUtensilio;
-    @FXML private ChoiceBox<String> cbLaboratorio;
     @FXML private ChoiceBox<String> cbStatus;
+    @FXML private ChoiceBox<String> cbLaboratorio;
 
-    @FXML private TableView<UtensilioMock> tabelaUtensilios;
-    @FXML private TableColumn<UtensilioMock, String> colItem;
-    @FXML private TableColumn<UtensilioMock, String> colLaboratorio;
-    @FXML private TableColumn<UtensilioMock, String> colStatus;
-    @FXML private TableColumn<UtensilioMock, Integer> colQtdTotal;
-    @FXML private TableColumn<UtensilioMock, Integer> colQtdDisponivel;
+    @FXML private TableView<Utensilio> tabelaUtensilios;
+    @FXML private TableColumn<Utensilio, String> colItem;
+    @FXML private TableColumn<Utensilio, String> colLaboratorio;
+    @FXML private TableColumn<Utensilio, String> colStatus;
+    @FXML private TableColumn<Utensilio, Integer> colQtdTotal;
+    @FXML private TableColumn<Utensilio, Integer> colQtdDisponivel;
 
-    // Lista observável para preencher a tabela
-    private ObservableList<UtensilioMock> listaUtensilios = FXCollections.observableArrayList();
+    @FXML private VBox submenuEstoque;
+    @FXML private Label setaEstoque;
+    @FXML private Button btnNavEstoque;
 
-    @FXML
-    public void initialize() {
+    @FXML private ChoiceBox<String> cbUnidade;
+    @FXML private ChoiceBox<String> cbCurso;
+
+    private ObservableList<Utensilio> observableListUtensilios;
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
         iniciarRelogio();
-
         usuarioLabel.setText("Administrador");
 
-        // Preenche os ChoiceBoxes de filtro
-        cbLaboratorio.setItems(FXCollections.observableArrayList("Todos", "Cozinha Quente", "Cozinha Fria", "Confeitaria", "Panificação"));
-        cbLaboratorio.setValue("Todos");
+        // Preenche os ChoiceBoxes de Filtro
+        if (cbStatus != null) {
+            cbStatus.setItems(FXCollections.observableArrayList("Todos", "Disponível", "Em uso", "Conserto"));
+            cbStatus.setValue("Todos");
+        }
 
-        cbStatus.setItems(FXCollections.observableArrayList("Todos", "Disponível", "Em Uso", "Requer Conserto"));
-        cbStatus.setValue("Todos");
+        if (cbLaboratorio != null) {
+            cbLaboratorio.setItems(FXCollections.observableArrayList("Todos", "Estoque Central", "Cozinha Quente", "Cozinha Oriental"));
+            cbLaboratorio.setValue("Todos");
+        }
 
-        configurarTabela();
-        carregarDadosDeTeste();
+        configurarColunas();
+        carregarDadosBanco();
     }
 
-    // ==========================================
-    // CONFIGURAÇÕES INICIAIS
-    // ==========================================
-    private void configurarTabela() {
+    private void configurarColunas() {
         colItem.setCellValueFactory(new PropertyValueFactory<>("nome"));
         colLaboratorio.setCellValueFactory(new PropertyValueFactory<>("laboratorio"));
         colStatus.setCellValueFactory(new PropertyValueFactory<>("status"));
         colQtdTotal.setCellValueFactory(new PropertyValueFactory<>("qtdTotal"));
         colQtdDisponivel.setCellValueFactory(new PropertyValueFactory<>("qtdDisponivel"));
+    }
 
-        tabelaUtensilios.setItems(listaUtensilios);
+    private void carregarDadosBanco() {
+        List<Utensilio> utensiliosDb = UtensilioDAO.listarUtensilios();
+        observableListUtensilios = FXCollections.observableArrayList(utensiliosDb);
+        tabelaUtensilios.setItems(observableListUtensilios);
     }
 
     private void iniciarRelogio() {
@@ -106,14 +104,35 @@ public class UtensiliosController {
     }
 
     // ==========================================
+    // AÇÕES DA TELA (Adicionados os métodos ausentes)
+    // ==========================================
+    @FXML
+    public void onFiltrarClick(ActionEvent event) {
+        System.out.println("Filtrando status: " + cbStatus.getValue() + " | Busca: " + txtPesquisaUtensilio.getText());
+    }
+
+    @FXML
+    public void onRegistrarAvariaClick(ActionEvent event) {
+        System.out.println("Abrindo tela de registro de avaria...");
+    }
+
+    @FXML
+    public void onEditarClick(ActionEvent event) {
+        System.out.println("Editando utensílio...");
+    }
+
+    @FXML
+    public void onAdicionarClick(ActionEvent event) {
+        System.out.println("Adicionando novo utensílio...");
+    }
+
+    // ==========================================
     // AÇÕES DO MENU LATERAL
     // ==========================================
-
     @FXML
     public void onClickHome(ActionEvent event) {
         try { MainApplication.trocadorDeTelas("homeTest.fxml"); } catch (Exception e) { e.printStackTrace(); }
     }
-
 
     @FXML
     public void onClickRelatorio(ActionEvent event) {
@@ -165,6 +184,7 @@ public class UtensiliosController {
             }
         }
     }
+
     @FXML
     public void toggleDropdownEstoque(ActionEvent event) {
         if (submenuEstoque != null && btnNavEstoque != null) {
@@ -194,95 +214,22 @@ public class UtensiliosController {
     }
 
     @FXML
-    public void onClickInsumos(javafx.event.ActionEvent event) {
+    public void onClickInsumos(ActionEvent event) {
         try {
-            com.sigec.system.sigec.MainApplication.trocadorDeTelas("lista-estoque.fxml");
-        } catch (java.io.IOException e) {
+            MainApplication.trocadorDeTelas("lista-estoque.fxml");
+        } catch (IOException e) {
             e.printStackTrace();
             System.out.println("Erro ao carregar a tela de Insumos: " + e.getMessage());
         }
     }
 
     @FXML
-    public void onClickUtensilios(javafx.event.ActionEvent event) {
+    public void onClickUtensilios(ActionEvent event) {
         try {
-            com.sigec.system.sigec.MainApplication.trocadorDeTelas("gestao-utensilios.fxml");
-        } catch (java.io.IOException e) {
+            MainApplication.trocadorDeTelas("gestao-utensilios.fxml");
+        } catch (IOException e) {
             e.printStackTrace();
             System.out.println("Erro ao carregar a tela de Utensílios: " + e.getMessage());
         }
-    }
-
-    // ==========================================
-    // AÇÕES DA TELA DE UTENSÍLIOS
-    // ==========================================
-    @FXML
-    void onFiltrarClick(ActionEvent event) {
-        String pesquisa = txtPesquisaUtensilio.getText();
-        String lab = cbLaboratorio.getValue();
-        String status = cbStatus.getValue();
-        System.out.println("Filtrando por: " + pesquisa + " | Lab: " + lab + " | Status: " + status);
-    }
-
-    @FXML
-    void onAdicionarClick(ActionEvent event) {
-        System.out.println("Abrir modal de Adicionar Utensílio");
-    }
-
-    @FXML
-    void onEditarClick(ActionEvent event) {
-        UtensilioMock selecionado = tabelaUtensilios.getSelectionModel().getSelectedItem();
-        if (selecionado != null) {
-            System.out.println("Editando utensílio: " + selecionado.getNome());
-        } else {
-            System.out.println("Nenhum item selecionado!");
-        }
-    }
-
-    @FXML
-    void onRegistrarAvariaClick(ActionEvent event) {
-        UtensilioMock selecionado = tabelaUtensilios.getSelectionModel().getSelectedItem();
-        if (selecionado != null) {
-            System.out.println("Abrindo modal de Avaria para o utensílio: " + selecionado.getNome());
-        } else {
-            System.out.println("Selecione um utensílio na tabela para registrar avaria.");
-        }
-    }
-
-    // ==========================================
-    // DADOS MOCK (Exemplo Visual)
-    // ==========================================
-    private void carregarDadosDeTeste() {
-        listaUtensilios.addAll(
-                new UtensilioMock("Balança Digital", "Cozinha Quente", "Disponível", 5, 4, 1),
-                new UtensilioMock("Fouet (Batedor)", "Confeitaria", "Em Uso", 12, 10, 0),
-                new UtensilioMock("Assadeira Retangular", "Panificação", "Disponível", 20, 18, 2),
-                new UtensilioMock("Faca do Chef 8\"", "Cozinha Fria", "Requer Conserto", 8, 5, 3)
-        );
-    }
-
-    public static class UtensilioMock {
-        private String nome;
-        private String laboratorio;
-        private String status;
-        private int qtdTotal;
-        private int qtdDisponivel;
-        private int qtdAvariada;
-
-        public UtensilioMock(String nome, String lab, String status, int total, int disponivel, int avariada) {
-            this.nome = nome;
-            this.laboratorio = lab;
-            this.status = status;
-            this.qtdTotal = total;
-            this.qtdDisponivel = disponivel;
-            this.qtdAvariada = avariada;
-        }
-
-        public String getNome() { return nome; }
-        public String getLaboratorio() { return laboratorio; }
-        public String getStatus() { return status; }
-        public int getQtdTotal() { return qtdTotal; }
-        public int getQtdDisponivel() { return qtdDisponivel; }
-        public int getQtdAvariada() { return qtdAvariada; }
     }
 }

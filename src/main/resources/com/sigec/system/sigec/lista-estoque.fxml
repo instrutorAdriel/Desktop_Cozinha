@@ -191,7 +191,7 @@
                                     <children>
                                         <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
-                                               <Image url="@imagens/cadastroIMG.png" />
+                                                <Image url="@imagens/cadastroIMG.png" />
                                             </image>
                                             <effect>
                                                 <ColorAdjust brightness="1.0" />
@@ -309,7 +309,33 @@
                                                 <Font name="Arial Bold" size="13.0" />
                                             </font>
                                         </Button>
+
+                                        <!-- NOVO: Filtro de Unidade -->
+                                        <HBox alignment="CENTER_LEFT" spacing="8.0">
+                                            <children>
+                                                <Label text="Unidade:" textFill="#475569">
+                                                    <font>
+                                                        <Font name="Arial Bold" size="13.0" />
+                                                    </font>
+                                                </Label>
+                                                <ChoiceBox fx:id="cbUnidade" prefHeight="35.0" prefWidth="130.0" styleClass="custom-choice-box" />
+                                            </children>
+                                        </HBox>
+
+                                        <!-- NOVO: Filtro de Curso -->
+                                        <HBox alignment="CENTER_LEFT" spacing="8.0">
+                                            <children>
+                                                <Label text="Curso:" textFill="#475569">
+                                                    <font>
+                                                        <Font name="Arial Bold" size="13.0" />
+                                                    </font>
+                                                </Label>
+                                                <ChoiceBox fx:id="cbCurso" prefHeight="35.0" prefWidth="130.0" styleClass="custom-choice-box" />
+                                            </children>
+                                        </HBox>
+
                                         <Region HBox.hgrow="ALWAYS" />
+
                                         <Button alignment="CENTER" graphicTextGap="6.0" mnemonicParsing="false" onAction="#onClickAddProduto" prefHeight="35.0" prefWidth="115.0" styleClass="btn-action-primary" text="Adicionar">
                                             <graphic>
                                                 <ImageView fitHeight="14.0" fitWidth="14.0" pickOnBounds="true" preserveRatio="true">
@@ -384,4 +410,3 @@
         </StackPane>
     </center>
 </BorderPane>
-

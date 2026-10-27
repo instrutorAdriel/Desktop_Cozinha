@@ -14,11 +14,7 @@ import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
@@ -88,6 +84,8 @@ public class HomeController implements Initializable {
     @FXML
     private Label setaEstoque;
     // ----------------------------------------------
+    @FXML
+    private ChoiceBox<String> cbUnidade;
 
     @FXML
     private Button btnNavCalendario;
