@@ -51,12 +51,13 @@ public class ScreenTransitionManager {
 
     // Ordem das abas principais para navegação intuitiva
     private static final Map<String, Integer> TAB_ORDER = Map.of(
-            "home.fxml", 0,
-            "lista-estoque.fxml", 1,
-            "historico.fxml", 2,
-            "cadastro.fxml", 3,
-            "cadastro-turma.fxml", 3);
-
+            "homeTest.fxml", 1,
+            "calendario.fxml", 2,
+            "lista-estoque.fxml", 3,
+            "historico.fxml", 4,
+            "cadastro.fxml", 5,
+            "cadastro-turma.fxml", 6
+    );
     // Parâmetros de animação para transições de tela cheia (Login <-> Home, etc.)
     private static final double FULL_MOTION_DISTANCE = 55.0;
     private static final double FULL_STAGGER_INTERVAL_MS = 45.0;

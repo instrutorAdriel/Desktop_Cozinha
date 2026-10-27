@@ -67,14 +67,80 @@
                         <Insets bottom="15.0" top="20.0" />
                     </VBox.margin>
                 </Button>
-                <Button id="btnNavEstoque" alignment="BASELINE_LEFT" graphicTextGap="12.0" mnemonicParsing="false" onAction="#onClickEstoque" styleClass="btn-padrao" text="Estoque">
+
+                <!-- Container do Menu Dropdown de Estoque -->
+                <VBox alignment="TOP_CENTER" spacing="0.0">
+                    <children>
+                        <!-- Botão Principal: Estoque -->
+                        <Button id="btnNavEstoque" fx:id="btnNavEstoque" alignment="CENTER_LEFT" mnemonicParsing="false" onAction="#toggleDropdownEstoque" styleClass="btn-padrao">
+                            <graphic>
+                                <HBox alignment="CENTER_LEFT" prefWidth="160.0" spacing="10.0">
+                                    <children>
+                                        <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@imagens/estoque.png" />
+                                            </image>
+                                            <effect>
+                                                <ColorAdjust brightness="1.0" />
+                                            </effect>
+                                        </ImageView>
+                                        <Label text="Estoque" textFill="WHITE">
+                                            <font>
+                                                <Font name="Arial Bold" size="15.0" />
+                                            </font>
+                                        </Label>
+                                        <Region HBox.hgrow="ALWAYS" />
+                                        <Label fx:id="setaEstoque" text="▼" textFill="WHITE">
+                                            <font>
+                                                <Font name="Arial Bold" size="11.0" />
+                                            </font>
+                                        </Label>
+                                    </children>
+                                </HBox>
+                            </graphic>
+                        </Button>
+
+                        <!-- Submenu com Insumos e Utensílios -->
+
+                        <VBox fx:id="submenuEstoque" alignment="TOP_CENTER" managed="false" spacing="0.0" styleClass="submenu-lateral" visible="false">
+                            <children>
+                                <!-- Botão Insumos (Antiga tela de Estoque) -->
+                                <Button id="btnSubNavInsumos" fx:id="btnSubNavInsumos" alignment="BASELINE_LEFT" graphicTextGap="8.0" mnemonicParsing="false" onAction="#onClickInsumos" styleClass="btn-sub-opcao" text="Insumos">
+                                    <graphic>
+                                        <Label text="•" textFill="#94a3b8">
+                                            <font>
+                                                <Font name="Arial Bold" size="14.0" />
+                                            </font>
+                                        </Label>
+                                    </graphic>
+                                </Button>
+
+                                <!-- Botão Utensílios -->
+                                <Button id="btnSubNavUtensilios" fx:id="btnSubNavUtensilios" alignment="BASELINE_LEFT" graphicTextGap="8.0" mnemonicParsing="false" onAction="#onClickUtensilios" styleClass="btn-sub-opcao" text="Utensílios">
+                                    <graphic>
+                                        <Label text="•" textFill="#94a3b8">
+                                            <font>
+                                                <Font name="Arial Bold" size="14.0" />
+                                            </font>
+                                        </Label>
+                                    </graphic>
+                                </Button>
+                            </children>
+                        </VBox>
+                    </children>
+                    <VBox.margin>
+                        <Insets bottom="15.0" />
+                    </VBox.margin>
+                </VBox>
+
+                <Button id="btnNavRelatorio" alignment="BASELINE_LEFT" graphicTextGap="12.0" mnemonicParsing="false" onAction="#onClickRelatorio" styleClass="btn-padrao" text="Relatório">
                     <font>
                         <Font name="Arial Bold" size="15.0" />
                     </font>
                     <graphic>
                         <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
                             <image>
-                                <Image url="@imagens/estoque.png" />
+                                <Image url="@imagens/relatorio.png" />
                             </image>
                             <effect>
                                 <ColorAdjust brightness="1.0" />
@@ -85,7 +151,9 @@
                         <Insets bottom="15.0" />
                     </VBox.margin>
                 </Button>
-                <Button id="btnNavRelatorio" alignment="BASELINE_LEFT" graphicTextGap="12.0" mnemonicParsing="false" onAction="#onClickRelatorio" styleClass="btn-padrao" text="Relatório">
+
+                <!-- Botão Solicitações -->
+                <Button id="btnNavSolicitacoes" alignment="BASELINE_LEFT" graphicTextGap="12.0" mnemonicParsing="false" onAction="#onClickSolicitacoes" styleClass="btn-padrao" text="Solicitações">
                     <font>
                         <Font name="Arial Bold" size="15.0" />
                     </font>
@@ -93,6 +161,25 @@
                         <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
                             <image>
                                 <Image url="@imagens/relatorio.png" />
+                            </image>
+                            <effect>
+                                <ColorAdjust brightness="1.0" />
+                            </effect>
+                        </ImageView>
+                    </graphic>
+                    <VBox.margin>
+                        <Insets bottom="15.0" />
+                    </VBox.margin>
+                </Button>
+
+                <Button id="btnNavCalendario" fx:id="btnNavCalendario" alignment="BASELINE_LEFT" graphicTextGap="12.0" mnemonicParsing="false" onAction="#botaoCalendarioAction" styleClass="btn-padrao" text="Calendário">
+                    <font>
+                        <Font name="Arial Bold" size="15.0" />
+                    </font>
+                    <graphic>
+                        <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@imagens/calendario.png" />
                             </image>
                             <effect>
                                 <ColorAdjust brightness="1.0" />
@@ -194,7 +281,7 @@
                 </ImageView>
                 <VBox alignment="TOP_CENTER" prefHeight="550.0" prefWidth="600.0" style="-fx-border-color: #054584; -fx-border-width: 0 0 0 1;">
                     <children>
-                        <HBox alignment="CENTER" prefHeight="50.0" styleClass="painel-secundario">
+                        <HBox alignment="CENTER" prefHeight="40.0" minHeight="40.0" maxHeight="40.0" styleClass="status-orange-banner">
                             <children>
                                 <Label fx:id="dataLabel" textFill="WHITE">
                                     <font>

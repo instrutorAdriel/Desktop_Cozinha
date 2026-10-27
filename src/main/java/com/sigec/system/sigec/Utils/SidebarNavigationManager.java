@@ -65,12 +65,15 @@ public final class SidebarNavigationManager {
     }
 
     /**
-     * Configura o comportamento do menu dropdown de Cadastros e seus subitens.
+     * Configura o comportamento do menu dropdown de Cadastros e Estoque e seus subitens.
      *
      * @param lateralParent Container do menu lateral
      * @param fxml          Nome do arquivo FXML atual
      */
     public static void configurarMenuDropdown(Parent lateralParent, String fxml) {
+        // ==========================================
+        // 1. LÓGICA DO MENU CADASTRO
+        // ==========================================
         Node btnCadNode = lateralParent.lookup("#btnNavCadastro");
         Node subCadNode = lateralParent.lookup("#submenuCadastro");
         Node setaCadNode = lateralParent.lookup("#setaCadastro");
@@ -116,7 +119,7 @@ public final class SidebarNavigationManager {
 
         boolean isAlreadyInCadastro = ScreenTransitionManager.getCurrentFxml() != null &&
                 (ScreenTransitionManager.getCurrentFxml().equalsIgnoreCase("cadastro.fxml") ||
-                 ScreenTransitionManager.getCurrentFxml().equalsIgnoreCase("cadastro-turma.fxml"));
+                        ScreenTransitionManager.getCurrentFxml().equalsIgnoreCase("cadastro-turma.fxml"));
 
         if (btnCadNode instanceof Button btnCad && subCadNode instanceof Pane subPane) {
             if (isCadastroTela) {
@@ -126,7 +129,6 @@ public final class SidebarNavigationManager {
                 if (!subPane.getStyleClass().contains("submenu-lateral-ativo")) {
                     subPane.getStyleClass().add("submenu-lateral-ativo");
                 }
-                // Se já estava em uma das telas de cadastro, apenas preserva o menu ativo sem reiniciar a timeline
                 if (!isAlreadyInCadastro && !ButtonBorderLapAnimator.isAnimating(btnCad)) {
                     DropdownBorderLapAnimator.animarDropdown(btnCad, subPane);
                 }
@@ -139,26 +141,95 @@ public final class SidebarNavigationManager {
 
             btnCad.setOnAction(e -> alternarDropdown(btnCad, subPane, setaCadNode));
         }
+
+        // ==========================================
+        // 2. LÓGICA DO MENU ESTOQUE
+        // ==========================================
+        Node btnEstoqueNode = lateralParent.lookup("#btnNavEstoque");
+        Node subEstoqueNode = lateralParent.lookup("#submenuEstoque");
+        Node setaEstoqueNode = lateralParent.lookup("#setaEstoque");
+        Node btnSubInsumosNode = lateralParent.lookup("#btnSubNavInsumos");
+        Node btnSubUtensiliosNode = lateralParent.lookup("#btnSubNavUtensilios");
+
+        boolean isEstoqueInsumos = "lista-estoque.fxml".equalsIgnoreCase(fxml);
+        boolean isEstoqueUtensilios = "gestao-utensilios.fxml".equalsIgnoreCase(fxml);
+        boolean isEstoqueTela = isEstoqueInsumos || isEstoqueUtensilios;
+
+        if (subEstoqueNode != null) {
+            subEstoqueNode.setVisible(isEstoqueTela);
+            subEstoqueNode.setManaged(isEstoqueTela);
+        }
+
+        if (setaEstoqueNode instanceof Label setaLbl) {
+            setaLbl.setText(isEstoqueTela ? "▶" : "▼");
+        }
+
+        if (btnSubInsumosNode instanceof Button btnSubInsumos) {
+            if (isEstoqueInsumos) {
+                if (!btnSubInsumos.getStyleClass().contains("btn-sub-ativo")) {
+                    btnSubInsumos.getStyleClass().add("btn-sub-ativo");
+                }
+            } else {
+                btnSubInsumos.getStyleClass().remove("btn-sub-ativo");
+            }
+            btnSubInsumos.setOnAction(e -> navegarComVerificacao("lista-estoque.fxml"));
+        }
+
+        if (btnSubUtensiliosNode instanceof Button btnSubUtensilios) {
+            if (isEstoqueUtensilios) {
+                if (!btnSubUtensilios.getStyleClass().contains("btn-sub-ativo")) {
+                    btnSubUtensilios.getStyleClass().add("btn-sub-ativo");
+                }
+            } else {
+                btnSubUtensilios.getStyleClass().remove("btn-sub-ativo");
+            }
+            btnSubUtensilios.setOnAction(e -> navegarComVerificacao("gestao-utensilios.fxml"));
+        }
+
+        boolean isAlreadyInEstoque = ScreenTransitionManager.getCurrentFxml() != null &&
+                (ScreenTransitionManager.getCurrentFxml().equalsIgnoreCase("lista-estoque.fxml") ||
+                        ScreenTransitionManager.getCurrentFxml().equalsIgnoreCase("gestao-utensilios.fxml"));
+
+        if (btnEstoqueNode instanceof Button btnEstoque && subEstoqueNode instanceof Pane subEstoquePane) {
+            if (isEstoqueTela) {
+                if (!btnEstoque.getStyleClass().contains("btn-dropdown-ativo")) {
+                    btnEstoque.getStyleClass().add("btn-dropdown-ativo");
+                }
+                if (!subEstoquePane.getStyleClass().contains("submenu-lateral-ativo")) {
+                    subEstoquePane.getStyleClass().add("submenu-lateral-ativo");
+                }
+                if (!isAlreadyInEstoque && !ButtonBorderLapAnimator.isAnimating(btnEstoque)) {
+                    DropdownBorderLapAnimator.animarDropdown(btnEstoque, subEstoquePane);
+                }
+            } else {
+                btnEstoque.getStyleClass().remove("btn-dropdown-ativo");
+                btnEstoque.setStyle(null);
+                subEstoquePane.getStyleClass().remove("submenu-lateral-ativo");
+                subEstoquePane.setStyle(null);
+            }
+
+            btnEstoque.setOnAction(e -> alternarDropdown(btnEstoque, subEstoquePane, setaEstoqueNode));
+        }
     }
 
     /**
-     * Alterna a visibilidade e animação do dropdown de cadastros ao ser clicado.
+     * Alterna a visibilidade e animação dos dropdowns ao serem clicados.
      */
-    private static void alternarDropdown(Button btnCad, Pane subPane, Node setaCadNode) {
+    private static void alternarDropdown(Button btnParent, Pane subPane, Node setaNode) {
         boolean novoEstado = !subPane.isVisible();
         subPane.setVisible(novoEstado);
         subPane.setManaged(novoEstado);
 
-        if (setaCadNode instanceof Label setaLbl) {
+        if (setaNode instanceof Label setaLbl) {
             setaLbl.setText(novoEstado ? "▶" : "▼");
         }
 
         if (novoEstado) {
-            DropdownBorderLapAnimator.animarDropdown(btnCad, subPane);
+            DropdownBorderLapAnimator.animarDropdown(btnParent, subPane);
         } else {
             ButtonBorderLapAnimator.cancelarAnimacaoAtiva();
-            btnCad.getStyleClass().remove("btn-dropdown-ativo");
-            btnCad.setStyle(null);
+            btnParent.getStyleClass().remove("btn-dropdown-ativo");
+            btnParent.setStyle(null);
             subPane.getStyleClass().remove("submenu-lateral-ativo");
             subPane.setStyle(null);
         }
@@ -172,15 +243,21 @@ public final class SidebarNavigationManager {
         String text = btn.getText() != null ? btn.getText().toLowerCase().trim() : "";
 
         // O botão pai de dropdown é gerenciado exclusivamente por configurarMenuDropdown
-        if (id.equals("btnnavcadastro") || id.contains("dropdown")) {
+        if (id.equals("btnnavcadastro") || id.equals("btnnavestoque") || id.contains("dropdown")) {
             return;
         }
 
         String destino = null;
         if (id.contains("home") || text.contains("inicial") || text.contains("home")) {
-            destino = "home.fxml";
-        } else if (id.contains("estoque") || text.contains("estoque")) {
+            destino = "homeTest.fxml";
+        } else if (id.contains("calendario") || text.contains("calendário") || text.contains("calendario")) {
+            destino = "calendario.fxml";
+        } else if (id.contains("insumo") || text.contains("insumos") || id.contains("estoque") || text.contains("estoque")) {
             destino = "lista-estoque.fxml";
+        } else if (id.contains("utensilio") || text.contains("utensílio") || text.contains("utensilio")) {
+            destino = "gestao-utensilios.fxml";
+        } else if (id.contains("solicitacao") || text.contains("solicitação") || text.contains("solicitações") || text.contains("solicitacoes")) {
+            destino = "solicitacoes-extras.fxml";
         } else if (id.contains("relatorio") || id.contains("historico") || text.contains("relat") || text.contains("hist")) {
             destino = "historico.fxml";
         }
@@ -192,7 +269,7 @@ public final class SidebarNavigationManager {
     }
 
     /**
-     * Verifica se o botão corresponde à tela indicada pelo FXML.
+     * Verifica se o botão corresponde à tela indicada pelo FXML para ativar o visual.
      */
     private static boolean isBotaoCorrespondente(Button btn, String fxml) {
         String id = btn.getId() != null ? btn.getId().toLowerCase() : "";
@@ -200,19 +277,29 @@ public final class SidebarNavigationManager {
         String target = fxml.toLowerCase();
 
         // Botão dropdown pai não deve receber contorno direto de aba única
-        if (id.equals("btnnavcadastro")) {
+        if (id.equals("btnnavcadastro") || id.equals("btnnavestoque")) {
             return false;
         }
 
         if (target.contains("home")) {
             return id.contains("home") || text.contains("inicial") || text.contains("home");
         }
-        if (target.contains("estoque")) {
-            return id.contains("estoque") || text.contains("estoque");
+        if (target.contains("calendario")) {
+            return id.contains("calendario") || text.contains("calendário") || text.contains("calendario");
+        }
+        if (target.contains("estoque") || target.contains("lista-estoque")) {
+            return id.contains("insumo") || text.contains("insumos") || id.contains("estoque") || text.contains("estoque");
+        }
+        if (target.contains("utensilios") || target.contains("utensilio")) {
+            return id.contains("utensilio") || text.contains("utensílio") || text.contains("utensilio");
+        }
+        if (target.contains("solicitacoes") || target.contains("solicitacao")) {
+            return id.contains("solicitacao") || text.contains("solicitação") || text.contains("solicitações") || text.contains("solicitacoes");
         }
         if (target.contains("historico") || target.contains("relatorio")) {
             return id.contains("relatorio") || id.contains("historico") || text.contains("relat") || text.contains("hist");
         }
+
         return false;
     }
 

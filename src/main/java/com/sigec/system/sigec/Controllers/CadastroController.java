@@ -3,9 +3,7 @@ package com.sigec.system.sigec.Controllers;
 import com.sigec.system.sigec.DAOS.UserDAO;
 import com.sigec.system.sigec.MainApplication;
 import com.sigec.system.sigec.Services.SessaoService;
-import com.sigec.system.sigec.Utils.BackgroundAnimator;
-import com.sigec.system.sigec.Utils.ButtonBorderLapAnimator;
-import com.sigec.system.sigec.Utils.FormNavigationUtil;
+import com.sigec.system.sigec.Utils.*;
 
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
@@ -24,6 +22,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.PopupWindow;
 import javafx.stage.Window;
@@ -49,6 +48,14 @@ public class CadastroController implements Initializable {
     @FXML private Button btnSubNavUsuario;
     @FXML private Button btnSubNavTurma;
     @FXML private Button botaoSair;
+
+    @FXML
+    private VBox submenuEstoque;
+    @FXML
+    private Button btnNavEstoque;
+    @FXML
+    private Label setaEstoque;
+
 
     @FXML private TextField txtNome;
     @FXML private TextField txtEmail;
@@ -235,14 +242,7 @@ public class CadastroController implements Initializable {
         }
     }
 
-    @FXML
-    public void onClickEstoque(ActionEvent event) {
-        try {
-            MainApplication.trocadorDeTelas("lista-estoque.fxml");
-        } catch (IOException e) {
-            exibirAlerta(Alert.AlertType.ERROR, "Erro", "Erro ao navegar para o Estoque: " + e.getMessage());
-        }
-    }
+
 
     @FXML
     public void onClickRelatorio(ActionEvent event) {
@@ -250,6 +250,15 @@ public class CadastroController implements Initializable {
             MainApplication.trocadorDeTelas("historico.fxml");
         } catch (IOException e) {
             exibirAlerta(Alert.AlertType.ERROR, "Erro", "Erro ao navegar para o Relatório: " + e.getMessage());
+        }
+    }
+
+    @FXML
+    protected void botaoCalendarioAction(javafx.event.ActionEvent event) {
+        try {
+            com.sigec.system.sigec.MainApplication.trocadorDeTelas("calendario.fxml");
+        } catch (java.io.IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -271,6 +280,55 @@ public class CadastroController implements Initializable {
                 submenuCadastro.getStyleClass().remove("submenu-lateral-ativo");
                 submenuCadastro.setStyle(null);
             }
+        }
+    }
+
+    @FXML
+    public void toggleDropdownEstoque(ActionEvent event) {
+        if (submenuEstoque != null && btnNavEstoque != null) {
+            boolean expandido = !submenuEstoque.isVisible();
+
+            if (setaEstoque != null) {
+                setaEstoque.setText(expandido ? "▲" : "▼");
+            }
+
+            if (expandido) {
+                submenuEstoque.setVisible(true);
+                submenuEstoque.setManaged(true);
+
+                DropdownBorderLapAnimator.animarDropdown(btnNavEstoque, submenuEstoque);
+            } else {
+
+                ButtonBorderLapAnimator.cancelarAnimacaoAtiva();
+
+                btnNavEstoque.getStyleClass().remove("btn-dropdown-ativo");
+                btnNavEstoque.setStyle(null);
+                submenuEstoque.getStyleClass().remove("submenu-lateral-ativo");
+                submenuEstoque.setStyle(null);
+
+                submenuEstoque.setVisible(false);
+                submenuEstoque.setManaged(false);
+            }
+        }
+    }
+
+    @FXML
+    public void onClickInsumos(javafx.event.ActionEvent event) {
+        try {
+            com.sigec.system.sigec.MainApplication.trocadorDeTelas("lista-estoque.fxml");
+        } catch (java.io.IOException e) {
+            e.printStackTrace();
+            System.out.println("Erro ao carregar a tela de Insumos: " + e.getMessage());
+        }
+    }
+
+    @FXML
+    public void onClickUtensilios(javafx.event.ActionEvent event) {
+        try {
+            com.sigec.system.sigec.MainApplication.trocadorDeTelas("gestao-utensilios.fxml");
+        } catch (java.io.IOException e) {
+            e.printStackTrace();
+            System.out.println("Erro ao carregar a tela de Utensílios: " + e.getMessage());
         }
     }
 
@@ -297,6 +355,17 @@ public class CadastroController implements Initializable {
             MainApplication.trocadorDeTelas("login.fxml");
         } catch (IOException e) {
             exibirAlerta(Alert.AlertType.ERROR, "Erro", "Erro ao sair: " + e.getMessage());
+        }
+    }
+
+
+
+    @FXML
+    public void onClickSolicitacoes(ActionEvent event) {
+        try {
+            MainApplication.trocadorDeTelas("solicitacoes-extras.fxml");
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -362,4 +431,8 @@ public class CadastroController implements Initializable {
         alert.setContentText(mensagem);
         alert.showAndWait();
     }
+
+
+
 }
+

@@ -4,6 +4,8 @@ import com.sigec.system.sigec.MainApplication;
 import com.sigec.system.sigec.Services.SessaoService;
 import com.sigec.system.sigec.Utils.BackgroundAnimator;
 import com.sigec.system.sigec.Utils.ButtonBorderLapAnimator;
+import com.sigec.system.sigec.Utils.DropdownBorderLapAnimator;
+import com.sigec.system.sigec.Utils.ScreenTransitionManager;
 
 import javafx.animation.Animation;
 import javafx.animation.FadeTransition;
@@ -12,11 +14,7 @@ import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
@@ -75,6 +73,22 @@ public class HomeController implements Initializable {
 
     @FXML
     private Label setaCadastro;
+
+    // --- VARIÁVEIS DO MENU DROPDOWN DE ESTOQUE ---
+    @FXML
+    private Button btnNavEstoque;
+
+    @FXML
+    private VBox submenuEstoque;
+
+    @FXML
+    private Label setaEstoque;
+    // ----------------------------------------------
+    @FXML
+    private ChoiceBox<String> cbUnidade;
+
+    @FXML
+    private Button btnNavCalendario;
 
     @FXML
     private Button botaoSair;
@@ -137,20 +151,90 @@ public class HomeController implements Initializable {
     // =========================================================================
 
     @FXML
+    public void toggleDropdownCadastro(ActionEvent event) {
+        if (submenuCadastro != null) {
+            boolean expandido = !submenuCadastro.isVisible();
+            submenuCadastro.setVisible(expandido);
+            submenuCadastro.setManaged(expandido);
+            if (setaCadastro != null) {
+                setaCadastro.setText(expandido ? "▲" : "▼");
+            }
+            if (expandido && btnNavCadastro != null) {
+                ButtonBorderLapAnimator.animarDropdown(btnNavCadastro, submenuCadastro);
+            } else if (!expandido && btnNavCadastro != null) {
+                ButtonBorderLapAnimator.cancelarAnimacaoAtiva();
+                btnNavCadastro.getStyleClass().remove("btn-dropdown-ativo");
+                btnNavCadastro.setStyle(null);
+                submenuCadastro.getStyleClass().remove("submenu-lateral-ativo");
+                submenuCadastro.setStyle(null);
+            }
+        }
+    }
+
+    @FXML
+    public void toggleDropdownEstoque(ActionEvent event) {
+        if (submenuEstoque != null && btnNavEstoque != null) {
+            boolean expandido = !submenuEstoque.isVisible();
+
+            if (setaEstoque != null) {
+                setaEstoque.setText(expandido ? "▲" : "▼");
+            }
+
+            if (expandido) {
+                submenuEstoque.setVisible(true);
+                submenuEstoque.setManaged(true);
+
+                DropdownBorderLapAnimator.animarDropdown(btnNavEstoque, submenuEstoque);
+            } else {
+                ButtonBorderLapAnimator.cancelarAnimacaoAtiva();
+
+                btnNavEstoque.getStyleClass().remove("btn-dropdown-ativo");
+                btnNavEstoque.setStyle(null);
+                submenuEstoque.getStyleClass().remove("submenu-lateral-ativo");
+                submenuEstoque.setStyle(null);
+
+                submenuEstoque.setVisible(false);
+                submenuEstoque.setManaged(false);
+            }
+        }
+    }
+
+    @FXML
+    public void onClickInsumos(ActionEvent event) {
+        try {
+            MainApplication.trocadorDeTelas("lista-estoque.fxml");
+        } catch (IOException e) {
+            exibirErroNavegacao("Insumos", e);
+        }
+    }
+
+    @FXML
+    public void onClickUtensilios(ActionEvent event) {
+        try {
+            MainApplication.trocadorDeTelas("gestao-utensilios.fxml");
+        } catch (IOException e) {
+            exibirErroNavegacao("Utensílios", e);
+        }
+    }
+
+
+    @FXML
     public void botaoEstoqueAction(ActionEvent event) {
-        navegarParaEstoque();
+        toggleDropdownEstoque(event);
     }
 
     @FXML
     public void onClickEstoque(ActionEvent event) {
-        navegarParaEstoque();
+        toggleDropdownEstoque(event);
     }
 
-    private void navegarParaEstoque() {
+    // DEMAIS BOTÕES
+    @FXML
+    public void onClickSolicitacoes(ActionEvent event) {
         try {
-            MainApplication.trocadorDeTelas("lista-estoque.fxml");
+            MainApplication.trocadorDeTelas("solicitacoes-extras.fxml");
         } catch (IOException e) {
-            exibirErroNavegacao("Estoque", e);
+            exibirErroNavegacao("Solicitações", e);
         }
     }
 
@@ -172,26 +256,7 @@ public class HomeController implements Initializable {
         }
     }
 
-    @FXML
-    public void toggleDropdownCadastro(ActionEvent event) {
-        if (submenuCadastro != null) {
-            boolean expandido = !submenuCadastro.isVisible();
-            submenuCadastro.setVisible(expandido);
-            submenuCadastro.setManaged(expandido);
-            if (setaCadastro != null) {
-                setaCadastro.setText(expandido ? "▶" : "▼");
-            }
-            if (expandido && btnNavCadastro != null) {
-                ButtonBorderLapAnimator.animarDropdown(btnNavCadastro, submenuCadastro);
-            } else if (!expandido && btnNavCadastro != null) {
-                ButtonBorderLapAnimator.cancelarAnimacaoAtiva();
-                btnNavCadastro.getStyleClass().remove("btn-dropdown-ativo");
-                btnNavCadastro.setStyle(null);
-                submenuCadastro.getStyleClass().remove("submenu-lateral-ativo");
-                submenuCadastro.setStyle(null);
-            }
-        }
-    }
+
 
     @FXML
     public void onClickCadastroUsuario(ActionEvent event) {
@@ -222,6 +287,24 @@ public class HomeController implements Initializable {
             MainApplication.trocadorDeTelas("cadastro.fxml");
         } catch (IOException e) {
             exibirErroNavegacao("Cadastro de Usuário", e);
+        }
+    }
+
+    @FXML
+    public void botaoCalendarioAction(ActionEvent event) {
+        navegarParaCalendario();
+    }
+
+    @FXML
+    public void onClickCalendario(ActionEvent event) {
+        navegarParaCalendario();
+    }
+
+    private void navegarParaCalendario() {
+        try {
+            MainApplication.trocadorDeTelas("calendario.fxml");
+        } catch (IOException e) {
+            exibirErroNavegacao("Calendário", e);
         }
     }
 

@@ -7,11 +7,8 @@ import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.DatePicker;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.net.URL;
@@ -27,6 +24,8 @@ public class CadastroProdutoController implements Initializable {
     @FXML private DatePicker txtDataValidade;
     @FXML private Button btnVoltar;
     @FXML private Button btnCadastro;
+
+
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {

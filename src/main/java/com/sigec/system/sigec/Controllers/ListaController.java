@@ -7,6 +7,7 @@ import com.sigec.system.sigec.Services.SessaoService;
 import com.sigec.system.sigec.Utils.BackgroundAnimator;
 import com.sigec.system.sigec.Utils.ButtonBorderLapAnimator;
 
+import com.sigec.system.sigec.Utils.DropdownBorderLapAnimator;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -94,6 +95,15 @@ public class ListaController implements Initializable {
     private Label setaCadastro;
 
     @FXML
+    private VBox submenuEstoque;
+
+    @FXML
+    private Label setaEstoque;
+
+    @FXML
+    private Button btnNavEstoque;
+
+    @FXML
     private Button botaoSair;
 
     @Override
@@ -168,16 +178,30 @@ public class ListaController implements Initializable {
         navegarParaRelatorio();
     }
 
-    @FXML
-    public void botaoRelatorio(ActionEvent event) {
-        navegarParaRelatorio();
-    }
-
     private void navegarParaRelatorio() {
         try {
             MainApplication.trocadorDeTelas("historico.fxml");
         } catch (IOException e) {
             exibirAlerta(Alert.AlertType.ERROR, "Erro", "Erro ao navegar para a tela de relatórios: " + e.getMessage());
+        }
+    }
+
+    @FXML
+    protected void botaoCalendarioAction(javafx.event.ActionEvent event) {
+        try {
+            com.sigec.system.sigec.MainApplication.trocadorDeTelas("calendario.fxml");
+        } catch (java.io.IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    @FXML
+    public void onClickSolicitacoes(ActionEvent event) {
+        try {
+            MainApplication.trocadorDeTelas("solicitacoes-extras.fxml");
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -203,6 +227,54 @@ public class ListaController implements Initializable {
     }
 
     @FXML
+    public void toggleDropdownEstoque(ActionEvent event) {
+        if (submenuEstoque != null && btnNavEstoque != null) {
+            boolean expandido = !submenuEstoque.isVisible();
+
+            if (setaEstoque != null) {
+                setaEstoque.setText(expandido ? "▲" : "▼");
+            }
+
+            if (expandido) {
+                submenuEstoque.setVisible(true);
+                submenuEstoque.setManaged(true);
+
+                DropdownBorderLapAnimator.animarDropdown(btnNavEstoque, submenuEstoque);
+            } else {
+                ButtonBorderLapAnimator.cancelarAnimacaoAtiva();
+
+                btnNavEstoque.getStyleClass().remove("btn-dropdown-ativo");
+                btnNavEstoque.setStyle(null);
+                submenuEstoque.getStyleClass().remove("submenu-lateral-ativo");
+                submenuEstoque.setStyle(null);
+
+                submenuEstoque.setVisible(false);
+                submenuEstoque.setManaged(false);
+            }
+        }
+    }
+
+    @FXML
+    public void onClickInsumos(javafx.event.ActionEvent event) {
+        try {
+            com.sigec.system.sigec.MainApplication.trocadorDeTelas("lista-estoque.fxml");
+        } catch (java.io.IOException e) {
+            e.printStackTrace();
+            System.out.println("Erro ao carregar a tela de Insumos: " + e.getMessage());
+        }
+    }
+
+    @FXML
+    public void onClickUtensilios(javafx.event.ActionEvent event) {
+        try {
+            com.sigec.system.sigec.MainApplication.trocadorDeTelas("gestao-utensilios.fxml");
+        } catch (java.io.IOException e) {
+            e.printStackTrace();
+            System.out.println("Erro ao carregar a tela de Utensílios: " + e.getMessage());
+        }
+    }
+
+    @FXML
     public void onClickCadastroUsuario(ActionEvent event) {
         navegarParaCadastro();
     }
@@ -216,15 +288,6 @@ public class ListaController implements Initializable {
         }
     }
 
-    @FXML
-    public void onClickCadastro(ActionEvent event) {
-        toggleDropdownCadastro(event);
-    }
-
-    @FXML
-    public void botaoCadastroAction(ActionEvent event) {
-        toggleDropdownCadastro(event);
-    }
 
     private void navegarParaCadastro() {
         try {
@@ -252,11 +315,6 @@ public class ListaController implements Initializable {
     public void onPesquisarClick(ActionEvent event) {
         String termo = FiltrarProdutos != null ? FiltrarProdutos.getText() : "";
         System.out.println("Pesquisando produtos com termo: " + termo);
-    }
-
-    @FXML
-    public void onHelloButtonClick(ActionEvent event) {
-        onPesquisarClick(event);
     }
 
     public static ListaEstoque produtoSelecionadoParaEdicao;
