@@ -1,23 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.String?>
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ChoiceBox?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ListView?>
-<?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.effect.ColorAdjust?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Region?>
-<?import javafx.scene.layout.StackPane?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.effect.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
 <BorderPane prefHeight="650.0" prefWidth="950.0" stylesheets="@CSS/StyleSheet.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sigec.system.sigec.Controllers.CadastroTurmaController">
     <top>
@@ -256,16 +245,16 @@
                 </VBox>
 
                 <Region VBox.vgrow="ALWAYS" />
-                <HBox alignment="CENTER_LEFT">
+                <HBox alignment="CENTER">
                     <children>
-                        <Button fx:id="botaoSair" alignment="CENTER" mnemonicParsing="false" onAction="#botaoSairAction" styleClass="btn-sair" text="Sair">
+                        <Button fx:id="botaoSair" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#botaoSairAction" prefWidth="103.0" styleClass="btn-sair" text="Sair" textAlignment="CENTER">
                             <font>
                                 <Font name="Arial Bold" size="13.0" />
                             </font>
                         </Button>
                     </children>
                     <VBox.margin>
-                        <Insets bottom="20.0" left="15.0" />
+                        <Insets bottom="20.0" />
                     </VBox.margin>
                 </HBox>
             </children>
@@ -372,12 +361,17 @@
                                                                 <ChoiceBox fx:id="laboratorioSelect" maxWidth="1.7976931348623157E308" prefHeight="36.0" styleClass="choice-box-cadastro" />
                                                             </children>
                                                         </VBox>
+                                          <VBox>
+                                             <children>
+                                                <Label styleClass="form-label" text="Escolha o Curso*" />
+                                                <ChoiceBox maxWidth="1.7976931348623157E308" prefHeight="36.0" styleClass="choice-box-cadastro" />
+                                             </children></VBox>
 
                                                         <!-- Campo Professor Responsável -->
                                                         <VBox spacing="5.0">
                                                             <children>
                                                                 <Label styleClass="form-label" text="Professor Responsável *" />
-                                                                <TextField fx:id="txtProfessorResponsavel" editable="false" prefHeight="36.0" promptText="Selecione um instrutor na lista ao lado ➔" styleClass="form-field-input" style="-fx-background-color: #f8fafc;" />
+                                                                <TextField fx:id="txtProfessorResponsavel" editable="false" prefHeight="36.0" promptText="Selecione um instrutor na lista ao lado ➔" style="-fx-background-color: #f8fafc;" styleClass="form-field-input" />
                                                                 <Label text="Clique em um dos instrutores na Seção 2 para vincular" textFill="#94a3b8">
                                                                     <font>
                                                                         <Font name="Arial Italic" size="11.0" />
