@@ -3,10 +3,9 @@
 <?import java.lang.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
-<?import javafx.scene.effect.ColorAdjust?>
+<?import javafx.scene.effect.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.shape.SVGPath?>
 <?import javafx.scene.text.*?>
 
 <BorderPane prefHeight="600.0" prefWidth="800.0" stylesheets="@CSS/StyleSheet.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sigec.system.sigec.Controllers.ListaController">
@@ -268,7 +267,7 @@
                 </ImageView>
                 <VBox alignment="TOP_CENTER" prefHeight="550.0" prefWidth="600.0" style="-fx-border-color: #054584; -fx-border-width: 0 0 0 1;">
                     <children>
-                        <HBox alignment="CENTER" prefHeight="40.0" minHeight="40.0" maxHeight="40.0" styleClass="status-orange-banner">
+                        <HBox alignment="CENTER" maxHeight="40.0" minHeight="40.0" prefHeight="40.0" styleClass="status-orange-banner">
                             <children>
                                 <Label fx:id="dataLabel" textFill="WHITE">
                                     <font>
@@ -310,7 +309,7 @@
                                             </font>
                                         </Button>
 
-                                        <!-- NOVO: Filtro de Unidade -->
+                                        <!-- Filtro de Unidade -->
                                         <HBox alignment="CENTER_LEFT" spacing="8.0">
                                             <children>
                                                 <Label text="Unidade:" textFill="#475569">
@@ -322,7 +321,7 @@
                                             </children>
                                         </HBox>
 
-                                        <!-- NOVO: Filtro de Curso -->
+                                        <!-- Filtro de Curso -->
                                         <HBox alignment="CENTER_LEFT" spacing="8.0">
                                             <children>
                                                 <Label text="Curso:" textFill="#475569">
@@ -366,29 +365,7 @@
                                         <Insets left="20.0" right="20.0" top="15.0" />
                                     </VBox.margin>
                                 </HBox>
-                                <HBox alignment="CENTER_RIGHT" prefHeight="30.0" spacing="20.0">
-                                    <children>
-                                        <CheckBox fx:id="chkPereciveis" mnemonicParsing="false" styleClass="filtro-checkbox" text="Perecível">
-                                            <font>
-                                                <Font name="Arial Bold" size="13.0" />
-                                            </font>
-                                        </CheckBox>
-                                        <CheckBox fx:id="chkNaoPereciveis" mnemonicParsing="false" styleClass="filtro-checkbox" text="Não Perecível">
-                                            <font>
-                                                <Font name="Arial Bold" size="13.0" />
-                                            </font>
-                                        </CheckBox>
-                                        <CheckBox fx:id="chkUtensilios" mnemonicParsing="false" styleClass="filtro-checkbox" text="Utensílios">
-                                            <font>
-                                                <Font name="Arial Bold" size="13.0" />
-                                            </font>
-                                        </CheckBox>
-                                    </children>
-                                    <VBox.margin>
-                                        <Insets bottom="10.0" left="20.0" right="20.0" top="10.0" />
-                                    </VBox.margin>
-                                </HBox>
-                                <TableView fx:id="ListaEstoque" prefHeight="380.0" prefWidth="560.0" styleClass="table-view" VBox.vgrow="ALWAYS">
+                                <TableView fx:id="ListaEstoque" prefHeight="419.0" prefWidth="559.0" styleClass="table-view" VBox.vgrow="ALWAYS">
                                     <columns>
                                         <TableColumn fx:id="nomeProduto" prefWidth="220.0" text="Produtos" />
                                         <TableColumn fx:id="tipoProduto" prefWidth="140.0" text="Tipo" />
@@ -399,7 +376,8 @@
                                         <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                                     </columnResizePolicy>
                                     <VBox.margin>
-                                        <Insets bottom="20.0" left="20.0" right="20.0" />
+                                        <!-- ESPAÇAMENTO ADICIONADO AQUI: top="20.0" -->
+                                        <Insets top="20.0" bottom="20.0" left="20.0" right="20.0" />
                                     </VBox.margin>
                                 </TableView>
                             </children>

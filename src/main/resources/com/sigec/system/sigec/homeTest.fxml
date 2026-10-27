@@ -336,12 +336,6 @@
                                                         <ChoiceBox fx:id="cbUnidade" prefHeight="35.0" prefWidth="180.0" styleClass="custom-choice-box" />
                                                     </children>
                                                 </HBox>
-
-                                                <Button mnemonicParsing="false" styleClass="btn-notificacao" text="🔔 " textFill="#004b93">
-                                                    <font>
-                                                        <Font name="Arial Bold" size="14.0" />
-                                                    </font>
-                                                </Button>
                                             </children>
                                         </HBox>
                                     </children>
@@ -453,7 +447,6 @@
                                                     <TableColumn fx:id="colBaixoItem" prefWidth="160.0" text="Item / Especificação" />
                                                     <TableColumn fx:id="colBaixoQtd" prefWidth="100.0" text="Qtd. Estoque" />
                                                     <TableColumn fx:id="colBaixoMin" prefWidth="90.0" text="Mín. Sugerido" />
-                                                    <TableColumn fx:id="colBaixoPedido" prefWidth="90.0" text="Pedido" />
                                                 </columns>
                                                 <columnResizePolicy>
                                                     <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
@@ -485,7 +478,6 @@
                                                 <columns>
                                                     <TableColumn fx:id="colZeradoItem" prefWidth="200.0" text="Item sem Saldo" />
                                                     <TableColumn fx:id="colZeradoCategoria" prefWidth="120.0" text="Categoria" />
-                                                    <TableColumn fx:id="colZeradoPedido" prefWidth="100.0" text="Pedido" />
                                                 </columns>
                                                 <columnResizePolicy>
                                                     <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
