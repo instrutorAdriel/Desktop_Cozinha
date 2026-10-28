@@ -142,15 +142,14 @@
 /* ==========================================================================
 ESTILIZAÇÃO DA TABELA (TABLEVIEW) - FUNDO CLARO E CABEÇALHO ESCURO
 ========================================================================== */
-
 .table-view {
     -fx-font-family: "Arial";
     -fx-font-size: 14px;
     -fx-background-color: #ffffff;
     -fx-control-inner-background: #ffffff;
     -fx-control-inner-background-alt: #f8fafc;
-    -fx-border-color: #054584;
-    -fx-border-width: 2px;
+    -fx-border-color: transparent;
+    -fx-border-width: 0px;
     -fx-border-radius: 6px;
     -fx-background-radius: 6px;
 }
@@ -1087,3 +1086,23 @@ ESTILOS DA PÁGINA INICIAL (HOME)
 .calendar-cell-selected .dot-feriado {
     -fx-fill: #fca5a5;
 }
+
+
+
+/* === CORES DE ALERTA PARA A PÁGINA INICIAL === */
+
+/* 1. Produtos Vencidos (Vermelho Crítico) */
+.card-vencido { -fx-border-color: #d32f2f; }
+.header-vencido { -fx-background-color: #b71c1c; }
+
+/* 2. Próximos ao Vencimento (Laranja) */
+.card-proximo { -fx-border-color: #f57c00; }
+.header-proximo { -fx-background-color: #e65100; }
+
+/* 3. Estoque Baixo (Amarelo/Mostarda) */
+.card-baixo { -fx-border-color: #fbc02d; }
+.header-baixo { -fx-background-color: #f57f17; }
+
+/* 4. Estoque Zerado (Vermelho Escuro/Laranja Forte) */
+.card-zerado { -fx-border-color: #3e3b38; }
+.header-zerado { -fx-background-color: #3e3b38; }

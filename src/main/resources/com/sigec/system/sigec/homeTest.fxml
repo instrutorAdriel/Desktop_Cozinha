@@ -354,10 +354,18 @@
                                         <Insets bottom="20.0" left="25.0" right="25.0" top="5.0" />
                                     </VBox.margin>
 
-                                    <!-- BLOCO 1: PRODUTOS VENCIDOS (Tabela Original) -->
-                                    <VBox styleClass="card-alertas" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                                    <!-- BLOCO 1: PRODUTOS VENCIDOS -->
+                                    <VBox GridPane.columnIndex="0" GridPane.rowIndex="0">
+                                        <styleClass>
+                                            <String fx:value="card-alertas" />
+                                            <String fx:value="card-vencido" />
+                                        </styleClass>
                                         <children>
-                                            <HBox alignment="CENTER_LEFT" prefHeight="40.0" styleClass="card-alertas-header">
+                                            <HBox alignment="CENTER_LEFT" prefHeight="40.0">
+                                                <styleClass>
+                                                    <String fx:value="card-alertas-header" />
+                                                    <String fx:value="header-vencido" />
+                                                </styleClass>
                                                 <padding>
                                                     <Insets left="15.0" right="15.0" />
                                                 </padding>
@@ -387,9 +395,17 @@
                                     </VBox>
 
                                     <!-- BLOCO 2: PRÓXIMOS AO VENCIMENTO -->
-                                    <VBox styleClass="card-alertas" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                                    <VBox GridPane.columnIndex="1" GridPane.rowIndex="0">
+                                        <styleClass>
+                                            <String fx:value="card-alertas" />
+                                            <String fx:value="card-proximo" />
+                                        </styleClass>
                                         <children>
-                                            <HBox alignment="CENTER_LEFT" prefHeight="40.0" styleClass="card-alertas-header">
+                                            <HBox alignment="CENTER_LEFT" prefHeight="40.0">
+                                                <styleClass>
+                                                    <String fx:value="card-alertas-header" />
+                                                    <String fx:value="header-proximo" />
+                                                </styleClass>
                                                 <padding>
                                                     <Insets left="15.0" right="15.0" />
                                                 </padding>
@@ -420,9 +436,17 @@
                                     </VBox>
 
                                     <!-- BLOCO 3: ESTOQUE BAIXO -->
-                                    <VBox styleClass="card-alertas" GridPane.columnIndex="0" GridPane.rowIndex="1">
+                                    <VBox GridPane.columnIndex="0" GridPane.rowIndex="1">
+                                        <styleClass>
+                                            <String fx:value="card-alertas" />
+                                            <String fx:value="card-baixo" />
+                                        </styleClass>
                                         <children>
-                                            <HBox alignment="CENTER_LEFT" prefHeight="40.0" styleClass="card-alertas-header">
+                                            <HBox alignment="CENTER_LEFT" prefHeight="40.0">
+                                                <styleClass>
+                                                    <String fx:value="card-alertas-header" />
+                                                    <String fx:value="header-baixo" />
+                                                </styleClass>
                                                 <padding>
                                                     <Insets left="15.0" right="15.0" />
                                                 </padding>
@@ -452,9 +476,17 @@
                                     </VBox>
 
                                     <!-- BLOCO 4: ESTOQUE ZERADO -->
-                                    <VBox styleClass="card-alertas" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                    <VBox GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                        <styleClass>
+                                            <String fx:value="card-alertas" />
+                                            <String fx:value="card-zerado" />
+                                        </styleClass>
                                         <children>
-                                            <HBox alignment="CENTER_LEFT" prefHeight="40.0" styleClass="card-alertas-header">
+                                            <HBox alignment="CENTER_LEFT" prefHeight="40.0">
+                                                <styleClass>
+                                                    <String fx:value="card-alertas-header" />
+                                                    <String fx:value="header-zerado" />
+                                                </styleClass>
                                                 <padding>
                                                     <Insets left="15.0" right="15.0" />
                                                 </padding>
