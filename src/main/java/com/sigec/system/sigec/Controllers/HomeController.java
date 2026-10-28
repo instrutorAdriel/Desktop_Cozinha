@@ -1,20 +1,24 @@
 package com.sigec.system.sigec.Controllers;
 
+import com.sigec.system.sigec.Constructors.AlertaEstoqueDTO;
+import com.sigec.system.sigec.Constructors.UnidadeDTO;
+import com.sigec.system.sigec.DAOS.HomeDAO;
 import com.sigec.system.sigec.MainApplication;
 import com.sigec.system.sigec.Services.SessaoService;
 import com.sigec.system.sigec.Utils.BackgroundAnimator;
 import com.sigec.system.sigec.Utils.ButtonBorderLapAnimator;
 import com.sigec.system.sigec.Utils.DropdownBorderLapAnimator;
-import com.sigec.system.sigec.Utils.ScreenTransitionManager;
 
 import javafx.animation.Animation;
 import javafx.animation.FadeTransition;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
@@ -25,6 +29,7 @@ import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.ResourceBundle;
 
 /**
@@ -50,20 +55,45 @@ public class HomeController implements Initializable {
     @FXML
     private Label logoSigec;
 
+    // --- TABELA 1: VENCIDOS ---
     @FXML
-    private TableView<?> tabelaAlertas;
+    private TableView<AlertaEstoqueDTO> tabelaAlertas;
+    @FXML
+    private TableColumn<AlertaEstoqueDTO, String> colProduto;
+    @FXML
+    private TableColumn<AlertaEstoqueDTO, LocalDate> colValidade;
+    @FXML
+    private TableColumn<AlertaEstoqueDTO, String> colStatus; // Categoria
 
+    // --- TABELA 2: PRÓXIMOS AO VENCIMENTO ---
     @FXML
-    private TableColumn<?, ?> colProduto;
+    private TableView<AlertaEstoqueDTO> tabelaProximos;
+    @FXML
+    private TableColumn<AlertaEstoqueDTO, String> colProximosProduto;
+    @FXML
+    private TableColumn<AlertaEstoqueDTO, LocalDate> colProximosVencimento;
+    @FXML
+    private TableColumn<AlertaEstoqueDTO, String> colProximosLote;
+    @FXML
+    private TableColumn<AlertaEstoqueDTO, Integer> colProximosQtd;
 
+    // --- TABELA 3: ESTOQUE BAIXO ---
     @FXML
-    private TableColumn<?, ?> colValidade;
+    private TableView<AlertaEstoqueDTO> tabelaEstoqueBaixo;
+    @FXML
+    private TableColumn<AlertaEstoqueDTO, String> colBaixoItem;
+    @FXML
+    private TableColumn<AlertaEstoqueDTO, Integer> colBaixoQtd;
+    @FXML
+    private TableColumn<AlertaEstoqueDTO, Integer> colBaixoMin;
 
+    // --- TABELA 4: ESTOQUE ZERADO ---
     @FXML
-    private TableColumn<?, ?> colStatus;
-
+    private TableView<AlertaEstoqueDTO> tabelaEstoqueZerado;
     @FXML
-    private TableColumn<?, ?> colQuantidade;
+    private TableColumn<AlertaEstoqueDTO, String> colZeradoItem;
+    @FXML
+    private TableColumn<AlertaEstoqueDTO, String> colZeradoCategoria;
 
     @FXML
     private Button btnNavCadastro;
@@ -85,13 +115,15 @@ public class HomeController implements Initializable {
     private Label setaEstoque;
     // ----------------------------------------------
     @FXML
-    private ChoiceBox<String> cbUnidade;
+    private ChoiceBox<UnidadeDTO> cbUnidade;
 
     @FXML
     private Button btnNavCalendario;
 
     @FXML
     private Button botaoSair;
+
+    private final HomeDAO homeDAO = new HomeDAO();
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -100,6 +132,39 @@ public class HomeController implements Initializable {
         }
         configurarDataHora();
         configurarUsuario();
+        configurarTabelas();
+
+        // Configuração do ChoiceBox Dinâmico de Unidades
+        if (cbUnidade != null) {
+            // 1. Busca as unidades ativas no banco de dados através da DAO
+            List<UnidadeDTO> unidades = homeDAO.listarUnidades();
+            cbUnidade.setItems(FXCollections.observableArrayList(unidades));
+
+            // 2. Define o Conversor visual: exibe apenas o nome na tela, mas guarda o ID internamente
+            cbUnidade.setConverter(new javafx.util.StringConverter<UnidadeDTO>() {
+                @Override
+                public String toString(UnidadeDTO unidade) {
+                    return unidade != null ? unidade.getNome() : "";
+                }
+
+                @Override
+                public UnidadeDTO fromString(String string) {
+                    return null; // Operação reversa não é usada no ChoiceBox
+                }
+            });
+
+            // 3. Listener: Sempre que a seleção mudar, buscar os dados daquela unidade
+            cbUnidade.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+                if (newValue != null) {
+                    carregarDadosDashboard(newValue.getId());
+                }
+            });
+
+            // 4. Marca o primeiro item automaticamente (dispara o listener na inicialização)
+            if (!unidades.isEmpty()) {
+                cbUnidade.getSelectionModel().selectFirst();
+            }
+        }
     }
 
     private void configurarUsuario() {
@@ -124,6 +189,68 @@ public class HomeController implements Initializable {
             timeline.setCycleCount(Animation.INDEFINITE);
             timeline.play();
         }
+    }
+
+    private void configurarTabelas() {
+        // Tabela Vencidos
+        if (tabelaAlertas != null && colProduto != null) {
+            colProduto.setCellValueFactory(new PropertyValueFactory<>("nomeProduto"));
+            colValidade.setCellValueFactory(new PropertyValueFactory<>("dataValidade"));
+            colStatus.setCellValueFactory(new PropertyValueFactory<>("nomeCategoria"));
+            formatarColunaData(colValidade);
+        }
+
+        // Tabela Próximos
+        if (tabelaProximos != null && colProximosProduto != null) {
+            colProximosProduto.setCellValueFactory(new PropertyValueFactory<>("nomeProduto"));
+            colProximosVencimento.setCellValueFactory(new PropertyValueFactory<>("dataValidade"));
+            colProximosLote.setCellValueFactory(new PropertyValueFactory<>("lote"));
+            colProximosQtd.setCellValueFactory(new PropertyValueFactory<>("qtdAtual"));
+            formatarColunaData(colProximosVencimento);
+        }
+
+        // Tabela Estoque Baixo
+        if (tabelaEstoqueBaixo != null && colBaixoItem != null) {
+            colBaixoItem.setCellValueFactory(new PropertyValueFactory<>("nomeProduto"));
+            colBaixoQtd.setCellValueFactory(new PropertyValueFactory<>("qtdAtual"));
+            colBaixoMin.setCellValueFactory(new PropertyValueFactory<>("qtdMinima"));
+        }
+
+        // Tabela Estoque Zerado
+        if (tabelaEstoqueZerado != null && colZeradoItem != null) {
+            colZeradoItem.setCellValueFactory(new PropertyValueFactory<>("nomeProduto"));
+            colZeradoCategoria.setCellValueFactory(new PropertyValueFactory<>("nomeCategoria"));
+        }
+    }
+
+    private void carregarDadosDashboard(int idUnidade) {
+        if (tabelaAlertas != null) {
+            tabelaAlertas.setItems(FXCollections.observableArrayList(homeDAO.listarProdutosVencidos(idUnidade)));
+        }
+        if (tabelaProximos != null) {
+            tabelaProximos.setItems(FXCollections.observableArrayList(homeDAO.listarProximosVencimento(idUnidade)));
+        }
+        if (tabelaEstoqueBaixo != null) {
+            tabelaEstoqueBaixo.setItems(FXCollections.observableArrayList(homeDAO.listarEstoqueBaixo(idUnidade)));
+        }
+        if (tabelaEstoqueZerado != null) {
+            tabelaEstoqueZerado.setItems(FXCollections.observableArrayList(homeDAO.listarEstoqueZerado(idUnidade)));
+        }
+    }
+
+    private void formatarColunaData(TableColumn<AlertaEstoqueDTO, LocalDate> coluna) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        coluna.setCellFactory(column -> new TableCell<AlertaEstoqueDTO, LocalDate>() {
+            @Override
+            protected void updateItem(LocalDate date, boolean empty) {
+                super.updateItem(date, empty);
+                if (empty || date == null) {
+                    setText(null);
+                } else {
+                    setText(formatter.format(date));
+                }
+            }
+        });
     }
 
     public void prepararAnimacao() {
@@ -239,11 +366,6 @@ public class HomeController implements Initializable {
     }
 
     @FXML
-    public void botaoRelatorio(ActionEvent event) {
-        navegarParaRelatorio();
-    }
-
-    @FXML
     public void onClickRelatorio(ActionEvent event) {
         navegarParaRelatorio();
     }
@@ -255,8 +377,6 @@ public class HomeController implements Initializable {
             exibirErroNavegacao("Relatório", e);
         }
     }
-
-
 
     @FXML
     public void onClickCadastroUsuario(ActionEvent event) {

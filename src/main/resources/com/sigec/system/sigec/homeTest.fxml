@@ -123,7 +123,7 @@
                     </VBox.margin>
                 </VBox>
 
-                <Button id="btnNavRelatorio" fx:id="btnNavRelatorio" alignment="BASELINE_LEFT" graphicTextGap="12.0" mnemonicParsing="false" onAction="#botaoRelatorio" styleClass="btn-padrao" text="Relatório">
+                <Button id="btnNavRelatorio" fx:id="btnNavRelatorio" alignment="BASELINE_LEFT" graphicTextGap="12.0" mnemonicParsing="false" onAction="#onClickRelatorio" styleClass="btn-padrao" text="Relatório">
                     <font>
                         <Font name="Arial Bold" size="15.0" />
                     </font>
@@ -161,7 +161,7 @@
                     </VBox.margin>
                 </Button>
 
-                <Button id="btnNavCalendario" fx:id="btnNavCalendario" alignment="BASELINE_LEFT" graphicTextGap="12.0" mnemonicParsing="false" onAction="#botaoCalendarioAction" styleClass="btn-padrao" text="Calendário">
+                <Button id="btnNavCalendario" fx:id="btnNavCalendario" alignment="BASELINE_LEFT" graphicTextGap="12.0" mnemonicParsing="false" onAction="#onClickCalendario" styleClass="btn-padrao" text="Calendário">
                     <font>
                         <Font name="Arial Bold" size="15.0" />
                     </font>
