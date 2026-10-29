@@ -127,7 +127,28 @@ public class UtensiliosController implements Initializable {
 
     @FXML
     public void onEditarClick(ActionEvent event) {
-        System.out.println("Editando utensílio...");
+        // Pega o utensílio selecionado na tabela principal
+        Utensilio utensilioSelecionado = tabelaUtensilios.getSelectionModel().getSelectedItem();
+
+        if (utensilioSelecionado == null) {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Atenção");
+            alert.setHeaderText(null);
+            alert.setContentText("Por favor, selecione um utensílio na tabela para editar.");
+            alert.showAndWait();
+            return;
+        }
+
+        try {
+
+            EdicaoUtensilioController.utensilioParaEditar = utensilioSelecionado;
+            MainApplication.abrirPopUp("EdicaoUtensilio.fxml");
+            carregarDadosBanco();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.err.println("Erro ao abrir a tela de edição de utensílio: " + e.getMessage());
+        }
     }
 
     @FXML
