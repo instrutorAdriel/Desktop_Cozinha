@@ -14,6 +14,7 @@ import com.sigec.system.sigec.Utils.FormNavigationUtil;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -116,6 +117,9 @@ public class CadastroTurmaController implements Initializable {
     @FXML
     private Button btnLimpar;
 
+    @FXML
+    private VBox loadingOverlay;
+
     // =========================================================================
     // SEÇÃO 2: INSTRUTORES DISPONÍVEIS
     // =========================================================================
@@ -194,7 +198,7 @@ public class CadastroTurmaController implements Initializable {
             Thread bgLabLoader = new Thread(() -> {
                 try {
                     List<Laboratorio> labsDb = TurmaDAO.listarLaboratoriosAtivos();
-                    javafx.application.Platform.runLater(() -> {
+                    Platform.runLater(() -> {
                         laboratorioSelect.getItems().clear();
                         if (labsDb != null && !labsDb.isEmpty()) {
                             for (Laboratorio lab : labsDb) {
@@ -228,7 +232,7 @@ public class CadastroTurmaController implements Initializable {
             Thread bgCursoLoader = new Thread(() -> {
                 try {
                     List<Curso> cursosDb = TurmaDAO.listarCursosAtivos();
-                    javafx.application.Platform.runLater(() -> {
+                    Platform.runLater(() -> {
                         cursoSelect.getItems().clear();
                         if (cursosDb != null && !cursosDb.isEmpty()) {
                             for (Curso curso : cursosDb) {
@@ -274,7 +278,7 @@ public class CadastroTurmaController implements Initializable {
         Thread bgLoader = new Thread(() -> {
             try {
                 List<User> instrutoresDb = TurmaDAO.listarProfessoresAtivos();
-                javafx.application.Platform.runLater(() -> {
+                Platform.runLater(() -> {
                     masterInstrutores.setAll(instrutoresDb);
                     if (instrutorSelecionado != null) {
                         for (User u : masterInstrutores) {
@@ -382,6 +386,19 @@ public class CadastroTurmaController implements Initializable {
         }
     }
 
+    private void exibirLoading(boolean mostrar) {
+        if (loadingOverlay != null) {
+            loadingOverlay.setVisible(mostrar);
+            loadingOverlay.setManaged(mostrar);
+        }
+        if (btnCadastrarTurma != null) {
+            btnCadastrarTurma.setDisable(mostrar);
+        }
+        if (btnLimpar != null) {
+            btnLimpar.setDisable(mostrar);
+        }
+    }
+
     // =========================================================================
     // AÇÕES DO FORMULÁRIO DE CADASTRO DE TURMA
     // =========================================================================
@@ -416,46 +433,58 @@ public class CadastroTurmaController implements Initializable {
             return;
         }
 
-        try {
-            int idLaboratorio = TurmaDAO.buscarIdLaboratorioPorNome(laboratorio);
-            if (idLaboratorio <= 0) {
-                exibirAlerta(Alert.AlertType.ERROR, "Laboratório Inválido",
-                        "Não foi possível identificar o laboratório selecionado no banco de dados.");
-                return;
+        int idProfessor = instrutorSelecionado.getIdUsuario();
+
+        // Exibe a tela de loading enquanto realiza o cadastro no banco de dados em segundo plano
+        exibirLoading(true);
+
+        Thread bgCadastro = new Thread(() -> {
+            try {
+                int idLaboratorio = TurmaDAO.buscarIdLaboratorioPorNome(laboratorio);
+                if (idLaboratorio <= 0) {
+                    Platform.runLater(() -> {
+                        exibirLoading(false);
+                        exibirAlerta(Alert.AlertType.ERROR, "Laboratório Inválido",
+                                "Não foi possível identificar o laboratório selecionado no banco de dados.");
+                    });
+                    return;
+                }
+
+                int idCurso = TurmaDAO.buscarIdCursoPorNome(curso);
+                if (idCurso <= 0) {
+                    Platform.runLater(() -> {
+                        exibirLoading(false);
+                        exibirAlerta(Alert.AlertType.ERROR, "Curso Inválido",
+                                "Não foi possível identificar o curso selecionado no banco de dados.");
+                    });
+                    return;
+                }
+
+                TurmaDAO.cadastrarTurma(nomeTurma, situacao, idLaboratorio, idProfessor, idCurso);
+
+                Platform.runLater(() -> {
+                    exibirLoading(false);
+                    limparFormulario();
+                    exibirAlerta(Alert.AlertType.INFORMATION, "Sucesso", "turma cadastrada com sucesso");
+                });
+
+            } catch (SQLException ex) {
+                Platform.runLater(() -> {
+                    exibirLoading(false);
+                    exibirAlerta(Alert.AlertType.ERROR, "Erro no Banco de Dados",
+                            "Falha ao cadastrar a turma no banco de dados: " + ex.getMessage());
+                });
+            } catch (Exception ex) {
+                Platform.runLater(() -> {
+                    exibirLoading(false);
+                    exibirAlerta(Alert.AlertType.ERROR, "Erro Inesperado",
+                            "Ocorreu um erro ao processar o cadastro: " + ex.getMessage());
+                });
             }
-
-            int idCurso = TurmaDAO.buscarIdCursoPorNome(curso);
-            if (idCurso <= 0) {
-                exibirAlerta(Alert.AlertType.ERROR, "Curso Inválido",
-                        "Não foi possível identificar o curso selecionado no banco de dados.");
-                return;
-            }
-
-            int idProfessor = instrutorSelecionado.getIdUsuario();
-
-            int idTurmaCriada = TurmaDAO.cadastrarTurma(nomeTurma, situacao, idLaboratorio, idProfessor, idCurso);
-
-            // Sucesso no cadastro com ID gerado
-            String mensagem = String.format(
-                    "Turma cadastrada com sucesso! (Código: #%d)\n\n" +
-                    "• Turma: %s\n" +
-                    "• Curso: %s (ID: %d)\n" +
-                    "• Laboratório: %s (ID: %d)\n" +
-                    "• Professor Responsável: %s\n" +
-                    "• Situação: %s",
-                    idTurmaCriada, nomeTurma.trim(), curso, idCurso, laboratorio, idLaboratorio, professor.trim(), situacao
-            );
-
-            exibirAlerta(Alert.AlertType.INFORMATION, "Turma Cadastrada", mensagem);
-            limparFormulario();
-
-        } catch (SQLException ex) {
-            exibirAlerta(Alert.AlertType.ERROR, "Erro no Banco de Dados",
-                    "Falha ao cadastrar a turma no banco de dados: " + ex.getMessage());
-        } catch (Exception ex) {
-            exibirAlerta(Alert.AlertType.ERROR, "Erro Inesperado",
-                    "Ocorreu um erro ao processar o cadastro: " + ex.getMessage());
-        }
+        });
+        bgCadastro.setDaemon(true);
+        bgCadastro.setName("SIGEC-CadastroTurmaWorker");
+        bgCadastro.start();
     }
 
     @FXML

@@ -14,7 +14,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Objeto de Acesso a Dados (DAO) para operações de Turmas, Laboratórios, Cursos e vínculos no banco de dados.
+ * Objeto de Acesso a Dados (DAO) para operações de Turmas, Laboratórios, Cursos
+ * e vínculos no banco de dados.
  */
 public final class TurmaDAO {
 
@@ -49,10 +50,14 @@ public final class TurmaDAO {
      * @param nomeTurma     Nome digitado pelo admin no formulário (ex: "Cozinha
      *                      Básica - 2026.1")
      * @param situacao      Opção selecionada pelo admin ("Ativo", "Inativo")
-     * @param idLaboratorio ID do laboratório escolhido pelo admin (chave estrangeira de 'laboratorio')
-     * @param idProfessor   ID do instrutor/usuário selecionado na lista (chave estrangeira de 'usuario')
-     * @param idCurso       id do Curso selecionado na lista (chave estrangeira de 'curso')
-     * @return O id_turma gerado automaticamente pelo banco de dados (AUTO_INCREMENT)
+     * @param idLaboratorio ID do laboratório escolhido pelo admin (chave
+     *                      estrangeira de 'laboratorio')
+     * @param idProfessor   ID do instrutor/usuário selecionado na lista (chave
+     *                      estrangeira de 'usuario')
+     * @param idCurso       id do Curso selecionado na lista (chave estrangeira de
+     *                      'curso')
+     * @return O id_turma gerado automaticamente pelo banco de dados
+     *         (AUTO_INCREMENT)
      * @throws SQLException Caso ocorra erro de conexão, integridade ou execução SQL
      */
     public static int cadastrarTurma(String nomeTurma, String situacao, int idLaboratorio, int idProfessor, int idCurso)
@@ -129,21 +134,22 @@ public final class TurmaDAO {
     }
 
     /**
-     * Retorna a lista de professores/instrutores ativos (acesso = 'I' e situacao = 'A') cadastrados na tabela 'usuario'.
+     * Retorna a lista de professores/instrutores ativos (acesso = 'I' e situacao =
+     * 'A') cadastrados na tabela 'usuario'.
      *
      * @return Lista de professores ativos
      */
     public static List<User> listarProfessoresAtivos() {
         List<User> professores = new ArrayList<>();
         String sql = "SELECT id_usuario, nome_usuario, email, senha, acesso, situacao " +
-                     "FROM usuario " +
-                     "WHERE UPPER(TRIM(acesso)) = 'I' " +
-                     "AND (situacao IS NULL OR UPPER(TRIM(situacao)) = 'A' OR UPPER(TRIM(situacao)) = 'ATIVO') " +
-                     "ORDER BY nome_usuario ASC";
+                "FROM usuario " +
+                "WHERE UPPER(TRIM(acesso)) = 'I' " +
+                "AND (situacao IS NULL OR UPPER(TRIM(situacao)) = 'A' OR UPPER(TRIM(situacao)) = 'ATIVO') " +
+                "ORDER BY nome_usuario ASC";
 
         try (Connection conn = ConfigDataBase.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql);
-             ResultSet rs = stmt.executeQuery()) {
+                PreparedStatement stmt = conn.prepareStatement(sql);
+                ResultSet rs = stmt.executeQuery()) {
 
             while (rs.next()) {
                 User professor = new User(
@@ -153,8 +159,7 @@ public final class TurmaDAO {
                         rs.getString("senha"),
                         rs.getString("acesso"),
                         rs.getString("situacao"),
-                        0
-                );
+                        0);
                 professores.add(professor);
             }
         } catch (SQLException e) {
@@ -240,26 +245,26 @@ public final class TurmaDAO {
 
     /**
      * Retorna a lista de cursos ativos cadastrados no banco de dados.
-     * Permite que a tela (ChoiceBox) liste os cursos reais disponíveis para seleção.
+     * Permite que a tela (ChoiceBox) liste os cursos reais disponíveis para
+     * seleção.
      *
      * @return Lista de cursos ativos
      */
     public static List<Curso> listarCursosAtivos() {
         List<Curso> cursos = new ArrayList<>();
         String sql = "SELECT id_curso, nome_curso, situacao " +
-                     "FROM curso WHERE UPPER(situacao) = 'A' OR UPPER(situacao) = 'ATIVO' " +
-                     "ORDER BY nome_curso ASC";
+                "FROM curso WHERE UPPER(situacao) = 'A' OR UPPER(situacao) = 'ATIVO' " +
+                "ORDER BY nome_curso ASC";
 
         try (Connection conn = ConfigDataBase.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql);
-             ResultSet rs = stmt.executeQuery()) {
+                PreparedStatement stmt = conn.prepareStatement(sql);
+                ResultSet rs = stmt.executeQuery()) {
 
             while (rs.next()) {
                 Curso curso = new Curso(
                         rs.getInt("id_curso"),
                         rs.getString("nome_curso"),
-                        rs.getString("situacao")
-                );
+                        rs.getString("situacao"));
                 cursos.add(curso);
             }
         } catch (SQLException e) {
@@ -285,7 +290,7 @@ public final class TurmaDAO {
         String sql = "SELECT id_curso FROM curso WHERE LOWER(TRIM(nome_curso)) = LOWER(TRIM(?)) LIMIT 1";
 
         try (Connection conn = ConfigDataBase.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, nomeCurso.trim());
 
@@ -299,8 +304,8 @@ public final class TurmaDAO {
         // Se não encontrou pelo nome exato, tenta o primeiro curso ativo como fallback
         String sqlFallback = "SELECT id_curso FROM curso WHERE UPPER(situacao) = 'A' LIMIT 1";
         try (Connection conn = ConfigDataBase.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sqlFallback);
-             ResultSet rs = stmt.executeQuery()) {
+                PreparedStatement stmt = conn.prepareStatement(sqlFallback);
+                ResultSet rs = stmt.executeQuery()) {
             if (rs.next()) {
                 return rs.getInt("id_curso");
             }
