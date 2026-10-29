@@ -14,10 +14,14 @@ public class ProductStorageDAO {
 
     public List<ListaEstoque> buscarTodosProdutosEstoque() {
         List<ListaEstoque> lista = new ArrayList<>();
-        String sql = "SELECT p.id_produto, p.nome_produto, c.nome_categoria AS tipo_produto, p.quantidade, p.unidade " +
+        // Query  para buscar e somar a quantidade da tabela insumo
+        String sql = "SELECT p.id_produto, p.nome_produto, c.nome_categoria AS tipo_produto, " +
+                "COALESCE(SUM(i.quantidade), 0) AS quantidade, p.unidade " +
                 "FROM produto p " +
                 "LEFT JOIN categoria c ON p.id_categoria = c.id_categoria " +
-                "WHERE p.situacao = 'A'";
+                "LEFT JOIN insumo i ON p.id_produto = i.id_produto AND i.cancelado = 'N' " +
+                "WHERE p.situacao = 'A' " +
+                "GROUP BY p.id_produto, p.nome_produto, c.nome_categoria, p.unidade";
 
         try (Connection conn = ConfigDataBase.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql);
@@ -28,7 +32,7 @@ public class ProductStorageDAO {
                         rs.getInt("id_produto"),
                         rs.getString("nome_produto"),
                         rs.getString("tipo_produto") != null ? rs.getString("tipo_produto") : "Sem Categoria",
-                        rs.getDouble("quantidade"),
+                        rs.getDouble("quantidade"), // Agora vem do SUM(i.quantidade)
                         rs.getString("unidade")
                 );
                 lista.add(produto);
