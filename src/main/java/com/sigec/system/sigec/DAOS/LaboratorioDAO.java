@@ -27,4 +27,22 @@ public class LaboratorioDAO {
         }
         return laboratorios;
     }
+
+
+    public static java.util.Map<String, Integer> listarLaboratoriosAtivosMap() {
+        java.util.Map<String, Integer> laboratorios = new java.util.HashMap<>();
+        String sql = "SELECT id_laboratorio, nome_laboratorio FROM laboratorio WHERE situacao = 'A'";
+
+        try (Connection conn = ConfigDataBase.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                laboratorios.put(rs.getString("nome_laboratorio"), rs.getInt("id_laboratorio"));
+            }
+        } catch (Exception e) {
+            System.err.println("Erro ao listar laboratórios (Map): " + e.getMessage());
+        }
+        return laboratorios;
+    }
 }

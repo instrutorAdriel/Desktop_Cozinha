@@ -2,6 +2,8 @@ package com.sigec.system.sigec.Controllers;
 
 import com.sigec.system.sigec.Constructors.Utensilio;
 import com.sigec.system.sigec.DAOS.UtensilioDAO;
+import com.sigec.system.sigec.DAOS.LaboratorioDAO;
+import com.sigec.system.sigec.DAOS.CategoriaUtensilioDAO;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -13,58 +15,82 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
 import java.net.URL;
-import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 public class CadastroUtensilioController implements Initializable {
 
     @FXML private TextField txtNomeUtensilio;
     @FXML private TextField txtQuantidade;
+    @FXML private TextField txtPatrimonio;
+    @FXML private ChoiceBox<String> cbCategoria;
     @FXML private ChoiceBox<String> cbLaboratorio;
-    @FXML private ChoiceBox<String> cbStatus;
 
     @FXML private Button btnVoltar;
     @FXML private Button btnSalvar;
 
+    private Map<String, Integer> mapaCategorias;
+    private Map<String, Integer> mapaLaboratorios; // Novo mapa para laboratórios
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         if (cbLaboratorio != null) {
-            // Puxa a lista real da base de dados através do DAO
-            List<String> laboratorios = com.sigec.system.sigec.DAOS.LaboratorioDAO.listarNomesLaboratoriosAtivos();
-            cbLaboratorio.setItems(FXCollections.observableArrayList(laboratorios));
+            // Utilizando o novo mapa para carregar os laboratórios
+            mapaLaboratorios = LaboratorioDAO.listarLaboratoriosAtivosMap();
+            cbLaboratorio.setItems(FXCollections.observableArrayList(mapaLaboratorios.keySet()));
 
-            // Seleciona o primeiro item por defeito, se a lista não estiver vazia
-            if (!laboratorios.isEmpty()) {
-                cbLaboratorio.setValue(laboratorios.get(0));
+            if (!mapaLaboratorios.isEmpty()) {
+                cbLaboratorio.setValue(mapaLaboratorios.keySet().iterator().next());
             }
         }
 
-        if (cbStatus != null) {
-            // Estes estados refletem a estrutura lógica da base de dados
-            cbStatus.setItems(FXCollections.observableArrayList("Pronto", "Em Manutenção", "Danificado"));
-            cbStatus.setValue("Pronto");
+        if (cbCategoria != null) {
+            mapaCategorias = CategoriaUtensilioDAO.listarCategoriasAtivas();
+            cbCategoria.setItems(FXCollections.observableArrayList(mapaCategorias.keySet()));
+
+            if (!mapaCategorias.isEmpty()) {
+                cbCategoria.setValue(mapaCategorias.keySet().iterator().next());
+            }
         }
     }
 
     @FXML
     public void onSalvar(ActionEvent event) {
         String nome = txtNomeUtensilio.getText();
-        String laboratorio = cbLaboratorio.getValue();
-        String status = cbStatus.getValue();
+        String strQtd = txtQuantidade.getText();
+        String strPatrimonio = txtPatrimonio.getText();
 
-        if (nome == null || nome.trim().isEmpty()) {
-            exibirAlerta(Alert.AlertType.WARNING, "Atenção", "O nome do utensílio é obrigatório.");
+        String nomeCategoria = cbCategoria.getValue();
+        String nomeLaboratorio = cbLaboratorio.getValue();
+
+        if (nome == null || nome.trim().isEmpty() || strQtd == null || strQtd.trim().isEmpty() ||
+                strPatrimonio == null || strPatrimonio.trim().isEmpty() ||
+                nomeCategoria == null || nomeLaboratorio == null) {
+
+            exibirAlerta(Alert.AlertType.WARNING, "Atenção", "Preencha todos os campos obrigatórios.");
             return;
         }
 
-        // Simulação da chamada ao DAO
-        boolean sucesso = true; // UtensilioDAO.adicionarUtensilio(...)
+        try {
+            int qtd = Integer.parseInt(strQtd);
+            int patrimonio = Integer.parseInt(strPatrimonio);
 
-        if (sucesso) {
-            exibirAlerta(Alert.AlertType.INFORMATION, "Sucesso", "Operação realizada com sucesso!");
-            fecharModal();
-        } else {
-            exibirAlerta(Alert.AlertType.ERROR, "Erro", "Não foi possível salvar as informações no banco de dados.");
+            int idCategoria = mapaCategorias.get(nomeCategoria);
+            int idLaboratorio = mapaLaboratorios.get(nomeLaboratorio); // Pega o ID correto do laboratório
+
+            // Agora passamos o idLaboratorio para o construtor do Utensílio
+            Utensilio novoUtensilio = new Utensilio(0, nome, nomeLaboratorio, "A", qtd, qtd, patrimonio, idCategoria, idLaboratorio);
+
+            boolean sucesso = UtensilioDAO.adicionarUtensilio(novoUtensilio);
+
+            if (sucesso) {
+                exibirAlerta(Alert.AlertType.INFORMATION, "Sucesso", "Utensílio adicionado com sucesso!");
+                fecharModal();
+            } else {
+                exibirAlerta(Alert.AlertType.ERROR, "Erro", "Não foi possível salvar as informações na base de dados.");
+            }
+        } catch (NumberFormatException e) {
+            exibirAlerta(Alert.AlertType.ERROR, "Erro", "Quantidade e Património devem ser números válidos.");
         }
     }
 

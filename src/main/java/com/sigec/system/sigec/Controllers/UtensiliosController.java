@@ -108,7 +108,16 @@ public class UtensiliosController implements Initializable {
     // ==========================================
     @FXML
     public void onFiltrarClick(ActionEvent event) {
-        System.out.println("Filtrando status: " + cbStatus.getValue() + " | Busca: " + txtPesquisaUtensilio.getText());
+        String termo = txtPesquisaUtensilio.getText();
+        String status = cbStatus.getValue();
+        String laboratorio = cbLaboratorio.getValue();
+
+        // Busca os dados filtrados no banco
+        List<Utensilio> utensiliosFiltrados = UtensilioDAO.buscarUtensiliosPorFiltro(termo, status, laboratorio);
+
+        // Atualiza a tabela na tela
+        observableListUtensilios.setAll(utensiliosFiltrados);
+        tabelaUtensilios.refresh();
     }
 
     @FXML
@@ -123,7 +132,14 @@ public class UtensiliosController implements Initializable {
 
     @FXML
     public void onAdicionarClick(ActionEvent event) {
-        System.out.println("Adicionando novo utensílio...");
+        try {
+            MainApplication.abrirPopUp("CadastroUtensilio.fxml");
+            carregarDadosBanco();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.err.println("Erro ao abrir a tela de cadastro de utensílio: " + e.getMessage());
+        }
     }
 
     // ==========================================

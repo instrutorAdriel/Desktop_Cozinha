@@ -14,8 +14,14 @@ public class UtensilioDAO {
 
     public static List<Utensilio> listarUtensilios() {
         List<Utensilio> lista = new ArrayList<>();
-        // Busca os utensílios ativos no banco
-        String sql = "SELECT id_utensilio, nome_utensilio, quantidade, situacao FROM utensilio WHERE situacao = 'A'";
+
+        String sql = "SELECT u.id_utensilio, u.nome_utensilio, u.quantidade, " +
+                "u.numero_patrimonio, u.id_categoria_utensilio, u.id_laboratorio, " +
+                "COALESCE(l.nome_laboratorio, 'Estoque Central') AS laboratorio_atual, " +
+                "COALESCE((SELECT estado_atual FROM checklist_utensilio cu WHERE cu.id_utensilio = u.id_utensilio ORDER BY cu.id_checklist_utensilio DESC LIMIT 1), 'PRONTO') AS status_atual " +
+                "FROM utensilio u " +
+                "LEFT JOIN laboratorio l ON u.id_laboratorio = l.id_laboratorio " +
+                "WHERE u.situacao = 'A'";
 
         try (Connection conn = ConfigDataBase.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql);
@@ -23,20 +29,30 @@ public class UtensilioDAO {
 
             while (rs.next()) {
                 int qtd = rs.getInt("quantidade");
+                int categoria = rs.getInt("id_categoria_utensilio");
+                int patrimonio = rs.getInt("numero_patrimonio");
+                int idLaboratorio = rs.getInt("id_laboratorio"); // Extraindo o ID do laboratório
+
+                String laboratorio = rs.getString("laboratorio_atual");
+                String status = rs.getString("status_atual");
+
 
                 Utensilio utensilio = new Utensilio(
                         rs.getInt("id_utensilio"),
                         rs.getString("nome_utensilio"),
-                        "Estoque Central",
-                        "Disponível",
+                        laboratorio,
+                        status,
                         qtd,
-                        qtd
+                        qtd,
+                        patrimonio,
+                        categoria,
+                        idLaboratorio
                 );
                 lista.add(utensilio);
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            System.out.println("Erro ao listar utensílios.");
+            System.err.println("Erro ao listar utensílios: " + e.getMessage());
         }
         return lista;
     }
@@ -116,5 +132,125 @@ public class UtensilioDAO {
         }
         // Se o utensílio for novo e nunca teve avaria, o padrão é PRONTO
         return "PRONTO";
+    }
+
+    public static boolean adicionarUtensilio(Utensilio novoUtensilio) {
+        // Agora o INSERT inclui o id_laboratorio
+        String sql = "INSERT INTO utensilio (nome_utensilio, quantidade, situacao, numero_patrimonio, id_categoria_utensilio, id_laboratorio) VALUES (?, ?, 'A', ?, ?, ?)";
+
+        try (Connection conn = ConfigDataBase.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, novoUtensilio.getNome());
+            stmt.setInt(2, novoUtensilio.getQtdTotal());
+            stmt.setInt(3, novoUtensilio.getNumeroPatrimonio());
+            stmt.setInt(4, novoUtensilio.getIdCategoria());
+            stmt.setInt(5, novoUtensilio.getIdLaboratorio()); // Enviando o laboratório para o banco
+
+            return stmt.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+            System.err.println("Erro ao adicionar utensílio: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public static boolean atualizarUtensilio(Utensilio utensilio) {
+        String sql = "UPDATE utensilio SET nome_utensilio = ?, quantidade = ?, numero_patrimonio = ?, id_categoria_utensilio = ? WHERE id_utensilio = ?";
+
+        try (Connection conn = ConfigDataBase.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, utensilio.getNome());
+            stmt.setInt(2, utensilio.getQtdTotal());
+            stmt.setInt(3, utensilio.getNumeroPatrimonio());
+            stmt.setInt(4, utensilio.getIdCategoria());
+            stmt.setInt(5, utensilio.getIdUtensilio());
+
+            return stmt.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+            System.err.println("Erro ao atualizar utensílio: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public static List<Utensilio> buscarUtensiliosPorFiltro(String termo, String status, String laboratorio) {
+        List<Utensilio> lista = new ArrayList<>();
+
+        StringBuilder sql = new StringBuilder();
+        sql.append("SELECT * FROM ( ");
+        sql.append("    SELECT u.id_utensilio, u.nome_utensilio, u.quantidade, ");
+        sql.append("    u.numero_patrimonio, u.id_categoria_utensilio, u.id_laboratorio, ");
+        sql.append("    COALESCE(l.nome_laboratorio, 'Estoque Central') AS laboratorio_atual, ");
+        sql.append("    COALESCE((SELECT estado_atual FROM checklist_utensilio cu WHERE cu.id_utensilio = u.id_utensilio ORDER BY cu.id_checklist_utensilio DESC LIMIT 1), 'PRONTO') AS status_atual ");
+        sql.append("    FROM utensilio u ");
+        sql.append("    LEFT JOIN laboratorio l ON u.id_laboratorio = l.id_laboratorio ");
+        sql.append("    WHERE u.situacao = 'A' ");
+        sql.append(") AS base WHERE 1=1 ");
+
+        List<Object> parametros = new ArrayList<>();
+
+        // Filtro por Nome (Pesquisa)
+        if (termo != null && !termo.trim().isEmpty()) {
+            sql.append("AND LOWER(nome_utensilio) LIKE LOWER(?) ");
+            parametros.add("%" + termo.trim() + "%");
+        }
+
+        // Filtro por Laboratório
+        if (laboratorio != null && !laboratorio.equals("Todos") && !laboratorio.trim().isEmpty()) {
+            sql.append("AND laboratorio_atual = ? ");
+            parametros.add(laboratorio);
+        }
+
+        if (status != null && !status.equals("Todos") && !status.trim().isEmpty()) {
+            if (status.equals("Disponível")) {
+                sql.append("AND status_atual = 'PRONTO' ");
+            } else if (status.equals("Conserto")) {
+                sql.append("AND status_atual IN ('EM_MANUTENCAO', 'DANIFICADO') ");
+            } else {
+                sql.append("AND status_atual = ? ");
+                parametros.add(status);
+            }
+        }
+
+        try (Connection conn = ConfigDataBase.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql.toString())) {
+
+            for (int i = 0; i < parametros.size(); i++) {
+                stmt.setObject(i + 1, parametros.get(i));
+            }
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    int qtd = rs.getInt("quantidade");
+                    int categoria = rs.getInt("id_categoria_utensilio");
+                    int patrimonio = rs.getInt("numero_patrimonio");
+                    int idLaboratorio = rs.getInt("id_laboratorio");
+
+                    String labAtual = rs.getString("laboratorio_atual");
+                    String statusAtualDB = rs.getString("status_atual");
+                    String statusVisual = statusAtualDB.equals("PRONTO") ? "Disponível" :
+                            statusAtualDB.equals("EM_MANUTENCAO") ? "Em Manutenção" :
+                                    statusAtualDB.equals("DANIFICADO") ? "Danificado" : statusAtualDB;
+
+                    Utensilio utensilio = new Utensilio(
+                            rs.getInt("id_utensilio"),
+                            rs.getString("nome_utensilio"),
+                            labAtual,
+                            statusVisual,
+                            qtd,
+                            qtd,
+                            patrimonio,
+                            categoria,
+                            idLaboratorio
+                    );
+                    lista.add(utensilio);
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Erro ao filtrar utensílios: " + e.getMessage());
+        }
+        return lista;
     }
 }
