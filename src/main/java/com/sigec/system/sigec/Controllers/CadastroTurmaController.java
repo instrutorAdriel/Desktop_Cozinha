@@ -1,5 +1,6 @@
 package com.sigec.system.sigec.Controllers;
 
+import com.sigec.system.sigec.Constructors.Curso;
 import com.sigec.system.sigec.Constructors.Laboratorio;
 import com.sigec.system.sigec.Constructors.User;
 import com.sigec.system.sigec.DAOS.TurmaDAO;
@@ -100,6 +101,9 @@ public class CadastroTurmaController implements Initializable {
 
     @FXML
     private ChoiceBox<String> laboratorioSelect;
+
+    @FXML
+    private ChoiceBox<String> cursoSelect;
 
     @FXML
     private TextField txtProfessorResponsavel;
@@ -217,6 +221,39 @@ public class CadastroTurmaController implements Initializable {
             bgLabLoader.setDaemon(true);
             bgLabLoader.setName("SIGEC-LabLoader");
             bgLabLoader.start();
+        }
+
+        if (cursoSelect != null) {
+            cursoSelect.getItems().clear();
+            // Carrega os cursos ativos do banco de dados em segundo plano
+            Thread bgCursoLoader = new Thread(() -> {
+                try {
+                    List<Curso> cursosDb = TurmaDAO.listarCursosAtivos();
+                    javafx.application.Platform.runLater(() -> {
+                        cursoSelect.getItems().clear();
+                        if (cursosDb != null && !cursosDb.isEmpty()) {
+                            for (Curso curso : cursosDb) {
+                                cursoSelect.getItems().add(curso.getNomeCurso());
+                            }
+                        } else {
+                            // Fallback caso não haja nenhum cadastrado
+                            cursoSelect.getItems().addAll(
+                                    "Técnico em Gastronomia",
+                                    "Confeitaria e Panificação",
+                                    "Cozinheiro Profissional",
+                                    "Cozinha Brasileira",
+                                    "Barista e Coquetelaria"
+                            );
+                        }
+                        cursoSelect.getSelectionModel().selectFirst();
+                    });
+                } catch (Exception e) {
+                    System.err.println("Aviso: Falha ao carregar cursos: " + e.getMessage());
+                }
+            });
+            bgCursoLoader.setDaemon(true);
+            bgCursoLoader.setName("SIGEC-CursoLoader");
+            bgCursoLoader.start();
         }
 
         if (situacaoSelect != null) {
@@ -356,6 +393,7 @@ public class CadastroTurmaController implements Initializable {
     public void onCadastrarTurma(ActionEvent event) {
         String nomeTurma = txtNomeTurma != null ? txtNomeTurma.getText() : null;
         String laboratorio = laboratorioSelect != null ? laboratorioSelect.getValue() : null;
+        String curso = cursoSelect != null ? cursoSelect.getValue() : null;
         String professor = txtProfessorResponsavel != null ? txtProfessorResponsavel.getText() : null;
         String situacao = situacaoSelect != null ? situacaoSelect.getValue() : "Ativo";
 
@@ -367,6 +405,11 @@ public class CadastroTurmaController implements Initializable {
 
         if (laboratorio == null || laboratorio.trim().isEmpty()) {
             exibirAlerta(Alert.AlertType.WARNING, "Campo Obrigatório", "Por favor, selecione um Laboratório.");
+            return;
+        }
+
+        if (curso == null || curso.trim().isEmpty()) {
+            exibirAlerta(Alert.AlertType.WARNING, "Campo Obrigatório", "Por favor, selecione um Curso.");
             return;
         }
 
@@ -384,17 +427,26 @@ public class CadastroTurmaController implements Initializable {
                 return;
             }
 
+            int idCurso = TurmaDAO.buscarIdCursoPorNome(curso);
+            if (idCurso <= 0) {
+                exibirAlerta(Alert.AlertType.ERROR, "Curso Inválido",
+                        "Não foi possível identificar o curso selecionado no banco de dados.");
+                return;
+            }
+
             int idProfessor = instrutorSelecionado.getIdUsuario();
-            int idTurmaCriada = TurmaDAO.cadastrarTurma(nomeTurma, situacao, idLaboratorio, idProfessor);
+
+            int idTurmaCriada = TurmaDAO.cadastrarTurma(nomeTurma, situacao, idLaboratorio, idProfessor, idCurso);
 
             // Sucesso no cadastro com ID gerado
             String mensagem = String.format(
                     "Turma cadastrada com sucesso! (Código: #%d)\n\n" +
                     "• Turma: %s\n" +
+                    "• Curso: %s (ID: %d)\n" +
                     "• Laboratório: %s (ID: %d)\n" +
                     "• Professor Responsável: %s\n" +
                     "• Situação: %s",
-                    idTurmaCriada, nomeTurma.trim(), laboratorio, idLaboratorio, professor.trim(), situacao
+                    idTurmaCriada, nomeTurma.trim(), curso, idCurso, laboratorio, idLaboratorio, professor.trim(), situacao
             );
 
             exibirAlerta(Alert.AlertType.INFORMATION, "Turma Cadastrada", mensagem);
@@ -423,6 +475,9 @@ public class CadastroTurmaController implements Initializable {
         if (txtNomeTurma != null) txtNomeTurma.clear();
         if (laboratorioSelect != null && !laboratorioSelect.getItems().isEmpty()) {
             laboratorioSelect.getSelectionModel().selectFirst();
+        }
+        if (cursoSelect != null && !cursoSelect.getItems().isEmpty()) {
+            cursoSelect.getSelectionModel().selectFirst();
         }
         if (situacaoSelect != null) {
             situacaoSelect.setValue("Ativo");

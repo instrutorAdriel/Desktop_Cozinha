@@ -2,6 +2,7 @@ module com.sigec.system.sigec {
     requires javafx.controls;
     requires javafx.fxml;
     requires java.sql;
+
     requires jbcrypt;
     requires atlantafx.base;
     requires jakarta.mail;

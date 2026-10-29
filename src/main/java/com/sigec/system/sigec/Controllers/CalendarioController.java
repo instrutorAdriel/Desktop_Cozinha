@@ -9,7 +9,6 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
@@ -81,7 +80,6 @@ public class CalendarioController {
         MainApplication.trocadorDeTelas("homeTest.fxml", ScreenTransitionManager.Direction.BACKWARD);
     }
 
-
     @FXML
     public void onClickSolicitacoes(ActionEvent event) {
         try {
@@ -95,8 +93,6 @@ public class CalendarioController {
     public void onClickCalendario(ActionEvent event) {
         // Já está na tela de calendário
     }
-
-
 
     @FXML
     public void onClickRelatorio(ActionEvent event) throws IOException {
@@ -172,7 +168,6 @@ public class CalendarioController {
         }
     }
 
-
     @FXML
     public void onClickCadastroUsuario(ActionEvent event) throws IOException {
         MainApplication.trocadorDeTelas("cadastro.fxml", ScreenTransitionManager.Direction.FORWARD);
@@ -187,6 +182,5 @@ public class CalendarioController {
     public void botaoSairAction(ActionEvent event) throws IOException {
         MainApplication.trocadorDeTelas("login.fxml");
     }
-
 
 }

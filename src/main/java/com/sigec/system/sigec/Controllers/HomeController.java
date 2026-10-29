@@ -5,7 +5,6 @@ import com.sigec.system.sigec.Services.SessaoService;
 import com.sigec.system.sigec.Utils.BackgroundAnimator;
 import com.sigec.system.sigec.Utils.ButtonBorderLapAnimator;
 import com.sigec.system.sigec.Utils.DropdownBorderLapAnimator;
-import com.sigec.system.sigec.Utils.ScreenTransitionManager;
 
 import javafx.animation.Animation;
 import javafx.animation.FadeTransition;
@@ -118,9 +117,8 @@ public class HomeController implements Initializable {
 
         if (horaLabel != null) {
             horaLabel.setText(LocalTime.now().format(horaFormatter));
-            Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(1), event ->
-                    horaLabel.setText(LocalTime.now().format(horaFormatter))
-            ));
+            Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(1),
+                    event -> horaLabel.setText(LocalTime.now().format(horaFormatter))));
             timeline.setCycleCount(Animation.INDEFINITE);
             timeline.play();
         }
@@ -217,7 +215,6 @@ public class HomeController implements Initializable {
         }
     }
 
-
     @FXML
     public void botaoEstoqueAction(ActionEvent event) {
         toggleDropdownEstoque(event);
@@ -255,8 +252,6 @@ public class HomeController implements Initializable {
             exibirErroNavegacao("Relatório", e);
         }
     }
-
-
 
     @FXML
     public void onClickCadastroUsuario(ActionEvent event) {

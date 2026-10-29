@@ -361,11 +361,14 @@
                                                                 <ChoiceBox fx:id="laboratorioSelect" maxWidth="1.7976931348623157E308" prefHeight="36.0" styleClass="choice-box-cadastro" />
                                                             </children>
                                                         </VBox>
-                                          <VBox>
-                                             <children>
-                                                <Label styleClass="form-label" text="Escolha o Curso*" />
-                                                <ChoiceBox maxWidth="1.7976931348623157E308" prefHeight="36.0" styleClass="choice-box-cadastro" />
-                                             </children></VBox>
+
+                                                        <!-- Campo Curso -->
+                                                        <VBox spacing="5.0">
+                                                            <children>
+                                                                <Label styleClass="form-label" text="Escolha o Curso *" />
+                                                                <ChoiceBox fx:id="cursoSelect" maxWidth="1.7976931348623157E308" prefHeight="36.0" styleClass="choice-box-cadastro" />
+                                                            </children>
+                                                        </VBox>
 
                                                         <!-- Campo Professor Responsável -->
                                                         <VBox spacing="5.0">

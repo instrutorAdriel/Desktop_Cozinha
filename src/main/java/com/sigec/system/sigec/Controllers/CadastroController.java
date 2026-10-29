@@ -22,7 +22,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Region;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.PopupWindow;
 import javafx.stage.Window;
@@ -38,16 +37,26 @@ import java.util.ResourceBundle;
 
 public class CadastroController implements Initializable {
 
-    @FXML private AnchorPane topBarPane;
-    @FXML private Label dataLabel;
-    @FXML private Label usuarioLabel;
-    @FXML private Label horaLabel;
-    @FXML private Button btnNavCadastro;
-    @FXML private VBox submenuCadastro;
-    @FXML private Label setaCadastro;
-    @FXML private Button btnSubNavUsuario;
-    @FXML private Button btnSubNavTurma;
-    @FXML private Button botaoSair;
+    @FXML
+    private AnchorPane topBarPane;
+    @FXML
+    private Label dataLabel;
+    @FXML
+    private Label usuarioLabel;
+    @FXML
+    private Label horaLabel;
+    @FXML
+    private Button btnNavCadastro;
+    @FXML
+    private VBox submenuCadastro;
+    @FXML
+    private Label setaCadastro;
+    @FXML
+    private Button btnSubNavUsuario;
+    @FXML
+    private Button btnSubNavTurma;
+    @FXML
+    private Button botaoSair;
 
     @FXML
     private VBox submenuEstoque;
@@ -56,27 +65,39 @@ public class CadastroController implements Initializable {
     @FXML
     private Label setaEstoque;
 
+    @FXML
+    private TextField txtNome;
+    @FXML
+    private TextField txtEmail;
+    @FXML
+    private TextField txtAcesso;
+    @FXML
+    private ChoiceBox<String> acessoSelect;
+    @FXML
+    private ChoiceBox<String> unidadeSelect;
 
-    @FXML private TextField txtNome;
-    @FXML private TextField txtEmail;
-    @FXML private TextField txtAcesso;
-    @FXML private ChoiceBox<String> acessoSelect;
-    @FXML private ChoiceBox<String> unidadeSelect;
-
-    @FXML private PasswordField txtSenha;
+    @FXML
+    private PasswordField txtSenha;
 
     // --- NOVOS CAMPOS DO OLHO (SENHA) ---
-    @FXML private TextField txtSenhaRevelada;
-    @FXML private ToggleButton btnMostrarSenha;
+    @FXML
+    private TextField txtSenhaRevelada;
+    @FXML
+    private ToggleButton btnMostrarSenha;
 
-    @FXML private PasswordField txtConfirmarSenha;
+    @FXML
+    private PasswordField txtConfirmarSenha;
 
     // --- NOVOS CAMPOS DO OLHO (CONFIRMAR SENHA) ---
-    @FXML private TextField txtConfirmarSenhaRevelada;
-    @FXML private ToggleButton btnMostrarConfirmarSenha;
+    @FXML
+    private TextField txtConfirmarSenhaRevelada;
+    @FXML
+    private ToggleButton btnMostrarConfirmarSenha;
 
-    @FXML private Button btnCadastrar;
-    @FXML private Button btnLimpar;
+    @FXML
+    private Button btnCadastrar;
+    @FXML
+    private Button btnLimpar;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -89,10 +110,10 @@ public class CadastroController implements Initializable {
         configurarMenuInicial();
 
         // Sincroniza os textos entre os campos ocultos e revelados
-        if(txtSenhaRevelada != null && txtSenha != null){
+        if (txtSenhaRevelada != null && txtSenha != null) {
             txtSenhaRevelada.textProperty().bindBidirectional(txtSenha.textProperty());
         }
-        if(txtConfirmarSenhaRevelada != null && txtConfirmarSenha != null){
+        if (txtConfirmarSenhaRevelada != null && txtConfirmarSenha != null) {
             txtConfirmarSenhaRevelada.textProperty().bindBidirectional(txtConfirmarSenha.textProperty());
         }
 
@@ -100,6 +121,7 @@ public class CadastroController implements Initializable {
         configurarSeletorAcesso();
         configurarSeletorUnidade();
     }
+
     private void configurarSeletorUnidade() {
         if (unidadeSelect != null) {
 
@@ -119,13 +141,11 @@ public class CadastroController implements Initializable {
                     "28 - POLO SANTA MARIA",
                     "29 - POLO RECANTO",
                     "32 - POLO SENAC BELEZA",
-                    "34 - CEP CORPORATIVO"
-            );
+                    "34 - CEP CORPORATIVO");
 
             unidadeSelect.setValue("34 - CEP CORPORATIVO");
         }
     }
-
 
     // --- MÉTODO DO OLHO (SENHA) ---
     @FXML
@@ -200,7 +220,8 @@ public class CadastroController implements Initializable {
                                 if (window instanceof PopupWindow popupWindow) {
                                     if (popupWindow.getScene() != null && popupWindow.getScene().getRoot() != null) {
                                         Node root = popupWindow.getScene().getRoot();
-                                        if (root.getStyleClass().contains("context-menu") && root instanceof Region region) {
+                                        if (root.getStyleClass().contains("context-menu")
+                                                && root instanceof Region region) {
                                             region.setMinWidth(buttonWidth);
                                             region.setPrefWidth(buttonWidth);
                                             region.setMaxWidth(buttonWidth);
@@ -225,9 +246,8 @@ public class CadastroController implements Initializable {
 
         if (horaLabel != null) {
             horaLabel.setText(LocalTime.now().format(horaFormatter));
-            Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(1), event ->
-                    horaLabel.setText(LocalTime.now().format(horaFormatter))
-            ));
+            Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(1),
+                    event -> horaLabel.setText(LocalTime.now().format(horaFormatter))));
             timeline.setCycleCount(Animation.INDEFINITE);
             timeline.play();
         }
@@ -241,8 +261,6 @@ public class CadastroController implements Initializable {
             exibirAlerta(Alert.AlertType.ERROR, "Erro", "Erro ao navegar para a Página Inicial: " + e.getMessage());
         }
     }
-
-
 
     @FXML
     public void onClickRelatorio(ActionEvent event) {
@@ -344,7 +362,8 @@ public class CadastroController implements Initializable {
         try {
             MainApplication.trocadorDeTelas("cadastro-turma.fxml");
         } catch (IOException e) {
-            exibirAlerta(Alert.AlertType.ERROR, "Erro", "Não foi possível carregar a tela de Cadastro de Turma: " + e.getMessage());
+            exibirAlerta(Alert.AlertType.ERROR, "Erro",
+                    "Não foi possível carregar a tela de Cadastro de Turma: " + e.getMessage());
         }
     }
 
@@ -357,8 +376,6 @@ public class CadastroController implements Initializable {
             exibirAlerta(Alert.AlertType.ERROR, "Erro", "Erro ao sair: " + e.getMessage());
         }
     }
-
-
 
     @FXML
     public void onClickSolicitacoes(ActionEvent event) {
@@ -380,26 +397,32 @@ public class CadastroController implements Initializable {
                 email == null || email.trim().isEmpty() ||
                 senha == null || senha.isEmpty() ||
                 confirmarSenha == null || confirmarSenha.isEmpty()) {
-            exibirAlerta(Alert.AlertType.WARNING, "Campos Obrigatórios", "Por favor, preencha todos os campos obrigatórios para continuar.");
+            exibirAlerta(Alert.AlertType.WARNING, "Campos Obrigatórios",
+                    "Por favor, preencha todos os campos obrigatórios para continuar.");
             return;
         }
 
         if (!senha.equals(confirmarSenha)) {
-            exibirAlerta(Alert.AlertType.ERROR, "Senhas não conferem", "A senha e a confirmação de senha devem ser idênticas.");
+            exibirAlerta(Alert.AlertType.ERROR, "Senhas não conferem",
+                    "A senha e a confirmação de senha devem ser idênticas.");
             return;
         }
 
         try {
-            String nivelAcesso = (acessoSelect != null && acessoSelect.getValue() != null && !acessoSelect.getValue().trim().isEmpty())
-                    ? acessoSelect.getValue().trim()
-                    : ((txtAcesso != null && !txtAcesso.getText().trim().isEmpty()) ? txtAcesso.getText().trim() : "Instrutor");
+            String nivelAcesso = (acessoSelect != null && acessoSelect.getValue() != null
+                    && !acessoSelect.getValue().trim().isEmpty())
+                            ? acessoSelect.getValue().trim()
+                            : ((txtAcesso != null && !txtAcesso.getText().trim().isEmpty()) ? txtAcesso.getText().trim()
+                                    : "Instrutor");
 
             boolean cadastrado = UserDAO.cadastrar(nome.trim(), email.trim(), senha, nivelAcesso);
             if (cadastrado) {
-                exibirAlerta(Alert.AlertType.INFORMATION, "Cadastro Realizado", "Usuário \"" + nome.trim() + "\" cadastrado com sucesso no sistema!");
+                exibirAlerta(Alert.AlertType.INFORMATION, "Cadastro Realizado",
+                        "Usuário \"" + nome.trim() + "\" cadastrado com sucesso no sistema!");
                 limparCampos();
             } else {
-                exibirAlerta(Alert.AlertType.ERROR, "Erro no Cadastro", "Não foi possível cadastrar. O e-mail informado já pode estar em uso.");
+                exibirAlerta(Alert.AlertType.ERROR, "Erro no Cadastro",
+                        "Não foi possível cadastrar. O e-mail informado já pode estar em uso.");
             }
         } catch (SQLException | RuntimeException e) {
             exibirAlerta(Alert.AlertType.ERROR, "Erro de Banco de Dados", "Erro ao salvar cadastro: " + e.getMessage());
@@ -412,12 +435,18 @@ public class CadastroController implements Initializable {
     }
 
     public void limparCampos() {
-        if (txtNome != null) txtNome.clear();
-        if (txtEmail != null) txtEmail.clear();
-        if (txtSenha != null) txtSenha.clear();
-        if (txtConfirmarSenha != null) txtConfirmarSenha.clear();
-        if (txtAcesso != null) txtAcesso.clear();
-        if (acessoSelect != null) acessoSelect.setValue("Instrutor");
+        if (txtNome != null)
+            txtNome.clear();
+        if (txtEmail != null)
+            txtEmail.clear();
+        if (txtSenha != null)
+            txtSenha.clear();
+        if (txtConfirmarSenha != null)
+            txtConfirmarSenha.clear();
+        if (txtAcesso != null)
+            txtAcesso.clear();
+        if (acessoSelect != null)
+            acessoSelect.setValue("Instrutor");
 
         if (txtNome != null) {
             txtNome.requestFocus();
@@ -432,7 +461,4 @@ public class CadastroController implements Initializable {
         alert.showAndWait();
     }
 
-
-
 }
-

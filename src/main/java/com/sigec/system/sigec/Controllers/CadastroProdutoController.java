@@ -8,7 +8,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.net.URL;
@@ -16,16 +15,22 @@ import java.util.ResourceBundle;
 
 public class CadastroProdutoController implements Initializable {
 
-    @FXML private TextField txtNomeProduto;
-    @FXML private TextField txtQtdAtual;
-    @FXML private TextField txtEstoqueMinimo;
-    @FXML private ChoiceBox<String> txtTipoProduto;
-    @FXML private ChoiceBox<String> txtUnidadeDeMedida;
-    @FXML private DatePicker txtDataValidade;
-    @FXML private Button btnVoltar;
-    @FXML private Button btnCadastro;
-
-
+    @FXML
+    private TextField txtNomeProduto;
+    @FXML
+    private TextField txtQtdAtual;
+    @FXML
+    private TextField txtEstoqueMinimo;
+    @FXML
+    private ChoiceBox<String> txtTipoProduto;
+    @FXML
+    private ChoiceBox<String> txtUnidadeDeMedida;
+    @FXML
+    private DatePicker txtDataValidade;
+    @FXML
+    private Button btnVoltar;
+    @FXML
+    private Button btnCadastro;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -40,15 +45,13 @@ public class CadastroProdutoController implements Initializable {
                     "Hortifruti",
                     "Proteína",
                     "Frios",
-                    "Mercearia"
-            ));
+                    "Mercearia"));
             txtTipoProduto.getSelectionModel().selectFirst();
         }
 
         if (txtUnidadeDeMedida != null) {
             txtUnidadeDeMedida.setItems(FXCollections.observableArrayList(
-                    "kg", "g", "L", "ml", "un", "pct", "cx"
-            ));
+                    "kg", "g", "L", "ml", "un", "pct", "cx"));
             txtUnidadeDeMedida.getSelectionModel().selectFirst();
         }
     }
@@ -80,7 +83,8 @@ public class CadastroProdutoController implements Initializable {
         // -------------------------------------------------------------------
         if (dao.verificarProdutoExisteAtivo(nome)) {
             exibirAlerta(Alert.AlertType.WARNING, "Produto Duplicado",
-                    "O produto '" + nome.trim() + "' já existe no estoque! Se precisar, altere a quantidade na opção 'Editar'.");
+                    "O produto '" + nome.trim()
+                            + "' já existe no estoque! Se precisar, altere a quantidade na opção 'Editar'.");
             return; // Interrompe o cadastro aqui
         }
 
@@ -88,7 +92,8 @@ public class CadastroProdutoController implements Initializable {
         boolean sucesso = dao.adicionarProduto(nome, tipo, quantidadeFormatada, unidade);
 
         if (sucesso) {
-            exibirAlerta(Alert.AlertType.INFORMATION, "Sucesso", "Produto '" + nome.trim() + "' cadastrado com sucesso no estoque!");
+            exibirAlerta(Alert.AlertType.INFORMATION, "Sucesso",
+                    "Produto '" + nome.trim() + "' cadastrado com sucesso no estoque!");
             fecharJanela();
         } else {
             exibirAlerta(Alert.AlertType.ERROR, "Erro", "Não foi possível salvar o produto no banco de dados.");
@@ -103,7 +108,8 @@ public class CadastroProdutoController implements Initializable {
     private void fecharJanela() {
         if (btnVoltar != null && btnVoltar.getScene() != null && btnVoltar.getScene().getWindow() != null) {
             ((Stage) btnVoltar.getScene().getWindow()).close();
-        } else if (btnCadastro != null && btnCadastro.getScene() != null && btnCadastro.getScene().getWindow() != null) {
+        } else if (btnCadastro != null && btnCadastro.getScene() != null
+                && btnCadastro.getScene().getWindow() != null) {
             ((Stage) btnCadastro.getScene().getWindow()).close();
         }
     }

@@ -14,40 +14,48 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
-
-import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
 public class SolicitacoesController {
 
-    @FXML private Label dataLabel;
-    @FXML private Label horaLabel;
-    @FXML private Label usuarioLabel;
-
-    @FXML private VBox submenuCadastro;
-    @FXML private Label setaCadastro;
+    @FXML
+    private Label dataLabel;
+    @FXML
+    private Label horaLabel;
+    @FXML
+    private Label usuarioLabel;
+    @FXML
+    private VBox submenuCadastro;
+    @FXML
+    private Label setaCadastro;
     @FXML
     private Button btnNavCadastro;
-
-    @FXML private TextField txtPesquisa;
-    @FXML private ChoiceBox<String> cbStatusFiltro;
-
-    @FXML private TableView<SolicitacaoMock> tabelaSolicitacoes;
-    @FXML private TableColumn<SolicitacaoMock, String> colData;
-    @FXML private TableColumn<SolicitacaoMock, String> colSolicitante;
-    @FXML private TableColumn<SolicitacaoMock, String> colTurma;
-    @FXML private TableColumn<SolicitacaoMock, String> colInsumo;
-    @FXML private TableColumn<SolicitacaoMock, String> colQtd;
-    @FXML private TableColumn<SolicitacaoMock, String> colJustificativa;
-    @FXML private TableColumn<SolicitacaoMock, String> colStatus;
+    @FXML
+    private TextField txtPesquisa;
+    @FXML
+    private ChoiceBox<String> cbStatusFiltro;
+    @FXML
+    private TableView<SolicitacaoMock> tabelaSolicitacoes;
+    @FXML
+    private TableColumn<SolicitacaoMock, String> colData;
+    @FXML
+    private TableColumn<SolicitacaoMock, String> colSolicitante;
+    @FXML
+    private TableColumn<SolicitacaoMock, String> colTurma;
+    @FXML
+    private TableColumn<SolicitacaoMock, String> colInsumo;
+    @FXML
+    private TableColumn<SolicitacaoMock, String> colQtd;
+    @FXML
+    private TableColumn<SolicitacaoMock, String> colJustificativa;
+    @FXML
+    private TableColumn<SolicitacaoMock, String> colStatus;
     @FXML
     private VBox submenuEstoque;
-
     @FXML
     private Label setaEstoque;
-
     @FXML
     private Button btnNavEstoque;
 
@@ -57,8 +65,6 @@ public class SolicitacoesController {
     public void initialize() {
         iniciarRelogio();
         usuarioLabel.setText("Administrador");
-
-        // Preenche o ChoiceBox de Filtro
         cbStatusFiltro.setItems(FXCollections.observableArrayList("Todos", "Pendente", "Aprovado", "Recusado"));
         cbStatusFiltro.setValue("Pendente");
 
@@ -130,37 +136,65 @@ public class SolicitacoesController {
 
     @FXML
     public void onClickHome(ActionEvent event) {
-        try { MainApplication.trocadorDeTelas("homeTest.fxml"); } catch (Exception e) { e.printStackTrace(); }
+        try {
+            MainApplication.trocadorDeTelas("homeTest.fxml");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
     public void onClickRelatorio(ActionEvent event) {
-        try { MainApplication.trocadorDeTelas("historico.fxml"); } catch (Exception e) { e.printStackTrace(); }
+        try {
+            MainApplication.trocadorDeTelas("historico.fxml");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
     public void onClickSolicitacoes(ActionEvent event) {
-        try { MainApplication.trocadorDeTelas("solicitacoes-extras.fxml"); } catch (Exception e) { e.printStackTrace(); }
+        try {
+            MainApplication.trocadorDeTelas("solicitacoes-extras.fxml");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
     public void botaoCalendarioAction(ActionEvent event) {
-        try { MainApplication.trocadorDeTelas("calendario.fxml"); } catch (Exception e) { e.printStackTrace(); }
+        try {
+            MainApplication.trocadorDeTelas("calendario.fxml");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
     public void onClickCadastroUsuario(ActionEvent event) {
-        try { MainApplication.trocadorDeTelas("cadastro.fxml"); } catch (Exception e) { e.printStackTrace(); }
+        try {
+            MainApplication.trocadorDeTelas("cadastro.fxml");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
     public void onClickCadastroTurma(ActionEvent event) {
-        try { MainApplication.trocadorDeTelas("cadastro-turma.fxml"); } catch (Exception e) { e.printStackTrace(); }
+        try {
+            MainApplication.trocadorDeTelas("cadastro-turma.fxml");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
     public void botaoSairAction(ActionEvent event) {
-        try { MainApplication.trocadorDeTelas("login.fxml"); } catch (Exception e) { e.printStackTrace(); }
+        try {
+            MainApplication.trocadorDeTelas("login.fxml");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
@@ -232,16 +266,17 @@ public class SolicitacoesController {
         }
     }
 
-
     // ==========================================
     // DADOS MOCK (Exemplo visual)
     // ==========================================
     private void carregarDadosDeTeste() {
         listaSolicitacoes.addAll(
-                new SolicitacaoMock("20/10/2026 14:30", "Prof. João Gastronomia", "Cozinha Quente A", "Farinha de Trigo", "2 kg", "Receita rendeu menos que o esperado", "Pendente"),
-                new SolicitacaoMock("20/10/2026 15:10", "Prof. Maria Confeitaria", "Confeitaria B", "Chocolate Meio Amargo", "500 g", "Teste extra de temperagem", "Pendente"),
-                new SolicitacaoMock("19/10/2026 09:00", "Prof. Carlos", "Panificação", "Fermento Biológico", "50 g", "O fermento anterior estava inativo", "Aprovado")
-        );
+                new SolicitacaoMock("20/10/2026 14:30", "Prof. João Gastronomia", "Cozinha Quente A",
+                        "Farinha de Trigo", "2 kg", "Receita rendeu menos que o esperado", "Pendente"),
+                new SolicitacaoMock("20/10/2026 15:10", "Prof. Maria Confeitaria", "Confeitaria B",
+                        "Chocolate Meio Amargo", "500 g", "Teste extra de temperagem", "Pendente"),
+                new SolicitacaoMock("19/10/2026 09:00", "Prof. Carlos", "Panificação", "Fermento Biológico", "50 g",
+                        "O fermento anterior estava inativo", "Aprovado"));
     }
 
     // CLASSE INTERNA MOCK PARA A TABELA
@@ -254,18 +289,47 @@ public class SolicitacoesController {
         private String justificativa;
         private String status;
 
-        public SolicitacaoMock(String data, String solicitante, String turma, String insumo, String quantidade, String justificativa, String status) {
-            this.data = data; this.solicitante = solicitante; this.turma = turma;
-            this.insumo = insumo; this.quantidade = quantidade; this.justificativa = justificativa; this.status = status;
+        public SolicitacaoMock(String data, String solicitante, String turma, String insumo, String quantidade,
+                String justificativa, String status) {
+            this.data = data;
+            this.solicitante = solicitante;
+            this.turma = turma;
+            this.insumo = insumo;
+            this.quantidade = quantidade;
+            this.justificativa = justificativa;
+            this.status = status;
         }
 
-        public String getData() { return data; }
-        public String getSolicitante() { return solicitante; }
-        public String getTurma() { return turma; }
-        public String getInsumo() { return insumo; }
-        public String getQuantidade() { return quantidade; }
-        public String getJustificativa() { return justificativa; }
-        public String getStatus() { return status; }
-        public void setStatus(String status) { this.status = status; }
+        public String getData() {
+            return data;
+        }
+
+        public String getSolicitante() {
+            return solicitante;
+        }
+
+        public String getTurma() {
+            return turma;
+        }
+
+        public String getInsumo() {
+            return insumo;
+        }
+
+        public String getQuantidade() {
+            return quantidade;
+        }
+
+        public String getJustificativa() {
+            return justificativa;
+        }
+
+        public String getStatus() {
+            return status;
+        }
+
+        public void setStatus(String status) {
+            this.status = status;
+        }
     }
 }
