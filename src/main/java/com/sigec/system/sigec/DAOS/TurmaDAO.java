@@ -2,6 +2,7 @@ package com.sigec.system.sigec.DAOS;
 
 import com.sigec.system.sigec.Constructors.Curso;
 import com.sigec.system.sigec.Constructors.Laboratorio;
+import com.sigec.system.sigec.Constructors.User;
 import com.sigec.system.sigec.DTBConfig.ConfigDataBase;
 
 import java.sql.Connection;
@@ -125,6 +126,42 @@ public final class TurmaDAO {
                 }
             }
         }
+    }
+
+    /**
+     * Retorna a lista de professores/instrutores ativos (acesso = 'I' e situacao = 'A') cadastrados na tabela 'usuario'.
+     *
+     * @return Lista de professores ativos
+     */
+    public static List<User> listarProfessoresAtivos() {
+        List<User> professores = new ArrayList<>();
+        String sql = "SELECT id_usuario, nome_usuario, email, senha, acesso, situacao " +
+                     "FROM usuario " +
+                     "WHERE UPPER(TRIM(acesso)) = 'I' " +
+                     "AND (situacao IS NULL OR UPPER(TRIM(situacao)) = 'A' OR UPPER(TRIM(situacao)) = 'ATIVO') " +
+                     "ORDER BY nome_usuario ASC";
+
+        try (Connection conn = ConfigDataBase.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                User professor = new User(
+                        rs.getInt("id_usuario"),
+                        rs.getString("nome_usuario"),
+                        rs.getString("email"),
+                        rs.getString("senha"),
+                        rs.getString("acesso"),
+                        rs.getString("situacao"),
+                        0
+                );
+                professores.add(professor);
+            }
+        } catch (SQLException e) {
+            System.err.println("Aviso: Falha ao listar professores do banco de dados: " + e.getMessage());
+        }
+
+        return professores;
     }
 
     /**
@@ -266,9 +303,9 @@ public final class TurmaDAO {
              ResultSet rs = stmt.executeQuery()) {
             if (rs.next()) {
                 return rs.getInt("id_curso");
- }
-           }
-        return -1;
+            }
         }
 
+        return -1;
+    }
 }

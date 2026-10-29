@@ -4,7 +4,6 @@ import com.sigec.system.sigec.Constructors.Curso;
 import com.sigec.system.sigec.Constructors.Laboratorio;
 import com.sigec.system.sigec.Constructors.User;
 import com.sigec.system.sigec.DAOS.TurmaDAO;
-import com.sigec.system.sigec.DAOS.UserDAO;
 import com.sigec.system.sigec.MainApplication;
 import com.sigec.system.sigec.Services.SessaoService;
 import com.sigec.system.sigec.Utils.BackgroundAnimator;
@@ -271,23 +270,22 @@ public class CadastroTurmaController implements Initializable {
         filteredInstrutores = new FilteredList<>(masterInstrutores, p -> true);
         listaInstrutores.setItems(filteredInstrutores);
 
-        // Consulta o banco de dados em thread assíncrona para não bloquear a thread da interface (JavaFX)
+        // Consulta os professores ativos (acesso = 'I') no banco de dados em segundo plano
         Thread bgLoader = new Thread(() -> {
             try {
-                List<User> instrutoresDb = UserDAO.listarInstrutores();
-                if (instrutoresDb != null && !instrutoresDb.isEmpty()) {
-                    javafx.application.Platform.runLater(() -> {
-                        masterInstrutores.setAll(instrutoresDb);
-                        if (instrutorSelecionado != null) {
-                            for (User u : masterInstrutores) {
-                                if (u.getNome() != null && u.getNome().equals(instrutorSelecionado.getNome())) {
-                                    selecionarInstrutor(u);
-                                    break;
-                                }
+                List<User> instrutoresDb = TurmaDAO.listarProfessoresAtivos();
+                javafx.application.Platform.runLater(() -> {
+                    masterInstrutores.setAll(instrutoresDb);
+                    if (instrutorSelecionado != null) {
+                        for (User u : masterInstrutores) {
+                            if (u.getIdUsuario() == instrutorSelecionado.getIdUsuario()) {
+                                selecionarInstrutor(u);
+                                break;
                             }
                         }
-                    });
-                }
+                    }
+                    listaInstrutores.refresh();
+                });
             } catch (Exception e) {
                 System.err.println("Aviso: Falha ao carregar instrutores em segundo plano: " + e.getMessage());
             }
@@ -305,7 +303,6 @@ public class CadastroTurmaController implements Initializable {
                 if (empty || user == null) {
                     setText(null);
                     setGraphic(null);
-                    setStyle(null);
                 } else {
                     HBox card = new HBox(12);
                     card.setAlignment(Pos.CENTER_LEFT);
@@ -318,7 +315,7 @@ public class CadastroTurmaController implements Initializable {
                     Label nomeLbl = new Label(user.getNome() != null ? user.getNome() : "Instrutor");
                     nomeLbl.setStyle("-fx-font-family: 'Arial Bold'; -fx-font-size: 13px; -fx-text-fill: #1e293b;");
 
-                    Label emailLbl = new Label(user.getEmail() != null ? user.getEmail() : "senac@sp.senac.br");
+                    Label emailLbl = new Label(user.getEmail() != null ? user.getEmail() : "senac@df.senac.br");
                     emailLbl.setStyle("-fx-font-family: 'Arial'; -fx-font-size: 11px; -fx-text-fill: #64748b;");
 
                     infoBox.getChildren().addAll(nomeLbl, emailLbl);
@@ -327,15 +324,15 @@ public class CadastroTurmaController implements Initializable {
                     Region spacer = new Region();
                     HBox.setHgrow(spacer, Priority.ALWAYS);
 
-                    // Indicador de seleção
+                    // Indicador de seleção baseado na chave primária id_usuario
                     boolean isSelected = (instrutorSelecionado != null &&
-                            instrutorSelecionado.getNome() != null &&
-                            instrutorSelecionado.getNome().equals(user.getNome()));
+                            instrutorSelecionado.getIdUsuario() == user.getIdUsuario());
 
                     Label statusBadge = new Label(isSelected ? "✔ Selecionado" : "Disponível");
                     statusBadge.getStyleClass().add(isSelected ? "badge-instrutor-selecionado" : "badge-instrutor-disponivel");
 
                     card.getChildren().addAll(avatar, infoBox, spacer, statusBadge);
+                    card.setOnMouseClicked(e -> selecionarInstrutor(user));
                     setGraphic(card);
                     setText(null);
                 }

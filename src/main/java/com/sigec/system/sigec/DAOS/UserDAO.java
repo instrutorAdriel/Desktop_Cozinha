@@ -131,8 +131,8 @@ public final class UserDAO {
      *
      * @param nomeC   Nome do usuário
      * @param emailC  E-mail
-     * @param senhaC  Senha em texto puro a ser criptografada
-     * @param acessoC Nível de acesso (ex: Administrador, Comum)
+     * @param senhaC  Senha em texto puro a ser criptografographed
+     * @param acessoC Nível de acesso (ex: Instrutor, Gestor)
      * @return true se cadastrado com sucesso, false se já existir violação de unicidade
      * @throws SQLException Em caso de erro de infraestrutura do banco
      */
@@ -160,38 +160,32 @@ public final class UserDAO {
     }
 
     /**
-     * Retorna a lista de usuários com perfil de Instrutor cadastrados no sistema.
+     * Retorna a lista de usuários ativos com perfil de Instrutor/Professor (acesso = 'I') cadastrados no sistema.
      *
      * @return Lista de instrutores disponíveis
      */
     public static List<User> listarInstrutores() {
         List<User> instrutores = new ArrayList<>();
-        String sql = "SELECT * FROM usuario WHERE UPPER(acesso) LIKE 'I%' OR UPPER(acesso) = 'INSTRUTOR' OR UPPER(acesso) LIKE 'P%' OR UPPER(acesso) = 'PROFESSOR' ORDER BY nome_usuario ASC";
+        String sql = "SELECT id_usuario, nome_usuario, email, senha, acesso, situacao " +
+                     "FROM usuario " +
+                     "WHERE UPPER(TRIM(acesso)) = 'I' " +
+                     "AND (situacao IS NULL OR UPPER(TRIM(situacao)) = 'A' OR UPPER(TRIM(situacao)) = 'ATIVO') " +
+                     "ORDER BY nome_usuario ASC";
 
         try (Connection conn = ConfigDataBase.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql);
              ResultSet rs = stmt.executeQuery()) {
 
             while (rs.next()) {
-                User u = new User();
-                try {
-                    u.setIdUsuario(rs.getInt("id_usuario"));
-                } catch (SQLException ignored) {
-                    try {
-                        u.setIdUsuario(rs.getInt("id"));
-                    } catch (SQLException ignored2) {}
-                }
-                try {
-                    u.setNome(rs.getString("nome_usuario"));
-                } catch (SQLException ignored) {
-                    try {
-                        u.setNome(rs.getString("nome"));
-                    } catch (SQLException ignored2) {}
-                }
-                u.setEmail(rs.getString("email"));
-                try {
-                    u.setAcesso(rs.getString("acesso"));
-                } catch (SQLException ignored) {}
+                User u = new User(
+                        rs.getInt("id_usuario"),
+                        rs.getString("nome_usuario"),
+                        rs.getString("email"),
+                        rs.getString("senha"),
+                        rs.getString("acesso"),
+                        rs.getString("situacao"),
+                        0
+                );
                 instrutores.add(u);
             }
         } catch (SQLException e) {
