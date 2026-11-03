@@ -2,9 +2,7 @@ package com.sigec.system.sigec.Constructors;
 
 import java.util.Objects;
 
-/**
- * Modelo de domínio para itens do estoque na visualização de listagem.
- */
+
 public class ListaEstoque {
 
     private int idProduto;

@@ -13,32 +13,64 @@ import java.util.List;
 public class ProductStorageDAO {
 
     public List<ListaEstoque> buscarTodosProdutosEstoque() {
+        return buscarProdutosPorFiltro("", "Todas", "Todos");
+    }
+
+    public List<ListaEstoque> buscarProdutosPorFiltro(String termo, String unidade, String curso) {
         List<ListaEstoque> lista = new ArrayList<>();
-        // Query  para buscar e somar a quantidade da tabela insumo
-        String sql = "SELECT p.id_produto, p.nome_produto, c.nome_categoria AS tipo_produto, " +
-                "COALESCE(SUM(i.quantidade), 0) AS quantidade, p.unidade " +
-                "FROM produto p " +
-                "LEFT JOIN categoria c ON p.id_categoria = c.id_categoria " +
-                "LEFT JOIN insumo i ON p.id_produto = i.id_produto AND i.cancelado = 'N' " +
-                "WHERE p.situacao = 'A' " +
-                "GROUP BY p.id_produto, p.nome_produto, c.nome_categoria, p.unidade";
+
+        StringBuilder sql = new StringBuilder();
+        sql.append("SELECT p.id_produto, p.nome_produto, c.nome_categoria AS tipo_produto, ");
+        sql.append("COALESCE(SUM(i.quantidade), 0) AS quantidade, p.unidade ");
+        sql.append("FROM produto p ");
+        sql.append("LEFT JOIN categoria c ON p.id_categoria = c.id_categoria ");
+        sql.append("LEFT JOIN insumo i ON p.id_produto = i.id_produto AND i.cancelado = 'N' ");
+        sql.append("LEFT JOIN unidade u ON i.id_unidade = u.id_unidade ");
+        sql.append("LEFT JOIN ficha f ON i.id_ficha = f.id_ficha ");
+        sql.append("LEFT JOIN turma t ON f.id_turma = t.id_turma ");
+        sql.append("LEFT JOIN curso cu ON t.id_curso = cu.id_curso ");
+        sql.append("WHERE p.situacao = 'A' ");
+
+        List<Object> parametros = new ArrayList<>();
+
+        if (termo != null && !termo.trim().isEmpty()) {
+            sql.append("AND LOWER(p.nome_produto) LIKE LOWER(?) ");
+            parametros.add("%" + termo.trim() + "%");
+        }
+
+        if (unidade != null && !unidade.equals("Todas") && !unidade.trim().isEmpty()) {
+            sql.append("AND u.nome_unidade = ? ");
+            parametros.add(unidade);
+        }
+
+        if (curso != null && !curso.equals("Todos") && !curso.trim().isEmpty()) {
+            sql.append("AND cu.nome_curso = ? ");
+            parametros.add(curso);
+        }
+
+        sql.append("GROUP BY p.id_produto, p.nome_produto, c.nome_categoria, p.unidade");
 
         try (Connection conn = ConfigDataBase.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql);
-             ResultSet rs = stmt.executeQuery()) {
+             PreparedStatement stmt = conn.prepareStatement(sql.toString())) {
 
-            while (rs.next()) {
-                ListaEstoque produto = new ListaEstoque(
-                        rs.getInt("id_produto"),
-                        rs.getString("nome_produto"),
-                        rs.getString("tipo_produto") != null ? rs.getString("tipo_produto") : "Sem Categoria",
-                        rs.getDouble("quantidade"), // Agora vem do SUM(i.quantidade)
-                        rs.getString("unidade")
-                );
-                lista.add(produto);
+            for (int j = 0; j < parametros.size(); j++) {
+                stmt.setObject(j + 1, parametros.get(j));
+            }
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    ListaEstoque produto = new ListaEstoque(
+                            rs.getInt("id_produto"),
+                            rs.getString("nome_produto"),
+                            rs.getString("tipo_produto") != null ? rs.getString("tipo_produto") : "Sem Categoria",
+                            rs.getDouble("quantidade"),
+                            rs.getString("unidade")
+                    );
+                    lista.add(produto);
+                }
             }
         } catch (Exception e) {
-            System.err.println("Erro ao carregar lista de estoque: " + e.getMessage());
+            System.err.println("Erro ao filtrar lista de estoque: " + e.getMessage());
         }
         return lista;
     }
@@ -71,9 +103,7 @@ public class ProductStorageDAO {
         return false;
     }
 
-    // =========================================================================
-    // INTELIGÊNCIA: Acha a categoria no banco. Se não existir, cria na hora!
-    // =========================================================================
+
     private int obterOuCriarCategoria(Connection conn, String nomeCategoria) throws Exception {
         String sqlSelect = "SELECT id_categoria FROM categoria WHERE nome_categoria = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sqlSelect)) {
@@ -96,49 +126,182 @@ public class ProductStorageDAO {
                 }
             }
         }
-        return 1; // Fallback de emergência
+        return 1;
     }
 
-    public boolean adicionarProduto(String nome, String nomeCategoria, double quantidade, String unidade) {
-        try (Connection conn = ConfigDataBase.getConnection()) {
+    public boolean adicionarProduto(String nome, String nomeCategoria, double quantidade, double estoqueMinimo,
+                                    String unidadeMedida, String lote, java.time.LocalDate dataValidade,
+                                    String nomeUnidade) {
+        Connection conn = null;
+        try {
+            conn = ConfigDataBase.getConnection();
+            conn.setAutoCommit(false);
 
-            // 1. Usa o método inteligente para ter certeza de que a categoria existe
             int idCategoria = obterOuCriarCategoria(conn, nomeCategoria);
 
-            // 2. Insere o produto usando o ID correto
-            String sql = "INSERT INTO produto (nome_produto, id_categoria, quantidade, unidade, situacao) VALUES (?, ?, ?, ?, 'A')";
-            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-                stmt.setString(1, nome);
-                stmt.setInt(2, idCategoria);
+            int idUnidade = obterIdUnidade(conn, nomeUnidade);
+
+            //  Insere o produto
+            int idProduto;
+            String sqlProduto = "INSERT INTO produto (nome_produto, unidade, quantidade, situacao, id_categoria) " +
+                    "VALUES (?, ?, ?, 'A', ?)";
+            try (PreparedStatement stmt = conn.prepareStatement(sqlProduto, Statement.RETURN_GENERATED_KEYS)) {
+                stmt.setString(1, nome.trim());
+                stmt.setString(2, unidadeMedida);
                 stmt.setDouble(3, quantidade);
-                stmt.setString(4, unidade);
-                return stmt.executeUpdate() > 0;
+                stmt.setInt(4, idCategoria);
+                stmt.executeUpdate();
+                try (ResultSet rs = stmt.getGeneratedKeys()) {
+                    if (!rs.next()) throw new Exception("ID do produto não gerado.");
+                    idProduto = rs.getInt(1);
+                }
             }
+
+            //  Insere o insumo (lote, validade, mínimo, unidade)
+            String sqlInsumo = "INSERT INTO insumo (quantidade, quantidade_mininma, unidade_medida, cancelado, " +
+                    "id_produto, id_ficha, id_unidade, extra, data_validade, lote) " +
+                    "VALUES (?, ?, ?, 'N', ?, NULL, ?, NULL, ?, ?)";
+            try (PreparedStatement stmt = conn.prepareStatement(sqlInsumo)) {
+                stmt.setDouble(1, quantidade);
+                stmt.setDouble(2, estoqueMinimo);
+                stmt.setString(3, unidadeMedida);
+                stmt.setInt(4, idProduto);
+                stmt.setInt(5, idUnidade);;
+                if (dataValidade != null) {
+                    stmt.setDate(6, java.sql.Date.valueOf(dataValidade));
+                } else {
+                    stmt.setNull(6, java.sql.Types.DATE);
+                }
+                stmt.setString(7, lote == null || lote.isBlank() ? null : lote.trim());
+                stmt.executeUpdate();
+            }
+
+            conn.commit();
+            return true;
         } catch (Exception e) {
             System.err.println("Erro ao adicionar produto: " + e.getMessage());
+            try { if (conn != null) conn.rollback(); } catch (Exception ignored) {}
             return false;
+        } finally {
+            try { if (conn != null) { conn.setAutoCommit(true); conn.close(); } } catch (Exception ignored) {}
         }
     }
 
-    public boolean atualizarProduto(int idProduto, String nome, String nomeCategoria, double quantidade, String unidade) {
-        try (Connection conn = ConfigDataBase.getConnection()) {
 
-            // 1. Acha ou cria a categoria nova
+    public boolean atualizarProduto(int idProduto, String nome, String nomeCategoria, double quantidade,
+                                    double estoqueMinimo, String unidadeMedida, String lote,
+                                    java.time.LocalDate dataValidade, String nomeUnidade) {
+        Connection conn = null;
+        try {
+            conn = ConfigDataBase.getConnection();
+            conn.setAutoCommit(false);
+
             int idCategoria = obterOuCriarCategoria(conn, nomeCategoria);
+            int idUnidade = obterIdUnidade(conn, nomeUnidade);
 
-            // 2. Salva a atualização
-            String sql = "UPDATE produto SET nome_produto = ?, id_categoria = ?, quantidade = ?, unidade = ? WHERE id_produto = ?";
-            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-                stmt.setString(1, nome);
+
+            String sqlProduto = "UPDATE produto SET nome_produto = ?, id_categoria = ?, quantidade = ?, unidade = ? " +
+                    "WHERE id_produto = ?";
+            try (PreparedStatement stmt = conn.prepareStatement(sqlProduto)) {
+                stmt.setString(1, nome.trim());
                 stmt.setInt(2, idCategoria);
                 stmt.setDouble(3, quantidade);
-                stmt.setString(4, unidade);
+                stmt.setString(4, unidadeMedida);
                 stmt.setInt(5, idProduto);
-                return stmt.executeUpdate() > 0;
+                if (stmt.executeUpdate() == 0) throw new Exception("Produto não encontrado.");
             }
+
+            //
+            String sqlUpdate = "UPDATE insumo SET quantidade = ?, quantidade_mininma = ?, unidade_medida = ?, " +
+                    "id_unidade = ?, data_validade = ?, lote = ? " +
+                    "WHERE id_produto = ? AND id_ficha IS NULL AND cancelado = 'N'";
+            int linhas;
+            try (PreparedStatement stmt = conn.prepareStatement(sqlUpdate)) {
+                preencherInsumo(stmt, quantidade, estoqueMinimo, unidadeMedida, idUnidade, dataValidade, lote);
+                stmt.setInt(7, idProduto);
+                linhas = stmt.executeUpdate();
+            }
+
+            //  Se o produto antigo não tinha insumo de estoque, cria
+            if (linhas == 0) {
+                String sqlInsert = "INSERT INTO insumo (quantidade, quantidade_mininma, unidade_medida, id_unidade, " +
+                        "data_validade, lote, id_produto, cancelado) VALUES (?, ?, ?, ?, ?, ?, ?, 'N')";
+                try (PreparedStatement stmt = conn.prepareStatement(sqlInsert)) {
+                    preencherInsumo(stmt, quantidade, estoqueMinimo, unidadeMedida, idUnidade, dataValidade, lote);
+                    stmt.setInt(7, idProduto);
+                    stmt.executeUpdate();
+                }
+            }
+
+            conn.commit();
+            return true;
         } catch (Exception e) {
             System.err.println("Erro ao atualizar produto: " + e.getMessage());
+            try { if (conn != null) conn.rollback(); } catch (Exception ignored) {}
             return false;
+        } finally {
+            try { if (conn != null) { conn.setAutoCommit(true); conn.close(); } } catch (Exception ignored) {}
         }
     }
+
+    private void preencherInsumo(PreparedStatement stmt, double quantidade, double estoqueMinimo, String unidadeMedida,
+                                 int idUnidade, java.time.LocalDate dataValidade, String lote) throws Exception {
+        stmt.setDouble(1, quantidade);
+        stmt.setDouble(2, estoqueMinimo);
+        stmt.setString(3, unidadeMedida);
+        stmt.setInt(4, idUnidade);
+        if (dataValidade != null) stmt.setDate(5, java.sql.Date.valueOf(dataValidade));
+        else stmt.setNull(5, java.sql.Types.DATE);
+        stmt.setString(6, lote == null || lote.isBlank() ? null : lote.trim());
+    }
+
+
+    private int obterIdUnidade(Connection conn, String nomeUnidade) throws Exception {
+        String sql = "SELECT id_unidade FROM unidade WHERE nome_unidade = ? AND situacao = 'A'";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, nomeUnidade);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) return rs.getInt("id_unidade");
+            }
+        }
+        throw new Exception("Unidade não encontrada: " + nomeUnidade);
+    }
+
+
+    public static class DetalhesInsumo {
+        public double estoqueMinimo;
+        public String lote;
+        public java.time.LocalDate dataValidade;
+        public String nomeUnidade;
+        public double quantidade;
+
+    }
+
+    public DetalhesInsumo buscarDetalhesInsumo(int idProduto) {
+        String sql = "SELECT i.quantidade, i.quantidade_mininma, i.lote, i.data_validade, u.nome_unidade " +
+                "FROM insumo i LEFT JOIN unidade u ON i.id_unidade = u.id_unidade " +
+                "WHERE i.id_produto = ? AND i.id_ficha IS NULL AND i.cancelado = 'N' " +
+                "ORDER BY i.id_insumo DESC LIMIT 1";
+        try (Connection conn = ConfigDataBase.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, idProduto);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    DetalhesInsumo d = new DetalhesInsumo();
+                    d.estoqueMinimo = rs.getDouble("quantidade_mininma");
+                    d.lote = rs.getString("lote");
+                    java.sql.Date data = rs.getDate("data_validade");
+                    d.dataValidade = data != null ? data.toLocalDate() : null;
+                    d.nomeUnidade = rs.getString("nome_unidade");
+                    d.quantidade = rs.getDouble("quantidade");
+                    return d;
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Erro ao buscar detalhes do insumo: " + e.getMessage());
+        }
+        return null;
+    }
+
+
 }

@@ -299,11 +299,6 @@
                                                 <Font name="Arial" size="13.0" />
                                             </font>
                                         </TextField>
-                                        <Button mnemonicParsing="false" onAction="#onPesquisarClick" prefHeight="35.0" prefWidth="105.0" styleClass="btn-action-secondary" text="Pesquisar">
-                                            <font>
-                                                <Font name="Arial Bold" size="13.0" />
-                                            </font>
-                                        </Button>
 
                                         <!-- Filtro de Unidade -->
                                         <HBox alignment="CENTER_LEFT" spacing="8.0">
@@ -328,6 +323,12 @@
                                                 <ChoiceBox fx:id="cbCurso" prefHeight="35.0" prefWidth="130.0" styleClass="custom-choice-box" />
                                             </children>
                                         </HBox>
+
+                                        <Button mnemonicParsing="false" onAction="#onPesquisarClick" prefHeight="35.0" prefWidth="105.0" styleClass="btn-action-secondary" text="Pesquisar">
+                                            <font>
+                                                <Font name="Arial Bold" size="13.0" />
+                                            </font>
+                                        </Button>
 
                                         <Region HBox.hgrow="ALWAYS" />
 
