@@ -47,7 +47,8 @@ import java.util.ResourceBundle;
 
 /**
  * Controlador da tela de Cadastro de Turma e Vinculação de Instrutores.
- * Gerencia a composição em duas seções lado a lado (Formulário da Turma e Lista de Instrutores).
+ * Gerencia a composição em duas seções lado a lado (Formulário da Turma e Lista
+ * de Instrutores).
  */
 public class CadastroTurmaController implements Initializable {
 
@@ -173,9 +174,8 @@ public class CadastroTurmaController implements Initializable {
 
         if (horaLabel != null) {
             horaLabel.setText(LocalTime.now().format(horaFormatter));
-            Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(1), event ->
-                    horaLabel.setText(LocalTime.now().format(horaFormatter))
-            ));
+            Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(1),
+                    event -> horaLabel.setText(LocalTime.now().format(horaFormatter))));
             timeline.setCycleCount(Animation.INDEFINITE);
             timeline.play();
         }
@@ -212,8 +212,7 @@ public class CadastroTurmaController implements Initializable {
                                     "Cozinha Pedagógica 02 (Panificação e Confeitaria)",
                                     "Cozinha Fria / Garde Manger",
                                     "Laboratório de Bebidas e Barismo",
-                                    "Cozinha Demonstrativa"
-                            );
+                                    "Cozinha Demonstrativa");
                         }
                         laboratorioSelect.getSelectionModel().selectFirst();
                     });
@@ -245,8 +244,7 @@ public class CadastroTurmaController implements Initializable {
                                     "Confeitaria e Panificação",
                                     "Cozinheiro Profissional",
                                     "Cozinha Brasileira",
-                                    "Barista e Coquetelaria"
-                            );
+                                    "Barista e Coquetelaria");
                         }
                         cursoSelect.getSelectionModel().selectFirst();
                     });
@@ -274,7 +272,8 @@ public class CadastroTurmaController implements Initializable {
         filteredInstrutores = new FilteredList<>(masterInstrutores, p -> true);
         listaInstrutores.setItems(filteredInstrutores);
 
-        // Consulta os professores ativos (acesso = 'I') no banco de dados em segundo plano
+        // Consulta os professores ativos (acesso = 'I') no banco de dados em segundo
+        // plano
         Thread bgLoader = new Thread(() -> {
             try {
                 List<User> instrutoresDb = TurmaDAO.listarProfessoresAtivos();
@@ -298,7 +297,8 @@ public class CadastroTurmaController implements Initializable {
         bgLoader.setName("SIGEC-InstrutoresLoader");
         bgLoader.start();
 
-        // Custom Cell Factory para renderizar os instrutores com visual profissional e badge de seleção
+        // Custom Cell Factory para renderizar os instrutores com visual profissional e
+        // badge de seleção
         listaInstrutores.setCellFactory(lv -> new ListCell<>() {
             @Override
             protected void updateItem(User user, boolean empty) {
@@ -333,7 +333,8 @@ public class CadastroTurmaController implements Initializable {
                             instrutorSelecionado.getIdUsuario() == user.getIdUsuario());
 
                     Label statusBadge = new Label(isSelected ? "✔ Selecionado" : "Disponível");
-                    statusBadge.getStyleClass().add(isSelected ? "badge-instrutor-selecionado" : "badge-instrutor-disponivel");
+                    statusBadge.getStyleClass()
+                            .add(isSelected ? "badge-instrutor-selecionado" : "badge-instrutor-disponivel");
 
                     card.getChildren().addAll(avatar, infoBox, spacer, statusBadge);
                     card.setOnMouseClicked(e -> selecionarInstrutor(user));
@@ -343,7 +344,8 @@ public class CadastroTurmaController implements Initializable {
             }
         });
 
-        // Evento de seleção: ao clicar em um instrutor, ele fica marcado e vincula no campo
+        // Evento de seleção: ao clicar em um instrutor, ele fica marcado e vincula no
+        // campo
         listaInstrutores.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal != null) {
                 selecionarInstrutor(newVal);
@@ -413,7 +415,8 @@ public class CadastroTurmaController implements Initializable {
 
         if (nomeTurma == null || nomeTurma.trim().isEmpty()) {
             exibirAlerta(Alert.AlertType.WARNING, "Campo Obrigatório", "Por favor, informe o Nome da Turma.");
-            if (txtNomeTurma != null) txtNomeTurma.requestFocus();
+            if (txtNomeTurma != null)
+                txtNomeTurma.requestFocus();
             return;
         }
 
@@ -435,7 +438,8 @@ public class CadastroTurmaController implements Initializable {
 
         int idProfessor = instrutorSelecionado.getIdUsuario();
 
-        // Exibe a tela de loading enquanto realiza o cadastro no banco de dados em segundo plano
+        // Exibe a tela de loading enquanto realiza o cadastro no banco de dados em
+        // segundo plano
         exibirLoading(true);
 
         Thread bgCadastro = new Thread(() -> {
@@ -465,7 +469,8 @@ public class CadastroTurmaController implements Initializable {
                 Platform.runLater(() -> {
                     exibirLoading(false);
                     limparFormulario();
-                    exibirAlerta(Alert.AlertType.INFORMATION, "Sucesso", "turma cadastrada com sucesso");
+                    exibirAlerta(Alert.AlertType.INFORMATION, "Sucesso", "Turma cadastrada com sucesso!");
+
                 });
 
             } catch (SQLException ex) {
@@ -498,7 +503,8 @@ public class CadastroTurmaController implements Initializable {
     }
 
     private void limparFormulario() {
-        if (txtNomeTurma != null) txtNomeTurma.clear();
+        if (txtNomeTurma != null)
+            txtNomeTurma.clear();
         if (laboratorioSelect != null && !laboratorioSelect.getItems().isEmpty()) {
             laboratorioSelect.getSelectionModel().selectFirst();
         }
@@ -542,7 +548,6 @@ public class CadastroTurmaController implements Initializable {
         }
     }
 
-
     @FXML
     public void onClickRelatorio(ActionEvent event) {
         try {
@@ -560,7 +565,6 @@ public class CadastroTurmaController implements Initializable {
             e.printStackTrace();
         }
     }
-
 
     @FXML
     public void onClickSolicitacoes(ActionEvent event) {
@@ -604,7 +608,6 @@ public class CadastroTurmaController implements Initializable {
             if (expandido) {
                 submenuEstoque.setVisible(true);
                 submenuEstoque.setManaged(true);
-
 
                 DropdownBorderLapAnimator.animarDropdown(btnNavEstoque, submenuEstoque);
             } else {
