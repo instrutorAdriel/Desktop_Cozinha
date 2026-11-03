@@ -207,7 +207,7 @@
                     <VBox.margin><Insets bottom="15.0" /></VBox.margin>
                 </VBox>
                 <Region VBox.vgrow="ALWAYS" />
-                <Button fx:id="botaoSair" alignment="CENTER" mnemonicParsing="false" onAction="#botaoSairAction" maxWidth="1.7976931348623157E308" prefHeight="45.0" styleClass="btn-sair" text="Sair">
+                <Button fx:id="botaoSair" alignment="CENTER" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#botaoSairAction" prefHeight="45.0" styleClass="btn-sair" text="Sair">
                     <font>
                         <Font name="Arial Bold" size="15.0" />
                     </font>
@@ -258,7 +258,7 @@
                                 <!-- Header da Página (AGORA COM OS NOVOS FILTROS MOVIDOS PRA CÁ) -->
                                 <HBox alignment="CENTER_LEFT" prefHeight="45.0" spacing="12.0" styleClass="header-alertas-border">
                                     <children>
-                                        <Label text="SOLICITAÇÕES DE INSUMOS EXTRAS (WEB)" textFill="#0c356a">
+                                        <Label text="SOLICITAÇÕES EXTRAS (WEB)" textFill="#0c356a">
                                             <font><Font name="Arial Bold" size="18.0" /></font>
                                         </Label>
 

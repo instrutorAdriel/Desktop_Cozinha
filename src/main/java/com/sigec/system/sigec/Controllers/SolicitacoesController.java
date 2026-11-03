@@ -8,6 +8,8 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -60,16 +62,18 @@ public class SolicitacoesController {
     private Button btnNavEstoque;
 
     private ObservableList<SolicitacaoMock> listaSolicitacoes = FXCollections.observableArrayList();
+    private FilteredList<SolicitacaoMock> filteredDatal;
 
     @FXML
     public void initialize() {
         iniciarRelogio();
         usuarioLabel.setText("Administrador");
         cbStatusFiltro.setItems(FXCollections.observableArrayList("Todos", "Pendente", "Aprovado", "Recusado"));
-        cbStatusFiltro.setValue("Pendente");
+        cbStatusFiltro.setValue("Todos");
 
         configurarTabela();
         carregarDadosDeTeste();
+        configurarFiltroEBusca();
     }
 
     private void configurarTabela() {
@@ -82,6 +86,42 @@ public class SolicitacoesController {
         colStatus.setCellValueFactory(new PropertyValueFactory<>("status"));
 
         tabelaSolicitacoes.setItems(listaSolicitacoes);
+    }
+    private void configurarFiltroEBusca() {
+        // 1. Envolve a lista master em um FilteredList
+        filteredDatal = new FilteredList<>(listaSolicitacoes, p -> true);
+
+
+        // 2. Conecta com a SortedList para manter a ordenação pelas colunas da tabela
+        SortedList<SolicitacaoMock> sortedData = new SortedList<>(filteredDatal);
+        sortedData.comparatorProperty().bind(tabelaSolicitacoes.comparatorProperty());
+
+        // 3. Define a lista ordenada/filtrada na tabela
+        tabelaSolicitacoes.setItems(sortedData);
+    }
+
+    private void aplicarFiltros() {
+        String textoBusca = txtPesquisa.getText() != null ? txtPesquisa.getText().toLowerCase().trim() : "";
+        String statusSelecionado = cbStatusFiltro.getValue();
+
+        filteredDatal.setPredicate(solicitacao -> {
+            // Filtro por Status
+            if (statusSelecionado != null && !statusSelecionado.equals("Todos")) {
+                if (!solicitacao.getStatus().equalsIgnoreCase(statusSelecionado)) {
+                    return false;
+                }
+            }
+
+            // Filtro por Texto (Insumo ou Solicitante/Professor)
+            if (!textoBusca.isEmpty()) {
+                boolean bateInsumo = solicitacao.getInsumo() != null && solicitacao.getInsumo().toLowerCase().contains(textoBusca);
+                boolean bateSolicitante = solicitacao.getSolicitante() != null && solicitacao.getSolicitante().toLowerCase().contains(textoBusca);
+
+                return bateInsumo || bateSolicitante;
+            }
+
+            return true;
+        });
     }
 
     private void iniciarRelogio() {
@@ -101,7 +141,8 @@ public class SolicitacoesController {
     // ==========================================
     @FXML
     void onFiltrarClick(ActionEvent event) {
-        System.out.println("Filtrando status: " + cbStatusFiltro.getValue() + " | Busca: " + txtPesquisa.getText());
+        aplicarFiltros();
+        System.out.println("Filtro aplicado: Status = " + cbStatusFiltro.getValue() + " | Busca = " + txtPesquisa.getText());
     }
 
     @FXML
@@ -111,6 +152,7 @@ public class SolicitacoesController {
             // Lógica para abater do estoque e atualizar no banco
             selecionada.setStatus("Aprovado");
             tabelaSolicitacoes.refresh();
+            aplicarFiltros();
             System.out.println("Solicitação Aprovada: " + selecionada.getInsumo());
         } else {
             System.out.println("Selecione uma solicitação 'Pendente' para aprovar.");
@@ -124,6 +166,7 @@ public class SolicitacoesController {
             // Aqui chamaria um modal pedindo o motivo da recusa
             selecionada.setStatus("Recusado");
             tabelaSolicitacoes.refresh();
+            aplicarFiltros();
             System.out.println("Solicitação Recusada: " + selecionada.getInsumo());
         } else {
             System.out.println("Selecione uma solicitação 'Pendente' para recusar.");
