@@ -326,12 +326,11 @@
                                                 <!-- Filtro de Curso -->
                                                 <HBox alignment="CENTER_LEFT" spacing="8.0">
                                                     <children>
-                                                        <Label text="Curso:" textFill="#475569">
+                                                        <Label textFill="#475569">
                                                             <font>
                                                                 <Font name="Arial Bold" size="13.0" />
                                                             </font>
                                                         </Label>
-                                                        <ChoiceBox fx:id="cbCurso" prefHeight="35.0" prefWidth="160.0" styleClass="custom-choice-box" />
                                                     </children>
                                                 </HBox>
                                             </children>

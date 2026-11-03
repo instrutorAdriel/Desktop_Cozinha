@@ -1,5 +1,6 @@
 package com.sigec.system.sigec.Controllers;
 
+import com.sigec.system.sigec.Constructors.Utensilio;
 import com.sigec.system.sigec.DAOS.UtensilioDAO;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
@@ -24,26 +25,29 @@ public class RegistroAvariaUtensilioController implements Initializable {
     @FXML private Button btnVoltar;
     @FXML private Button btnSalvar;
 
-    // Variável estática para receber o ID do utensílio selecionado na tela principal
-    public static int idUtensilioSelecionado = -1;
-    public static String nomeUtensilioSelecionado = "";
+    public static Utensilio utensilioSelecionado;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        if (txtUtensilio != null) {
-            txtUtensilio.setText(nomeUtensilioSelecionado);
-        }
 
         if (cbEstado != null) {
             // Valores correspondentes ao ENUM do banco de dados
             cbEstado.setItems(FXCollections.observableArrayList("PRONTO", "EM_MANUTENCAO", "DANIFICADO"));
+        }
 
-            // Puxando o estado do banco de dados para o utensílio selecionado
-            if (idUtensilioSelecionado != -1) {
-                String estadoAtualBanco = UtensilioDAO.buscarUltimoEstadoUtensilio(idUtensilioSelecionado);
+
+        if (utensilioSelecionado != null) {
+            if (txtUtensilio != null) {
+                txtUtensilio.setText(utensilioSelecionado.getNome());
+            }
+
+            if (cbEstado != null) {
+                String estadoAtualBanco = UtensilioDAO.buscarUltimoEstadoUtensilio(utensilioSelecionado.getIdUtensilio());
                 cbEstado.setValue(estadoAtualBanco);
-            } else {
-                cbEstado.setValue("PRONTO"); // Fallback de segurança
+            }
+        } else {
+            if (cbEstado != null) {
+                cbEstado.setValue("PRONTO");
             }
         }
     }
@@ -53,19 +57,19 @@ public class RegistroAvariaUtensilioController implements Initializable {
         String estado = cbEstado.getValue();
         String observacao = txtObservacao.getText();
 
-        if (idUtensilioSelecionado == -1) {
+        if (utensilioSelecionado == null) {
             exibirAlerta(Alert.AlertType.ERROR, "Erro", "Nenhum utensílio foi selecionado para avaria.");
             return;
         }
 
-        boolean sucesso = UtensilioDAO.registrarAvaria(idUtensilioSelecionado, observacao, estado);
 
+        boolean sucesso = UtensilioDAO.registrarAvaria(utensilioSelecionado.getIdUtensilio(), observacao, estado);
 
         if (sucesso) {
-            exibirAlerta(Alert.AlertType.INFORMATION, "Sucesso", "Avaria registrada com sucesso!");
+            exibirAlerta(Alert.AlertType.INFORMATION, "Sucesso", "Avaria registada com sucesso!");
             fecharModal();
         } else {
-            exibirAlerta(Alert.AlertType.ERROR, "Erro", "Não foi possível registrar a avaria.");
+            exibirAlerta(Alert.AlertType.ERROR, "Erro", "Não foi possível registar a avaria.");
         }
     }
 
@@ -78,9 +82,7 @@ public class RegistroAvariaUtensilioController implements Initializable {
         Stage stage = (Stage) btnVoltar.getScene().getWindow();
         stage.close();
 
-        // Limpa a seleção após fechar para evitar sujeira de memória
-        idUtensilioSelecionado = -1;
-        nomeUtensilioSelecionado = "";
+        utensilioSelecionado = null;
     }
 
     private void exibirAlerta(Alert.AlertType tipo, String titulo, String mensagem) {

@@ -31,11 +31,10 @@ public class UtensilioDAO {
                 int qtd = rs.getInt("quantidade");
                 int categoria = rs.getInt("id_categoria_utensilio");
                 int patrimonio = rs.getInt("numero_patrimonio");
-                int idLaboratorio = rs.getInt("id_laboratorio"); // Extraindo o ID do laboratório
+                int idLaboratorio = rs.getInt("id_laboratorio");
 
                 String laboratorio = rs.getString("laboratorio_atual");
                 String status = rs.getString("status_atual");
-
 
                 Utensilio utensilio = new Utensilio(
                         rs.getInt("id_utensilio"),
@@ -58,22 +57,15 @@ public class UtensilioDAO {
     }
 
     public static boolean registrarAvaria(int idUtensilioSelecionado, String observacao, String estado) {
-        // Query para descobrir o estado atual antes da mudança
         String sqlSelect = "SELECT estado_atual FROM checklist_utensilio WHERE id_utensilio = ? ORDER BY id_checklist_utensilio DESC LIMIT 1";
-
-        // Query para inserir o novo registro com o novo estado na checklist
         String sqlInsertChecklist = "INSERT INTO checklist_utensilio (id_utensilio, estado_anterior, estado_atual, observacao, data_hora_entrada) VALUES (?, ?, ?, ?, NOW())";
-
-        // Query para registrar na tabela 'ocorrencia' (histórico formal de avarias)
         String sqlInsertOcorrencia = "INSERT INTO ocorrencia (id_utensilio, observacao) VALUES (?, ?)";
 
         try (Connection conn = ConfigDataBase.getConnection()) {
-            // Desativa o auto-commit para garantir que ou salva em ambas as tabelas, ou em nenhuma
             conn.setAutoCommit(false);
 
             String estadoAnterior = "PRONTO";
 
-            //  Busca o estado anterior
             try (PreparedStatement stmtSelect = conn.prepareStatement(sqlSelect)) {
                 stmtSelect.setInt(1, idUtensilioSelecionado);
                 try (ResultSet rs = stmtSelect.executeQuery()) {
@@ -83,7 +75,6 @@ public class UtensilioDAO {
                 }
             }
 
-            //  Insere na tabela checklist_utensilio (para atualizar o status de PRONTO/MANUTENÇÃO/DANIFICADO)
             try (PreparedStatement stmtChecklist = conn.prepareStatement(sqlInsertChecklist)) {
                 stmtChecklist.setInt(1, idUtensilioSelecionado);
                 stmtChecklist.setString(2, estadoAnterior);
@@ -92,8 +83,6 @@ public class UtensilioDAO {
                 stmtChecklist.executeUpdate();
             }
 
-            //  Insere na tabela ocorrencia (histórico de descrições das avarias)
-            // Apenas insere se houver uma observação digitada
             if (observacao != null && !observacao.trim().isEmpty()) {
                 try (PreparedStatement stmtOcorrencia = conn.prepareStatement(sqlInsertOcorrencia)) {
                     stmtOcorrencia.setInt(1, idUtensilioSelecionado);
@@ -102,7 +91,6 @@ public class UtensilioDAO {
                 }
             }
 
-            // Confirma a transação no banco
             conn.commit();
             return true;
 
@@ -113,7 +101,6 @@ public class UtensilioDAO {
     }
 
     public static String buscarUltimoEstadoUtensilio(int idUtensilioSelecionado) {
-        // Busca o último registro de checklist deste utensílio para saber seu estado atual
         String sql = "SELECT estado_atual FROM checklist_utensilio WHERE id_utensilio = ? ORDER BY id_checklist_utensilio DESC LIMIT 1";
 
         try (Connection conn = ConfigDataBase.getConnection();
@@ -130,12 +117,10 @@ public class UtensilioDAO {
         } catch (SQLException e) {
             System.err.println("Erro ao buscar estado do utensílio: " + e.getMessage());
         }
-        // Se o utensílio for novo e nunca teve avaria, o padrão é PRONTO
         return "PRONTO";
     }
 
     public static boolean adicionarUtensilio(Utensilio novoUtensilio) {
-        // Agora o INSERT inclui o id_laboratorio
         String sql = "INSERT INTO utensilio (nome_utensilio, quantidade, situacao, numero_patrimonio, id_categoria_utensilio, id_laboratorio) VALUES (?, ?, 'A', ?, ?, ?)";
 
         try (Connection conn = ConfigDataBase.getConnection();
@@ -145,7 +130,7 @@ public class UtensilioDAO {
             stmt.setInt(2, novoUtensilio.getQtdTotal());
             stmt.setInt(3, novoUtensilio.getNumeroPatrimonio());
             stmt.setInt(4, novoUtensilio.getIdCategoria());
-            stmt.setInt(5, novoUtensilio.getIdLaboratorio()); // Enviando o laboratório para o banco
+            stmt.setInt(5, novoUtensilio.getIdLaboratorio());
 
             return stmt.executeUpdate() > 0;
 
@@ -175,7 +160,8 @@ public class UtensilioDAO {
         }
     }
 
-    public static List<Utensilio> buscarUtensiliosPorFiltro(String termo, String status, String laboratorio) {
+
+    public static List<Utensilio> buscarUtensiliosPorFiltro(String termo, String status, String laboratorio, String unidade) {
         List<Utensilio> lista = new ArrayList<>();
 
         StringBuilder sql = new StringBuilder();
@@ -186,18 +172,23 @@ public class UtensilioDAO {
         sql.append("    COALESCE((SELECT estado_atual FROM checklist_utensilio cu WHERE cu.id_utensilio = u.id_utensilio ORDER BY cu.id_checklist_utensilio DESC LIMIT 1), 'PRONTO') AS status_atual ");
         sql.append("    FROM utensilio u ");
         sql.append("    LEFT JOIN laboratorio l ON u.id_laboratorio = l.id_laboratorio ");
+        sql.append("    LEFT JOIN unidade un ON l.id_unidade = un.id_unidade ");
         sql.append("    WHERE u.situacao = 'A' ");
-        sql.append(") AS base WHERE 1=1 ");
 
         List<Object> parametros = new ArrayList<>();
 
-        // Filtro por Nome (Pesquisa)
+        if (unidade != null && !unidade.equals("Todas") && !unidade.trim().isEmpty()) {
+            sql.append("    AND un.nome_unidade = ? ");
+            parametros.add(unidade);
+        }
+
+        sql.append(") AS base WHERE 1=1 ");
+
         if (termo != null && !termo.trim().isEmpty()) {
             sql.append("AND LOWER(nome_utensilio) LIKE LOWER(?) ");
             parametros.add("%" + termo.trim() + "%");
         }
 
-        // Filtro por Laboratório
         if (laboratorio != null && !laboratorio.equals("Todos") && !laboratorio.trim().isEmpty()) {
             sql.append("AND laboratorio_atual = ? ");
             parametros.add(laboratorio);
