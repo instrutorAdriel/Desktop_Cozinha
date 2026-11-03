@@ -130,8 +130,8 @@ public class ListaController implements Initializable {
 
     private void carregarTabelaEstoque() {
         ProductStorageDAO dao = new ProductStorageDAO();
-        List<ListaEstoque> produtos = dao.buscarTodosProdutosEstoque();
-        ObservableList<ListaEstoque> obsLista = FXCollections.observableArrayList(produtos);
+        List<ListaEstoque> insumo = dao.buscarTodosProdutosEstoque();
+        ObservableList<ListaEstoque> obsLista = FXCollections.observableArrayList(insumo);
         ListaEstoque.setItems(obsLista);
         ListaEstoque.refresh();
     }
