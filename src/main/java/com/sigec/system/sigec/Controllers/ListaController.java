@@ -78,6 +78,9 @@ public class ListaController implements Initializable {
 
     @FXML
     private TableColumn<ListaEstoque, String> nomeProduto;
+    @FXML
+    private TableColumn<ListaEstoque, String> loteProduto;
+
 
     @FXML
     private TableColumn<ListaEstoque, String> tipoProduto;
@@ -147,6 +150,7 @@ public class ListaController implements Initializable {
 
         // Configuração das colunas
         nomeProduto.setCellValueFactory(new PropertyValueFactory<>("nomeProduto"));
+        loteProduto.setCellValueFactory(new PropertyValueFactory<>("lote"));
         tipoProduto.setCellValueFactory(new PropertyValueFactory<>("tipoProduto"));
         quantidadeProduto.setCellValueFactory(new PropertyValueFactory<>("quantidadeProduto"));
         unidadeProduto.setCellValueFactory(new PropertyValueFactory<>("unidadeProduto"));

@@ -2,32 +2,28 @@ package com.sigec.system.sigec.Constructors;
 
 import java.util.Objects;
 
-
 public class ListaEstoque {
 
     private int idProduto;
     private String nomeProduto;
+    private String lote;
     private String tipoProduto;
     private double quantidadeProduto;
     private String unidadeProduto;
 
-    public ListaEstoque() {
-    }
 
-    public ListaEstoque(String nomeProduto, String tipoProduto, double quantidadeProduto, String unidadeProduto) {
-        this.nomeProduto = nomeProduto;
-        this.tipoProduto = tipoProduto;
-        this.quantidadeProduto = quantidadeProduto;
-        this.unidadeProduto = unidadeProduto;
-    }
 
-    public ListaEstoque(int idProduto, String nomeProduto, String tipoProduto, double quantidadeProduto, String unidadeProduto) {
+
+    public ListaEstoque(int idProduto, String nomeProduto, String lote, String tipoProduto, double quantidadeProduto, String unidadeProduto) {
         this.idProduto = idProduto;
         this.nomeProduto = nomeProduto;
+        this.lote = lote;
         this.tipoProduto = tipoProduto;
         this.quantidadeProduto = quantidadeProduto;
         this.unidadeProduto = unidadeProduto;
     }
+
+
 
     public int getIdProduto() {
         return idProduto;
@@ -43,6 +39,14 @@ public class ListaEstoque {
 
     public void setNomeProduto(String nomeProduto) {
         this.nomeProduto = nomeProduto;
+    }
+
+    public String getLote() {
+        return lote;
+    }
+
+    public void setLote(String lote) {
+        this.lote = lote;
     }
 
     public String getTipoProduto() {
@@ -87,6 +91,7 @@ public class ListaEstoque {
         return "ListaEstoque{" +
                 "idProduto=" + idProduto +
                 ", nomeProduto='" + nomeProduto + '\'' +
+                ", lote='" + lote + '\'' +
                 ", tipoProduto='" + tipoProduto + '\'' +
                 ", quantidadeProduto=" + quantidadeProduto +
                 ", unidadeProduto='" + unidadeProduto + '\'' +

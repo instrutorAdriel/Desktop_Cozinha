@@ -365,6 +365,7 @@
                                 <TableView fx:id="ListaEstoque" prefHeight="419.0" prefWidth="559.0" styleClass="table-view" VBox.vgrow="ALWAYS">
                                     <columns>
                                         <TableColumn fx:id="nomeProduto" prefWidth="220.0" text="Produtos" />
+                                        <TableColumn fx:id="loteProduto" prefWidth="100.0" text="Lote" />
                                         <TableColumn fx:id="tipoProduto" prefWidth="140.0" text="Tipo" />
                                         <TableColumn fx:id="quantidadeProduto" prefWidth="100.0" text="Quantidade" />
                                         <TableColumn fx:id="unidadeProduto" prefWidth="100.0" text="Unidade" />
