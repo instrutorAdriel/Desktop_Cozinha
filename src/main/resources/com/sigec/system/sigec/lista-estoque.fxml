@@ -300,6 +300,12 @@
                                             </font>
                                         </TextField>
 
+                                        <Button mnemonicParsing="false" onAction="#onPesquisarClick" prefHeight="35.0" prefWidth="105.0" styleClass="btn-action-secondary" text="Pesquisar">
+                                            <font>
+                                                <Font name="Arial Bold" size="13.0" />
+                                            </font>
+                                        </Button>
+
                                         <!-- Filtro de Unidade -->
                                         <HBox alignment="CENTER_LEFT" spacing="8.0">
                                             <children>
@@ -324,11 +330,7 @@
                                             </children>
                                         </HBox>
 
-                                        <Button mnemonicParsing="false" onAction="#onPesquisarClick" prefHeight="35.0" prefWidth="105.0" styleClass="btn-action-secondary" text="Pesquisar">
-                                            <font>
-                                                <Font name="Arial Bold" size="13.0" />
-                                            </font>
-                                        </Button>
+
 
                                         <Region HBox.hgrow="ALWAYS" />
 

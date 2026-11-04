@@ -49,7 +49,8 @@ public class EdicaoProdutosController implements Initializable {
         txtTipoProduto.setValue(produtoOriginal.getTipoProduto());
         txtUnidadeDeMedida.setValue(produtoOriginal.getUnidadeProduto());
 
-        ProductStorageDAO.DetalhesInsumo d = dao.buscarDetalhesInsumo(produtoOriginal.getIdProduto());
+        // CORREÇÃO: Agora busca os detalhes usando o ID específico do Lote (id_insumo)
+        ProductStorageDAO.DetalhesInsumo d = dao.buscarDetalhesInsumo(produtoOriginal.getIdInsumo());
         if (d != null) {
             txtQtdAtual.setText(String.valueOf(d.quantidade));
             txtEstoqueMinimo.setText(String.valueOf(d.estoqueMinimo));
@@ -100,7 +101,8 @@ public class EdicaoProdutosController implements Initializable {
             return;
         }
 
-        boolean sucesso = dao.atualizarProduto(produtoOriginal.getIdProduto(), nome, categoria, quantidade,
+
+        boolean sucesso = dao.atualizarProduto(produtoOriginal.getIdProduto(), produtoOriginal.getIdInsumo(), nome, categoria, quantidade,
                 estoqueMinimo, unidadeMedida, lote, validade, unidade);
 
         if (sucesso) {

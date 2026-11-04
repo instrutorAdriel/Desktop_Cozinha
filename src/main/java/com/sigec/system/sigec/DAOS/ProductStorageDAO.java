@@ -7,6 +7,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,7 +21,7 @@ public class ProductStorageDAO {
         List<ListaEstoque> lista = new ArrayList<>();
 
         StringBuilder sql = new StringBuilder();
-        sql.append("SELECT p.id_produto, p.nome_produto, c.nome_categoria AS tipo_produto, ");
+        sql.append("SELECT i.id_insumo, p.id_produto, p.nome_produto, c.nome_categoria AS tipo_produto, ");
         sql.append("i.lote, i.quantidade, p.unidade ");
         sql.append("FROM insumo i ");
         sql.append("JOIN produto p ON i.id_produto = p.id_produto ");
@@ -61,6 +62,7 @@ public class ProductStorageDAO {
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
                     ListaEstoque produto = new ListaEstoque(
+                            rs.getInt("id_insumo"),
                             rs.getInt("id_produto"),
                             rs.getString("nome_produto"),
                             rs.getString("lote") != null ? rs.getString("lote") : "S/L",
@@ -183,9 +185,9 @@ public class ProductStorageDAO {
         }
     }
 
-    public boolean atualizarProduto(int idProduto, String nome, String nomeCategoria, double quantidade,
+    public boolean atualizarProduto(int idProduto, int idInsumo, String nome, String nomeCategoria, double quantidade,
                                     double estoqueMinimo, String unidadeMedida, String lote,
-                                    java.time.LocalDate dataValidade, String nomeUnidade) {
+                                    LocalDate dataValidade, String nomeUnidade) {
         Connection conn = null;
         try {
             conn = ConfigDataBase.getConnection();
@@ -206,11 +208,11 @@ public class ProductStorageDAO {
 
             String sqlUpdate = "UPDATE insumo SET quantidade = ?, quantidade_minima = ?, unidade_medida = ?, " +
                     "id_unidade = ?, data_validade = ?, lote = ? " +
-                    "WHERE id_produto = ? AND cancelado = 'N'";
+                    "WHERE id_insumo = ? AND cancelado = 'N'";
             int linhas;
             try (PreparedStatement stmt = conn.prepareStatement(sqlUpdate)) {
                 preencherInsumo(stmt, quantidade, estoqueMinimo, unidadeMedida, idUnidade, dataValidade, lote);
-                stmt.setInt(7, idProduto);
+                stmt.setInt(7, idInsumo);
                 linhas = stmt.executeUpdate();
             }
 
@@ -265,14 +267,13 @@ public class ProductStorageDAO {
         public double quantidade;
     }
 
-    public DetalhesInsumo buscarDetalhesInsumo(int idProduto) {
+    public DetalhesInsumo buscarDetalhesInsumo(int idInsumo) {
         String sql = "SELECT i.quantidade, i.quantidade_minima, i.lote, i.data_validade, u.nome_unidade " +
                 "FROM insumo i LEFT JOIN unidade u ON i.id_unidade = u.id_unidade " +
-                "WHERE i.id_produto = ? AND i.cancelado = 'N' " +
-                "ORDER BY i.id_insumo DESC LIMIT 1";
+                "WHERE i.id_insumo = ? AND i.cancelado = 'N' ";
         try (Connection conn = ConfigDataBase.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, idProduto);
+            stmt.setInt(1, idInsumo);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     DetalhesInsumo d = new DetalhesInsumo();

@@ -4,6 +4,7 @@ import java.util.Objects;
 
 public class ListaEstoque {
 
+    private int idInsumo;
     private int idProduto;
     private String nomeProduto;
     private String lote;
@@ -11,10 +12,11 @@ public class ListaEstoque {
     private double quantidadeProduto;
     private String unidadeProduto;
 
+    public ListaEstoque() {
+    }
 
-
-
-    public ListaEstoque(int idProduto, String nomeProduto, String lote, String tipoProduto, double quantidadeProduto, String unidadeProduto) {
+    public ListaEstoque(int idInsumo, int idProduto, String nomeProduto, String lote, String tipoProduto, double quantidadeProduto, String unidadeProduto) {
+        this.idInsumo = idInsumo;
         this.idProduto = idProduto;
         this.nomeProduto = nomeProduto;
         this.lote = lote;
@@ -23,7 +25,13 @@ public class ListaEstoque {
         this.unidadeProduto = unidadeProduto;
     }
 
+    public int getIdInsumo() {
+        return idInsumo;
+    }
 
+    public void setIdInsumo(int idInsumo) {
+        this.idInsumo = idInsumo;
+    }
 
     public int getIdProduto() {
         return idProduto;
@@ -78,18 +86,20 @@ public class ListaEstoque {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ListaEstoque that = (ListaEstoque) o;
-        return idProduto == that.idProduto && Objects.equals(nomeProduto, that.nomeProduto);
+
+        return idInsumo == that.idInsumo;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(idProduto, nomeProduto);
+        return Objects.hash(idInsumo);
     }
 
     @Override
     public String toString() {
         return "ListaEstoque{" +
-                "idProduto=" + idProduto +
+                "idInsumo=" + idInsumo +
+                ", idProduto=" + idProduto +
                 ", nomeProduto='" + nomeProduto + '\'' +
                 ", lote='" + lote + '\'' +
                 ", tipoProduto='" + tipoProduto + '\'' +
