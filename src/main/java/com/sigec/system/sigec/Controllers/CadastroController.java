@@ -99,6 +99,9 @@ public class CadastroController implements Initializable {
     @FXML
     private Button btnLimpar;
 
+    @FXML
+    private VBox loadingOverlay;
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         if (topBarPane != null) {
@@ -386,6 +389,19 @@ public class CadastroController implements Initializable {
         }
     }
 
+    private void exibirLoading(boolean mostrar) {
+        if (loadingOverlay != null) {
+            loadingOverlay.setVisible(mostrar);
+            loadingOverlay.setManaged(mostrar);
+        }
+        if (btnCadastrar != null) {
+            btnCadastrar.setDisable(mostrar);
+        }
+        if (btnLimpar != null) {
+            btnLimpar.setDisable(mostrar);
+        }
+    }
+
     @FXML
     public void onCadastrar(ActionEvent event) {
         String nome = txtNome != null ? txtNome.getText() : null;
@@ -402,31 +418,70 @@ public class CadastroController implements Initializable {
             return;
         }
 
+        String nomeLimpo = nome.trim();
+        String emailLimpo = email.trim();
+
+        if (!validarEmailInstitucional(emailLimpo)) {
+            exibirAlerta(Alert.AlertType.WARNING, "E-mail Institucional Inválido",
+                    "O e-mail institucional deve pertencer obrigatoriamente ao domínio @df.senac.br (ex: usuario@df.senac.br).");
+            if (txtEmail != null) {
+                txtEmail.requestFocus();
+            }
+            return;
+        }
+
+        if (!validarSenha(senha)) {
+            exibirAlerta(Alert.AlertType.WARNING, "Senha Fora do Padrão",
+                    "A senha deve conter no mínimo 8 caracteres, incluindo obrigatoriamente:\n"
+                            + "• Pelo menos 1 letra maiúscula\n"
+                            + "• Pelo menos 1 número\n"
+                            + "• Pelo menos 1 caractere especial (ex: !@#$%&*)");
+            if (txtSenha != null) {
+                txtSenha.requestFocus();
+            }
+            return;
+        }
+
         if (!senha.equals(confirmarSenha)) {
             exibirAlerta(Alert.AlertType.ERROR, "Senhas não conferem",
                     "A senha e a confirmação de senha devem ser idênticas.");
             return;
         }
 
-        try {
-            String nivelAcesso = (acessoSelect != null && acessoSelect.getValue() != null
-                    && !acessoSelect.getValue().trim().isEmpty())
-                            ? acessoSelect.getValue().trim()
-                            : ((txtAcesso != null && !txtAcesso.getText().trim().isEmpty()) ? txtAcesso.getText().trim()
-                                    : "Instrutor");
+        String nivelAcesso = (acessoSelect != null && acessoSelect.getValue() != null
+                && !acessoSelect.getValue().trim().isEmpty())
+                        ? acessoSelect.getValue().trim()
+                        : ((txtAcesso != null && !txtAcesso.getText().trim().isEmpty()) ? txtAcesso.getText().trim()
+                                : "Instrutor");
 
-            boolean cadastrado = UserDAO.cadastrar(nome.trim(), email.trim(), senha, nivelAcesso);
-            if (cadastrado) {
-                exibirAlerta(Alert.AlertType.INFORMATION, "Cadastro Realizado",
-                        "Usuário \"" + nome.trim() + "\" cadastrado com sucesso no sistema!");
-                limparCampos();
-            } else {
-                exibirAlerta(Alert.AlertType.ERROR, "Erro no Cadastro",
-                        "Não foi possível cadastrar. O e-mail informado já pode estar em uso.");
+        // Exibe a tela de loading enquanto realiza o cadastro no banco de dados em segundo plano
+        exibirLoading(true);
+
+        Thread bgCadastro = new Thread(() -> {
+            try {
+                boolean cadastrado = UserDAO.cadastrar(nomeLimpo, emailLimpo, senha, nivelAcesso);
+                Platform.runLater(() -> {
+                    exibirLoading(false);
+                    if (cadastrado) {
+                        limparCampos();
+                        exibirAlerta(Alert.AlertType.INFORMATION, "Cadastro Realizado",
+                                "Usuário \"" + nomeLimpo + "\" cadastrado com sucesso no sistema!");
+                    } else {
+                        exibirAlerta(Alert.AlertType.ERROR, "Erro no Cadastro",
+                                "Não foi possível cadastrar. O e-mail informado já pode estar em uso.");
+                    }
+                });
+            } catch (SQLException | RuntimeException e) {
+                Platform.runLater(() -> {
+                    exibirLoading(false);
+                    exibirAlerta(Alert.AlertType.ERROR, "Erro de Banco de Dados",
+                            "Erro ao salvar cadastro: " + e.getMessage());
+                });
             }
-        } catch (SQLException | RuntimeException e) {
-            exibirAlerta(Alert.AlertType.ERROR, "Erro de Banco de Dados", "Erro ao salvar cadastro: " + e.getMessage());
-        }
+        });
+        bgCadastro.setDaemon(true);
+        bgCadastro.setName("SIGEC-CadastroUsuarioWorker");
+        bgCadastro.start();
     }
 
     @FXML
@@ -451,6 +506,34 @@ public class CadastroController implements Initializable {
         if (txtNome != null) {
             txtNome.requestFocus();
         }
+    }
+
+    private boolean validarEmailInstitucional(String email) {
+        if (email == null || email.isBlank()) {
+            return false;
+        }
+        return email.trim().toLowerCase().matches("^[a-z0-9._%+-]+@df\\.senac\\.br$");
+    }
+
+    private boolean validarSenha(String senha) {
+        if (senha == null || senha.length() < 8) {
+            return false;
+        }
+        boolean temNumero = false;
+        boolean temMaiuscula = false;
+        boolean temEspecial = false;
+
+        for (char c : senha.toCharArray()) {
+            if (Character.isDigit(c)) {
+                temNumero = true;
+            } else if (Character.isUpperCase(c)) {
+                temMaiuscula = true;
+            } else if (!Character.isLetterOrDigit(c) && !Character.isWhitespace(c)) {
+                temEspecial = true;
+            }
+        }
+
+        return temNumero && temMaiuscula && temEspecial;
     }
 
     private void exibirAlerta(Alert.AlertType tipo, String titulo, String mensagem) {
