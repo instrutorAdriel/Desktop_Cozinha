@@ -179,8 +179,8 @@ public class CalendarioController {
     }
 
     @FXML
-    public void botaoSairAction(ActionEvent event) throws IOException {
-        MainApplication.trocadorDeTelas("login.fxml");
+    public void botaoSairAction(ActionEvent event) {
+        com.sigec.system.sigec.Utils.SidebarNavigationManager.executarLogout();
     }
 
 }

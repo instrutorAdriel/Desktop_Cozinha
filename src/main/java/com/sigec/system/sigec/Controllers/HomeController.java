@@ -428,12 +428,7 @@ public class HomeController implements Initializable {
 
     @FXML
     public void botaoSairAction(ActionEvent event) {
-        try {
-            SessaoService.encerrarSessao();
-            MainApplication.trocadorDeTelas("login.fxml");
-        } catch (IOException e) {
-            exibirErroNavegacao("Login", e);
-        }
+        com.sigec.system.sigec.Utils.SidebarNavigationManager.executarLogout();
     }
 
     private void exibirErroNavegacao(String destino, Exception e) {

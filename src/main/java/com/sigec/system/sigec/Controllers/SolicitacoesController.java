@@ -190,11 +190,7 @@ public class SolicitacoesController {
 
     @FXML
     public void botaoSairAction(ActionEvent event) {
-        try {
-            MainApplication.trocadorDeTelas("login.fxml");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        com.sigec.system.sigec.Utils.SidebarNavigationManager.executarLogout();
     }
 
     @FXML
