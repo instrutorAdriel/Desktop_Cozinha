@@ -29,13 +29,13 @@ public final class UserDAO {
      * @return true se a autenticação for bem-sucedida, false caso contrário
      * @throws SQLException Em caso de falha de conexão com o banco
      */
+
     public static boolean autenticar(String email, String senha) throws SQLException {
         if (email == null || senha == null || email.isBlank() || senha.isBlank()) {
             return false;
         }
 
         String sql = "SELECT senha FROM usuario WHERE LOWER(TRIM(email)) = LOWER(TRIM(?))";
-
         try (Connection conn = ConfigDataBase.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
