@@ -372,8 +372,8 @@
                                             </children>
                                         </HBox>
 
-                                        <!-- Botão Filtrar -->
-                                        <Button mnemonicParsing="false" onAction="#onFiltrarClick" prefHeight="35.0" prefWidth="90.0" styleClass="btn-action-secondary" text="Filtrar">
+                                        <!-- Botão Pesquisar -->
+                                        <Button mnemonicParsing="false" onAction="#onFiltrarClick" prefHeight="35.0" prefWidth="105.0" styleClass="btn-action-secondary" text="Pesquisar">
                                             <font><Font name="Arial Bold" size="13.0" /></font>
                                         </Button>
 

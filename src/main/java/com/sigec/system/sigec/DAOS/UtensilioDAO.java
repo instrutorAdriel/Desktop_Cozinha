@@ -8,9 +8,70 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 public class UtensilioDAO {
+
+    /**
+     * Busca no banco de dados apenas os laboratórios que possuem utensílios ativos vinculados na tabela utensilio.
+     */
+    public static List<String> listarOpcoesLaboratorio() {
+        Set<String> opcoes = new LinkedHashSet<>();
+        opcoes.add("Todos");
+
+        String sqlUtensiliosLabs = "SELECT DISTINCT COALESCE(l.nome_laboratorio, 'Estoque Central') AS laboratorio_atual " +
+                "FROM utensilio u " +
+                "LEFT JOIN laboratorio l ON u.id_laboratorio = l.id_laboratorio " +
+                "WHERE u.situacao = 'A' " +
+                "ORDER BY laboratorio_atual ASC";
+
+        try (Connection conn = ConfigDataBase.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sqlUtensiliosLabs);
+             ResultSet rs = stmt.executeQuery()) {
+            while (rs.next()) {
+                String nome = rs.getString("laboratorio_atual");
+                if (nome != null && !nome.isBlank()) {
+                    opcoes.add(nome.trim());
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Erro ao carregar opções de laboratório dos utensílios: " + e.getMessage());
+        }
+
+        return new ArrayList<>(opcoes);
+    }
+
+    /**
+     * Busca no banco de dados apenas as situações/status atualmente presentes nos utensílios ativos.
+     */
+    public static List<String> listarOpcoesSituacao() {
+        Set<String> opcoes = new LinkedHashSet<>();
+        opcoes.add("Todos");
+
+        String sqlDistinctStatus = "SELECT DISTINCT COALESCE(" +
+                "(SELECT estado_atual FROM checklist_utensilio cu WHERE cu.id_utensilio = u.id_utensilio ORDER BY cu.id_checklist_utensilio DESC LIMIT 1), " +
+                "'PRONTO') AS status_atual " +
+                "FROM utensilio u " +
+                "WHERE u.situacao = 'A' " +
+                "ORDER BY status_atual ASC";
+
+        try (Connection conn = ConfigDataBase.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sqlDistinctStatus);
+             ResultSet rs = stmt.executeQuery()) {
+            while (rs.next()) {
+                String status = rs.getString("status_atual");
+                if (status != null && !status.isBlank()) {
+                    opcoes.add(status.trim());
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Erro ao carregar opções de situação dos utensílios: " + e.getMessage());
+        }
+
+        return new ArrayList<>(opcoes);
+    }
 
     public static List<Utensilio> listarUtensilios() {
         List<Utensilio> lista = new ArrayList<>();
@@ -190,18 +251,22 @@ public class UtensilioDAO {
         }
 
         if (laboratorio != null && !laboratorio.equals("Todos") && !laboratorio.trim().isEmpty()) {
-            sql.append("AND laboratorio_atual = ? ");
-            parametros.add(laboratorio);
+            sql.append("AND TRIM(laboratorio_atual) = TRIM(?) ");
+            parametros.add(laboratorio.trim());
         }
 
         if (status != null && !status.equals("Todos") && !status.trim().isEmpty()) {
-            if (status.equals("Disponível")) {
+            if (status.equalsIgnoreCase("Disponível")) {
                 sql.append("AND status_atual = 'PRONTO' ");
-            } else if (status.equals("Conserto")) {
+            } else if (status.equalsIgnoreCase("Em Manutenção")) {
+                sql.append("AND status_atual = 'EM_MANUTENCAO' ");
+            } else if (status.equalsIgnoreCase("Danificado")) {
+                sql.append("AND status_atual = 'DANIFICADO' ");
+            } else if (status.equalsIgnoreCase("Conserto")) {
                 sql.append("AND status_atual IN ('EM_MANUTENCAO', 'DANIFICADO') ");
             } else {
-                sql.append("AND status_atual = ? ");
-                parametros.add(status);
+                sql.append("AND TRIM(status_atual) = TRIM(?) ");
+                parametros.add(status.trim());
             }
         }
 
@@ -221,15 +286,12 @@ public class UtensilioDAO {
 
                     String labAtual = rs.getString("laboratorio_atual");
                     String statusAtualDB = rs.getString("status_atual");
-                    String statusVisual = statusAtualDB.equals("PRONTO") ? "Disponível" :
-                            statusAtualDB.equals("EM_MANUTENCAO") ? "Em Manutenção" :
-                                    statusAtualDB.equals("DANIFICADO") ? "Danificado" : statusAtualDB;
 
                     Utensilio utensilio = new Utensilio(
                             rs.getInt("id_utensilio"),
                             rs.getString("nome_utensilio"),
                             labAtual,
-                            statusVisual,
+                            statusAtualDB,
                             qtd,
                             qtd,
                             patrimonio,

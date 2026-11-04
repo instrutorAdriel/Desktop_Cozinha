@@ -64,35 +64,66 @@ public class UtensiliosController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         iniciarRelogio();
 
-
         if (SessaoService.getUsuarioAtual() != null) {
             usuarioLabel.setText(SessaoService.getUsuarioAtual().getNome());
         } else {
             usuarioLabel.setText("Administrador");
         }
 
-        if (cbStatus != null) {
-            cbStatus.setItems(FXCollections.observableArrayList("Todos", "Disponível", "Em uso", "Conserto"));
-            cbStatus.setValue("Todos");
-        }
+        configurarColunas();
+        carregarDadosBanco();
+        carregarOpcoesFiltros();
 
         if (cbLaboratorio != null) {
-            cbLaboratorio.setItems(FXCollections.observableArrayList("Todos", "Estoque Central", "Cozinha Quente", "Cozinha Oriental"));
-            cbLaboratorio.setValue("Todos");
+            cbLaboratorio.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+                if (newValue != null) {
+                    onFiltrarClick(new ActionEvent());
+                }
+            });
+        }
+
+        if (cbStatus != null) {
+            cbStatus.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+                if (newValue != null) {
+                    onFiltrarClick(new ActionEvent());
+                }
+            });
         }
 
         if (cbUnidade != null) {
             cbUnidade.setItems(FXCollections.observableArrayList(UnidadeDAO.listarNomesUnidades()));
             cbUnidade.setValue("Todas");
 
-
             cbUnidade.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-                onFiltrarClick(new ActionEvent());
+                if (newValue != null) {
+                    onFiltrarClick(new ActionEvent());
+                }
             });
         }
+    }
 
-        configurarColunas();
-        carregarDadosBanco();
+    private void carregarOpcoesFiltros() {
+        if (cbLaboratorio != null) {
+            String labSelecionado = cbLaboratorio.getValue();
+            List<String> labs = UtensilioDAO.listarOpcoesLaboratorio();
+            cbLaboratorio.setItems(FXCollections.observableArrayList(labs));
+            if (labSelecionado != null && labs.contains(labSelecionado)) {
+                cbLaboratorio.setValue(labSelecionado);
+            } else {
+                cbLaboratorio.setValue("Todos");
+            }
+        }
+
+        if (cbStatus != null) {
+            String statusSelecionado = cbStatus.getValue();
+            List<String> situacoes = UtensilioDAO.listarOpcoesSituacao();
+            cbStatus.setItems(FXCollections.observableArrayList(situacoes));
+            if (statusSelecionado != null && situacoes.contains(statusSelecionado)) {
+                cbStatus.setValue(statusSelecionado);
+            } else {
+                cbStatus.setValue("Todos");
+            }
+        }
     }
 
     private void configurarColunas() {
@@ -123,16 +154,20 @@ public class UtensiliosController implements Initializable {
 
     @FXML
     public void onFiltrarClick(ActionEvent event) {
-        String termo = txtPesquisaUtensilio.getText();
-        String status = cbStatus.getValue();
-        String laboratorio = cbLaboratorio.getValue();
+        String termo = txtPesquisaUtensilio != null ? txtPesquisaUtensilio.getText() : "";
+        String status = cbStatus != null ? cbStatus.getValue() : "Todos";
+        String laboratorio = cbLaboratorio != null ? cbLaboratorio.getValue() : "Todos";
         String unidade = cbUnidade != null ? cbUnidade.getValue() : "Todas";
-
 
         List<Utensilio> utensiliosFiltrados = UtensilioDAO.buscarUtensiliosPorFiltro(termo, status, laboratorio, unidade);
 
-        observableListUtensilios.setAll(utensiliosFiltrados);
-        tabelaUtensilios.refresh();
+        if (observableListUtensilios == null) {
+            observableListUtensilios = FXCollections.observableArrayList(utensiliosFiltrados);
+            tabelaUtensilios.setItems(observableListUtensilios);
+        } else {
+            observableListUtensilios.setAll(utensiliosFiltrados);
+            tabelaUtensilios.refresh();
+        }
     }
 
     @FXML
@@ -151,7 +186,8 @@ public class UtensiliosController implements Initializable {
         try {
             RegistroAvariaUtensilioController.utensilioSelecionado = utensilioSelecionado;
             MainApplication.abrirPopUp("registroAvariaUtensilio.fxml");
-            carregarDadosBanco();
+            carregarOpcoesFiltros();
+            onFiltrarClick(new ActionEvent());
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -175,7 +211,8 @@ public class UtensiliosController implements Initializable {
         try {
             EdicaoUtensilioController.utensilioParaEditar = utensilioSelecionado;
             MainApplication.abrirPopUp("EdicaoUtensilio.fxml");
-            carregarDadosBanco();
+            carregarOpcoesFiltros();
+            onFiltrarClick(new ActionEvent());
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -187,7 +224,8 @@ public class UtensiliosController implements Initializable {
     public void onAdicionarClick(ActionEvent event) {
         try {
             MainApplication.abrirPopUp("CadastroUtensilio.fxml");
-            carregarDadosBanco();
+            carregarOpcoesFiltros();
+            onFiltrarClick(new ActionEvent());
 
         } catch (IOException e) {
             e.printStackTrace();
