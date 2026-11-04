@@ -20,12 +20,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Group;
 import javafx.scene.Parent;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.Hyperlink;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
-import javafx.scene.control.ToggleButton;
+import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
@@ -33,10 +28,10 @@ import javafx.scene.layout.VBox;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.SVGPath;
 import javafx.util.Duration;
+import javafx.concurrent.Task;
 
 import java.io.IOException;
 import java.sql.SQLException;
-
 public class LoginController {
 
     @FXML private TextField txtemail;
@@ -54,6 +49,7 @@ public class LoginController {
     @FXML private StackPane rootPane;
     @FXML private ImageView logoSenac;
     @FXML private Group waveGroup;
+    @FXML private ProgressIndicator progressIndicator;
 
     @FXML
     public void initialize() {
@@ -105,32 +101,92 @@ public class LoginController {
 
     @FXML
     public void onButtonLoginClick(ActionEvent event) {
+        btnlogin.setDisable(true);
+        btnlogin.setText("ENTRANDO...");
+
+        progressIndicator.setManaged(true);
+        progressIndicator.setVisible(true);
         String email = txtemail != null ? txtemail.getText() : null;
         String senha = pswsenha != null ? pswsenha.getText() : null;
 
         if (email == null || email.trim().isEmpty() || senha == null || senha.isEmpty()) {
             exibirAlerta(Alert.AlertType.WARNING, "Atenção", "Todos os campos devem estar preenchidos!");
+            btnlogin.setDisable(false);
+            btnlogin.setText("ENTRAR");
+
+            progressIndicator.setVisible(false);
+            progressIndicator.setManaged(false);
             return;
         }
+        Task<Boolean> loginTask = new Task<>() {
 
-        try {
-            boolean autenticado = UserDAO.autenticar(email.trim(), senha);
-            if (autenticado) {
-                User userLogado = UserDAO.buscarPorEmail(email.trim());
-                if (userLogado != null) {
-                    SessaoService.setUsuarioLogado(userLogado);
-                }
-                transicaoParaHome();
-            } else {
-                exibirAlerta(Alert.AlertType.ERROR, "Erro", "Usuário ou senha incorretos.");
+            @Override
+            protected Boolean call() throws Exception {
+                return UserDAO.autenticar(email.trim(), senha);
             }
-        } catch (SQLException e) {
-            exibirAlerta(Alert.AlertType.ERROR, "Erro de Banco de Dados", "Erro ao conectar ao banco de dados: " + e.getMessage());
-        } catch (Exception e) {
-            exibirAlerta(Alert.AlertType.ERROR, "Erro de Autenticação", "Ocorreu um erro ao validar os dados: " + e.getMessage());
-        }
-    }
+        };
 
+        loginTask.setOnSucceeded(e -> {
+
+            boolean autenticado = loginTask.getValue();
+
+            progressIndicator.setVisible(false);
+            progressIndicator.setManaged(false);
+
+            if (autenticado) {
+
+                try {
+
+                    User userLogado = UserDAO.buscarPorEmail(email.trim());
+
+                    if (userLogado != null) {
+                        SessaoService.setUsuarioLogado(userLogado);
+                    }
+
+                    transicaoParaHome();
+
+                } catch (Exception ex) {
+
+                    btnlogin.setDisable(false);
+                    btnlogin.setText("ENTRAR");
+
+                    exibirAlerta(
+                            Alert.AlertType.ERROR,
+                            "Erro",
+                            ex.getMessage()
+                    );
+                }
+
+            } else {
+
+                btnlogin.setDisable(false);
+                btnlogin.setText("ENTRAR");
+
+                exibirAlerta(
+                        Alert.AlertType.ERROR,
+                        "Erro",
+                        "Usuário ou senha incorretos."
+                );
+            }
+        });
+
+        loginTask.setOnFailed(e -> {
+
+            btnlogin.setDisable(false);
+            btnlogin.setText("ENTRAR");
+
+            progressIndicator.setVisible(false);
+            progressIndicator.setManaged(false);
+
+            exibirAlerta(
+                    Alert.AlertType.ERROR,
+                    "Erro",
+                    "Falha ao realizar login."
+            );
+        });
+
+        new Thread(loginTask).start();
+    }
     private void transicaoParaHome() throws IOException {
         try {
             if (rootPane == null || animatedBackground == null || loginForm == null) {
