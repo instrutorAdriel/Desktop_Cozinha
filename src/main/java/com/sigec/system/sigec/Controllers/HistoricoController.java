@@ -1,5 +1,6 @@
 package com.sigec.system.sigec.Controllers;
 
+import com.sigec.system.sigec.Constructors.UnidadeDTO;
 import com.sigec.system.sigec.DAOS.HistoryDAO;
 import com.sigec.system.sigec.MainApplication;
 import com.sigec.system.sigec.Services.SessaoService;
@@ -27,6 +28,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
+import javafx.util.StringConverter;
 
 import java.io.IOException;
 import java.net.URL;
@@ -35,9 +37,10 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 /**
- * Controlador da tela de Histórico e Auditoria de Movimentações / Lista de Compras.
+ * Controlador da tela de Histórico, Auditoria de Movimentações e Lista de Compras.
  */
 public class HistoricoController implements Initializable {
 
@@ -68,6 +71,9 @@ public class HistoricoController implements Initializable {
     @FXML
     private ChoiceBox<String> filtro;
 
+    @FXML
+    private ChoiceBox<UnidadeDTO> cbUnidade;
+
     // Componentes da Tabela
     @FXML
     private TableView<HistoryDAO> tableHistorico;
@@ -86,7 +92,6 @@ public class HistoricoController implements Initializable {
 
     @FXML
     private TableColumn<HistoryDAO, Integer> qtdcompra;
-
 
     // Elementos de Navegação e Layout Lateral
     @FXML
@@ -123,8 +128,22 @@ public class HistoricoController implements Initializable {
         configurarUsuario();
         configurarFiltroCategorias();
 
-        if (txtpesquisa != null) {
-            txtpesquisa.setOnAction(this::filtrarHistorico);
+        // Configuração do ChoiceBox Dinâmico de Unidades
+        if (cbUnidade != null) {
+            List<UnidadeDTO> unidades = HistoryDAO.listarUnidades();
+            cbUnidade.setItems(FXCollections.observableArrayList(unidades));
+
+            cbUnidade.setConverter(new StringConverter<UnidadeDTO>() {
+                @Override
+                public String toString(UnidadeDTO unidade) {
+                    return unidade != null ? unidade.getNome() : "";
+                }
+
+                @Override
+                public UnidadeDTO fromString(String string) {
+                    return null;
+                }
+            });
         }
 
         // 2. Configuração das Colunas da Tabela (TableView)
@@ -154,10 +173,7 @@ public class HistoricoController implements Initializable {
         if (tableHistorico == null) return;
 
         try {
-            // Busca a lista unificada (Estoque Baixo + Zerado) a partir do DAO
             List<HistoryDAO> listaCompras = HistoryDAO.listarListaDeCompras(idUnidade);
-
-            // Converte para ObservableList e envia para a TableView
             ObservableList<HistoryDAO> dadosObservable = FXCollections.observableArrayList(listaCompras);
             tableHistorico.setItems(dadosObservable);
         } catch (Exception e) {
@@ -167,7 +183,6 @@ public class HistoricoController implements Initializable {
 
     @FXML
     public void onExportarComprasAction(ActionEvent event) {
-        // A lógica de exportação (CSV/Excel/PDF) será implementada aqui
         System.out.println("Iniciando a exportação de compras...");
     }
 
@@ -222,10 +237,10 @@ public class HistoricoController implements Initializable {
     }
 
     @FXML
-    protected void botaoCalendarioAction(javafx.event.ActionEvent event) {
+    protected void botaoCalendarioAction(ActionEvent event) {
         try {
             MainApplication.trocadorDeTelas("calendario.fxml");
-        } catch (java.io.IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
@@ -286,17 +301,17 @@ public class HistoricoController implements Initializable {
     }
 
     @FXML
-    public void onClickInsumos(javafx.event.ActionEvent event) {
+    public void onClickInsumos(ActionEvent event) {
         try {
             MainApplication.trocadorDeTelas("lista-estoque.fxml");
-        } catch (java.io.IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
             System.out.println("Erro ao carregar a tela de Insumos: " + e.getMessage());
         }
     }
 
     @FXML
-    public void onClickUtensilios(javafx.event.ActionEvent event) {
+    public void onClickUtensilios(ActionEvent event) {
         try {
             MainApplication.trocadorDeTelas("gestao-utensilios.fxml");
         } catch (java.io.IOException e) {
@@ -338,17 +353,62 @@ public class HistoricoController implements Initializable {
     }
 
     // =========================================================================
-    // CONSULTA DO HISTÓRICO
+    // PESQUISA COM TOLERÂNCIA A ERROS (ACIONADA PELO BOTÃO)
     // =========================================================================
 
     @FXML
     public void filtrarHistorico(ActionEvent event) {
-        String termo = txtpesquisa != null ? txtpesquisa.getText() : "";
-        String categoria = filtro != null ? filtro.getValue() : "Todos";
-        LocalDate de = dataDE != null ? dataDE.getValue() : null;
-        LocalDate ate = dataATE != null ? dataATE.getValue() : null;
+        String termo = txtpesquisa != null ? txtpesquisa.getText().trim() : "";
 
-        System.out.println("Filtrando histórico: termo=" + termo + ", categoria=" + categoria + ", de=" + de + ", ate=" + ate);
+        // Se o campo estiver vazio ao clicar em pesquisar, recarrega todos os dados
+        if (termo.isEmpty()) {
+            carregarDadosTabela(1);
+            return;
+        }
+
+        List<HistoryDAO> listaCompleta = HistoryDAO.listarListaDeCompras(1);
+        String termoLower = termo.toLowerCase();
+
+        // Aplica o filtro com tolerância a erros estritamente no clique do botão
+        List<HistoryDAO> listaFiltrada = listaCompleta.stream().filter(item -> {
+            if (item.getNomeProduto() == null) return false;
+            String nomeProd = item.getNomeProduto().toLowerCase();
+
+            if (nomeProd.contains(termoLower)) {
+                return true;
+            }
+
+            int tolerancia = termoLower.length() > 5 ? 2 : 1;
+            return calcularDistanciaLevenshtein(nomeProd, termoLower) <= tolerancia;
+
+        }).collect(Collectors.toList());
+
+        tableHistorico.setItems(FXCollections.observableArrayList(listaFiltrada));
+    }
+
+    private int calcularDistanciaLevenshtein(String s1, String s2) {
+        int[] custos = new int[s2.length() + 1];
+        for (int i = 0; i <= s1.length(); i++) {
+            int ultimoValor = i;
+            for (int j = 0; j <= s2.length(); j++) {
+                if (i == 0) {
+                    custos[j] = j;
+                } else {
+                    if (j > 0) {
+                        int novoValor = custos[j - 1];
+                        if (s1.charAt(i - 1) != s2.charAt(j - 1)) {
+                            novoValor = Math.min(Math.min(novoValor, ultimoValor), custos[j]) + 1;
+                        }
+                        custos[j - 1] = ultimoValor;
+                        ultimoValor = novoValor;
+                    }
+                }
+            }
+            if (i > 0) {
+                custos[s2.length()] = ultimoValor;
+            }
+        }
+        return custos[s2.length()];
     }
 
     private void exibirAlerta(Alert.AlertType tipo, String titulo, String mensagem) {

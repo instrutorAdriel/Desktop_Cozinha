@@ -2,6 +2,7 @@ package com.sigec.system.sigec.DAOS;
 
 import com.sigec.system.sigec.Constructors.AlertaEstoqueDTO;
 import com.sigec.system.sigec.Constructors.Historico;
+import com.sigec.system.sigec.Constructors.UnidadeDTO;
 import com.sigec.system.sigec.DTBConfig.ConfigDataBase;
 
 import java.sql.Connection;
@@ -98,4 +99,21 @@ public class HistoryDAO {
 
     public int getQtdMinima() { return qtdMinima; }
     public void setQtdMinima(int qtdMinima) { this.qtdMinima = qtdMinima; }
+
+    public static List<UnidadeDTO> listarUnidades() {
+        List<UnidadeDTO> unidades = new ArrayList<>();
+        String sql = "SELECT id_unidade, nome_unidade FROM unidade WHERE situacao = 'A'";
+
+        try (Connection conn = ConfigDataBase.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                unidades.add(new UnidadeDTO(rs.getInt("id_unidade"), rs.getString("nome_unidade")));
+            }
+        } catch (SQLException e) {
+            System.err.println("Erro ao listar unidades: " + e.getMessage());
+        }
+        return unidades;
+    }
 }

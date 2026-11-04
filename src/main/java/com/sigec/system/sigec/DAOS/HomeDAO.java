@@ -89,10 +89,10 @@ public class HomeDAO {
     // 3. Estoque Baixo
     public List<AlertaEstoqueDTO> listarEstoqueBaixo(int idUnidade) {
         List<AlertaEstoqueDTO> lista = new ArrayList<>();
-        String sql = "SELECT p.nome_produto, i.quantidade, i.quantidade_mininma " +
+        String sql = "SELECT p.nome_produto, i.quantidade, i.quantidade_minima " +
                 "FROM insumo i " +
                 "JOIN produto p ON i.id_produto = p.id_produto " +
-                "WHERE i.quantidade > 0 AND i.quantidade <= i.quantidade_mininma " +
+                "WHERE i.quantidade > 0 AND i.quantidade <= i.quantidade_minima " +
                 "AND i.cancelado = 'N' AND i.id_unidade = ?";
 
         try (Connection conn = ConfigDataBase.getConnection();

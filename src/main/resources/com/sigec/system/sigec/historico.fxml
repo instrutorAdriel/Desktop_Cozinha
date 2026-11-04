@@ -89,10 +89,8 @@
                         </Button>
 
                         <!-- Submenu com Insumos e Utensílios -->
-
                         <VBox fx:id="submenuEstoque" alignment="TOP_CENTER" managed="false" spacing="0.0" styleClass="submenu-lateral" visible="false">
                             <children>
-                                <!-- Botão Insumos (Antiga tela de Estoque) -->
                                 <Button id="btnSubNavInsumos" fx:id="btnSubNavInsumos" alignment="BASELINE_LEFT" graphicTextGap="8.0" mnemonicParsing="false" onAction="#onClickInsumos" styleClass="btn-sub-opcao" text="Insumos">
                                     <graphic>
                                         <Label text="•" textFill="#94a3b8">
@@ -102,8 +100,6 @@
                                         </Label>
                                     </graphic>
                                 </Button>
-
-                                <!-- Botão Utensílios -->
                                 <Button id="btnSubNavUtensilios" fx:id="btnSubNavUtensilios" alignment="BASELINE_LEFT" graphicTextGap="8.0" mnemonicParsing="false" onAction="#onClickUtensilios" styleClass="btn-sub-opcao" text="Utensílios">
                                     <graphic>
                                         <Label text="•" textFill="#94a3b8">
@@ -181,6 +177,7 @@
                         <Insets bottom="15.0" />
                     </VBox.margin>
                 </Button>
+
                 <!-- Container do Menu Dropdown de Cadastro -->
                 <VBox alignment="TOP_CENTER" spacing="0.0">
                     <children>
@@ -212,7 +209,6 @@
                             </graphic>
                         </Button>
 
-                        <!-- Submenu com as opções de cadastro (inicialmente recolhido) -->
                         <VBox fx:id="submenuCadastro" alignment="TOP_CENTER" managed="false" spacing="0.0" styleClass="submenu-lateral" visible="false">
                             <children>
                                 <Button id="btnSubNavUsuario" fx:id="btnSubNavUsuario" alignment="BASELINE_LEFT" graphicTextGap="8.0" mnemonicParsing="false" onAction="#onClickCadastroUsuario" styleClass="btn-sub-opcao" text="Cadastro Usuário">
@@ -292,7 +288,7 @@
                         </HBox>
                         <VBox fx:id="conteudoPagina" styleClass="conteudo-pagina" VBox.vgrow="ALWAYS">
                             <children>
-                                <!-- NOVO CABEÇALHO E BOTÃO DE EXPORTAÇÃO DE COMPRAS -->
+                                <!-- CABEÇALHO E BOTÃO DE EXPORTAÇÃO DE COMPRAS -->
                                 <HBox alignment="CENTER_LEFT" prefHeight="45.0" spacing="12.0">
                                     <children>
                                         <Label text=" Relatórios" textFill="#054685">
@@ -320,13 +316,15 @@
                                                 <Font name="Arial" size="13.0" />
                                             </font>
                                         </TextField>
-                                        <Button fx:id="btnbuscardata" mnemonicParsing="false" onAction="#filtrarHistorico" prefHeight="35.0" prefWidth="95.0" styleClass="btn-action-primary" text="Filtrar">
+
+                                        <!-- BOTÃO CORRIGIDO -->
+                                        <Button fx:id="btnbuscardata" mnemonicParsing="false" onAction="#filtrarHistorico" prefHeight="35.0" prefWidth="95.0" styleClass="btn-action-primary" text="Pesquisar">
                                             <font>
                                                 <Font name="Arial Bold" size="13.0" />
                                             </font>
                                         </Button>
 
-                                        <!-- NOVO: Filtro de Unidade -->
+                                        <!-- Filtro de Unidade -->
                                         <HBox alignment="CENTER_LEFT" spacing="8.0">
                                             <children>
                                                 <Label text="Unidade:" textFill="#475569">
@@ -338,7 +336,7 @@
                                             </children>
                                         </HBox>
 
-                                        <!-- NOVO: Filtro de Curso -->
+                                        <!-- Filtro de Curso -->
                                         <HBox alignment="CENTER_LEFT" spacing="8.0">
                                             <children>
                                                 <Label text="Curso:" textFill="#475569">
@@ -351,23 +349,20 @@
                                         </HBox>
 
                                         <Region HBox.hgrow="ALWAYS" />
-                                        <DatePicker fx:id="dataDE" prefHeight="35.0" prefWidth="140.0" promptText="De" styleClass="custom-date-picker" />
-                                        <DatePicker fx:id="dataATE" prefHeight="35.0" prefWidth="140.0" promptText="Até" styleClass="custom-date-picker" />
-                                        <ChoiceBox fx:id="filtro" prefHeight="35.0" prefWidth="135.0" styleClass="custom-choice-box" />
                                     </children>
                                     <VBox.margin>
                                         <Insets left="20.0" right="20.0" top="5.0" />
                                     </VBox.margin>
                                 </HBox>
 
-                                <!-- TABELA ORIGINAL -->
+                                <!-- TABELA -->
                                 <TableView fx:id="tableHistorico" prefHeight="390.0" prefWidth="560.0" styleClass="table-view" VBox.vgrow="ALWAYS">
                                     <columns>
                                         <TableColumn fx:id="codMXM" prefWidth="100.0" text="Código  " />
                                         <TableColumn fx:id="nome_produto" prefWidth="150.0" text="Produto" />
                                         <TableColumn fx:id="tipo_estoque" prefWidth="90.0" text="Tipo" />
                                         <TableColumn fx:id="quantidade" prefWidth="60.0" text="Qtd" />
-                              <TableColumn fx:id="qtdcompra" prefWidth="75.0" text="Qtd.Compra" />
+                                        <TableColumn fx:id="qtdcompra" prefWidth="75.0" text="Qtd.Compra" />
                                     </columns>
                                     <columnResizePolicy>
                                         <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
