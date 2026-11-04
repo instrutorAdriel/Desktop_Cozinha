@@ -344,9 +344,14 @@
                                 <!-- Barra de Ferramentas / Ações e os antigos filtros -->
                                 <HBox alignment="CENTER_LEFT" prefHeight="45.0" spacing="12.0">
                                     <children>
-                                        <TextField fx:id="txtPesquisaUtensilio" prefHeight="35.0" prefWidth="250.0" promptText="🔍 Pesquisar utensílio..." styleClass="search-field">
+                                        <TextField fx:id="txtPesquisaUtensilio" onAction="#onFiltrarClick" prefHeight="35.0" prefWidth="250.0" promptText="🔍 Pesquisar utensílio..." styleClass="search-field">
                                             <font><Font name="Arial" size="13.0" /></font>
                                         </TextField>
+
+                                        <!-- Botão Pesquisar -->
+                                        <Button mnemonicParsing="false" onAction="#onFiltrarClick" prefHeight="35.0" prefWidth="105.0" styleClass="btn-action-secondary" text="Pesquisar">
+                                            <font><Font name="Arial Bold" size="13.0" /></font>
+                                        </Button>
 
                                         <!-- Filtro de Laboratório com Label -->
                                         <HBox alignment="CENTER_LEFT" spacing="8.0">
@@ -371,11 +376,6 @@
                                                 <ChoiceBox fx:id="cbStatus" prefHeight="35.0" prefWidth="130.0" styleClass="custom-choice-box" />
                                             </children>
                                         </HBox>
-
-                                        <!-- Botão Pesquisar -->
-                                        <Button mnemonicParsing="false" onAction="#onFiltrarClick" prefHeight="35.0" prefWidth="105.0" styleClass="btn-action-secondary" text="Pesquisar">
-                                            <font><Font name="Arial Bold" size="13.0" /></font>
-                                        </Button>
 
                                         <Region HBox.hgrow="ALWAYS" />
 
