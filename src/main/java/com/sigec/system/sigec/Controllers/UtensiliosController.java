@@ -1,8 +1,10 @@
 package com.sigec.system.sigec.Controllers;
 
 import com.sigec.system.sigec.Constructors.Utensilio;
+import com.sigec.system.sigec.DAOS.UnidadeDAO;
 import com.sigec.system.sigec.DAOS.UtensilioDAO;
 import com.sigec.system.sigec.MainApplication;
+import com.sigec.system.sigec.Services.SessaoService;
 import com.sigec.system.sigec.Utils.ButtonBorderLapAnimator;
 import com.sigec.system.sigec.Utils.DropdownBorderLapAnimator;
 import javafx.animation.Animation;
@@ -36,7 +38,6 @@ public class UtensiliosController implements Initializable {
     @FXML private Label setaCadastro;
     @FXML private Button btnNavCadastro;
 
-    // IDs corrigidos para bater exatamente com o gestao-utensilios.fxml
     @FXML private TextField txtPesquisaUtensilio;
     @FXML private ChoiceBox<String> cbStatus;
     @FXML private ChoiceBox<String> cbLaboratorio;
@@ -53,16 +54,23 @@ public class UtensiliosController implements Initializable {
     @FXML private Button btnNavEstoque;
 
     @FXML private ChoiceBox<String> cbUnidade;
-    @FXML private ChoiceBox<String> cbCurso;
+    // cbCurso foi removido
+
+    @FXML private Button btnAvaria;
 
     private ObservableList<Utensilio> observableListUtensilios;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         iniciarRelogio();
-        usuarioLabel.setText("Administrador");
 
-        // Preenche os ChoiceBoxes de Filtro
+
+        if (SessaoService.getUsuarioAtual() != null) {
+            usuarioLabel.setText(SessaoService.getUsuarioAtual().getNome());
+        } else {
+            usuarioLabel.setText("Administrador");
+        }
+
         if (cbStatus != null) {
             cbStatus.setItems(FXCollections.observableArrayList("Todos", "Disponível", "Em uso", "Conserto"));
             cbStatus.setValue("Todos");
@@ -71,6 +79,16 @@ public class UtensiliosController implements Initializable {
         if (cbLaboratorio != null) {
             cbLaboratorio.setItems(FXCollections.observableArrayList("Todos", "Estoque Central", "Cozinha Quente", "Cozinha Oriental"));
             cbLaboratorio.setValue("Todos");
+        }
+
+        if (cbUnidade != null) {
+            cbUnidade.setItems(FXCollections.observableArrayList(UnidadeDAO.listarNomesUnidades()));
+            cbUnidade.setValue("Todas");
+
+
+            cbUnidade.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+                onFiltrarClick(new ActionEvent());
+            });
         }
 
         configurarColunas();
@@ -103,32 +121,80 @@ public class UtensiliosController implements Initializable {
         timeline.play();
     }
 
-    // ==========================================
-    // AÇÕES DA TELA (Adicionados os métodos ausentes)
-    // ==========================================
     @FXML
     public void onFiltrarClick(ActionEvent event) {
-        System.out.println("Filtrando status: " + cbStatus.getValue() + " | Busca: " + txtPesquisaUtensilio.getText());
+        String termo = txtPesquisaUtensilio.getText();
+        String status = cbStatus.getValue();
+        String laboratorio = cbLaboratorio.getValue();
+        String unidade = cbUnidade != null ? cbUnidade.getValue() : "Todas";
+
+
+        List<Utensilio> utensiliosFiltrados = UtensilioDAO.buscarUtensiliosPorFiltro(termo, status, laboratorio, unidade);
+
+        observableListUtensilios.setAll(utensiliosFiltrados);
+        tabelaUtensilios.refresh();
     }
 
     @FXML
     public void onRegistrarAvariaClick(ActionEvent event) {
-        System.out.println("Abrindo tela de registro de avaria...");
+        Utensilio utensilioSelecionado = tabelaUtensilios.getSelectionModel().getSelectedItem();
+
+        if (utensilioSelecionado == null) {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Atenção");
+            alert.setHeaderText(null);
+            alert.setContentText("Por favor, selecione um utensílio na tabela para registrar a avaria.");
+            alert.showAndWait();
+            return;
+        }
+
+        try {
+            RegistroAvariaUtensilioController.utensilioSelecionado = utensilioSelecionado;
+            MainApplication.abrirPopUp("registroAvariaUtensilio.fxml");
+            carregarDadosBanco();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.err.println("Erro ao abrir a tela de registro de avaria: " + e.getMessage());
+        }
     }
 
     @FXML
     public void onEditarClick(ActionEvent event) {
-        System.out.println("Editando utensílio...");
+        Utensilio utensilioSelecionado = tabelaUtensilios.getSelectionModel().getSelectedItem();
+
+        if (utensilioSelecionado == null) {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Atenção");
+            alert.setHeaderText(null);
+            alert.setContentText("Por favor, selecione um utensílio na tabela para editar.");
+            alert.showAndWait();
+            return;
+        }
+
+        try {
+            EdicaoUtensilioController.utensilioParaEditar = utensilioSelecionado;
+            MainApplication.abrirPopUp("EdicaoUtensilio.fxml");
+            carregarDadosBanco();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.err.println("Erro ao abrir a tela de edição de utensílio: " + e.getMessage());
+        }
     }
 
     @FXML
     public void onAdicionarClick(ActionEvent event) {
-        System.out.println("Adicionando novo utensílio...");
+        try {
+            MainApplication.abrirPopUp("CadastroUtensilio.fxml");
+            carregarDadosBanco();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.err.println("Erro ao abrir a tela de cadastro de utensílio: " + e.getMessage());
+        }
     }
 
-    // ==========================================
-    // AÇÕES DO MENU LATERAL
-    // ==========================================
     @FXML
     public void onClickHome(ActionEvent event) {
         try { MainApplication.trocadorDeTelas("homeTest.fxml"); } catch (Exception e) { e.printStackTrace(); }
@@ -197,16 +263,13 @@ public class UtensiliosController implements Initializable {
             if (expandido) {
                 submenuEstoque.setVisible(true);
                 submenuEstoque.setManaged(true);
-
                 DropdownBorderLapAnimator.animarDropdown(btnNavEstoque, submenuEstoque);
             } else {
                 ButtonBorderLapAnimator.cancelarAnimacaoAtiva();
-
                 btnNavEstoque.getStyleClass().remove("btn-dropdown-ativo");
                 btnNavEstoque.setStyle(null);
                 submenuEstoque.getStyleClass().remove("submenu-lateral-ativo");
                 submenuEstoque.setStyle(null);
-
                 submenuEstoque.setVisible(false);
                 submenuEstoque.setManaged(false);
             }
