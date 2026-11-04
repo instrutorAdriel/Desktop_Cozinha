@@ -242,7 +242,7 @@
                 </VBox>
 
                 <Region VBox.vgrow="ALWAYS" />
-                <Button fx:id="botaoSair" alignment="CENTER" mnemonicParsing="false" onAction="#botaoSairAction" maxWidth="1.7976931348623157E308" prefHeight="45.0" styleClass="btn-sair" text="Sair">
+                <Button fx:id="botaoSair" alignment="CENTER" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#botaoSairAction" prefHeight="45.0" styleClass="btn-sair" text="Sair">
                     <font>
                         <Font name="Arial Bold" size="15.0" />
                     </font>
@@ -363,12 +363,11 @@
                                 <!-- TABELA ORIGINAL -->
                                 <TableView fx:id="tableHistorico" prefHeight="390.0" prefWidth="560.0" styleClass="table-view" VBox.vgrow="ALWAYS">
                                     <columns>
-                                        <TableColumn fx:id="data_hora" prefWidth="100.0" text="Data/Hora" />
+                                        <TableColumn fx:id="codMXM" prefWidth="100.0" text="Código  " />
                                         <TableColumn fx:id="nome_produto" prefWidth="150.0" text="Produto" />
                                         <TableColumn fx:id="tipo_estoque" prefWidth="90.0" text="Tipo" />
                                         <TableColumn fx:id="quantidade" prefWidth="60.0" text="Qtd" />
-                                        <TableColumn fx:id="tipo_movimentacao" prefWidth="90.0" text="Movimentação" />
-                                        <TableColumn fx:id="nome_usuario" prefWidth="110.0" text="Usuário" />
+                              <TableColumn fx:id="qtdcompra" prefWidth="75.0" text="Qtd.Compra" />
                                     </columns>
                                     <columnResizePolicy>
                                         <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />

@@ -1,15 +1,17 @@
 package com.sigec.system.sigec.Controllers;
 
+import com.sigec.system.sigec.DAOS.HistoryDAO;
 import com.sigec.system.sigec.MainApplication;
 import com.sigec.system.sigec.Services.SessaoService;
 import com.sigec.system.sigec.Utils.BackgroundAnimator;
 import com.sigec.system.sigec.Utils.ButtonBorderLapAnimator;
-
 import com.sigec.system.sigec.Utils.DropdownBorderLapAnimator;
+
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -21,6 +23,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
@@ -30,10 +33,11 @@ import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.ResourceBundle;
 
 /**
- * Controlador da tela de Histórico e Auditoria de Movimentações.
+ * Controlador da tela de Histórico e Auditoria de Movimentações / Lista de Compras.
  */
 public class HistoricoController implements Initializable {
 
@@ -64,27 +68,27 @@ public class HistoricoController implements Initializable {
     @FXML
     private ChoiceBox<String> filtro;
 
+    // Componentes da Tabela
     @FXML
-    private TableView<?> tableHistorico;
+    private TableView<HistoryDAO> tableHistorico;
 
     @FXML
-    private TableColumn<?, ?> data_hora;
+    private TableColumn<HistoryDAO, String> codMXM;
 
     @FXML
-    private TableColumn<?, ?> nome_produto;
+    private TableColumn<HistoryDAO, String> nome_produto;
 
     @FXML
-    private TableColumn<?, ?> tipo_estoque;
+    private TableColumn<HistoryDAO, String> tipo_estoque;
 
     @FXML
-    private TableColumn<?, ?> quantidade;
+    private TableColumn<HistoryDAO, Integer> quantidade;
 
     @FXML
-    private TableColumn<?, ?> tipo_movimentacao;
+    private TableColumn<HistoryDAO, Integer> qtdcompra;
 
-    @FXML
-    private TableColumn<?, ?> nome_usuario;
 
+    // Elementos de Navegação e Layout Lateral
     @FXML
     private Button btnNavCadastro;
 
@@ -111,6 +115,7 @@ public class HistoricoController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        // 1. Animações e Cabeçalho
         if (topBarPane != null) {
             BackgroundAnimator.startTopBarAnimation(topBarPane);
         }
@@ -120,6 +125,43 @@ public class HistoricoController implements Initializable {
 
         if (txtpesquisa != null) {
             txtpesquisa.setOnAction(this::filtrarHistorico);
+        }
+
+        // 2. Configuração das Colunas da Tabela (TableView)
+        configurarTabela();
+
+        // 3. Carga Inicial de Dados (Unidade padrão ID = 1 ou obtida da sessão)
+        int idUnidadeAtual = 1;
+        carregarDadosTabela(idUnidadeAtual);
+    }
+
+    private void configurarTabela() {
+        if (nome_produto != null) {
+            nome_produto.setCellValueFactory(new PropertyValueFactory<>("nomeProduto"));
+        }
+        if (tipo_estoque != null) {
+            tipo_estoque.setCellValueFactory(new PropertyValueFactory<>("nomeCategoria"));
+        }
+        if (quantidade != null) {
+            quantidade.setCellValueFactory(new PropertyValueFactory<>("qtdAtual"));
+        }
+        if (qtdcompra != null) {
+            qtdcompra.setCellValueFactory(new PropertyValueFactory<>("qtdComprar"));
+        }
+    }
+
+    public void carregarDadosTabela(int idUnidade) {
+        if (tableHistorico == null) return;
+
+        try {
+            // Busca a lista unificada (Estoque Baixo + Zerado) a partir do DAO
+            List<HistoryDAO> listaCompras = HistoryDAO.listarListaDeCompras(idUnidade);
+
+            // Converte para ObservableList e envia para a TableView
+            ObservableList<HistoryDAO> dadosObservable = FXCollections.observableArrayList(listaCompras);
+            tableHistorico.setItems(dadosObservable);
+        } catch (Exception e) {
+            exibirAlerta(Alert.AlertType.ERROR, "Erro", "Não foi possível carregar os dados da tabela: " + e.getMessage());
         }
     }
 
@@ -179,11 +221,10 @@ public class HistoricoController implements Initializable {
         }
     }
 
-
     @FXML
     protected void botaoCalendarioAction(javafx.event.ActionEvent event) {
         try {
-            com.sigec.system.sigec.MainApplication.trocadorDeTelas("calendario.fxml");
+            MainApplication.trocadorDeTelas("calendario.fxml");
         } catch (java.io.IOException e) {
             e.printStackTrace();
         }
@@ -231,16 +272,13 @@ public class HistoricoController implements Initializable {
             if (expandido) {
                 submenuEstoque.setVisible(true);
                 submenuEstoque.setManaged(true);
-
                 DropdownBorderLapAnimator.animarDropdown(btnNavEstoque, submenuEstoque);
             } else {
                 ButtonBorderLapAnimator.cancelarAnimacaoAtiva();
-
                 btnNavEstoque.getStyleClass().remove("btn-dropdown-ativo");
                 btnNavEstoque.setStyle(null);
                 submenuEstoque.getStyleClass().remove("submenu-lateral-ativo");
                 submenuEstoque.setStyle(null);
-
                 submenuEstoque.setVisible(false);
                 submenuEstoque.setManaged(false);
             }
@@ -250,7 +288,7 @@ public class HistoricoController implements Initializable {
     @FXML
     public void onClickInsumos(javafx.event.ActionEvent event) {
         try {
-            com.sigec.system.sigec.MainApplication.trocadorDeTelas("lista-estoque.fxml");
+            MainApplication.trocadorDeTelas("lista-estoque.fxml");
         } catch (java.io.IOException e) {
             e.printStackTrace();
             System.out.println("Erro ao carregar a tela de Insumos: " + e.getMessage());
@@ -260,7 +298,7 @@ public class HistoricoController implements Initializable {
     @FXML
     public void onClickUtensilios(javafx.event.ActionEvent event) {
         try {
-            com.sigec.system.sigec.MainApplication.trocadorDeTelas("gestao-utensilios.fxml");
+            MainApplication.trocadorDeTelas("gestao-utensilios.fxml");
         } catch (java.io.IOException e) {
             e.printStackTrace();
             System.out.println("Erro ao carregar a tela de Utensílios: " + e.getMessage());
