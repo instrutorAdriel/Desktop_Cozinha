@@ -1,5 +1,8 @@
 package com.sigec.system.sigec.Controllers;
 
+import com.sigec.system.sigec.DAOS.CursoDAO;
+import com.sigec.system.sigec.DAOS.SolicitacaoDAO;
+import com.sigec.system.sigec.DAOS.UnidadeDAO;
 import com.sigec.system.sigec.MainApplication;
 import com.sigec.system.sigec.Utils.ButtonBorderLapAnimator;
 import com.sigec.system.sigec.Utils.DropdownBorderLapAnimator;
@@ -16,9 +19,11 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 public class SolicitacoesController {
 
@@ -61,19 +66,39 @@ public class SolicitacoesController {
     @FXML
     private Button btnNavEstoque;
 
+    @FXML
+    private ChoiceBox<String> cbUnidade;
+    @FXML
+    private ChoiceBox<String> cbCurso;
+
     private ObservableList<SolicitacaoMock> listaSolicitacoes = FXCollections.observableArrayList();
-    private FilteredList<SolicitacaoMock> filteredDatal;
+    private FilteredList<SolicitacaoMock> filteredData;
 
     @FXML
     public void initialize() {
         iniciarRelogio();
         usuarioLabel.setText("Administrador");
+
+        configurarTabela();
+        configurarFiltroEBusca();
+
+        carregarUnidadesDoBanco();
+        carregarCursosDoBanco();
+
         cbStatusFiltro.setItems(FXCollections.observableArrayList("Todos", "Pendente", "Aprovado", "Recusado"));
         cbStatusFiltro.setValue("Todos");
 
-        configurarTabela();
-        carregarDadosDeTeste();
-        configurarFiltroEBusca();
+        // LISTENER EM TEMPO REAL: Filtra assim que muda a opção no ChoiceBox de Status
+        cbStatusFiltro.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> aplicarFiltros());
+
+        if (cbCurso != null) {
+            cbCurso.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> aplicarFiltros());
+        }
+        if (cbUnidade != null) {
+            cbUnidade.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> aplicarFiltros());
+        }
+
+        carregarDadosDoBanco();
     }
 
     private void configurarTabela() {
@@ -87,32 +112,41 @@ public class SolicitacoesController {
 
         tabelaSolicitacoes.setItems(listaSolicitacoes);
     }
+
     private void configurarFiltroEBusca() {
-        // 1. Envolve a lista master em um FilteredList
-        filteredDatal = new FilteredList<>(listaSolicitacoes, p -> true);
+        filteredData = new FilteredList<>(listaSolicitacoes, p -> true);
 
+        if (txtPesquisa != null) {
+            txtPesquisa.textProperty().addListener((obs, oldVal, newVal) -> aplicarFiltros());
+        }
 
-        // 2. Conecta com a SortedList para manter a ordenação pelas colunas da tabela
-        SortedList<SolicitacaoMock> sortedData = new SortedList<>(filteredDatal);
+        SortedList<SolicitacaoMock> sortedData = new SortedList<>(filteredData);
         sortedData.comparatorProperty().bind(tabelaSolicitacoes.comparatorProperty());
 
-        // 3. Define a lista ordenada/filtrada na tabela
         tabelaSolicitacoes.setItems(sortedData);
     }
 
     private void aplicarFiltros() {
-        String textoBusca = txtPesquisa.getText() != null ? txtPesquisa.getText().toLowerCase().trim() : "";
-        String statusSelecionado = cbStatusFiltro.getValue();
+        String textoBusca = txtPesquisa != null && txtPesquisa.getText() != null ? txtPesquisa.getText().toLowerCase().trim() : "";
+        String statusSelecionado = cbStatusFiltro != null ? cbStatusFiltro.getValue() : "Todos";
+        String cursoSelecionado = cbCurso != null ? cbCurso.getValue() : "Todos";
 
-        filteredDatal.setPredicate(solicitacao -> {
-            // Filtro por Status
-            if (statusSelecionado != null && !statusSelecionado.equals("Todos")) {
+        filteredData.setPredicate(solicitacao -> {
+            // 1. Filtro por Status
+            if (statusSelecionado != null && !statusSelecionado.equalsIgnoreCase("Todos")) {
                 if (!solicitacao.getStatus().equalsIgnoreCase(statusSelecionado)) {
                     return false;
                 }
             }
 
-            // Filtro por Texto (Insumo ou Solicitante/Professor)
+            // 2. Filtro por Curso
+            if (cursoSelecionado != null && !cursoSelecionado.equalsIgnoreCase("Todos")) {
+                if (solicitacao.getTurma() == null || !solicitacao.getTurma().toLowerCase().contains(cursoSelecionado.toLowerCase())) {
+                    return false;
+                }
+            }
+
+            // 3. Filtro por Texto (Insumo ou Solicitante)
             if (!textoBusca.isEmpty()) {
                 boolean bateInsumo = solicitacao.getInsumo() != null && solicitacao.getInsumo().toLowerCase().contains(textoBusca);
                 boolean bateSolicitante = solicitacao.getSolicitante() != null && solicitacao.getSolicitante().toLowerCase().contains(textoBusca);
@@ -141,36 +175,69 @@ public class SolicitacoesController {
     // ==========================================
     @FXML
     void onFiltrarClick(ActionEvent event) {
-        aplicarFiltros();
-        System.out.println("Filtro aplicado: Status = " + cbStatusFiltro.getValue() + " | Busca = " + txtPesquisa.getText());
+        carregarDadosDoBanco();
     }
 
     @FXML
     void onAprovarClick(ActionEvent event) {
         SolicitacaoMock selecionada = tabelaSolicitacoes.getSelectionModel().getSelectedItem();
-        if (selecionada != null && selecionada.getStatus().equals("Pendente")) {
-            // Lógica para abater do estoque e atualizar no banco
+
+        if (selecionada == null) {
+            exibirAlerta(Alert.AlertType.WARNING, "Seleção Necessária", "Selecione uma solicitação na tabela para aprovar.");
+            return;
+        }
+
+        if (!selecionada.getStatus().equalsIgnoreCase("Pendente")) {
+            exibirAlerta(Alert.AlertType.INFORMATION, "Ação Não Permitida", "Esta solicitação já foi finalizada (" + selecionada.getStatus() + ") e não pode ser alterada.");
+            return;
+        }
+
+        // Grava no Banco MySQL ('A' = Aprovado)
+        boolean sucesso = SolicitacaoDAO.atualizarStatus(selecionada.getId(), "A", selecionada.getTipo());
+
+        if (sucesso) {
             selecionada.setStatus("Aprovado");
             tabelaSolicitacoes.refresh();
             aplicarFiltros();
-            System.out.println("Solicitação Aprovada: " + selecionada.getInsumo());
+            exibirAlerta(Alert.AlertType.INFORMATION, "Sucesso", "Solicitação do item '" + selecionada.getInsumo() + "' foi APROVADA no banco!");
         } else {
-            System.out.println("Selecione uma solicitação 'Pendente' para aprovar.");
+            exibirAlerta(Alert.AlertType.ERROR, "Erro", "Não foi possível atualizar a solicitação no banco de dados.");
         }
     }
 
     @FXML
     void onRecusarClick(ActionEvent event) {
         SolicitacaoMock selecionada = tabelaSolicitacoes.getSelectionModel().getSelectedItem();
-        if (selecionada != null && selecionada.getStatus().equals("Pendente")) {
-            // Aqui chamaria um modal pedindo o motivo da recusa
+
+        if (selecionada == null) {
+            exibirAlerta(Alert.AlertType.WARNING, "Seleção Necessária", "Selecione uma solicitação na tabela para recusar.");
+            return;
+        }
+
+        if (!selecionada.getStatus().equalsIgnoreCase("Pendente")) {
+            exibirAlerta(Alert.AlertType.INFORMATION, "Ação Não Permitida", "Esta solicitação já foi finalizada (" + selecionada.getStatus() + ") e não pode ser alterada.");
+            return;
+        }
+
+        // Grava no Banco MySQL ('R' = Recusado)
+        boolean sucesso = SolicitacaoDAO.atualizarStatus(selecionada.getId(), "R", selecionada.getTipo());
+
+        if (sucesso) {
             selecionada.setStatus("Recusado");
             tabelaSolicitacoes.refresh();
             aplicarFiltros();
-            System.out.println("Solicitação Recusada: " + selecionada.getInsumo());
+            exibirAlerta(Alert.AlertType.WARNING, "Recusado", "Solicitação do item '" + selecionada.getInsumo() + "' foi RECUSADA no banco!");
         } else {
-            System.out.println("Selecione uma solicitação 'Pendente' para recusar.");
+            exibirAlerta(Alert.AlertType.ERROR, "Erro", "Não foi possível atualizar a solicitação no banco de dados.");
         }
+    }
+
+    private void exibirAlerta(Alert.AlertType tipo, String titulo, String mensagem) {
+        Alert alert = new Alert(tipo);
+        alert.setTitle(titulo);
+        alert.setHeaderText(null);
+        alert.setContentText(mensagem);
+        alert.showAndWait();
     }
 
     // ==========================================
@@ -290,40 +357,59 @@ public class SolicitacoesController {
     }
 
     @FXML
-    public void onClickInsumos(javafx.event.ActionEvent event) {
+    public void onClickInsumos(ActionEvent event) {
         try {
-            com.sigec.system.sigec.MainApplication.trocadorDeTelas("lista-estoque.fxml");
-        } catch (java.io.IOException e) {
+            MainApplication.trocadorDeTelas("lista-estoque.fxml");
+        } catch (Exception e) {
             e.printStackTrace();
             System.out.println("Erro ao carregar a tela de Insumos: " + e.getMessage());
         }
     }
 
     @FXML
-    public void onClickUtensilios(javafx.event.ActionEvent event) {
+    public void onClickUtensilios(ActionEvent event) {
         try {
-            com.sigec.system.sigec.MainApplication.trocadorDeTelas("gestao-utensilios.fxml");
-        } catch (java.io.IOException e) {
+            MainApplication.trocadorDeTelas("gestao-utensilios.fxml");
+        } catch (Exception e) {
             e.printStackTrace();
             System.out.println("Erro ao carregar a tela de Utensílios: " + e.getMessage());
         }
     }
 
-    // ==========================================
-    // DADOS MOCK (Exemplo visual)
-    // ==========================================
-    private void carregarDadosDeTeste() {
-        listaSolicitacoes.addAll(
-                new SolicitacaoMock("20/10/2026 14:30", "Prof. João Gastronomia", "Cozinha Quente A",
-                        "Farinha de Trigo", "2 kg", "Receita rendeu menos que o esperado", "Pendente"),
-                new SolicitacaoMock("20/10/2026 15:10", "Prof. Maria Confeitaria", "Confeitaria B",
-                        "Chocolate Meio Amargo", "500 g", "Teste extra de temperagem", "Pendente"),
-                new SolicitacaoMock("19/10/2026 09:00", "Prof. Carlos", "Panificação", "Fermento Biológico", "50 g",
-                        "O fermento anterior estava inativo", "Aprovado"));
+    private void carregarDadosDoBanco() {
+        listaSolicitacoes.clear();
+        List<SolicitacaoMock> dados = SolicitacaoDAO.listarTodasSolicitacoes();
+        listaSolicitacoes.addAll(dados);
+        aplicarFiltros();
     }
 
-    // CLASSE INTERNA MOCK PARA A TABELA
+    private void carregarUnidadesDoBanco() {
+        List<String> unidadesDB = UnidadeDAO.listarNomesUnidades();
+        ObservableList<String> items = FXCollections.observableArrayList(unidadesDB);
+
+        cbUnidade.setItems(items);
+        if (items.contains("Todas")) {
+            cbUnidade.setValue("Todas");
+        } else if (!items.isEmpty()) {
+            cbUnidade.getSelectionModel().selectFirst();
+        }
+    }
+
+    private void carregarCursosDoBanco() {
+        List<String> cursosDB = CursoDAO.listarNomesCursos();
+        ObservableList<String> items = FXCollections.observableArrayList(cursosDB);
+
+        cbCurso.setItems(items);
+        if (items.contains("Todos")) {
+            cbCurso.setValue("Todos");
+        } else if (!items.isEmpty()) {
+            cbCurso.getSelectionModel().selectFirst();
+        }
+    }
+
+    // CLASSE MODEL DE SOLICITAÇÃO ATUALIZADA (com id e tipo)
     public static class SolicitacaoMock {
+        private int id;
         private String data;
         private String solicitante;
         private String turma;
@@ -331,9 +417,11 @@ public class SolicitacoesController {
         private String quantidade;
         private String justificativa;
         private String status;
+        private String tipo;
 
-        public SolicitacaoMock(String data, String solicitante, String turma, String insumo, String quantidade,
-                String justificativa, String status) {
+        public SolicitacaoMock(int id, String data, String solicitante, String turma, String insumo, String quantidade,
+                               String justificativa, String status, String tipo) {
+            this.id = id;
             this.data = data;
             this.solicitante = solicitante;
             this.turma = turma;
@@ -341,38 +429,18 @@ public class SolicitacoesController {
             this.quantidade = quantidade;
             this.justificativa = justificativa;
             this.status = status;
+            this.tipo = tipo;
         }
 
-        public String getData() {
-            return data;
-        }
-
-        public String getSolicitante() {
-            return solicitante;
-        }
-
-        public String getTurma() {
-            return turma;
-        }
-
-        public String getInsumo() {
-            return insumo;
-        }
-
-        public String getQuantidade() {
-            return quantidade;
-        }
-
-        public String getJustificativa() {
-            return justificativa;
-        }
-
-        public String getStatus() {
-            return status;
-        }
-
-        public void setStatus(String status) {
-            this.status = status;
-        }
+        public int getId() { return id; }
+        public String getData() { return data; }
+        public String getSolicitante() { return solicitante; }
+        public String getTurma() { return turma; }
+        public String getInsumo() { return insumo; }
+        public String getQuantidade() { return quantidade; }
+        public String getJustificativa() { return justificativa; }
+        public String getStatus() { return status; }
+        public String getTipo() { return tipo; }
+        public void setStatus(String status) { this.status = status; }
     }
 }
