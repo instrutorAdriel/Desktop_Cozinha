@@ -47,15 +47,12 @@ public class UtensiliosController implements Initializable {
     @FXML private TableColumn<Utensilio, Integer> colPatrimonio;
     @FXML private TableColumn<Utensilio, String> colLaboratorio;
     @FXML private TableColumn<Utensilio, String> colStatus;
-    @FXML private TableColumn<Utensilio, Integer> colQtdTotal;
-    @FXML private TableColumn<Utensilio, Integer> colQtdDisponivel;
 
     @FXML private VBox submenuEstoque;
     @FXML private Label setaEstoque;
     @FXML private Button btnNavEstoque;
 
     @FXML private ChoiceBox<String> cbUnidade;
-    // cbCurso foi removido
 
     @FXML private Button btnAvaria;
 
@@ -74,6 +71,12 @@ public class UtensiliosController implements Initializable {
         configurarColunas();
         carregarDadosBanco();
         carregarOpcoesFiltros();
+
+        if (txtPesquisaUtensilio != null) {
+            txtPesquisaUtensilio.textProperty().addListener((observable, oldValue, newValue) -> {
+                onFiltrarClick(new ActionEvent());
+            });
+        }
 
         if (cbLaboratorio != null) {
             cbLaboratorio.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
@@ -134,8 +137,6 @@ public class UtensiliosController implements Initializable {
         }
         colLaboratorio.setCellValueFactory(new PropertyValueFactory<>("laboratorio"));
         colStatus.setCellValueFactory(new PropertyValueFactory<>("status"));
-        colQtdTotal.setCellValueFactory(new PropertyValueFactory<>("qtdTotal"));
-        colQtdDisponivel.setCellValueFactory(new PropertyValueFactory<>("qtdDisponivel"));
     }
 
     private void carregarDadosBanco() {

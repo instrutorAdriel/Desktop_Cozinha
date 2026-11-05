@@ -344,7 +344,7 @@
                                 <!-- Barra de Ferramentas / Ações e os antigos filtros -->
                                 <HBox alignment="CENTER_LEFT" prefHeight="45.0" spacing="12.0">
                                     <children>
-                                        <TextField fx:id="txtPesquisaUtensilio" onAction="#onFiltrarClick" prefHeight="35.0" prefWidth="250.0" promptText="🔍 Pesquisar utensílio..." styleClass="search-field">
+                                        <TextField fx:id="txtPesquisaUtensilio" onAction="#onFiltrarClick" prefHeight="35.0" prefWidth="265.0" promptText="🔍 Pesquisar utensílio ou nº patrimônio..." styleClass="search-field">
                                             <font><Font name="Arial" size="13.0" /></font>
                                         </TextField>
 
@@ -397,12 +397,10 @@
                                 <!-- Tabela de Inventário de Utensílios -->
                                 <TableView fx:id="tabelaUtensilios" styleClass="table-view" VBox.vgrow="ALWAYS">
                                     <columns>
-                                        <TableColumn fx:id="colItem" prefWidth="200.0" text="Item / Utensílio" />
-                                        <TableColumn fx:id="colPatrimonio" prefWidth="120.0" text="N.º Patrimônio" />
-                                        <TableColumn fx:id="colLaboratorio" prefWidth="160.0" text="Laboratório Atual" />
-                                        <TableColumn fx:id="colStatus" prefWidth="120.0" text="Status" />
-                                        <TableColumn fx:id="colQtdTotal" prefWidth="100.0" text="Qtd. Total" />
-                                        <TableColumn fx:id="colQtdDisponivel" prefWidth="110.0" text="Qtd. Disponível" />
+                                        <TableColumn fx:id="colItem" prefWidth="240.0" text="Item / Utensílio" />
+                                        <TableColumn fx:id="colPatrimonio" prefWidth="150.0" text="N.º Patrimônio" />
+                                        <TableColumn fx:id="colLaboratorio" prefWidth="200.0" text="Laboratório Atual" />
+                                        <TableColumn fx:id="colStatus" prefWidth="150.0" text="Status" />
                                     </columns>
                                     <columnResizePolicy>
                                         <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
