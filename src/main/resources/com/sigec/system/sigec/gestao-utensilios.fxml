@@ -397,7 +397,8 @@
                                 <!-- Tabela de Inventário de Utensílios -->
                                 <TableView fx:id="tabelaUtensilios" styleClass="table-view" VBox.vgrow="ALWAYS">
                                     <columns>
-                                        <TableColumn fx:id="colItem" prefWidth="220.0" text="Item / Utensílio" />
+                                        <TableColumn fx:id="colItem" prefWidth="200.0" text="Item / Utensílio" />
+                                        <TableColumn fx:id="colPatrimonio" prefWidth="120.0" text="N.º Patrimônio" />
                                         <TableColumn fx:id="colLaboratorio" prefWidth="160.0" text="Laboratório Atual" />
                                         <TableColumn fx:id="colStatus" prefWidth="120.0" text="Status" />
                                         <TableColumn fx:id="colQtdTotal" prefWidth="100.0" text="Qtd. Total" />

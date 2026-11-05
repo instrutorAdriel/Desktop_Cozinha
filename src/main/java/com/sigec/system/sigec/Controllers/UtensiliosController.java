@@ -44,6 +44,7 @@ public class UtensiliosController implements Initializable {
 
     @FXML private TableView<Utensilio> tabelaUtensilios;
     @FXML private TableColumn<Utensilio, String> colItem;
+    @FXML private TableColumn<Utensilio, Integer> colPatrimonio;
     @FXML private TableColumn<Utensilio, String> colLaboratorio;
     @FXML private TableColumn<Utensilio, String> colStatus;
     @FXML private TableColumn<Utensilio, Integer> colQtdTotal;
@@ -128,6 +129,9 @@ public class UtensiliosController implements Initializable {
 
     private void configurarColunas() {
         colItem.setCellValueFactory(new PropertyValueFactory<>("nome"));
+        if (colPatrimonio != null) {
+            colPatrimonio.setCellValueFactory(new PropertyValueFactory<>("numeroPatrimonio"));
+        }
         colLaboratorio.setCellValueFactory(new PropertyValueFactory<>("laboratorio"));
         colStatus.setCellValueFactory(new PropertyValueFactory<>("status"));
         colQtdTotal.setCellValueFactory(new PropertyValueFactory<>("qtdTotal"));

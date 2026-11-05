@@ -1,9 +1,12 @@
 package com.sigec.system.sigec.Controllers;
 
+import com.sigec.system.sigec.Constructors.User;
 import com.sigec.system.sigec.Constructors.Utensilio;
-import com.sigec.system.sigec.DAOS.UtensilioDAO;
-import com.sigec.system.sigec.DAOS.LaboratorioDAO;
 import com.sigec.system.sigec.DAOS.CategoriaUtensilioDAO;
+import com.sigec.system.sigec.DAOS.LaboratorioDAO;
+import com.sigec.system.sigec.DAOS.UnidadeDAO;
+import com.sigec.system.sigec.DAOS.UtensilioDAO;
+import com.sigec.system.sigec.Services.SessaoService;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -15,6 +18,7 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
 import java.net.URL;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
 
@@ -23,19 +27,31 @@ public class CadastroUtensilioController implements Initializable {
     @FXML private TextField txtNomeUtensilio;
     @FXML private TextField txtQuantidade;
     @FXML private TextField txtPatrimonio;
+    @FXML private ChoiceBox<String> cbUnidade;
     @FXML private ChoiceBox<String> cbCategoria;
     @FXML private ChoiceBox<String> cbLaboratorio;
 
     @FXML private Button btnVoltar;
     @FXML private Button btnSalvar;
 
+    private Map<String, Integer> mapaUnidades = new LinkedHashMap<>();
     private Map<String, Integer> mapaCategorias;
-    private Map<String, Integer> mapaLaboratorios; // Novo mapa para laboratórios
+    private Map<String, Integer> mapaLaboratorios;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        if (cbUnidade != null) {
+            User usuarioLogado = SessaoService.getUsuarioAtual();
+            if (usuarioLogado != null && usuarioLogado.getIdUsuario() > 0) {
+                mapaUnidades = UnidadeDAO.listarUnidadesPorUsuarioMap(usuarioLogado.getIdUsuario());
+            }
+            cbUnidade.setItems(FXCollections.observableArrayList(mapaUnidades.keySet()));
+            if (!mapaUnidades.isEmpty()) {
+                cbUnidade.setValue(mapaUnidades.keySet().iterator().next());
+            }
+        }
+
         if (cbLaboratorio != null) {
-            // Utilizando o novo mapa para carregar os laboratórios
             mapaLaboratorios = LaboratorioDAO.listarLaboratoriosAtivosMap();
             cbLaboratorio.setItems(FXCollections.observableArrayList(mapaLaboratorios.keySet()));
 
@@ -60,26 +76,38 @@ public class CadastroUtensilioController implements Initializable {
         String strQtd = txtQuantidade.getText();
         String strPatrimonio = txtPatrimonio.getText();
 
+        String nomeUnidade = cbUnidade != null ? cbUnidade.getValue() : null;
         String nomeCategoria = cbCategoria.getValue();
         String nomeLaboratorio = cbLaboratorio.getValue();
 
         if (nome == null || nome.trim().isEmpty() || strQtd == null || strQtd.trim().isEmpty() ||
                 strPatrimonio == null || strPatrimonio.trim().isEmpty() ||
-                nomeCategoria == null || nomeLaboratorio == null) {
+                nomeUnidade == null || nomeCategoria == null || nomeLaboratorio == null) {
 
             exibirAlerta(Alert.AlertType.WARNING, "Atenção", "Preencha todos os campos obrigatórios.");
             return;
         }
 
         try {
-            int qtd = Integer.parseInt(strQtd);
-            int patrimonio = Integer.parseInt(strPatrimonio);
+            int qtd = Integer.parseInt(strQtd.trim());
+            int patrimonio = Integer.parseInt(strPatrimonio.trim());
 
+            int idUnidade = mapaUnidades.getOrDefault(nomeUnidade, 0);
             int idCategoria = mapaCategorias.get(nomeCategoria);
-            int idLaboratorio = mapaLaboratorios.get(nomeLaboratorio); // Pega o ID correto do laboratório
+            int idLaboratorio = mapaLaboratorios.get(nomeLaboratorio);
 
-            // Agora passamos o idLaboratorio para o construtor do Utensílio
-            Utensilio novoUtensilio = new Utensilio(0, nome, nomeLaboratorio, "A", qtd, qtd, patrimonio, idCategoria, idLaboratorio);
+            Utensilio novoUtensilio = new Utensilio(
+                    0,
+                    nome.trim(),
+                    nomeLaboratorio,
+                    "A",
+                    qtd,
+                    qtd,
+                    patrimonio,
+                    idUnidade,
+                    idCategoria,
+                    idLaboratorio
+            );
 
             boolean sucesso = UtensilioDAO.adicionarUtensilio(novoUtensilio);
 

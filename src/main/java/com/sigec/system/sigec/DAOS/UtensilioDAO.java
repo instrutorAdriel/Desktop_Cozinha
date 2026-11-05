@@ -7,6 +7,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -181,20 +182,57 @@ public class UtensilioDAO {
         return "PRONTO";
     }
 
+    private static int obterOuCriarLaboratorioPorUnidade(Connection conn, String nomeLaboratorio, int idUnidade, int idLaboratorioPadrao) throws SQLException {
+        if (idUnidade <= 0 || nomeLaboratorio == null || nomeLaboratorio.isBlank()) {
+            return idLaboratorioPadrao;
+        }
+
+        String sqlSelect = "SELECT id_laboratorio FROM laboratorio WHERE TRIM(nome_laboratorio) = TRIM(?) AND id_unidade = ? AND situacao = 'A' LIMIT 1";
+        try (PreparedStatement stmt = conn.prepareStatement(sqlSelect)) {
+            stmt.setString(1, nomeLaboratorio.trim());
+            stmt.setInt(2, idUnidade);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("id_laboratorio");
+                }
+            }
+        }
+
+        String sqlInsert = "INSERT INTO laboratorio (nome_laboratorio, capacidade, situacao, id_unidade) VALUES (?, 20, 'A', ?)";
+        try (PreparedStatement stmtInsert = conn.prepareStatement(sqlInsert, Statement.RETURN_GENERATED_KEYS)) {
+            stmtInsert.setString(1, nomeLaboratorio.trim());
+            stmtInsert.setInt(2, idUnidade);
+            stmtInsert.executeUpdate();
+            try (ResultSet rsKeys = stmtInsert.getGeneratedKeys()) {
+                if (rsKeys.next()) {
+                    return rsKeys.getInt(1);
+                }
+            }
+        }
+
+        return idLaboratorioPadrao;
+    }
+
     public static boolean adicionarUtensilio(Utensilio novoUtensilio) {
         String sql = "INSERT INTO utensilio (nome_utensilio, quantidade, situacao, numero_patrimonio, id_categoria_utensilio, id_laboratorio) VALUES (?, ?, 'A', ?, ?, ?)";
 
-        try (Connection conn = ConfigDataBase.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (Connection conn = ConfigDataBase.getConnection()) {
+            int idLabVinculado = obterOuCriarLaboratorioPorUnidade(
+                    conn,
+                    novoUtensilio.getLaboratorio(),
+                    novoUtensilio.getIdUnidade(),
+                    novoUtensilio.getIdLaboratorio()
+            );
 
-            stmt.setString(1, novoUtensilio.getNome());
-            stmt.setInt(2, novoUtensilio.getQtdTotal());
-            stmt.setInt(3, novoUtensilio.getNumeroPatrimonio());
-            stmt.setInt(4, novoUtensilio.getIdCategoria());
-            stmt.setInt(5, novoUtensilio.getIdLaboratorio());
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setString(1, novoUtensilio.getNome());
+                stmt.setInt(2, novoUtensilio.getQtdTotal());
+                stmt.setInt(3, novoUtensilio.getNumeroPatrimonio());
+                stmt.setInt(4, novoUtensilio.getIdCategoria());
+                stmt.setInt(5, idLabVinculado);
 
-            return stmt.executeUpdate() > 0;
-
+                return stmt.executeUpdate() > 0;
+            }
         } catch (SQLException e) {
             System.err.println("Erro ao adicionar utensílio: " + e.getMessage());
             return false;
@@ -239,8 +277,8 @@ public class UtensilioDAO {
         List<Object> parametros = new ArrayList<>();
 
         if (unidade != null && !unidade.equals("Todas") && !unidade.trim().isEmpty()) {
-            sql.append("    AND un.nome_unidade = ? ");
-            parametros.add(unidade);
+            sql.append("    AND TRIM(un.nome_unidade) = TRIM(?) ");
+            parametros.add(unidade.trim());
         }
 
         sql.append(") AS base WHERE 1=1 ");
