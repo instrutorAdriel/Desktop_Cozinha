@@ -297,9 +297,9 @@
                                             </font>
                                         </Label>
                                         <Region HBox.hgrow="ALWAYS" />
-                                        <Button fx:id="btnExportarCompras" mnemonicParsing="false" onAction="#onExportarComprasAction" prefHeight="35.0" styleClass="btn-laranja" text="Exportar Relatório de Compras" textFill="WHITE">
+                                        <Button fx:id="btnExportarCompras" mnemonicParsing="false" onAction="#onExportarComprasAction" prefHeight="35.0" prefWidth="210.0" styleClass="btn-laranja" text="Exportar Relatório de Compras" textFill="WHITE">
                                             <font>
-                                                <Font name="Arial Bold" size="13.0" />
+                                                <Font name="Arial Bold" size="12.0" />
                                             </font>
                                         </Button>
                                     </children>

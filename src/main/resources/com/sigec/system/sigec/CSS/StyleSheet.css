@@ -680,14 +680,21 @@ CONTEÚDO DA PÁGINA (ESTOQUE, HISTÓRICO/RELATÓRIOS E CONSULTAS)
 }
 
 .btn-laranja {
-    -fx-background-color:#e4891b;
+    -fx-background-color: #e4891b;
     -fx-font-family: SansSerif;
     -fx-font-weight: bold;
     -fx-text-fill: white;
+    -fx-cursor: hand;
+    /* Fixa o comportamento de redimensionamento para evitar saltos */
+    -fx-background-insets: 0;
 }
 
-.btn-laranja:hover{
-    -fx-background-color: #ba7119;
+.btn-laranja:hover {
+    -fx-background-color: #d27912; /* Um tom ligeiramente mais escuro para indicar o hover sem alterar o tamanho */
+}
+
+.btn-laranja:pressed {
+    -fx-background-color: #b8670f;
 }
 
 /* --- Novos estilos do Login Inteiramente em CSS --- */
