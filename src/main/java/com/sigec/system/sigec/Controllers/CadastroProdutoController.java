@@ -10,14 +10,14 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.DateCell;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-import javafx.scene.control.DateCell;
-
 
 import java.net.URL;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.ResourceBundle;
 
 public class CadastroProdutoController implements Initializable {
@@ -37,9 +37,11 @@ public class CadastroProdutoController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         txtTipoProduto.setItems(FXCollections.observableArrayList(CategoriaDAO.listarNomesCategorias()));
         txtUnidadeDeMedida.setItems(FXCollections.observableArrayList("kg", "g", "L", "ml", "un"));
-        cbUnidade.setItems(FXCollections.observableArrayList(UnidadeDAO.listarNomesUnidades()));
 
-        if (cbUnidade.getItems().size() == 1) {
+        // Carrega apenas as unidades vinculadas ao usuário (sem a opção "Todas")
+        List<String> unidadesUsuario = UnidadeDAO.listarUnidadesParaCadastro();
+        cbUnidade.setItems(FXCollections.observableArrayList(unidadesUsuario));
+        if (!unidadesUsuario.isEmpty()) {
             cbUnidade.getSelectionModel().selectFirst();
         }
 
@@ -52,8 +54,7 @@ public class CadastroProdutoController implements Initializable {
                 if (passado) setStyle("-fx-background-color: #e0e0e0; -fx-text-fill: #9e9e9e;");
             }
         });
-        txtDataValidade.setEditable(false); // impede digitar uma data passada à mão
-
+        txtDataValidade.setEditable(false);
     }
 
     @FXML
@@ -87,9 +88,8 @@ public class CadastroProdutoController implements Initializable {
         }
 
         ProductStorageDAO dao = new ProductStorageDAO();
-
-        if (dao.verificarProdutoExisteAtivo(nome)) {
-            exibirAlerta(Alert.AlertType.WARNING, "Atenção", "Já existe um produto ativo com esse nome.");
+        if (lote != null && !lote.isBlank() && dao.verificarLoteExisteAtivo(nome, lote, unidade)) {
+            exibirAlerta(Alert.AlertType.WARNING, "Atenção", "Já existe um insumo ativo para este produto com este mesmo Lote nesta unidade.");
             return;
         }
 

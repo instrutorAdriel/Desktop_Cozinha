@@ -17,6 +17,7 @@ import javafx.stage.Stage;
 
 import java.net.URL;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.ResourceBundle;
 
 public class EdicaoProdutosController implements Initializable {
@@ -39,7 +40,9 @@ public class EdicaoProdutosController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         txtTipoProduto.setItems(FXCollections.observableArrayList(CategoriaDAO.listarNomesCategorias()));
         txtUnidadeDeMedida.setItems(FXCollections.observableArrayList("kg", "g", "L", "ml", "un"));
-        cbUnidade.setItems(FXCollections.observableArrayList(UnidadeDAO.listarNomesUnidades()));
+
+        List<String> unidadesUsuario = UnidadeDAO.listarUnidadesParaCadastro();
+        cbUnidade.setItems(FXCollections.observableArrayList(unidadesUsuario));
 
         produtoOriginal = ListaController.produtoSelecionadoParaEdicao;
         if (produtoOriginal == null) return;
@@ -49,17 +52,17 @@ public class EdicaoProdutosController implements Initializable {
         txtTipoProduto.setValue(produtoOriginal.getTipoProduto());
         txtUnidadeDeMedida.setValue(produtoOriginal.getUnidadeProduto());
 
-        // CORREÇÃO: Agora busca os detalhes usando o ID específico do Lote (id_insumo)
         ProductStorageDAO.DetalhesInsumo d = dao.buscarDetalhesInsumo(produtoOriginal.getIdInsumo());
         if (d != null) {
             txtQtdAtual.setText(String.valueOf(d.quantidade));
             txtEstoqueMinimo.setText(String.valueOf(d.estoqueMinimo));
             txtLote.setText(d.lote != null ? d.lote : "");
             txtDataValidade.setValue(d.dataValidade);
-            cbUnidade.setValue(d.nomeUnidade);
+            if (d.nomeUnidade != null) {
+                cbUnidade.setValue(d.nomeUnidade.trim());
+            }
         }
-
-        if (cbUnidade.getValue() == null && cbUnidade.getItems().size() == 1) {
+        if (cbUnidade.getValue() == null && !cbUnidade.getItems().isEmpty()) {
             cbUnidade.getSelectionModel().selectFirst();
         }
     }
@@ -94,13 +97,11 @@ public class EdicaoProdutosController implements Initializable {
             return;
         }
 
-        // Evita duplicidade só se o nome foi alterado
         if (!nome.trim().equalsIgnoreCase(produtoOriginal.getNomeProduto().trim())
                 && dao.verificarProdutoExisteAtivo(nome)) {
             exibirAlerta(Alert.AlertType.WARNING, "Atenção", "Já existe um produto ativo com esse nome.");
             return;
         }
-
 
         boolean sucesso = dao.atualizarProduto(produtoOriginal.getIdProduto(), produtoOriginal.getIdInsumo(), nome, categoria, quantidade,
                 estoqueMinimo, unidadeMedida, lote, validade, unidade);

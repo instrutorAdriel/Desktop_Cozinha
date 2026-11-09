@@ -128,25 +128,8 @@ public class ListaController implements Initializable {
         configurarDataHora();
         configurarUsuario();
 
-
-
-        if (cbUnidade != null) {
-            cbUnidade.setItems(FXCollections.observableArrayList(UnidadeDAO.listarNomesUnidades()));
-            cbUnidade.setValue("Todas");
-
-            cbUnidade.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
-                onPesquisarClick(new ActionEvent());
-            });
-        }
-
-        if (cbCurso != null) {
-            cbCurso.setItems(FXCollections.observableArrayList(CursoDAO.listarNomesCursos()));
-            cbCurso.setValue("Todos");
-
-            cbCurso.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
-                onPesquisarClick(new ActionEvent());
-            });
-        }
+        obsLista = FXCollections.observableArrayList();
+        ListaEstoque.setItems(obsLista);
 
         // Configuração das colunas
         nomeProduto.setCellValueFactory(new PropertyValueFactory<>("nomeProduto"));
@@ -155,8 +138,27 @@ public class ListaController implements Initializable {
         quantidadeProduto.setCellValueFactory(new PropertyValueFactory<>("quantidadeProduto"));
         unidadeProduto.setCellValueFactory(new PropertyValueFactory<>("unidadeProduto"));
 
+        if (cbCurso != null) {
+            cbCurso.setItems(FXCollections.observableArrayList(CursoDAO.listarNomesCursos()));
+            cbCurso.setValue("Todos");
+            cbCurso.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
+                onPesquisarClick(new ActionEvent());
+            });
+        }
+
+        if (cbUnidade != null) {
+            List<String> unidadesUsuario = UnidadeDAO.listarNomesUnidades();
+            cbUnidade.setItems(FXCollections.observableArrayList(unidadesUsuario));
+            if (!unidadesUsuario.isEmpty()) {
+                cbUnidade.getSelectionModel().selectFirst();
+            }
+            cbUnidade.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
+                onPesquisarClick(new ActionEvent());
+            });
+        }
+
         // Carrega os dados do banco
-        carregarTabelaEstoque();
+        onPesquisarClick(new ActionEvent());
     }
 
     private void carregarTabelaEstoque() {
@@ -389,10 +391,10 @@ public class ListaController implements Initializable {
         }
     }
 
+
     @FXML
     public void onRemoverProdutoClick(ActionEvent event) {
         ListaEstoque selecionado = ListaEstoque.getSelectionModel().getSelectedItem();
-
         if (selecionado == null) {
             exibirAlerta(Alert.AlertType.WARNING, "Atenção", "Por favor, selecione um produto na lista para excluir.");
             return;
@@ -401,14 +403,12 @@ public class ListaController implements Initializable {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Confirmar Exclusão");
         alert.setHeaderText("Exclusão de Produto");
-        alert.setContentText("Deseja realmente remover o produto selecionado?");
-
+        alert.setContentText("Deseja realmente remover o insumo \"" + selecionado.getNomeProduto() + "\" (Lote: " + selecionado.getLote() + ")?");
         Optional<ButtonType> resultado = alert.showAndWait();
+
         if (resultado.isPresent() && resultado.get() == ButtonType.OK) {
-
             ProductStorageDAO dao = new ProductStorageDAO();
-            boolean sucesso = dao.excluirProduto(selecionado.getIdProduto());
-
+            boolean sucesso = dao.excluirInsumo(selecionado.getIdInsumo(), selecionado.getIdProduto());
             if (sucesso) {
                 exibirAlerta(Alert.AlertType.INFORMATION, "Sucesso", "Produto removido com sucesso!");
                 onPesquisarClick(null); // Atualiza aplicando o filtro atual
