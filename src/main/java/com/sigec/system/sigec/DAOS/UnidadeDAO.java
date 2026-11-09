@@ -30,6 +30,14 @@ public class UnidadeDAO {
     }
 
     /**
+     * Retorna a lista de nomes apenas das unidades ativas nas quais o usuário
+     * informado está vinculado através da tabela usuario_unidade.
+     */
+    public static List<String> listarNomesUnidadesPorUsuario(int idUsuario) {
+        return new ArrayList<>(listarUnidadesPorUsuarioMap(idUsuario).keySet());
+    }
+
+    /**
      * Retorna o mapa (nome_unidade -> id_unidade) apenas das unidades ativas
      * nas quais o usuário informado está vinculado através da tabela usuario_unidade.
      */

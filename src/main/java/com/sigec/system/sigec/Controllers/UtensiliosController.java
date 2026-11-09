@@ -1,5 +1,6 @@
 package com.sigec.system.sigec.Controllers;
 
+import com.sigec.system.sigec.Constructors.User;
 import com.sigec.system.sigec.Constructors.Utensilio;
 import com.sigec.system.sigec.DAOS.UnidadeDAO;
 import com.sigec.system.sigec.DAOS.UtensilioDAO;
@@ -25,6 +26,7 @@ import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -69,7 +71,6 @@ public class UtensiliosController implements Initializable {
         }
 
         configurarColunas();
-        carregarDadosBanco();
         carregarOpcoesFiltros();
 
         if (txtPesquisaUtensilio != null) {
@@ -95,14 +96,27 @@ public class UtensiliosController implements Initializable {
         }
 
         if (cbUnidade != null) {
-            cbUnidade.setItems(FXCollections.observableArrayList(UnidadeDAO.listarNomesUnidades()));
-            cbUnidade.setValue("Todas");
+            List<String> unidadesVinculadas = new ArrayList<>();
+            User usuarioLogado = SessaoService.getUsuarioAtual();
+            if (usuarioLogado != null && usuarioLogado.getIdUsuario() > 0) {
+                unidadesVinculadas = UnidadeDAO.listarNomesUnidadesPorUsuario(usuarioLogado.getIdUsuario());
+            }
+
+            cbUnidade.setItems(FXCollections.observableArrayList(unidadesVinculadas));
 
             cbUnidade.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
                 if (newValue != null) {
                     onFiltrarClick(new ActionEvent());
                 }
             });
+
+            if (!unidadesVinculadas.isEmpty()) {
+                cbUnidade.getSelectionModel().selectFirst();
+            } else {
+                onFiltrarClick(new ActionEvent());
+            }
+        } else {
+            carregarDadosBanco();
         }
     }
 
@@ -162,9 +176,11 @@ public class UtensiliosController implements Initializable {
         String termo = txtPesquisaUtensilio != null ? txtPesquisaUtensilio.getText() : "";
         String status = cbStatus != null ? cbStatus.getValue() : "Todos";
         String laboratorio = cbLaboratorio != null ? cbLaboratorio.getValue() : "Todos";
-        String unidade = cbUnidade != null ? cbUnidade.getValue() : "Todas";
+        String unidade = cbUnidade != null ? cbUnidade.getValue() : null;
 
-        List<Utensilio> utensiliosFiltrados = UtensilioDAO.buscarUtensiliosPorFiltro(termo, status, laboratorio, unidade);
+        List<Utensilio> utensiliosFiltrados = (unidade != null && !unidade.trim().isEmpty())
+                ? UtensilioDAO.buscarUtensiliosPorFiltro(termo, status, laboratorio, unidade)
+                : new ArrayList<>();
 
         if (observableListUtensilios == null) {
             observableListUtensilios = FXCollections.observableArrayList(utensiliosFiltrados);
