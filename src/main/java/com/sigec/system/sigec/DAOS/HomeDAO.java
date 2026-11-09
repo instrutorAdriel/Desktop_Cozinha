@@ -89,10 +89,10 @@ public class HomeDAO {
     // 3. Estoque Baixo
     public List<AlertaEstoqueDTO> listarEstoqueBaixo(int idUnidade) {
         List<AlertaEstoqueDTO> lista = new ArrayList<>();
-        String sql = "SELECT p.nome_produto, i.quantidade, i.quantidade_mininma " +
+        String sql = "SELECT p.nome_produto, i.quantidade, i.quantidade_minima " +
                 "FROM insumo i " +
                 "JOIN produto p ON i.id_produto = p.id_produto " +
-                "WHERE i.quantidade > 0 AND i.quantidade <= i.quantidade_mininma " +
+                "WHERE i.quantidade > 0 AND i.quantidade <= i.quantidade_minima " +
                 "AND i.cancelado = 'N' AND i.id_unidade = ?";
 
         try (Connection conn = ConfigDataBase.getConnection();
@@ -105,7 +105,7 @@ public class HomeDAO {
                     AlertaEstoqueDTO alerta = new AlertaEstoqueDTO();
                     alerta.setNomeProduto(rs.getString("nome_produto"));
                     alerta.setQtdAtual(rs.getInt("quantidade"));
-                    alerta.setQtdMinima(rs.getInt("quantidade_mininma"));
+                    alerta.setQtdMinima(rs.getInt("quantidade_minima"));
 
                     lista.add(alerta);
                 }
@@ -147,16 +147,24 @@ public class HomeDAO {
         return lista;
     }
 
-    public List<UnidadeDTO> listarUnidades() {
+    //  Unidades vinculadas ao usuário logado (tabela usuario_unidade)
+    public List<UnidadeDTO> listarUnidadesDoUsuario(int idUsuario) {
         List<UnidadeDTO> unidades = new ArrayList<>();
-        String sql = "SELECT id_unidade, nome_unidade FROM unidade WHERE situacao = 'A'";
+        String sql = "SELECT u.id_unidade, TRIM(u.nome_unidade) AS nome_unidade " +
+                "FROM unidade u " +
+                "JOIN usuario_unidade uu ON uu.id_unidade = u.id_unidade " +
+                "WHERE uu.id_usuario = ? AND u.situacao = 'A' " +
+                "ORDER BY nome_unidade";
 
         try (Connection conn = ConfigDataBase.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql);
-             ResultSet rs = stmt.executeQuery()) {
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            while (rs.next()) {
-                unidades.add(new UnidadeDTO(rs.getInt("id_unidade"), rs.getString("nome_unidade")));
+            stmt.setInt(1, idUsuario);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    unidades.add(new UnidadeDTO(rs.getInt("id_unidade"), rs.getString("nome_unidade")));
+                }
             }
         } catch (SQLException e) {
             System.err.println("Erro ao listar unidades: " + e.getMessage());

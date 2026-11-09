@@ -65,11 +65,11 @@ public final class SessaoService {
         return usuarioAtual != null;
     }
 
-    /**
-     * Retorna o nome do usuário logado ou "Administrador" como fallback padrão.
-     *
-     * @return Nome de exibição do usuário
-     */
+
+    public static int getIdUsuarioLogado() {
+        return usuarioAtual != null ? usuarioAtual.getIdUsuario() : -1;
+    }
+
     public static String getNomeExibicao() {
         if (usuarioAtual != null && usuarioAtual.getNome() != null && !usuarioAtual.getNome().isBlank()) {
             return usuarioAtual.getNome();
@@ -77,11 +77,7 @@ public final class SessaoService {
         return "Administrador";
     }
 
-    /**
-     * Alias para getNomeExibicao.
-     *
-     * @return Nome de exibição do usuário ou fallback padrão
-     */
+
     public static String getNomeUsuarioLogado() {
         return getNomeExibicao();
     }
