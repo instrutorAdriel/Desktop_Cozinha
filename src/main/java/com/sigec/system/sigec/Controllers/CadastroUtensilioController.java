@@ -47,7 +47,7 @@ public class CadastroUtensilioController implements Initializable {
 
     private Map<String, Integer> mapaUnidades = new LinkedHashMap<>();
     private Map<String, Integer> mapaCategorias;
-    private Map<String, Integer> mapaLaboratorios;
+    private Map<String, Integer> mapaLaboratorios = new LinkedHashMap<>();
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -57,17 +57,15 @@ public class CadastroUtensilioController implements Initializable {
                 mapaUnidades = UnidadeDAO.listarUnidadesPorUsuarioMap(usuarioLogado.getIdUsuario());
             }
             cbUnidade.setItems(FXCollections.observableArrayList(mapaUnidades.keySet()));
+
+            cbUnidade.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+                carregarLaboratoriosPorUnidade(newValue);
+            });
+
             if (!mapaUnidades.isEmpty()) {
                 cbUnidade.setValue(mapaUnidades.keySet().iterator().next());
-            }
-        }
-
-        if (cbLaboratorio != null) {
-            mapaLaboratorios = LaboratorioDAO.listarLaboratoriosAtivosMap();
-            cbLaboratorio.setItems(FXCollections.observableArrayList(mapaLaboratorios.keySet()));
-
-            if (!mapaLaboratorios.isEmpty()) {
-                cbLaboratorio.setValue(mapaLaboratorios.keySet().iterator().next());
+            } else {
+                carregarLaboratoriosPorUnidade(null);
             }
         }
 
@@ -78,6 +76,26 @@ public class CadastroUtensilioController implements Initializable {
             if (!mapaCategorias.isEmpty()) {
                 cbCategoria.setValue(mapaCategorias.keySet().iterator().next());
             }
+        }
+    }
+
+    private void carregarLaboratoriosPorUnidade(String nomeUnidade) {
+        if (cbLaboratorio == null) {
+            return;
+        }
+
+        int idUnidade = (nomeUnidade != null) ? mapaUnidades.getOrDefault(nomeUnidade, 0) : 0;
+        if (idUnidade > 0) {
+            mapaLaboratorios = LaboratorioDAO.listarLaboratoriosAtivosPorUnidadeMap(idUnidade);
+        } else {
+            mapaLaboratorios = new LinkedHashMap<>();
+        }
+
+        cbLaboratorio.setItems(FXCollections.observableArrayList(mapaLaboratorios.keySet()));
+        if (!mapaLaboratorios.isEmpty()) {
+            cbLaboratorio.setValue(mapaLaboratorios.keySet().iterator().next());
+        } else {
+            cbLaboratorio.setValue(null);
         }
     }
 
