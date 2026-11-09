@@ -19,9 +19,10 @@ public class SolicitacaoDAO {
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
         sdf.setTimeZone(TimeZone.getDefault());
 
+        // COALESCE(c.nome_curso, t.nome_turma, 'Sem Curso') garante que, se c.nome_curso for NULL por conta do id_curso nulo na turma, o nome da turma é exibido!
         String sql =
                 "SELECT si.id_solicitacao_insumo AS id, si.data_solicitacao AS data_hora, u.nome_usuario AS solicitante, " +
-                        "COALESCE(c.nome_curso, 'Sem Curso') AS curso, " +
+                        "COALESCE(c.nome_curso, t.nome_turma, 'Sem Curso') AS curso, " +
                         "COALESCE(p.nome_produto, 'Insumo') AS item, " +
                         "CONCAT(si.quantidade, ' ', COALESCE(si.unidade_medida, '')) AS qtd, " +
                         "si.justificativa, si.situacao, 'INSUMO' AS tipo " +
@@ -35,7 +36,7 @@ public class SolicitacaoDAO {
                         "UNION ALL " +
 
                         "SELECT su.id_solicitacao_utensilio AS id, su.data_solicitacao AS data_hora, u.nome_usuario AS solicitante, " +
-                        "COALESCE(c.nome_curso, 'Sem Curso') AS curso, " +
+                        "COALESCE(c.nome_curso, t.nome_turma, 'Sem Curso') AS curso, " +
                         "COALESCE(ut.nome_utensilio, 'Utensílio') AS item, " +
                         "CAST(su.quantidade AS CHAR) AS qtd, " +
                         "su.justificativa, su.situacao, 'UTENSILIO' AS tipo " +
@@ -86,7 +87,6 @@ public class SolicitacaoDAO {
         return lista;
     }
 
-    // Método para atualizar a situação no MySQL (A = Aprovado, R = Recusado)
     public static boolean atualizarStatus(int id, String novaSituacao, String tipo) {
         String tabela = "UTENSILIO".equalsIgnoreCase(tipo) ? "solicitacao_utensilio" : "solicitacao_insumo";
         String colunaId = "UTENSILIO".equalsIgnoreCase(tipo) ? "id_solicitacao_utensilio" : "id_solicitacao_insumo";

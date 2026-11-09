@@ -88,15 +88,17 @@ public class SolicitacoesController {
         cbStatusFiltro.setItems(FXCollections.observableArrayList("Todos", "Pendente", "Aprovado", "Recusado"));
         cbStatusFiltro.setValue("Todos");
 
-        // LISTENER EM TEMPO REAL: Filtra assim que muda a opção no ChoiceBox de Status
-        cbStatusFiltro.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> aplicarFiltros());
-
-        if (cbCurso != null) {
-            cbCurso.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> aplicarFiltros());
-        }
+        // FILTROS AUTOMÁTICOS DO CANTO SUPERIOR (Unidade e Curso)
+        // Quando o usuário seleciona um item, a tabela atualiza na hora sem precisar do botão
         if (cbUnidade != null) {
             cbUnidade.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> aplicarFiltros());
         }
+        if (cbCurso != null) {
+            cbCurso.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> aplicarFiltros());
+        }
+
+        // NOTA: txtPesquisa e cbStatusFiltro permanecem sem listeners automáticos,
+        // dependendo exclusivamente do botão "Filtrar".
 
         carregarDadosDoBanco();
     }
@@ -116,10 +118,6 @@ public class SolicitacoesController {
     private void configurarFiltroEBusca() {
         filteredData = new FilteredList<>(listaSolicitacoes, p -> true);
 
-        if (txtPesquisa != null) {
-            txtPesquisa.textProperty().addListener((obs, oldVal, newVal) -> aplicarFiltros());
-        }
-
         SortedList<SolicitacaoMock> sortedData = new SortedList<>(filteredData);
         sortedData.comparatorProperty().bind(tabelaSolicitacoes.comparatorProperty());
 
@@ -132,21 +130,21 @@ public class SolicitacoesController {
         String cursoSelecionado = cbCurso != null ? cbCurso.getValue() : "Todos";
 
         filteredData.setPredicate(solicitacao -> {
-            // 1. Filtro por Status
+            // 1. Filtro por Status (Acionado no clique do botão Filtrar)
             if (statusSelecionado != null && !statusSelecionado.equalsIgnoreCase("Todos")) {
                 if (!solicitacao.getStatus().equalsIgnoreCase(statusSelecionado)) {
                     return false;
                 }
             }
 
-            // 2. Filtro por Curso
+            // 2. Filtro por Curso (Automático no evento de seleção)
             if (cursoSelecionado != null && !cursoSelecionado.equalsIgnoreCase("Todos")) {
                 if (solicitacao.getTurma() == null || !solicitacao.getTurma().toLowerCase().contains(cursoSelecionado.toLowerCase())) {
                     return false;
                 }
             }
 
-            // 3. Filtro por Texto (Insumo ou Solicitante)
+            // 3. Filtro por Texto (Acionado no clique do botão Filtrar)
             if (!textoBusca.isEmpty()) {
                 boolean bateInsumo = solicitacao.getInsumo() != null && solicitacao.getInsumo().toLowerCase().contains(textoBusca);
                 boolean bateSolicitante = solicitacao.getSolicitante() != null && solicitacao.getSolicitante().toLowerCase().contains(textoBusca);
@@ -175,6 +173,7 @@ public class SolicitacoesController {
     // ==========================================
     @FXML
     void onFiltrarClick(ActionEvent event) {
+        // Recarrega os dados do banco e aplica os filtros de busca por Texto e Status
         carregarDadosDoBanco();
     }
 
@@ -192,7 +191,6 @@ public class SolicitacoesController {
             return;
         }
 
-        // Grava no Banco MySQL ('A' = Aprovado)
         boolean sucesso = SolicitacaoDAO.atualizarStatus(selecionada.getId(), "A", selecionada.getTipo());
 
         if (sucesso) {
@@ -219,7 +217,6 @@ public class SolicitacoesController {
             return;
         }
 
-        // Grava no Banco MySQL ('R' = Recusado)
         boolean sucesso = SolicitacaoDAO.atualizarStatus(selecionada.getId(), "R", selecionada.getTipo());
 
         if (sucesso) {
@@ -241,7 +238,7 @@ public class SolicitacoesController {
     }
 
     // ==========================================
-    // AÇÕES DO MENU LATERAL
+    // NAVEGAÇÃO DO MENU LATERAL
     // ==========================================
 
     @FXML
@@ -300,7 +297,11 @@ public class SolicitacoesController {
 
     @FXML
     public void botaoSairAction(ActionEvent event) {
-        com.sigec.system.sigec.Utils.SidebarNavigationManager.executarLogout();
+        try {
+            MainApplication.trocadorDeTelas("login.fxml");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
@@ -358,7 +359,6 @@ public class SolicitacoesController {
             MainApplication.trocadorDeTelas("lista-estoque.fxml");
         } catch (Exception e) {
             e.printStackTrace();
-            System.out.println("Erro ao carregar a tela de Insumos: " + e.getMessage());
         }
     }
 
@@ -368,7 +368,6 @@ public class SolicitacoesController {
             MainApplication.trocadorDeTelas("gestao-utensilios.fxml");
         } catch (Exception e) {
             e.printStackTrace();
-            System.out.println("Erro ao carregar a tela de Utensílios: " + e.getMessage());
         }
     }
 
@@ -380,13 +379,22 @@ public class SolicitacoesController {
     }
 
     private void carregarUnidadesDoBanco() {
-        List<String> unidadesDB = UnidadeDAO.listarNomesUnidades();
-        ObservableList<String> items = FXCollections.observableArrayList(unidadesDB);
+        // Pega o ID do usuário logado na sessão (ajuste o método getUsuarioLogado() conforme seu SessaoService)
+        int idUsuarioLogado = 1; // Ex: SessaoService.getUsuarioLogado().getIdUsuario();
+
+        List<String> unidadesDB = UnidadeDAO.listarUnidadesPorUsuario(idUsuarioLogado);
+        ObservableList<String> items = FXCollections.observableArrayList();
+
+        // Se o usuário trabalhar em mais de uma unidade, adiciona a opção "Todas"
+        if (unidadesDB.size() > 1) {
+            items.add("Todas");
+        }
+        items.addAll(unidadesDB);
 
         cbUnidade.setItems(items);
-        if (items.contains("Todas")) {
-            cbUnidade.setValue("Todas");
-        } else if (!items.isEmpty()) {
+
+        // Define a primeira unidade dele como selecionada por padrão
+        if (!items.isEmpty()) {
             cbUnidade.getSelectionModel().selectFirst();
         }
     }
@@ -403,7 +411,6 @@ public class SolicitacoesController {
         }
     }
 
-    // CLASSE MODEL DE SOLICITAÇÃO ATUALIZADA (com id e tipo)
     public static class SolicitacaoMock {
         private int id;
         private String data;
