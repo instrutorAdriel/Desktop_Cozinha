@@ -10,9 +10,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Parent;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
@@ -56,8 +53,7 @@ public class ScreenTransitionManager {
             "lista-estoque.fxml", 3,
             "historico.fxml", 4,
             "cadastro.fxml", 5,
-            "cadastro-turma.fxml", 6
-    );
+            "cadastro-turma.fxml", 6);
     // Parâmetros de animação para transições de tela cheia (Login <-> Home, etc.)
     private static final double FULL_MOTION_DISTANCE = 55.0;
     private static final double FULL_STAGGER_INTERVAL_MS = 45.0;
@@ -65,7 +61,8 @@ public class ScreenTransitionManager {
     private static final double FULL_EXIT_DURATION_MS = 300.0;
     private static final double FULL_ENTER_DURATION_MS = 350.0;
 
-    // Parâmetros de animação interna do quadrado de conteúdo (#conteudoPagina) - Rápida, suave e ágil
+    // Parâmetros de animação interna do quadrado de conteúdo (#conteudoPagina) -
+    // Rápida, suave e ágil
     private static final double CONTENT_MOTION_DISTANCE = 20.0;
     private static final double CONTENT_STAGGER_INTERVAL_MS = 15.0;
     private static final double CONTENT_MAX_STAGGER_MS = 45.0;
@@ -92,7 +89,8 @@ public class ScreenTransitionManager {
             return;
         }
 
-        // Se houver uma animação em andamento, cancela e conclui imediatamente para permitir navegação rápida e ágil
+        // Se houver uma animação em andamento, cancela e conclui imediatamente para
+        // permitir navegação rápida e ágil
         if (activeAnimation != null && activeAnimation.getStatus() == Animation.Status.RUNNING) {
             activeAnimation.stop();
             if (activeAnimationCancelAction != null) {
@@ -129,8 +127,10 @@ public class ScreenTransitionManager {
         sincronizarBotaoAtivo(oldView, fxml);
 
         // Bloqueia a raiz apenas em transições de tela inteira (ex: Login <-> Home).
-        // Em transições internas de abas, o menu lateral e barras NUNCA são desabilitados,
-        // eliminando qualquer escurecimento (opacidade 0.4 do JavaFX) e bloqueio de cliques.
+        // Em transições internas de abas, o menu lateral e barras NUNCA são
+        // desabilitados,
+        // eliminando qualquer escurecimento (opacidade 0.4 do JavaFX) e bloqueio de
+        // cliques.
         if (!isInternal) {
             rootContainer.setDisable(true);
         }
@@ -209,8 +209,10 @@ public class ScreenTransitionManager {
     }
 
     /**
-     * Executa a animação Silk Stagger exclusivamente dentro do quadrado de conteúdo da página (#conteudoPagina).
-     * O topo, menu lateral e a barra do administrador permanecem 100% fixos e sem recarregamento.
+     * Executa a animação Silk Stagger exclusivamente dentro do quadrado de conteúdo
+     * da página (#conteudoPagina).
+     * O topo, menu lateral e a barra do administrador permanecem 100% fixos e sem
+     * recarregamento.
      */
     private static void executarTransicaoConteudo(
             StackPane rootContainer,
@@ -232,13 +234,15 @@ public class ScreenTransitionManager {
         sincronizarBotaoAtivo(oldView, targetFxml);
         sincronizarBotaoAtivo(newView, targetFxml);
 
-        // Desabilita temporariamente APENAS o conteúdo antigo saindo (o menu lateral permanece 100% ativo e opaco)
+        // Desabilita temporariamente APENAS o conteúdo antigo saindo (o menu lateral
+        // permanece 100% ativo e opaco)
         oldContent.setDisable(true);
 
         double exitTranslateX = (direction == Direction.FORWARD) ? -CONTENT_MOTION_DISTANCE : CONTENT_MOTION_DISTANCE;
         double enterTranslateX = (direction == Direction.FORWARD) ? CONTENT_MOTION_DISTANCE : -CONTENT_MOTION_DISTANCE;
 
-        // Aplica recorte delimitado (clip) para evitar vazamento sobre o menu lateral ou barras
+        // Aplica recorte delimitado (clip) para evitar vazamento sobre o menu lateral
+        // ou barras
         aplicarClipDelimitado(oldContent);
         aplicarClipDelimitado(newContent);
 
@@ -296,7 +300,8 @@ public class ScreenTransitionManager {
                 }
                 oldContent.setDisable(false);
 
-                // Preserva o topBarPane e o menu lateral já ativos de oldView para continuidade total sem piscar nem interromper animações
+                // Preserva o topBarPane e o menu lateral já ativos de oldView para continuidade
+                // total sem piscar nem interromper animações
                 if (oldView instanceof BorderPane oldBp && newView instanceof BorderPane newBp) {
                     if (oldBp.getTop() != null) {
                         Node existingTop = oldBp.getTop();
@@ -310,7 +315,8 @@ public class ScreenTransitionManager {
                     }
                 }
 
-                // Troca a raiz para a nova tela: o topo, painel lateral e barra secundária coincidem pixel a pixel
+                // Troca a raiz para a nova tela: o topo, painel lateral e barra secundária
+                // coincidem pixel a pixel
                 rootContainer.getChildren().setAll(newView);
                 sincronizarBotaoAtivo(newView, targetFxml);
 
@@ -615,7 +621,8 @@ public class ScreenTransitionManager {
 
     /**
      * Sincroniza visualmente o botão da tela atual no menu lateral,
-     * delegando para {@link SidebarNavigationManager#sincronizarBotaoAtivo(Parent, String)}.
+     * delegando para
+     * {@link SidebarNavigationManager#sincronizarBotaoAtivo(Parent, String)}.
      */
     public static void sincronizarBotaoAtivo(Parent view, String fxml) {
         SidebarNavigationManager.sincronizarBotaoAtivo(view, fxml);

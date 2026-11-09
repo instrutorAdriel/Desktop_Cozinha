@@ -349,12 +349,7 @@ public class ListaController implements Initializable {
 
     @FXML
     public void botaoSairAction(ActionEvent event) {
-        try {
-            SessaoService.encerrarSessao();
-            MainApplication.trocadorDeTelas("login.fxml");
-        } catch (IOException e) {
-            exibirAlerta(Alert.AlertType.ERROR, "Erro", "Erro ao sair: " + e.getMessage());
-        }
+        com.sigec.system.sigec.Utils.SidebarNavigationManager.executarLogout();
     }
 
     // =========================================================================

@@ -417,7 +417,7 @@
                                                 <String fx:value="tabela-alertas-custom" />
                                             </styleClass>
                                             <columns>
-                                                <TableColumn fx:id="colDataAula" prefWidth="120.0" text="Data da Aula" />
+
                                                 <TableColumn fx:id="colInsumo" prefWidth="250.0" text="Insumo / Produto" />
                                                 <TableColumn fx:id="colQuantidadeNecessaria" prefWidth="150.0" text="Qtd. Necessária" />
                                                 <TableColumn fx:id="colUnidade" prefWidth="100.0" text="Unidade" />

@@ -9,11 +9,17 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
+import com.sigec.system.sigec.Constructors.ListaEstoque;
+import com.sigec.system.sigec.DAOS.ProductStorageDAO;
+
+import javafx.collections.FXCollections;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.cell.PropertyValueFactory;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -45,6 +51,17 @@ public class CalendarioController {
 
     @FXML
     private Button btnNavEstoque;
+    @FXML
+    private TableView<ListaEstoque> tabelaInsumos;
+
+    @FXML
+    private TableColumn<ListaEstoque, String> colInsumo;
+
+    @FXML
+    private TableColumn<ListaEstoque, Double> colQuantidadeNecessaria;
+
+    @FXML
+    private TableColumn<ListaEstoque, String> colUnidade;
 
     @FXML
     public void initialize() {
@@ -64,11 +81,26 @@ public class CalendarioController {
             clock.setCycleCount(Animation.INDEFINITE);
             clock.play();
         }
+        colInsumo.setCellValueFactory(
+                new PropertyValueFactory<>("nomeProduto"));
+
+        colQuantidadeNecessaria.setCellValueFactory(
+                new PropertyValueFactory<>("quantidadeProduto"));
+
+        colUnidade.setCellValueFactory(
+                new PropertyValueFactory<>("unidadeProduto"));
     }
 
     @FXML
     public void onBuscarInsumos(ActionEvent event) {
-        // Lógica para filtrar as datas da tabela
+
+        ProductStorageDAO dao = new ProductStorageDAO();
+
+        tabelaInsumos.setItems(
+                FXCollections.observableArrayList(
+                        dao.buscarTodosProdutosEstoque()
+                )
+        );
     }
 
     @FXML
@@ -80,7 +112,6 @@ public class CalendarioController {
     public void onClickHome(ActionEvent event) throws IOException {
         MainApplication.trocadorDeTelas("homeTest.fxml", ScreenTransitionManager.Direction.BACKWARD);
     }
-
 
     @FXML
     public void onClickSolicitacoes(ActionEvent event) {
@@ -95,8 +126,6 @@ public class CalendarioController {
     public void onClickCalendario(ActionEvent event) {
         // Já está na tela de calendário
     }
-
-
 
     @FXML
     public void onClickRelatorio(ActionEvent event) throws IOException {
@@ -172,7 +201,6 @@ public class CalendarioController {
         }
     }
 
-
     @FXML
     public void onClickCadastroUsuario(ActionEvent event) throws IOException {
         MainApplication.trocadorDeTelas("cadastro.fxml", ScreenTransitionManager.Direction.FORWARD);
@@ -184,9 +212,8 @@ public class CalendarioController {
     }
 
     @FXML
-    public void botaoSairAction(ActionEvent event) throws IOException {
-        MainApplication.trocadorDeTelas("login.fxml");
+    public void botaoSairAction(ActionEvent event) {
+        com.sigec.system.sigec.Utils.SidebarNavigationManager.executarLogout();
     }
-
 
 }

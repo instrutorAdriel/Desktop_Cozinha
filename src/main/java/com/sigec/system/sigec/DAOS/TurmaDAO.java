@@ -1,6 +1,8 @@
 package com.sigec.system.sigec.DAOS;
 
+import com.sigec.system.sigec.Constructors.Curso;
 import com.sigec.system.sigec.Constructors.Laboratorio;
+import com.sigec.system.sigec.Constructors.User;
 import com.sigec.system.sigec.DTBConfig.ConfigDataBase;
 
 import java.sql.Connection;
@@ -12,7 +14,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Objeto de Acesso a Dados (DAO) para operações de Turmas, Laboratórios e vínculos no banco de dados.
+ * Objeto de Acesso a Dados (DAO) para operações de Turmas, Laboratórios, Cursos
+ * e vínculos no banco de dados.
  */
 public final class TurmaDAO {
 
@@ -21,7 +24,8 @@ public final class TurmaDAO {
     }
 
     /**
-     * Normaliza a situação selecionada pelo admin ("Ativo", "Inativo", etc.) para o padrão 'A' / 'I' do banco CHAR(1).
+     * Normaliza a situação selecionada pelo admin ("Ativo", "Inativo", etc.) para o
+     * padrão 'A' / 'I' do banco CHAR(1).
      *
      * @param situacao String vinda do formulário
      * @return "A" para ativo ou "I" para inativo
@@ -38,22 +42,34 @@ public final class TurmaDAO {
     }
 
     /**
-     * Cadastra uma nova turma e vincula o professor responsável na tabela associativa 'usuario_turma'.
-     * Executa tudo em uma transação atômica (commit/rollback) para garantir consistência relacional.
+     * Cadastra uma nova turma e vincula o professor responsável na tabela
+     * associativa 'usuario_turma'.
+     * Executa tudo em uma transação atômica (commit/rollback) para garantir
+     * consistência relacional.
      *
-     * @param nomeTurma     Nome digitado pelo admin no formulário (ex: "Cozinha Básica - 2026.1")
+     * @param nomeTurma     Nome digitado pelo admin no formulário (ex: "Cozinha
+     *                      Básica - 2026.1")
      * @param situacao      Opção selecionada pelo admin ("Ativo", "Inativo")
-     * @param idLaboratorio ID do laboratório escolhido pelo admin (chave estrangeira de 'laboratorio')
-     * @param idProfessor   ID do instrutor/usuário selecionado na lista (chave estrangeira de 'usuario')
-     * @return O id_turma gerado automaticamente pelo banco de dados (AUTO_INCREMENT)
+     * @param idLaboratorio ID do laboratório escolhido pelo admin (chave
+     *                      estrangeira de 'laboratorio')
+     * @param idProfessor   ID do instrutor/usuário selecionado na lista (chave
+     *                      estrangeira de 'usuario')
+     * @param idCurso       id do Curso selecionado na lista (chave estrangeira de
+     *                      'curso')
+     * @return O id_turma gerado automaticamente pelo banco de dados
+     *         (AUTO_INCREMENT)
      * @throws SQLException Caso ocorra erro de conexão, integridade ou execução SQL
      */
-    public static int cadastrarTurma(String nomeTurma, String situacao, int idLaboratorio, int idProfessor) throws SQLException {
+    public static int cadastrarTurma(String nomeTurma, String situacao, int idLaboratorio, int idProfessor, int idCurso)
+            throws SQLException {
         if (nomeTurma == null || nomeTurma.trim().isEmpty()) {
             throw new IllegalArgumentException("O nome da turma é obrigatório.");
         }
         if (idLaboratorio <= 0) {
             throw new IllegalArgumentException("Laboratório inválido selecionado.");
+        }
+        if (idCurso <= 0) {
+            throw new IllegalArgumentException("Curso inválido selecionado.");
         }
         if (idProfessor <= 0) {
             throw new IllegalArgumentException("Professor responsável inválido selecionado.");
@@ -61,7 +77,7 @@ public final class TurmaDAO {
 
         String situacaoNormalizada = normalizarSituacao(situacao);
 
-        String sqlTurma = "INSERT INTO turma (nome_turma, situacao, id_laboratorio) VALUES (?, ?, ?)";
+        String sqlTurma = "INSERT INTO turma (nome_turma, situacao, id_laboratorio, id_curso) VALUES (?, ?, ?, ?)";
         String sqlUsuarioTurma = "INSERT INTO usuario_turma (id_usuario, id_turma) VALUES (?, ?)";
 
         try (Connection conn = ConfigDataBase.getConnection()) {
@@ -75,6 +91,7 @@ public final class TurmaDAO {
                     stmtTurma.setString(1, nomeTurma.trim());
                     stmtTurma.setString(2, situacaoNormalizada);
                     stmtTurma.setInt(3, idLaboratorio);
+                    stmtTurma.setInt(4, idCurso);
 
                     stmtTurma.executeUpdate();
 
@@ -117,20 +134,57 @@ public final class TurmaDAO {
     }
 
     /**
+     * Retorna a lista de professores/instrutores ativos (acesso = 'I' e situacao =
+     * 'A') cadastrados na tabela 'usuario'.
+     *
+     * @return Lista de professores ativos
+     */
+    public static List<User> listarProfessoresAtivos() {
+        List<User> professores = new ArrayList<>();
+        String sql = "SELECT id_usuario, nome_usuario, email, senha, acesso, situacao " +
+                "FROM usuario " +
+                "WHERE UPPER(TRIM(acesso)) = 'I' " +
+                "AND (situacao IS NULL OR UPPER(TRIM(situacao)) = 'A' OR UPPER(TRIM(situacao)) = 'ATIVO') " +
+                "ORDER BY nome_usuario ASC";
+
+        try (Connection conn = ConfigDataBase.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql);
+                ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                User professor = new User(
+                        rs.getInt("id_usuario"),
+                        rs.getString("nome_usuario"),
+                        rs.getString("email"),
+                        rs.getString("senha"),
+                        rs.getString("acesso"),
+                        rs.getString("situacao"),
+                        0);
+                professores.add(professor);
+            }
+        } catch (SQLException e) {
+            System.err.println("Aviso: Falha ao listar professores do banco de dados: " + e.getMessage());
+        }
+
+        return professores;
+    }
+
+    /**
      * Retorna a lista de laboratórios ativos cadastrados no banco de dados.
-     * Permite que a tela (ChoiceBox) liste os laboratórios reais disponíveis para seleção.
+     * Permite que a tela (ChoiceBox) liste os laboratórios reais disponíveis para
+     * seleção.
      *
      * @return Lista de laboratórios ativos
      */
     public static List<Laboratorio> listarLaboratoriosAtivos() {
         List<Laboratorio> laboratorios = new ArrayList<>();
         String sql = "SELECT id_laboratorio, nome_laboratorio, capacidade, situacao, id_unidade " +
-                     "FROM laboratorio WHERE UPPER(situacao) = 'A' OR UPPER(situacao) = 'ATIVO' " +
-                     "ORDER BY nome_laboratorio ASC";
+                "FROM laboratorio WHERE UPPER(situacao) = 'A' OR UPPER(situacao) = 'ATIVO' " +
+                "ORDER BY nome_laboratorio ASC";
 
         try (Connection conn = ConfigDataBase.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql);
-             ResultSet rs = stmt.executeQuery()) {
+                PreparedStatement stmt = conn.prepareStatement(sql);
+                ResultSet rs = stmt.executeQuery()) {
 
             while (rs.next()) {
                 Laboratorio lab = new Laboratorio(
@@ -138,8 +192,7 @@ public final class TurmaDAO {
                         rs.getString("nome_laboratorio"),
                         rs.getInt("capacidade"),
                         rs.getString("situacao"),
-                        rs.getInt("id_unidade")
-                );
+                        rs.getInt("id_unidade"));
                 laboratorios.add(lab);
             }
         } catch (SQLException e) {
@@ -165,7 +218,7 @@ public final class TurmaDAO {
         String sql = "SELECT id_laboratorio FROM laboratorio WHERE LOWER(TRIM(nome_laboratorio)) = LOWER(TRIM(?)) LIMIT 1";
 
         try (Connection conn = ConfigDataBase.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, nomeLaboratorio.trim());
 
@@ -176,13 +229,85 @@ public final class TurmaDAO {
             }
         }
 
-        // Se não encontrou pelo nome exato, tenta o primeiro laboratório ativo como fallback
+        // Se não encontrou pelo nome exato, tenta o primeiro laboratório ativo como
+        // fallback
         String sqlFallback = "SELECT id_laboratorio FROM laboratorio WHERE UPPER(situacao) = 'A' LIMIT 1";
         try (Connection conn = ConfigDataBase.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sqlFallback);
-             ResultSet rs = stmt.executeQuery()) {
+                PreparedStatement stmt = conn.prepareStatement(sqlFallback);
+                ResultSet rs = stmt.executeQuery()) {
             if (rs.next()) {
                 return rs.getInt("id_laboratorio");
+            }
+        }
+
+        return -1;
+    }
+
+    /**
+     * Retorna a lista de cursos ativos cadastrados no banco de dados.
+     * Permite que a tela (ChoiceBox) liste os cursos reais disponíveis para
+     * seleção.
+     *
+     * @return Lista de cursos ativos
+     */
+    public static List<Curso> listarCursosAtivos() {
+        List<Curso> cursos = new ArrayList<>();
+        String sql = "SELECT id_curso, nome_curso, situacao " +
+                "FROM curso WHERE UPPER(situacao) = 'A' OR UPPER(situacao) = 'ATIVO' " +
+                "ORDER BY nome_curso ASC";
+
+        try (Connection conn = ConfigDataBase.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql);
+                ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                Curso curso = new Curso(
+                        rs.getInt("id_curso"),
+                        rs.getString("nome_curso"),
+                        rs.getString("situacao"));
+                cursos.add(curso);
+            }
+        } catch (SQLException e) {
+            System.err.println("Aviso: Falha ao listar cursos do banco de dados: " + e.getMessage());
+        }
+
+        return cursos;
+    }
+
+    /**
+     * Busca o ID do curso pelo seu nome.
+     * Útil quando o ChoiceBox da interface disponibiliza os nomes como String.
+     *
+     * @param nomeCurso Nome do curso selecionado na interface
+     * @return ID do curso correspondente ou -1 se não encontrado
+     * @throws SQLException Em caso de erro na consulta
+     */
+    public static int buscarIdCursoPorNome(String nomeCurso) throws SQLException {
+        if (nomeCurso == null || nomeCurso.trim().isEmpty()) {
+            return -1;
+        }
+
+        String sql = "SELECT id_curso FROM curso WHERE LOWER(TRIM(nome_curso)) = LOWER(TRIM(?)) LIMIT 1";
+
+        try (Connection conn = ConfigDataBase.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, nomeCurso.trim());
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("id_curso");
+                }
+            }
+        }
+
+        // Se não encontrou pelo nome exato, tenta o primeiro curso ativo como fallback
+        String sqlFallback = "SELECT id_curso FROM curso WHERE UPPER(situacao) = 'A' LIMIT 1";
+        try (Connection conn = ConfigDataBase.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sqlFallback);
+                ResultSet rs = stmt.executeQuery()) {
+            if (rs.next()) {
+                return rs.getInt("id_curso");
             }
         }
 

@@ -10,6 +10,7 @@ public class Turma {
     private int idTurma;
     private String nomeTurma;
     private int id_laboratorio;
+    private int id_curso;
     private String situacao;
 
     public Turma() {
@@ -22,10 +23,25 @@ public class Turma {
         this.situacao = (situacao != null && !situacao.isBlank()) ? situacao : "Ativo";
     }
 
+    public Turma(String nomeTurma, int id_laboratorio, int id_curso, String situacao) {
+        this.nomeTurma = nomeTurma;
+        this.id_laboratorio = id_laboratorio;
+        this.id_curso = id_curso;
+        this.situacao = (situacao != null && !situacao.isBlank()) ? situacao : "Ativo";
+    }
+
     public Turma(int idTurma, String nomeTurma, int id_laboratorio, String situacao) {
         this.idTurma = idTurma;
         this.nomeTurma = nomeTurma;
         this.id_laboratorio = id_laboratorio;
+        this.situacao = (situacao != null && !situacao.isBlank()) ? situacao : "Ativo";
+    }
+
+    public Turma(int idTurma, String nomeTurma, int id_laboratorio, int id_curso, String situacao) {
+        this.idTurma = idTurma;
+        this.nomeTurma = nomeTurma;
+        this.id_laboratorio = id_laboratorio;
+        this.id_curso = id_curso;
         this.situacao = (situacao != null && !situacao.isBlank()) ? situacao : "Ativo";
     }
 
@@ -49,8 +65,16 @@ public class Turma {
         return id_laboratorio;
     }
 
-    public void setLaboratorio(int laboratorio) {
+    public void setLaboratorio(int id_laboratorio) {
         this.id_laboratorio = id_laboratorio;
+    }
+
+    public int getId_curso() {
+        return id_curso;
+    }
+
+    public void setId_curso(int id_curso) {
+        this.id_curso = id_curso;
     }
 
     public String getSituacao() {
@@ -63,8 +87,10 @@ public class Turma {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         Turma turma = (Turma) o;
         return idTurma == turma.idTurma && Objects.equals(nomeTurma, turma.nomeTurma);
     }
@@ -80,6 +106,7 @@ public class Turma {
                 "idTurma=" + idTurma +
                 ", nomeTurma='" + nomeTurma + '\'' +
                 ", laboratorio='" + id_laboratorio + '\'' +
+                ", curso='" + id_curso + '\'' +
                 ", situacao='" + situacao + '\'' +
                 '}';
     }

@@ -245,14 +245,18 @@
                 </VBox>
 
                 <Region VBox.vgrow="ALWAYS" />
-                <Button fx:id="botaoSair" alignment="CENTER" mnemonicParsing="false" onAction="#botaoSairAction" maxWidth="1.7976931348623157E308" prefHeight="45.0" styleClass="btn-sair" text="Sair">
-                    <font>
-                        <Font name="Arial Bold" size="15.0" />
-                    </font>
+                <HBox alignment="CENTER">
+                    <children>
+                        <Button fx:id="botaoSair" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#botaoSairAction" prefWidth="103.0" styleClass="btn-sair" text="Sair" textAlignment="CENTER">
+                            <font>
+                                <Font name="Arial Bold" size="13.0" />
+                            </font>
+                        </Button>
+                    </children>
                     <VBox.margin>
-                        <Insets bottom="20.0" left="10.0" right="10.0" />
+                        <Insets bottom="20.0" />
                     </VBox.margin>
-                </Button>
+                </HBox>
             </children>
         </VBox>
     </left>
@@ -357,11 +361,14 @@
                                                                 <ChoiceBox fx:id="laboratorioSelect" maxWidth="1.7976931348623157E308" prefHeight="36.0" styleClass="choice-box-cadastro" />
                                                             </children>
                                                         </VBox>
-                                          <VBox>
-                                             <children>
-                                                <Label styleClass="form-label" text="Escolha o Curso*" />
-                                                <ChoiceBox maxWidth="1.7976931348623157E308" prefHeight="36.0" styleClass="choice-box-cadastro" />
-                                             </children></VBox>
+
+                                                        <!-- Campo Curso -->
+                                                        <VBox spacing="5.0">
+                                                            <children>
+                                                                <Label styleClass="form-label" text="Escolha o Curso *" />
+                                                                <ChoiceBox fx:id="cursoSelect" maxWidth="1.7976931348623157E308" prefHeight="36.0" styleClass="choice-box-cadastro" />
+                                                            </children>
+                                                        </VBox>
 
                                                         <!-- Campo Professor Responsável -->
                                                         <VBox spacing="5.0">
@@ -466,6 +473,22 @@
                                         </HBox>
                                     </content>
                                 </ScrollPane>
+                            </children>
+                        </VBox>
+                    </children>
+                </VBox>
+
+                <!-- OVERLAY DE LOADING DURANTE O CADASTRO -->
+                <VBox fx:id="loadingOverlay" alignment="CENTER" managed="false" visible="false" style="-fx-background-color: rgba(11, 38, 71, 0.55);">
+                    <children>
+                        <VBox alignment="CENTER" maxHeight="190.0" maxWidth="320.0" spacing="16.0" style="-fx-background-color: #ffffff; -fx-background-radius: 12px; -fx-border-color: #cbd5e1; -fx-border-width: 1.5px; -fx-border-radius: 12px; -fx-padding: 28px 32px; -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.25), 18, 0.3, 0, 4);">
+                            <children>
+                                <ProgressIndicator prefHeight="48.0" prefWidth="48.0" />
+                                <Label text="Cadastrando turma no banco de dados..." textAlignment="CENTER" textFill="#054685" wrapText="true">
+                                    <font>
+                                        <Font name="Arial Bold" size="14.0" />
+                                    </font>
+                                </Label>
                             </children>
                         </VBox>
                     </children>

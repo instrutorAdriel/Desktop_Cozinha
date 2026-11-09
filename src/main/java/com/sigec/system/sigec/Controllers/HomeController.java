@@ -183,9 +183,8 @@ public class HomeController implements Initializable {
 
         if (horaLabel != null) {
             horaLabel.setText(LocalTime.now().format(horaFormatter));
-            Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(1), event ->
-                    horaLabel.setText(LocalTime.now().format(horaFormatter))
-            ));
+            Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(1),
+                    event -> horaLabel.setText(LocalTime.now().format(horaFormatter))));
             timeline.setCycleCount(Animation.INDEFINITE);
             timeline.play();
         }
@@ -344,7 +343,6 @@ public class HomeController implements Initializable {
         }
     }
 
-
     @FXML
     public void botaoEstoqueAction(ActionEvent event) {
         toggleDropdownEstoque(event);
@@ -430,12 +428,7 @@ public class HomeController implements Initializable {
 
     @FXML
     public void botaoSairAction(ActionEvent event) {
-        try {
-            SessaoService.encerrarSessao();
-            MainApplication.trocadorDeTelas("login.fxml");
-        } catch (IOException e) {
-            exibirErroNavegacao("Login", e);
-        }
+        com.sigec.system.sigec.Utils.SidebarNavigationManager.executarLogout();
     }
 
     private void exibirErroNavegacao(String destino, Exception e) {
