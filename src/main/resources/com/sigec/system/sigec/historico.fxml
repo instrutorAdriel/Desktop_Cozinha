@@ -345,6 +345,10 @@
                                                     </font>
                                                 </Label>
                                                 <ChoiceBox fx:id="cbCurso" prefHeight="35.0" prefWidth="130.0" styleClass="custom-choice-box" />
+                                    <Label text="De" />
+                                    <DatePicker prefHeight="30.0" prefWidth="130.0" />
+                                    <Label text="Até" />
+                                    <DatePicker fx:id="dataATE" layoutX="160.0" layoutY="12.0" prefHeight="30.0" prefWidth="130.0" />
                                             </children>
                                         </HBox>
 

@@ -1,6 +1,7 @@
 package com.sigec.system.sigec.Controllers;
 
 import com.sigec.system.sigec.Constructors.UnidadeDTO;
+import com.sigec.system.sigec.Constructors.CursoDTO;
 import com.sigec.system.sigec.DAOS.HistoryDAO;
 import com.sigec.system.sigec.MainApplication;
 import com.sigec.system.sigec.Services.SessaoService;
@@ -74,6 +75,9 @@ public class HistoricoController implements Initializable {
     @FXML
     private ChoiceBox<UnidadeDTO> cbUnidade;
 
+    @FXML
+    private ChoiceBox<CursoDTO> cbCurso;
+
     // Componentes da Tabela
     @FXML
     private TableView<HistoryDAO> tableHistorico;
@@ -120,13 +124,30 @@ public class HistoricoController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        // 1. Animações e Cabeçalho
         if (topBarPane != null) {
             BackgroundAnimator.startTopBarAnimation(topBarPane);
         }
         configurarDataHora();
         configurarUsuario();
         configurarFiltroCategorias();
+
+        // Configuração do ChoiceBox de Turmas (vinculado ao cbCurso do FXML)
+        if (cbCurso != null) {
+            List<CursoDTO> turmas = HistoryDAO.listarCursos();
+            cbCurso.setItems(FXCollections.observableArrayList(turmas));
+
+            cbCurso.setConverter(new StringConverter<CursoDTO>() {
+                @Override
+                public String toString(CursoDTO turma) {
+                    return turma != null ? turma.getNome() : "";
+                }
+
+                @Override
+                public CursoDTO fromString(String string) {
+                    return null;
+                }
+            });
+        }
 
         // Configuração do ChoiceBox Dinâmico de Unidades
         if (cbUnidade != null) {
@@ -144,17 +165,28 @@ public class HistoricoController implements Initializable {
                     return null;
                 }
             });
+
+            cbUnidade.getSelectionModel().selectedItemProperty().addListener((obs, antigo, novo) -> {
+                if (novo != null) {
+                    carregarDadosTabela(novo.getId());
+                }
+            });
+
+            if (!unidades.isEmpty()) {
+                cbUnidade.getSelectionModel().selectFirst();
+            }
         }
 
-        // 2. Configuração das Colunas da Tabela (TableView)
         configurarTabela();
 
-        // 3. Carga Inicial de Dados (Unidade padrão ID = 1 ou obtida da sessão)
-        int idUnidadeAtual = 1;
-        carregarDadosTabela(idUnidadeAtual);
+        int idUnidadeInicial = (cbUnidade != null && cbUnidade.getValue() != null) ? cbUnidade.getValue().getId() : 1;
+        carregarDadosTabela(idUnidadeInicial);
     }
 
     private void configurarTabela() {
+        if (codMXM != null) {
+            codMXM.setCellValueFactory(new PropertyValueFactory<>("codMXM"));
+        }
         if (nome_produto != null) {
             nome_produto.setCellValueFactory(new PropertyValueFactory<>("nomeProduto"));
         }
@@ -353,37 +385,52 @@ public class HistoricoController implements Initializable {
     }
 
     // =========================================================================
-    // PESQUISA COM TOLERÂNCIA A ERROS (ACIONADA PELO BOTÃO)
+    // PESQUISA, PERÍODO, TURMA E TOLERÂNCIA A ERROS NO BOTÃO
     // =========================================================================
 
     @FXML
     public void filtrarHistorico(ActionEvent event) {
+        UnidadeDTO unidadeSelecionada = cbUnidade != null ? cbUnidade.getValue() : null;
+        int idUnidade = unidadeSelecionada != null ? unidadeSelecionada.getId() : 1;
+
+        CursoDTO turmaSelecionada = cbCurso != null ? cbCurso.getValue() : null;
+        int idTurma = turmaSelecionada != null ? turmaSelecionada.getId() : 0;
+
+        LocalDate dataInicio = dataDE != null ? dataDE.getValue() : null;
+        LocalDate dataFim = dataATE != null ? dataATE.getValue() : null;
+
         String termo = txtpesquisa != null ? txtpesquisa.getText().trim() : "";
 
-        // Se o campo estiver vazio ao clicar em pesquisar, recarrega todos os dados
-        if (termo.isEmpty()) {
-            carregarDadosTabela(1);
-            return;
+        List<HistoryDAO> listaBase;
+
+        // Validação: Se selecionou a turma e o intervalo de datas, calcula com base nas fichas da turma
+        if (idTurma > 0 && dataInicio != null && dataFim != null) {
+            if (dataInicio.isAfter(dataFim)) {
+                exibirAlerta(Alert.AlertType.ERROR, "Erro", "A data inicial não pode ser superior à data final.");
+                return;
+            }
+            listaBase = HistoryDAO.listarComprasPorPeriodo(idUnidade, idTurma, dataInicio, dataFim);
+        } else {
+            listaBase = HistoryDAO.listarListaDeCompras(idUnidade);
         }
 
-        List<HistoryDAO> listaCompleta = HistoryDAO.listarListaDeCompras(1);
-        String termoLower = termo.toLowerCase();
+        // Se houver termo digitado no campo de pesquisa, aplica o filtro inteligente (Levenshtein)
+        if (!termo.isEmpty()) {
+            String termoLower = termo.toLowerCase();
+            listaBase = listaBase.stream().filter(item -> {
+                if (item.getNomeProduto() == null) return false;
+                String nomeProd = item.getNomeProduto().toLowerCase();
 
-        // Aplica o filtro com tolerância a erros estritamente no clique do botão
-        List<HistoryDAO> listaFiltrada = listaCompleta.stream().filter(item -> {
-            if (item.getNomeProduto() == null) return false;
-            String nomeProd = item.getNomeProduto().toLowerCase();
+                if (nomeProd.contains(termoLower)) {
+                    return true;
+                }
 
-            if (nomeProd.contains(termoLower)) {
-                return true;
-            }
+                int tolerancia = termoLower.length() > 5 ? 2 : 1;
+                return calcularDistanciaLevenshtein(nomeProd, termoLower) <= tolerancia;
+            }).collect(Collectors.toList());
+        }
 
-            int tolerancia = termoLower.length() > 5 ? 2 : 1;
-            return calcularDistanciaLevenshtein(nomeProd, termoLower) <= tolerancia;
-
-        }).collect(Collectors.toList());
-
-        tableHistorico.setItems(FXCollections.observableArrayList(listaFiltrada));
+        tableHistorico.setItems(FXCollections.observableArrayList(listaBase));
     }
 
     private int calcularDistanciaLevenshtein(String s1, String s2) {
