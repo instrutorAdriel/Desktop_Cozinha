@@ -32,7 +32,9 @@ public class ProductStorageDAO {
         List<Object> parametros = new ArrayList<>();
 
         if (termo != null && !termo.trim().isEmpty()) {
-            sql.append("AND LOWER(p.nome_produto) LIKE LOWER(?) ");
+
+            sql.append("AND (LOWER(p.nome_produto) LIKE LOWER(?) OR LOWER(COALESCE(i.lote, '')) LIKE LOWER(?)) ");
+            parametros.add("%" + termo.trim() + "%");
             parametros.add("%" + termo.trim() + "%");
         }
 
@@ -96,7 +98,7 @@ public class ProductStorageDAO {
             conn = ConfigDataBase.getConnection();
             conn.setAutoCommit(false);
 
-            // 1 Cancela o lote específico na tabela insumo
+            //  Cancela o lote específico na tabela insumo
             String sqlCancelInsumo = "UPDATE insumo SET cancelado = 'S' WHERE id_insumo = ?";
             try (PreparedStatement stmt = conn.prepareStatement(sqlCancelInsumo)) {
                 stmt.setInt(1, idInsumo);
