@@ -136,11 +136,11 @@ public class HomeController implements Initializable {
 
         // Configuração do ChoiceBox Dinâmico de Unidades
         if (cbUnidade != null) {
-            // 1. Busca as unidades ativas no banco de dados através da DAO
-            List<UnidadeDTO> unidades = homeDAO.listarUnidades();
+            //  Busca apenas as unidades ativas vinculadas ao usuário logado (usuario_unidade)
+            List<UnidadeDTO> unidades = homeDAO.listarUnidadesDoUsuario(SessaoService.getIdUsuarioLogado());
             cbUnidade.setItems(FXCollections.observableArrayList(unidades));
 
-            // 2. Define o Conversor visual: exibe apenas o nome na tela, mas guarda o ID internamente
+            // Define o Conversor visual: exibe apenas o nome na tela, mas guarda o ID internamente
             cbUnidade.setConverter(new javafx.util.StringConverter<UnidadeDTO>() {
                 @Override
                 public String toString(UnidadeDTO unidade) {
@@ -149,20 +149,24 @@ public class HomeController implements Initializable {
 
                 @Override
                 public UnidadeDTO fromString(String string) {
-                    return null; // Operação reversa não é usada no ChoiceBox
+                    return null;
                 }
             });
 
-            // 3. Listener: Sempre que a seleção mudar, buscar os dados daquela unidade
+            //  Listener: Sempre que a seleção mudar, buscar os dados daquela unidade
             cbUnidade.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
                 if (newValue != null) {
                     carregarDadosDashboard(newValue.getId());
                 }
             });
 
-            // 4. Marca o primeiro item automaticamente (dispara o listener na inicialização)
+            //  Marca o primeiro item automaticamente (dispara o listener na inicialização)
             if (!unidades.isEmpty()) {
                 cbUnidade.getSelectionModel().selectFirst();
+            } else {
+                // Usuário sem unidade vinculada: não exibe nenhum dado
+                cbUnidade.setDisable(true);
+                limparTabelas();
             }
         }
     }
@@ -235,6 +239,13 @@ public class HomeController implements Initializable {
         if (tabelaEstoqueZerado != null) {
             tabelaEstoqueZerado.setItems(FXCollections.observableArrayList(homeDAO.listarEstoqueZerado(idUnidade)));
         }
+    }
+
+    private void limparTabelas() {
+        if (tabelaAlertas != null) tabelaAlertas.getItems().clear();
+        if (tabelaProximos != null) tabelaProximos.getItems().clear();
+        if (tabelaEstoqueBaixo != null) tabelaEstoqueBaixo.getItems().clear();
+        if (tabelaEstoqueZerado != null) tabelaEstoqueZerado.getItems().clear();
     }
 
     private void formatarColunaData(TableColumn<AlertaEstoqueDTO, LocalDate> coluna) {
