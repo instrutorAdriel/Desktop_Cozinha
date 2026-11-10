@@ -1,117 +1,113 @@
 package com.sigec.system.sigec.Controllers;
 
+import com.sigec.system.sigec.DAOS.CategoriaDAO;
 import com.sigec.system.sigec.DAOS.ProductStorageDAO;
-import com.sigec.system.sigec.Utils.FormNavigationUtil;
-
+import com.sigec.system.sigec.DAOS.UnidadeDAO;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.DateCell;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
 import java.net.URL;
+import java.time.LocalDate;
+import java.util.List;
 import java.util.ResourceBundle;
 
 public class CadastroProdutoController implements Initializable {
 
-    @FXML
-    private TextField txtNomeProduto;
-    @FXML
-    private TextField txtQtdAtual;
-    @FXML
-    private TextField txtEstoqueMinimo;
-    @FXML
-    private ChoiceBox<String> txtTipoProduto;
-    @FXML
-    private ChoiceBox<String> txtUnidadeDeMedida;
-    @FXML
-    private DatePicker txtDataValidade;
-    @FXML
-    private Button btnVoltar;
-    @FXML
-    private Button btnCadastro;
+    @FXML private TextField txtNomeProduto;
+    @FXML private TextField txtQtdAtual;
+    @FXML private TextField txtEstoqueMinimo;
+    @FXML private ChoiceBox<String> txtTipoProduto;
+    @FXML private ChoiceBox<String> txtUnidadeDeMedida;
+    @FXML private TextField txtLote;
+    @FXML private ChoiceBox<String> cbUnidade;
+    @FXML private DatePicker txtDataValidade;
+    @FXML private Button btnVoltar;
+    @FXML private Button btnCadastro;
 
     @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
-        configurarSeletores();
-        FormNavigationUtil.encadearCampos(btnCadastro, txtNomeProduto, txtQtdAtual, txtEstoqueMinimo);
-    }
+    public void initialize(URL location, ResourceBundle resources) {
+        txtTipoProduto.setItems(FXCollections.observableArrayList(CategoriaDAO.listarNomesCategorias()));
+        txtUnidadeDeMedida.setItems(FXCollections.observableArrayList("kg", "g", "L", "ml", "un"));
 
-    private void configurarSeletores() {
-        if (txtTipoProduto != null) {
-            // Aqui estão os novos tipos de produtos!
-            txtTipoProduto.setItems(FXCollections.observableArrayList(
-                    "Hortifruti",
-                    "Proteína",
-                    "Frios",
-                    "Mercearia"));
-            txtTipoProduto.getSelectionModel().selectFirst();
+        // Carrega apenas as unidades vinculadas ao usuário (sem a opção "Todas")
+        List<String> unidadesUsuario = UnidadeDAO.listarUnidadesParaCadastro();
+        cbUnidade.setItems(FXCollections.observableArrayList(unidadesUsuario));
+        if (!unidadesUsuario.isEmpty()) {
+            cbUnidade.getSelectionModel().selectFirst();
         }
 
-        if (txtUnidadeDeMedida != null) {
-            txtUnidadeDeMedida.setItems(FXCollections.observableArrayList(
-                    "kg", "g", "L", "ml", "un", "pct", "cx"));
-            txtUnidadeDeMedida.getSelectionModel().selectFirst();
-        }
+        txtDataValidade.setDayCellFactory(picker -> new DateCell() {
+            @Override
+            public void updateItem(LocalDate date, boolean empty) {
+                super.updateItem(date, empty);
+                boolean passado = empty || date.isBefore(LocalDate.now());
+                setDisable(passado);
+                if (passado) setStyle("-fx-background-color: #e0e0e0; -fx-text-fill: #9e9e9e;");
+            }
+        });
+        txtDataValidade.setEditable(false);
     }
 
     @FXML
     public void onCadastrar(ActionEvent event) {
-        String nome = txtNomeProduto != null ? txtNomeProduto.getText() : "";
-        String qtd = txtQtdAtual != null ? txtQtdAtual.getText() : "";
-        String tipo = txtTipoProduto != null ? txtTipoProduto.getValue() : "";
-        String unidade = txtUnidadeDeMedida != null ? txtUnidadeDeMedida.getValue() : "";
+        String nome = txtNomeProduto.getText();
+        String categoria = txtTipoProduto.getValue();
+        String unidadeMedida = txtUnidadeDeMedida.getValue();
+        String unidade = cbUnidade.getValue();
+        String lote = txtLote.getText();
+        LocalDate validade = txtDataValidade.getValue();
 
-        if (nome.trim().isEmpty() || qtd.trim().isEmpty()) {
-            exibirAlerta(Alert.AlertType.WARNING, "Campos Obrigatórios", "Preencha o nome e a quantidade do produto.");
+        if (nome == null || nome.isBlank() || categoria == null || unidadeMedida == null || unidade == null) {
+            exibirAlerta(Alert.AlertType.WARNING, "Atenção", "Preencha os campos obrigatórios.");
             return;
         }
 
-        double quantidadeFormatada;
+        double quantidade;
+        double estoqueMinimo;
         try {
-            quantidadeFormatada = Double.parseDouble(qtd.trim().replace(",", "."));
-        } catch (NumberFormatException e) {
-            exibirAlerta(Alert.AlertType.ERROR, "Formato Inválido", "A quantidade deve ser um número válido.");
+            quantidade = Double.parseDouble(txtQtdAtual.getText().replace(",", "."));
+            String min = txtEstoqueMinimo.getText();
+            estoqueMinimo = (min == null || min.isBlank()) ? 0 : Double.parseDouble(min.replace(",", "."));
+        } catch (NumberFormatException | NullPointerException e) {
+            exibirAlerta(Alert.AlertType.WARNING, "Erro de Validação", "Quantidade ou estoque mínimo inválido.");
+            return;
+        }
+
+        if (validade != null && validade.isBefore(LocalDate.now())) {
+            exibirAlerta(Alert.AlertType.WARNING, "Atenção", "A data de validade não pode ser no passado.");
             return;
         }
 
         ProductStorageDAO dao = new ProductStorageDAO();
-
-        // -------------------------------------------------------------------
-        // TRAVA DE DUPLICIDADE: Verifica antes de adicionar
-        // -------------------------------------------------------------------
-        if (dao.verificarProdutoExisteAtivo(nome)) {
-            exibirAlerta(Alert.AlertType.WARNING, "Produto Duplicado",
-                    "O produto '" + nome.trim()
-                            + "' já existe no estoque! Se precisar, altere a quantidade na opção 'Editar'.");
-            return; // Interrompe o cadastro aqui
+        if (lote != null && !lote.isBlank() && dao.verificarLoteExisteAtivo(nome, lote, unidade)) {
+            exibirAlerta(Alert.AlertType.WARNING, "Atenção", "Já existe um insumo ativo para este produto com este mesmo Lote nesta unidade.");
+            return;
         }
 
-        // Se passou pela trava, envia para o banco de dados
-        boolean sucesso = dao.adicionarProduto(nome, tipo, quantidadeFormatada, unidade);
+        boolean sucesso = dao.adicionarProduto(nome, categoria, quantidade, estoqueMinimo,
+                unidadeMedida, lote, validade, unidade);
 
         if (sucesso) {
-            exibirAlerta(Alert.AlertType.INFORMATION, "Sucesso",
-                    "Produto '" + nome.trim() + "' cadastrado com sucesso no estoque!");
-            fecharJanela();
+            exibirAlerta(Alert.AlertType.INFORMATION, "Sucesso", "Produto cadastrado com sucesso!");
+            voltarTela(null);
         } else {
-            exibirAlerta(Alert.AlertType.ERROR, "Erro", "Não foi possível salvar o produto no banco de dados.");
+            exibirAlerta(Alert.AlertType.ERROR, "Erro", "Não foi possível cadastrar o produto.");
         }
     }
 
     @FXML
     public void voltarTela(ActionEvent event) {
-        fecharJanela();
-    }
-
-    private void fecharJanela() {
-        if (btnVoltar != null && btnVoltar.getScene() != null && btnVoltar.getScene().getWindow() != null) {
-            ((Stage) btnVoltar.getScene().getWindow()).close();
-        } else if (btnCadastro != null && btnCadastro.getScene() != null
-                && btnCadastro.getScene().getWindow() != null) {
-            ((Stage) btnCadastro.getScene().getWindow()).close();
-        }
+        Stage stage = (Stage) btnVoltar.getScene().getWindow();
+        stage.close();
     }
 
     private void exibirAlerta(Alert.AlertType tipo, String titulo, String mensagem) {

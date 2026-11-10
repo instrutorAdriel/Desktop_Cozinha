@@ -13,7 +13,7 @@ import java.util.List;
 
 public class HomeDAO {
 
-    // 1. Produtos Vencidos
+    //  Produtos Vencidos
     public List<AlertaEstoqueDTO> listarProdutosVencidos(int idUnidade) {
         List<AlertaEstoqueDTO> lista = new ArrayList<>();
         String sql = "SELECT p.nome_produto, i.data_validade, c.nome_categoria " +
@@ -50,7 +50,7 @@ public class HomeDAO {
         return lista;
     }
 
-    // 2. Próximos ao Vencimento
+    //  Próximos ao Vencimento
     public List<AlertaEstoqueDTO> listarProximosVencimento(int idUnidade) {
         List<AlertaEstoqueDTO> lista = new ArrayList<>();
         String sql = "SELECT p.nome_produto, i.data_validade, i.lote, i.quantidade " +
@@ -86,7 +86,7 @@ public class HomeDAO {
         return lista;
     }
 
-    // 3. Estoque Baixo
+    //  Estoque Baixo
     public List<AlertaEstoqueDTO> listarEstoqueBaixo(int idUnidade) {
         List<AlertaEstoqueDTO> lista = new ArrayList<>();
         String sql = "SELECT p.nome_produto, i.quantidade, i.quantidade_minima " +
