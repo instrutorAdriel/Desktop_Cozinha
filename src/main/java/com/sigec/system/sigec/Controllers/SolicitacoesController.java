@@ -88,17 +88,16 @@ public class SolicitacoesController {
         cbStatusFiltro.setItems(FXCollections.observableArrayList("Todos", "Pendente", "Aprovado", "Recusado"));
         cbStatusFiltro.setValue("Todos");
 
-        // FILTROS AUTOMÁTICOS DO CANTO SUPERIOR (Unidade e Curso)
-        // Quando o usuário seleciona um item, a tabela atualiza na hora sem precisar do botão
+        // FILTROS AUTOMÁTICOS (Unidade, Curso e Status)
         if (cbUnidade != null) {
             cbUnidade.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> aplicarFiltros());
         }
         if (cbCurso != null) {
             cbCurso.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> aplicarFiltros());
         }
-
-        // NOTA: txtPesquisa e cbStatusFiltro permanecem sem listeners automáticos,
-        // dependendo exclusivamente do botão "Filtrar".
+        if (cbStatusFiltro != null) {
+            cbStatusFiltro.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> aplicarFiltros());
+        }
 
         carregarDadosDoBanco();
     }
@@ -379,22 +378,15 @@ public class SolicitacoesController {
     }
 
     private void carregarUnidadesDoBanco() {
-        // Pega o ID do usuário logado na sessão (ajuste o método getUsuarioLogado() conforme seu SessaoService)
-        int idUsuarioLogado = 1; // Ex: SessaoService.getUsuarioLogado().getIdUsuario();
-
-        List<String> unidadesDB = UnidadeDAO.listarUnidadesPorUsuario(idUsuarioLogado);
-        ObservableList<String> items = FXCollections.observableArrayList();
-
-        // Se o usuário trabalhar em mais de uma unidade, adiciona a opção "Todas"
-        if (unidadesDB.size() > 1) {
-            items.add("Todas");
-        }
-        items.addAll(unidadesDB);
+        // Utiliza o método nativo da UnidadeDAO mantendo a classe DAO original intocada
+        List<String> unidadesDB = UnidadeDAO.listarNomesUnidades();
+        ObservableList<String> items = FXCollections.observableArrayList(unidadesDB);
 
         cbUnidade.setItems(items);
 
-        // Define a primeira unidade dele como selecionada por padrão
-        if (!items.isEmpty()) {
+        if (items.contains("Todas")) {
+            cbUnidade.setValue("Todas");
+        } else if (!items.isEmpty()) {
             cbUnidade.getSelectionModel().selectFirst();
         }
     }

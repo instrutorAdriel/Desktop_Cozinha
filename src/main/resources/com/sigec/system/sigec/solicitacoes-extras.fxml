@@ -296,9 +296,15 @@
                                 <!-- Barra de Ferramentas / Filtros / Botões de Ação -->
                                 <HBox alignment="CENTER_LEFT" prefHeight="45.0" spacing="12.0">
                                     <children>
+                                        <!-- Campo de Pesquisa -->
                                         <TextField fx:id="txtPesquisa" prefHeight="35.0" prefWidth="220.0" promptText="🔍 Buscar insumo ou professor..." styleClass="search-field">
                                             <font><Font name="Arial" size="13.0" /></font>
                                         </TextField>
+
+                                        <!-- Botão Buscar ao lado da caixa de pesquisa -->
+                                        <Button mnemonicParsing="false" onAction="#onFiltrarClick" prefHeight="35.0" prefWidth="85.0" styleClass="btn-action-primary" text="Buscar">
+                                            <font><Font name="Arial Bold" size="13.0" /></font>
+                                        </Button>
 
                                         <!-- Filtro de Status -->
                                         <HBox alignment="CENTER_LEFT" spacing="8.0">
@@ -312,21 +318,16 @@
                                             </children>
                                         </HBox>
 
-                                        <Button mnemonicParsing="false" onAction="#onFiltrarClick" prefHeight="35.0" prefWidth="85.0" styleClass="btn-action-primary" text="Filtrar">
-                                            <font><Font name="Arial Bold" size="13.0" /></font>
-                                        </Button>
-
                                         <Region HBox.hgrow="ALWAYS" />
 
-                                        <HBox spacing="10" alignment="CENTER_RIGHT">
-                                            <!-- Botão Aprovar (Verde) -->
-                                            <Button fx:id="btnAprovar" onAction="#onAprovarClick" text="Aprovar"
-                                                    style="-fx-background-color: #2e7d32; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6; -fx-padding: 8 16;" />
+                                        <!-- Botão Recusar (Vermelho) -->
+                                        <Button fx:id="btnRecusar" onAction="#onRecusarClick" text="Recusar"
+                                                style="-fx-background-color: #d32f2f; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6; -fx-padding: 8 16;" />
 
-                                            <!-- Botão Recusar (Vermelho) -->
-                                            <Button fx:id="btnRecusar" onAction="#onRecusarClick" text="Recusar"
-                                                    style="-fx-background-color: #d32f2f; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6; -fx-padding: 8 16;" />
-                                        </HBox>
+                                        <!-- Botão Aprovar (Verde) -->
+                                        <Button fx:id="btnAprovar" onAction="#onAprovarClick" text="Aprovar"
+                                                style="-fx-background-color: #2e7d32; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6; -fx-padding: 8 16;" />
+
                                     </children>
                                 </HBox>
 
