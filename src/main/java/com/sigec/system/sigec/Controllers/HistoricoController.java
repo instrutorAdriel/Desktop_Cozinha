@@ -40,87 +40,35 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
-/**
- * Controlador da tela de Histórico, Auditoria de Movimentações e Lista de Compras.
- */
 public class HistoricoController implements Initializable {
 
-    @FXML
-    private AnchorPane topBarPane;
+    @FXML private AnchorPane topBarPane;
+    @FXML private Label dataLabel;
+    @FXML private Label usuarioLabel;
+    @FXML private Label horaLabel;
+    @FXML private TextField txtpesquisa;
+    @FXML @SuppressWarnings("unused") private Button btnbuscardata;
+    @FXML @SuppressWarnings("unused") private DatePicker dataDE;
+    @FXML @SuppressWarnings("unused") private DatePicker dataATE;
+    @FXML private ChoiceBox<String> filtro;
+    @FXML private ChoiceBox<UnidadeDTO> cbUnidade;
+    @FXML private ChoiceBox<CursoDTO> cbCurso;
 
-    @FXML
-    private Label dataLabel;
+    @FXML private TableView<HistoryDAO> tableHistorico;
+    @FXML private TableColumn<HistoryDAO, String> codMXM;
+    @FXML private TableColumn<HistoryDAO, String> nome_produto;
+    @FXML private TableColumn<HistoryDAO, String> tipo_estoque;
+    @FXML private TableColumn<HistoryDAO, Number> quantidade;
+    @FXML private TableColumn<HistoryDAO, Number> qtdcompra;
 
-    @FXML
-    private Label usuarioLabel;
-
-    @FXML
-    private Label horaLabel;
-
-    @FXML
-    private TextField txtpesquisa;
-
-    @FXML
-    private Button btnbuscardata;
-
-    @FXML
-    private DatePicker dataDE;
-
-    @FXML
-    private DatePicker dataATE;
-
-    @FXML
-    private ChoiceBox<String> filtro;
-
-    @FXML
-    private ChoiceBox<UnidadeDTO> cbUnidade;
-
-    @FXML
-    private ChoiceBox<CursoDTO> cbCurso;
-
-    // Componentes da Tabela
-    @FXML
-    private TableView<HistoryDAO> tableHistorico;
-
-    @FXML
-    private TableColumn<HistoryDAO, String> codMXM;
-
-    @FXML
-    private TableColumn<HistoryDAO, String> nome_produto;
-
-    @FXML
-    private TableColumn<HistoryDAO, String> tipo_estoque;
-
-    @FXML
-    private TableColumn<HistoryDAO, Integer> quantidade;
-
-    @FXML
-    private TableColumn<HistoryDAO, Integer> qtdcompra;
-
-    // Elementos de Navegação e Layout Lateral
-    @FXML
-    private Button btnNavCadastro;
-
-    @FXML
-    private VBox submenuCadastro;
-
-    @FXML
-    private Label setaCadastro;
-
-    @FXML
-    private Button botaoSair;
-
-    @FXML
-    private VBox submenuEstoque;
-
-    @FXML
-    private Label setaEstoque;
-
-    @FXML
-    private Button btnNavEstoque;
-
-    @FXML
-    private Button btnExportarCompras;
+    @FXML private Button btnNavCadastro;
+    @FXML private VBox submenuCadastro;
+    @FXML private Label setaCadastro;
+    @FXML @SuppressWarnings("unused") private Button botaoSair;
+    @FXML private VBox submenuEstoque;
+    @FXML private Label setaEstoque;
+    @FXML private Button btnNavEstoque;
+    @FXML @SuppressWarnings("unused") private Button btnExportarCompras;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -131,39 +79,25 @@ public class HistoricoController implements Initializable {
         configurarUsuario();
         configurarFiltroCategorias();
 
-        // Configuração do ChoiceBox de Turmas (vinculado ao cbCurso do FXML)
+        // 1. Carrega as turmas no ChoiceBox
         if (cbCurso != null) {
             List<CursoDTO> turmas = HistoryDAO.listarCursos();
             cbCurso.setItems(FXCollections.observableArrayList(turmas));
-
-            cbCurso.setConverter(new StringConverter<CursoDTO>() {
-                @Override
-                public String toString(CursoDTO turma) {
-                    return turma != null ? turma.getNome() : "";
-                }
-
-                @Override
-                public CursoDTO fromString(String string) {
-                    return null;
-                }
+            cbCurso.setConverter(new StringConverter<>() {
+                @Override public String toString(CursoDTO turma) { return turma != null ? turma.getNome() : ""; }
+                @Override public CursoDTO fromString(String string) { return null; }
             });
         }
 
-        // Configuração do ChoiceBox Dinâmico de Unidades
+        // 2. Carrega APENAS as unidades cadastradas/vinculadas ao utilizador logado
         if (cbUnidade != null) {
-            List<UnidadeDTO> unidades = HistoryDAO.listarUnidades();
+            String nomeUsuarioLogado = SessaoService.getNomeUsuarioLogado();
+            List<UnidadeDTO> unidades = HistoryDAO.listarUnidadesDoUsuario(nomeUsuarioLogado);
             cbUnidade.setItems(FXCollections.observableArrayList(unidades));
 
-            cbUnidade.setConverter(new StringConverter<UnidadeDTO>() {
-                @Override
-                public String toString(UnidadeDTO unidade) {
-                    return unidade != null ? unidade.getNome() : "";
-                }
-
-                @Override
-                public UnidadeDTO fromString(String string) {
-                    return null;
-                }
+            cbUnidade.setConverter(new StringConverter<>() {
+                @Override public String toString(UnidadeDTO unidade) { return unidade != null ? unidade.getNome() : ""; }
+                @Override public UnidadeDTO fromString(String string) { return null; }
             });
 
             cbUnidade.getSelectionModel().selectedItemProperty().addListener((obs, antigo, novo) -> {
@@ -184,32 +118,20 @@ public class HistoricoController implements Initializable {
     }
 
     private void configurarTabela() {
-        if (codMXM != null) {
-            codMXM.setCellValueFactory(new PropertyValueFactory<>("codMXM"));
-        }
-        if (nome_produto != null) {
-            nome_produto.setCellValueFactory(new PropertyValueFactory<>("nomeProduto"));
-        }
-        if (tipo_estoque != null) {
-            tipo_estoque.setCellValueFactory(new PropertyValueFactory<>("nomeCategoria"));
-        }
-        if (quantidade != null) {
-            quantidade.setCellValueFactory(new PropertyValueFactory<>("qtdAtual"));
-        }
-        if (qtdcompra != null) {
-            qtdcompra.setCellValueFactory(new PropertyValueFactory<>("qtdComprar"));
-        }
+        if (codMXM != null) codMXM.setCellValueFactory(new PropertyValueFactory<>("codMXM"));
+        if (nome_produto != null) nome_produto.setCellValueFactory(new PropertyValueFactory<>("nomeProduto"));
+        if (tipo_estoque != null) tipo_estoque.setCellValueFactory(new PropertyValueFactory<>("nomeCategoria"));
+        if (quantidade != null) quantidade.setCellValueFactory(new PropertyValueFactory<>("qtdAtual"));
+        if (qtdcompra != null) qtdcompra.setCellValueFactory(new PropertyValueFactory<>("qtdComprar"));
     }
 
     public void carregarDadosTabela(int idUnidade) {
         if (tableHistorico == null) return;
-
         try {
             List<HistoryDAO> listaCompras = HistoryDAO.listarListaDeCompras(idUnidade);
-            ObservableList<HistoryDAO> dadosObservable = FXCollections.observableArrayList(listaCompras);
-            tableHistorico.setItems(dadosObservable);
+            tableHistorico.setItems(FXCollections.observableArrayList(listaCompras));
         } catch (Exception e) {
-            exibirAlerta(Alert.AlertType.ERROR, "Erro", "Não foi possível carregar os dados da tabela: " + e.getMessage());
+            exibirAlerta("Não foi possível carregar os dados da tabela: " + e.getMessage());
         }
     }
 
@@ -226,13 +148,7 @@ public class HistoricoController implements Initializable {
 
     private void configurarFiltroCategorias() {
         if (filtro != null) {
-            filtro.setItems(FXCollections.observableArrayList(
-                    "Todos",
-                    "Entrada",
-                    "Saída",
-                    "Ajuste",
-                    "Descarte"
-            ));
+            filtro.setItems(FXCollections.observableArrayList("Todos", "Entrada", "Saída", "Ajuste", "Descarte"));
             filtro.getSelectionModel().selectFirst();
         }
     }
@@ -241,9 +157,7 @@ public class HistoricoController implements Initializable {
         DateTimeFormatter dataFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         DateTimeFormatter horaFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
 
-        if (dataLabel != null) {
-            dataLabel.setText(LocalDate.now().format(dataFormatter));
-        }
+        if (dataLabel != null) dataLabel.setText(LocalDate.now().format(dataFormatter));
 
         if (horaLabel != null) {
             horaLabel.setText(LocalTime.now().format(horaFormatter));
@@ -259,133 +173,50 @@ public class HistoricoController implements Initializable {
     // NAVEGAÇÃO
     // =========================================================================
 
-    @FXML
-    public void onClickHome(ActionEvent event) {
-        try {
-            MainApplication.trocadorDeTelas("home.fxml");
-        } catch (IOException e) {
-            exibirAlerta(Alert.AlertType.ERROR, "Erro", "Erro ao navegar para a tela inicial: " + e.getMessage());
-        }
+    @FXML public void onClickHome(ActionEvent event) {
+        try { MainApplication.trocadorDeTelas("home.fxml"); } catch (IOException e) { exibirAlerta("Erro ao navegar: " + e.getMessage()); }
     }
-
-    @FXML
-    protected void botaoCalendarioAction(ActionEvent event) {
-        try {
-            MainApplication.trocadorDeTelas("calendario.fxml");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    @FXML protected void botaoCalendarioAction(ActionEvent event) {
+        try { MainApplication.trocadorDeTelas("calendario.fxml"); } catch (IOException e) { System.err.println(e.getMessage()); }
     }
-
-    @FXML
-    public void onClickSolicitacoes(ActionEvent event) {
-        try {
-            MainApplication.trocadorDeTelas("solicitacoes-extras.fxml");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    @FXML public void onClickSolicitacoes(ActionEvent event) {
+        try { MainApplication.trocadorDeTelas("solicitacoes-extras.fxml"); } catch (IOException e) { System.err.println(e.getMessage()); }
     }
-
-    @FXML
-    public void toggleDropdownCadastro(ActionEvent event) {
+    @FXML public void toggleDropdownCadastro(ActionEvent event) {
         if (submenuCadastro != null) {
             boolean expandido = !submenuCadastro.isVisible();
             submenuCadastro.setVisible(expandido);
             submenuCadastro.setManaged(expandido);
-            if (setaCadastro != null) {
-                setaCadastro.setText(expandido ? "▶" : "▼");
-            }
-            if (expandido && btnNavCadastro != null) {
-                ButtonBorderLapAnimator.animarDropdown(btnNavCadastro, submenuCadastro);
-            } else if (!expandido && btnNavCadastro != null) {
-                ButtonBorderLapAnimator.cancelarAnimacaoAtiva();
-                btnNavCadastro.getStyleClass().remove("btn-dropdown-ativo");
-                btnNavCadastro.setStyle(null);
-                submenuCadastro.getStyleClass().remove("submenu-lateral-ativo");
-                submenuCadastro.setStyle(null);
-            }
+            if (setaCadastro != null) setaCadastro.setText(expandido ? "▶" : "▼");
         }
     }
-
-    @FXML
-    public void toggleDropdownEstoque(ActionEvent event) {
+    @FXML public void toggleDropdownEstoque(ActionEvent event) {
         if (submenuEstoque != null && btnNavEstoque != null) {
             boolean expandido = !submenuEstoque.isVisible();
-
-            if (setaEstoque != null) {
-                setaEstoque.setText(expandido ? "▲" : "▼");
-            }
-
-            if (expandido) {
-                submenuEstoque.setVisible(true);
-                submenuEstoque.setManaged(true);
-                DropdownBorderLapAnimator.animarDropdown(btnNavEstoque, submenuEstoque);
-            } else {
-                ButtonBorderLapAnimator.cancelarAnimacaoAtiva();
-                btnNavEstoque.getStyleClass().remove("btn-dropdown-ativo");
-                btnNavEstoque.setStyle(null);
-                submenuEstoque.getStyleClass().remove("submenu-lateral-ativo");
-                submenuEstoque.setStyle(null);
-                submenuEstoque.setVisible(false);
-                submenuEstoque.setManaged(false);
-            }
+            if (setaEstoque != null) setaEstoque.setText(expandido ? "▲" : "▼");
+            submenuEstoque.setVisible(expandido);
+            submenuEstoque.setManaged(expandido);
         }
     }
-
-    @FXML
-    public void onClickInsumos(ActionEvent event) {
-        try {
-            MainApplication.trocadorDeTelas("lista-estoque.fxml");
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.out.println("Erro ao carregar a tela de Insumos: " + e.getMessage());
-        }
+    @FXML public void onClickInsumos(ActionEvent event) {
+        try { MainApplication.trocadorDeTelas("lista-estoque.fxml"); } catch (IOException e) { System.err.println(e.getMessage()); }
     }
-
-    @FXML
-    public void onClickUtensilios(ActionEvent event) {
-        try {
-            MainApplication.trocadorDeTelas("gestao-utensilios.fxml");
-        } catch (java.io.IOException e) {
-            e.printStackTrace();
-            System.out.println("Erro ao carregar a tela de Utensílios: " + e.getMessage());
-        }
+    @FXML public void onClickUtensilios(ActionEvent event) {
+        try { MainApplication.trocadorDeTelas("gestao-utensilios.fxml"); } catch (IOException e) { System.err.println(e.getMessage()); }
     }
-
-    @FXML
-    public void onClickCadastroUsuario(ActionEvent event) {
-        navegarParaCadastro();
+    @FXML public void onClickCadastroUsuario(ActionEvent event) { navegarParaCadastro(); }
+    @FXML public void onClickCadastroTurma(ActionEvent event) {
+        try { MainApplication.trocadorDeTelas("cadastro-turma.fxml"); } catch (IOException e) { exibirAlerta(e.getMessage()); }
     }
-
-    @FXML
-    public void onClickCadastroTurma(ActionEvent event) {
-        try {
-            MainApplication.trocadorDeTelas("cadastro-turma.fxml");
-        } catch (IOException e) {
-            exibirAlerta(Alert.AlertType.ERROR, "Erro", "Não foi possível carregar a tela de Cadastro de Turma: " + e.getMessage());
-        }
-    }
-
     private void navegarParaCadastro() {
-        try {
-            MainApplication.trocadorDeTelas("cadastro.fxml");
-        } catch (IOException e) {
-            exibirAlerta(Alert.AlertType.ERROR, "Erro", "Erro ao navegar para a tela de cadastro: " + e.getMessage());
-        }
+        try { MainApplication.trocadorDeTelas("cadastro.fxml"); } catch (IOException e) { exibirAlerta(e.getMessage()); }
     }
-
-    @FXML
-    public void botaoSairAction(ActionEvent event) {
-        try {
-            SessaoService.encerrarSessao();
-            MainApplication.trocadorDeTelas("login.fxml");
-        } catch (IOException e) {
-            exibirAlerta(Alert.AlertType.ERROR, "Erro", "Erro ao sair: " + e.getMessage());
-        }
+    @FXML public void botaoSairAction(ActionEvent event) {
+        try { SessaoService.encerrarSessao(); MainApplication.trocadorDeTelas("login.fxml"); } catch (IOException e) { exibirAlerta(e.getMessage()); }
     }
 
     // =========================================================================
-    // PESQUISA, PERÍODO, TURMA E TOLERÂNCIA A ERROS NO BOTÃO
+    // Filtra por período e turma quando datas são informadas; sem datas, mantém a lista padrão.
     // =========================================================================
 
     @FXML
@@ -403,27 +234,36 @@ public class HistoricoController implements Initializable {
 
         List<HistoryDAO> listaBase;
 
-        // Validação: Se selecionou a turma e o intervalo de datas, calcula com base nas fichas da turma
-        if (idTurma > 0 && dataInicio != null && dataFim != null) {
-            if (dataInicio.isAfter(dataFim)) {
-                exibirAlerta(Alert.AlertType.ERROR, "Erro", "A data inicial não pode ser superior à data final.");
+        boolean algumaDataInformada = dataInicio != null || dataFim != null;
+        if (algumaDataInformada && (dataInicio == null || dataFim == null)) {
+            exibirAlerta("Informe as datas inicial e final para filtrar o período.");
+            return;
+        }
+
+        if (dataInicio != null && dataFim != null) {
+            if (idTurma <= 0) {
+                exibirAlerta("Selecione uma turma para filtrar as fichas alocadas no período.");
                 return;
             }
+            if (dataInicio.isAfter(dataFim)) {
+                exibirAlerta("A data inicial não pode ser superior à data final.");
+                return;
+            }
+            // Método de período ativo
             listaBase = HistoryDAO.listarComprasPorPeriodo(idUnidade, idTurma, dataInicio, dataFim);
         } else {
+            // Caso contrário (se nada estiver selecionado ou incompleto), roda o método padrão geral de reposição
             listaBase = HistoryDAO.listarListaDeCompras(idUnidade);
         }
 
-        // Se houver termo digitado no campo de pesquisa, aplica o filtro inteligente (Levenshtein)
+        // Aplica o filtro de pesquisa textual com tolerância (Levenshtein) se houver termo digitado
         if (!termo.isEmpty()) {
             String termoLower = termo.toLowerCase();
             listaBase = listaBase.stream().filter(item -> {
                 if (item.getNomeProduto() == null) return false;
                 String nomeProd = item.getNomeProduto().toLowerCase();
 
-                if (nomeProd.contains(termoLower)) {
-                    return true;
-                }
+                if (nomeProd.contains(termoLower)) return true;
 
                 int tolerancia = termoLower.length() > 5 ? 2 : 1;
                 return calcularDistanciaLevenshtein(nomeProd, termoLower) <= tolerancia;
@@ -451,16 +291,14 @@ public class HistoricoController implements Initializable {
                     }
                 }
             }
-            if (i > 0) {
-                custos[s2.length()] = ultimoValor;
-            }
+            if (i > 0) custos[s2.length()] = ultimoValor;
         }
         return custos[s2.length()];
     }
 
-    private void exibirAlerta(Alert.AlertType tipo, String titulo, String mensagem) {
-        Alert alert = new Alert(tipo);
-        alert.setTitle(titulo);
+    private void exibirAlerta(String mensagem) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Erro");
         alert.setHeaderText(null);
         alert.setContentText(mensagem);
         alert.showAndWait();
