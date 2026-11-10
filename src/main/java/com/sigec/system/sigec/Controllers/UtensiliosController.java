@@ -73,12 +73,6 @@ public class UtensiliosController implements Initializable {
         configurarColunas();
         carregarOpcoesFiltros();
 
-        if (txtPesquisaUtensilio != null) {
-            txtPesquisaUtensilio.textProperty().addListener((observable, oldValue, newValue) -> {
-                onFiltrarClick(new ActionEvent());
-            });
-        }
-
         if (cbLaboratorio != null) {
             cbLaboratorio.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
                 if (newValue != null) {

@@ -344,7 +344,7 @@
                                 <!-- Barra de Ferramentas / Ações e os antigos filtros -->
                                 <HBox alignment="CENTER_LEFT" prefHeight="45.0" spacing="12.0">
                                     <children>
-                                        <TextField fx:id="txtPesquisaUtensilio" onAction="#onFiltrarClick" prefHeight="35.0" prefWidth="265.0" promptText="🔍 Pesquisar utensílio ou nº patrimônio..." styleClass="search-field">
+                                        <TextField fx:id="txtPesquisaUtensilio" prefHeight="35.0" prefWidth="265.0" promptText="🔍 Pesquisar utensílio ou nº patrimônio..." styleClass="search-field">
                                             <font><Font name="Arial" size="13.0" /></font>
                                         </TextField>
 
