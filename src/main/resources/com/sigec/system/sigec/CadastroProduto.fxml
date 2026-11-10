@@ -15,16 +15,16 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane prefHeight="480.0" prefWidth="520.0" stylesheets="@CSS/StyleSheet.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sigec.system.sigec.Controllers.CadastroProdutoController">
+<BorderPane prefHeight="565.0" prefWidth="520.0" stylesheets="@CSS/StyleSheet.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sigec.system.sigec.Controllers.CadastroProdutoController">
    <center>
-      <StackPane prefHeight="480.0" prefWidth="520.0" styleClass="painel-center" BorderPane.alignment="CENTER">
+      <StackPane prefHeight="565.0" prefWidth="520.0" styleClass="painel-center" BorderPane.alignment="CENTER">
          <children>
             <ImageView fitHeight="380.0" fitWidth="380.0" opacity="0.15" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@imagens/LogocoloridaSenac.png" />
                </image>
             </ImageView>
-            <VBox alignment="CENTER" maxWidth="450.0" prefHeight="480.0" prefWidth="450.0" spacing="12.0">
+            <VBox alignment="CENTER" maxWidth="450.0" prefHeight="565.0" prefWidth="450.0" spacing="12.0">
                <children>
                   <Label alignment="CENTER" text="ADICIONAR PRODUTO" textFill="#054685">
                      <font>
@@ -105,6 +105,32 @@
                         </HBox>
                         <HBox alignment="CENTER_LEFT" prefHeight="35.0">
                            <children>
+                              <Label prefWidth="170.0" text="LOTE">
+                                 <font>
+                                    <Font name="Arial Bold" size="13.0" />
+                                 </font>
+                              </Label>
+                              <Region HBox.hgrow="ALWAYS" />
+                              <TextField fx:id="txtLote" prefHeight="30.0" prefWidth="220.0" promptText="Ex: L2026-001">
+                                 <font>
+                                    <Font name="Arial" size="12.0" />
+                                 </font>
+                              </TextField>
+                           </children>
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" prefHeight="35.0">
+                           <children>
+                              <Label prefWidth="170.0" text="UNIDADE">
+                                 <font>
+                                    <Font name="Arial Bold" size="13.0" />
+                                 </font>
+                              </Label>
+                              <Region HBox.hgrow="ALWAYS" />
+                              <ChoiceBox fx:id="cbUnidade" prefHeight="30.0" prefWidth="220.0" />
+                           </children>
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" prefHeight="35.0">
+                           <children>
                               <Label prefWidth="170.0" text="DATA DE VALIDADE">
                                  <font>
                                     <Font name="Arial Bold" size="13.0" />
@@ -142,4 +168,3 @@
       </StackPane>
    </center>
 </BorderPane>
-

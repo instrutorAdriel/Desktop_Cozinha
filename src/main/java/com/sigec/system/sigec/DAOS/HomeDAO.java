@@ -13,7 +13,7 @@ import java.util.List;
 
 public class HomeDAO {
 
-    // 1. Produtos Vencidos
+    //  Produtos Vencidos
     public List<AlertaEstoqueDTO> listarProdutosVencidos(int idUnidade) {
         List<AlertaEstoqueDTO> lista = new ArrayList<>();
         String sql = "SELECT p.nome_produto, i.data_validade, c.nome_categoria " +
@@ -50,7 +50,7 @@ public class HomeDAO {
         return lista;
     }
 
-    // 2. Próximos ao Vencimento
+    //  Próximos ao Vencimento
     public List<AlertaEstoqueDTO> listarProximosVencimento(int idUnidade) {
         List<AlertaEstoqueDTO> lista = new ArrayList<>();
         String sql = "SELECT p.nome_produto, i.data_validade, i.lote, i.quantidade " +
@@ -86,13 +86,13 @@ public class HomeDAO {
         return lista;
     }
 
-    // 3. Estoque Baixo
+    //  Estoque Baixo
     public List<AlertaEstoqueDTO> listarEstoqueBaixo(int idUnidade) {
         List<AlertaEstoqueDTO> lista = new ArrayList<>();
-        String sql = "SELECT p.nome_produto, i.quantidade, i.quantidade_mininma " +
+        String sql = "SELECT p.nome_produto, i.quantidade, i.quantidade_minima " +
                 "FROM insumo i " +
                 "JOIN produto p ON i.id_produto = p.id_produto " +
-                "WHERE i.quantidade > 0 AND i.quantidade <= i.quantidade_mininma " +
+                "WHERE i.quantidade > 0 AND i.quantidade <= i.quantidade_minima " +
                 "AND i.cancelado = 'N' AND i.id_unidade = ?";
 
         try (Connection conn = ConfigDataBase.getConnection();
@@ -105,7 +105,7 @@ public class HomeDAO {
                     AlertaEstoqueDTO alerta = new AlertaEstoqueDTO();
                     alerta.setNomeProduto(rs.getString("nome_produto"));
                     alerta.setQtdAtual(rs.getInt("quantidade"));
-                    alerta.setQtdMinima(rs.getInt("quantidade_mininma"));
+                    alerta.setQtdMinima(rs.getInt("quantidade_minima"));
 
                     lista.add(alerta);
                 }
