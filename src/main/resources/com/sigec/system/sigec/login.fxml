@@ -24,7 +24,7 @@
             </Group>
 
             <!-- Logo colorida Senac no topo à esquerda -->
-            <ImageView fx:id="logoSenac" fitHeight="130.0" fitWidth="180.0" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="50.0" AnchorPane.topAnchor="50.0">
+            <ImageView fx:id="logoSenac" fitHeight="130.0" fitWidth="180.0" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="90.0" AnchorPane.topAnchor="110.0">
                 <image>
                     <Image url="@imagens/LogocoloridaSenac.png" />
                 </image>

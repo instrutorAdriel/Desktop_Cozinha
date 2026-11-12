@@ -6,6 +6,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
+import javafx.scene.image.Image;
 
 
 import java.io.IOException;
@@ -29,7 +30,14 @@ public class MainApplication extends Application {
         // Carrega a primeira tela
         trocadorDeTelas("login.fxml");
 
-        primaryStage.setTitle("Sistema Cozinha");
+        primaryStage.setTitle("");
+        stage.getIcons().add(
+                new Image(
+                        MainApplication.class.getResource(
+                                "/com/sigec/system/sigec/imagens/logo-white.png"
+                        ).toExternalForm()
+                )
+        );
         primaryStage.setMaximized(true);
         primaryStage.show();
     }
