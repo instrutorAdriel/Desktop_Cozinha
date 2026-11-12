@@ -13,13 +13,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
-import javafx.scene.control.ToggleButton;
+import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
@@ -416,6 +410,19 @@ public class CadastroController implements Initializable {
         String nomeLimpo = nome.trim();
         String emailLimpo = email.trim();
 
+
+        // [NOVO] Rejeita nomes com números/símbolos ou sem sobrenome
+        if (!validarNomeCompleto(nomeLimpo)) {
+            exibirAlerta(Alert.AlertType.WARNING, "Nome Inválido",
+                    "Informe o nome completo (nome e sobrenome), usando somente letras.");
+            if (txtNome != null) {
+                txtNome.requestFocus();
+            }
+            return; // rejeita: não chega no UserDAO
+        }
+
+
+
         if (!validarEmailInstitucional(emailLimpo)) {
             exibirAlerta(Alert.AlertType.WARNING, "E-mail Institucional Inválido",
                     "O e-mail institucional deve pertencer obrigatoriamente ao domínio @df.senac.br (ex: usuario@df.senac.br).");
@@ -503,11 +510,29 @@ public class CadastroController implements Initializable {
         }
     }
 
+    // [NOVO] Bloqueia a digitação/colagem de números e símbolos no campo Nome
+    private void configurarValidacaoNome() {
+        if (txtNome != null) {
+            txtNome.setTextFormatter(new TextFormatter<String>(change ->
+                    change.getControlNewText().matches("[\\p{L} '\\-]*") ? change : null));
+        }
+    }
+
+    // [NOVO] Exige nome e sobrenome, somente letras (com acento), espaço, apóstrofo e hífen
+    private boolean validarNomeCompleto(String nome) {
+        if (nome == null || nome.isBlank()) {
+            return false;
+        }
+        return nome.trim().replaceAll("\\s+", " ")
+                .matches("^\\p{L}{2,}(?:[ '\\-]\\p{L}+)+$");
+    }
+
     private boolean validarEmailInstitucional(String email) {
         if (email == null || email.isBlank()) {
             return false;
         }
         return email.trim().toLowerCase().matches("^[a-z0-9._%+-]+@df\\.senac\\.br$");
+
     }
 
     private boolean validarSenha(String senha) {
