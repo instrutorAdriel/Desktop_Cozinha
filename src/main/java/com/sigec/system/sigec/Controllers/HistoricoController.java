@@ -113,9 +113,6 @@ public class HistoricoController implements Initializable {
         if (dataATE != null) {
             dataATE.valueProperty().addListener((obs, antiga, nova) -> atualizarTabela());
         }
-        if (txtpesquisa != null) {
-            txtpesquisa.textProperty().addListener((obs, antigo, novo) -> atualizarTabela());
-        }
         atualizarTabela();
     }
 
