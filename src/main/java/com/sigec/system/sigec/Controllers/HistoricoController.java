@@ -4,6 +4,7 @@ import com.sigec.system.sigec.Constructors.UnidadeDTO;
 import com.sigec.system.sigec.Constructors.CursoDTO;
 import com.sigec.system.sigec.DAOS.HistoryDAO;
 import com.sigec.system.sigec.MainApplication;
+import com.sigec.system.sigec.Constructors.User;
 import com.sigec.system.sigec.Services.SessaoService;
 import com.sigec.system.sigec.Utils.BackgroundAnimator;
 import com.sigec.system.sigec.Utils.ButtonBorderLapAnimator;
@@ -13,7 +14,6 @@ import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -36,6 +36,7 @@ import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
@@ -79,42 +80,58 @@ public class HistoricoController implements Initializable {
         configurarUsuario();
         configurarFiltroCategorias();
 
-        // 1. Carrega as turmas no ChoiceBox
+        configurarTabela();
+
         if (cbCurso != null) {
-            List<CursoDTO> turmas = HistoryDAO.listarCursos();
-            cbCurso.setItems(FXCollections.observableArrayList(turmas));
             cbCurso.setConverter(new StringConverter<>() {
                 @Override public String toString(CursoDTO turma) { return turma != null ? turma.getNome() : ""; }
                 @Override public CursoDTO fromString(String string) { return null; }
             });
+            cbCurso.getSelectionModel().selectedItemProperty().addListener(
+                    (obs, antigo, novo) -> atualizarTabela());
         }
 
-        // 2. Carrega APENAS as unidades cadastradas/vinculadas ao utilizador logado
         if (cbUnidade != null) {
-            String nomeUsuarioLogado = SessaoService.getNomeUsuarioLogado();
-            List<UnidadeDTO> unidades = HistoryDAO.listarUnidadesDoUsuario(nomeUsuarioLogado);
+            User usuarioLogado = SessaoService.getUsuarioAtual();
+            List<UnidadeDTO> unidades = usuarioLogado == null || usuarioLogado.getIdUsuario() <= 0
+                    ? List.of()
+                    : HistoryDAO.listarUnidadesDoUsuario(usuarioLogado.getIdUsuario());
             cbUnidade.setItems(FXCollections.observableArrayList(unidades));
-
             cbUnidade.setConverter(new StringConverter<>() {
                 @Override public String toString(UnidadeDTO unidade) { return unidade != null ? unidade.getNome() : ""; }
                 @Override public UnidadeDTO fromString(String string) { return null; }
             });
-
             cbUnidade.getSelectionModel().selectedItemProperty().addListener((obs, antigo, novo) -> {
-                if (novo != null) {
-                    carregarDadosTabela(novo.getId());
-                }
+                carregarTurmas(novo);
             });
-
-            if (!unidades.isEmpty()) {
-                cbUnidade.getSelectionModel().selectFirst();
-            }
+            cbUnidade.getSelectionModel().selectFirst();
         }
 
-        configurarTabela();
+        if (dataDE != null) {
+            dataDE.valueProperty().addListener((obs, antiga, nova) -> atualizarTabela());
+        }
+        if (dataATE != null) {
+            dataATE.valueProperty().addListener((obs, antiga, nova) -> atualizarTabela());
+        }
+        if (txtpesquisa != null) {
+            txtpesquisa.textProperty().addListener((obs, antigo, novo) -> atualizarTabela());
+        }
+        atualizarTabela();
+    }
 
-        int idUnidadeInicial = (cbUnidade != null && cbUnidade.getValue() != null) ? cbUnidade.getValue().getId() : 1;
-        carregarDadosTabela(idUnidadeInicial);
+    private void carregarTurmas(UnidadeDTO unidade) {
+        if (cbCurso == null) {
+            atualizarTabela();
+            return;
+        }
+        List<CursoDTO> turmas = new ArrayList<>();
+        turmas.add(new CursoDTO(0, "Todos"));
+        if (unidade != null) {
+            turmas.addAll(HistoryDAO.listarCursos(unidade.getId()));
+        }
+        cbCurso.setItems(FXCollections.observableArrayList(turmas));
+        cbCurso.getSelectionModel().selectFirst();
+        atualizarTabela();
     }
 
     private void configurarTabela() {
@@ -128,7 +145,9 @@ public class HistoricoController implements Initializable {
     public void carregarDadosTabela(int idUnidade) {
         if (tableHistorico == null) return;
         try {
-            List<HistoryDAO> listaCompras = HistoryDAO.listarListaDeCompras(idUnidade);
+            CursoDTO turma = cbCurso != null ? cbCurso.getValue() : null;
+            List<HistoryDAO> listaCompras = HistoryDAO.listarListaDeCompras(
+                    idUnidade, turma != null ? turma.getId() : 0);
             tableHistorico.setItems(FXCollections.observableArrayList(listaCompras));
         } catch (Exception e) {
             exibirAlerta("Não foi possível carregar os dados da tabela: " + e.getMessage());
@@ -216,13 +235,22 @@ public class HistoricoController implements Initializable {
     }
 
     // =========================================================================
-    // Filtra por período e turma quando datas são informadas; sem datas, mantém a lista padrão.
+    // Os filtros de turma e período são opcionais e independentes.
     // =========================================================================
 
     @FXML
     public void filtrarHistorico(ActionEvent event) {
+        atualizarTabela();
+    }
+
+    private void atualizarTabela() {
+        if (tableHistorico == null) return;
         UnidadeDTO unidadeSelecionada = cbUnidade != null ? cbUnidade.getValue() : null;
-        int idUnidade = unidadeSelecionada != null ? unidadeSelecionada.getId() : 1;
+        if (unidadeSelecionada == null) {
+            tableHistorico.setItems(FXCollections.observableArrayList());
+            return;
+        }
+        int idUnidade = unidadeSelecionada.getId();
 
         CursoDTO turmaSelecionada = cbCurso != null ? cbCurso.getValue() : null;
         int idTurma = turmaSelecionada != null ? turmaSelecionada.getId() : 0;
@@ -234,26 +262,18 @@ public class HistoricoController implements Initializable {
 
         List<HistoryDAO> listaBase;
 
-        boolean algumaDataInformada = dataInicio != null || dataFim != null;
-        if (algumaDataInformada && (dataInicio == null || dataFim == null)) {
-            exibirAlerta("Informe as datas inicial e final para filtrar o período.");
+        if (dataInicio != null && dataFim != null && dataInicio.isAfter(dataFim)) {
+            tableHistorico.setItems(FXCollections.observableArrayList());
+            exibirAlerta("A data inicial não pode ser superior à data final.");
             return;
         }
 
-        if (dataInicio != null && dataFim != null) {
-            if (idTurma <= 0) {
-                exibirAlerta("Selecione uma turma para filtrar as fichas alocadas no período.");
-                return;
-            }
-            if (dataInicio.isAfter(dataFim)) {
-                exibirAlerta("A data inicial não pode ser superior à data final.");
-                return;
-            }
-            // Método de período ativo
-            listaBase = HistoryDAO.listarComprasPorPeriodo(idUnidade, idTurma, dataInicio, dataFim);
+        if (dataInicio != null || dataFim != null) {
+            LocalDate inicioConsulta = dataInicio != null ? dataInicio : dataFim;
+            LocalDate fimConsulta = dataFim != null ? dataFim : dataInicio;
+            listaBase = HistoryDAO.listarComprasPorPeriodo(idUnidade, idTurma, inicioConsulta, fimConsulta);
         } else {
-            // Caso contrário (se nada estiver selecionado ou incompleto), roda o método padrão geral de reposição
-            listaBase = HistoryDAO.listarListaDeCompras(idUnidade);
+            listaBase = HistoryDAO.listarListaDeCompras(idUnidade, idTurma);
         }
 
         // Aplica o filtro de pesquisa textual com tolerância (Levenshtein) se houver termo digitado
