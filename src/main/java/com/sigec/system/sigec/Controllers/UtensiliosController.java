@@ -1,5 +1,6 @@
 package com.sigec.system.sigec.Controllers;
 
+import com.sigec.system.sigec.Constructors.User;
 import com.sigec.system.sigec.Constructors.Utensilio;
 import com.sigec.system.sigec.DAOS.UnidadeDAO;
 import com.sigec.system.sigec.DAOS.UtensilioDAO;
@@ -10,6 +11,7 @@ import com.sigec.system.sigec.Utils.DropdownBorderLapAnimator;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -25,10 +27,20 @@ import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class UtensiliosController implements Initializable {
+
+    private static final ExecutorService DB_EXECUTOR = Executors.newCachedThreadPool(r -> {
+        Thread t = new Thread(r, "SIGEC-Utensilios-Worker");
+        t.setDaemon(true);
+        return t;
+    });
 
     @FXML private Label dataLabel;
     @FXML private Label horaLabel;
@@ -44,26 +56,24 @@ public class UtensiliosController implements Initializable {
 
     @FXML private TableView<Utensilio> tabelaUtensilios;
     @FXML private TableColumn<Utensilio, String> colItem;
+    @FXML private TableColumn<Utensilio, Integer> colPatrimonio;
     @FXML private TableColumn<Utensilio, String> colLaboratorio;
     @FXML private TableColumn<Utensilio, String> colStatus;
-    @FXML private TableColumn<Utensilio, Integer> colQtdTotal;
-    @FXML private TableColumn<Utensilio, Integer> colQtdDisponivel;
 
     @FXML private VBox submenuEstoque;
     @FXML private Label setaEstoque;
     @FXML private Button btnNavEstoque;
 
     @FXML private ChoiceBox<String> cbUnidade;
-    // cbCurso foi removido
 
     @FXML private Button btnAvaria;
 
     private ObservableList<Utensilio> observableListUtensilios;
+    private boolean ignorarEventosFiltro = false;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         iniciarRelogio();
-
 
         if (SessaoService.getUsuarioAtual() != null) {
             usuarioLabel.setText(SessaoService.getUsuarioAtual().getNome());
@@ -71,42 +81,120 @@ public class UtensiliosController implements Initializable {
             usuarioLabel.setText("Administrador");
         }
 
-        if (cbStatus != null) {
-            cbStatus.setItems(FXCollections.observableArrayList("Todos", "Disponível", "Em uso", "Conserto"));
-            cbStatus.setValue("Todos");
-        }
+        configurarColunas();
+        observableListUtensilios = FXCollections.observableArrayList();
+        tabelaUtensilios.setItems(observableListUtensilios);
 
         if (cbLaboratorio != null) {
-            cbLaboratorio.setItems(FXCollections.observableArrayList("Todos", "Estoque Central", "Cozinha Quente", "Cozinha Oriental"));
-            cbLaboratorio.setValue("Todos");
-        }
-
-        if (cbUnidade != null) {
-            cbUnidade.setItems(FXCollections.observableArrayList(UnidadeDAO.listarNomesUnidades()));
-            cbUnidade.setValue("Todas");
-
-
-            cbUnidade.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-                onFiltrarClick(new ActionEvent());
+            cbLaboratorio.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+                if (!ignorarEventosFiltro && newValue != null) {
+                    onFiltrarClick(new ActionEvent());
+                }
             });
         }
 
-        configurarColunas();
-        carregarDadosBanco();
+        if (cbStatus != null) {
+            cbStatus.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+                if (!ignorarEventosFiltro && newValue != null) {
+                    onFiltrarClick(new ActionEvent());
+                }
+            });
+        }
+
+        if (cbUnidade != null) {
+            cbUnidade.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+                if (!ignorarEventosFiltro && newValue != null) {
+                    onFiltrarClick(new ActionEvent());
+                }
+            });
+        }
+
+        carregarOpcoesFiltros();
+
+        if (cbUnidade != null) {
+            User usuarioLogado = SessaoService.getUsuarioAtual();
+            final int idUsuario = (usuarioLogado != null && usuarioLogado.getIdUsuario() > 0)
+                    ? usuarioLogado.getIdUsuario()
+                    : 0;
+
+            CompletableFuture.supplyAsync(() ->
+                    idUsuario > 0 ? UnidadeDAO.listarNomesUnidadesPorUsuario(idUsuario) : new ArrayList<String>(),
+                    DB_EXECUTOR
+            ).thenAccept(unidadesVinculadas -> Platform.runLater(() -> {
+                ignorarEventosFiltro = true;
+                try {
+                    cbUnidade.setItems(FXCollections.observableArrayList(unidadesVinculadas));
+                    if (!unidadesVinculadas.isEmpty()) {
+                        cbUnidade.getSelectionModel().selectFirst();
+                    }
+                } finally {
+                    ignorarEventosFiltro = false;
+                }
+                onFiltrarClick(new ActionEvent());
+            }));
+        } else {
+            carregarDadosBanco();
+        }
+    }
+
+    private void carregarOpcoesFiltros() {
+        if (cbLaboratorio != null) {
+            final String labSelecionado = cbLaboratorio.getValue();
+            CompletableFuture.supplyAsync(UtensilioDAO::listarOpcoesLaboratorio, DB_EXECUTOR)
+                    .thenAccept(labs -> Platform.runLater(() -> {
+                        ignorarEventosFiltro = true;
+                        try {
+                            cbLaboratorio.setItems(FXCollections.observableArrayList(labs));
+                            if (labSelecionado != null && labs.contains(labSelecionado)) {
+                                cbLaboratorio.setValue(labSelecionado);
+                            } else {
+                                cbLaboratorio.setValue("Todos");
+                            }
+                        } finally {
+                            ignorarEventosFiltro = false;
+                        }
+                    }));
+        }
+
+        if (cbStatus != null) {
+            final String statusSelecionado = cbStatus.getValue();
+            CompletableFuture.supplyAsync(UtensilioDAO::listarOpcoesSituacao, DB_EXECUTOR)
+                    .thenAccept(situacoes -> Platform.runLater(() -> {
+                        ignorarEventosFiltro = true;
+                        try {
+                            cbStatus.setItems(FXCollections.observableArrayList(situacoes));
+                            if (statusSelecionado != null && situacoes.contains(statusSelecionado)) {
+                                cbStatus.setValue(statusSelecionado);
+                            } else {
+                                cbStatus.setValue("Todos");
+                            }
+                        } finally {
+                            ignorarEventosFiltro = false;
+                        }
+                    }));
+        }
     }
 
     private void configurarColunas() {
         colItem.setCellValueFactory(new PropertyValueFactory<>("nome"));
+        if (colPatrimonio != null) {
+            colPatrimonio.setCellValueFactory(new PropertyValueFactory<>("numeroPatrimonio"));
+        }
         colLaboratorio.setCellValueFactory(new PropertyValueFactory<>("laboratorio"));
         colStatus.setCellValueFactory(new PropertyValueFactory<>("status"));
-        colQtdTotal.setCellValueFactory(new PropertyValueFactory<>("qtdTotal"));
-        colQtdDisponivel.setCellValueFactory(new PropertyValueFactory<>("qtdDisponivel"));
     }
 
     private void carregarDadosBanco() {
-        List<Utensilio> utensiliosDb = UtensilioDAO.listarUtensilios();
-        observableListUtensilios = FXCollections.observableArrayList(utensiliosDb);
-        tabelaUtensilios.setItems(observableListUtensilios);
+        CompletableFuture.supplyAsync(UtensilioDAO::listarUtensilios, DB_EXECUTOR)
+                .thenAccept(utensiliosDb -> Platform.runLater(() -> {
+                    if (observableListUtensilios == null) {
+                        observableListUtensilios = FXCollections.observableArrayList(utensiliosDb);
+                        tabelaUtensilios.setItems(observableListUtensilios);
+                    } else {
+                        observableListUtensilios.setAll(utensiliosDb);
+                        tabelaUtensilios.refresh();
+                    }
+                }));
     }
 
     private void iniciarRelogio() {
@@ -123,16 +211,34 @@ public class UtensiliosController implements Initializable {
 
     @FXML
     public void onFiltrarClick(ActionEvent event) {
-        String termo = txtPesquisaUtensilio.getText();
-        String status = cbStatus.getValue();
-        String laboratorio = cbLaboratorio.getValue();
-        String unidade = cbUnidade != null ? cbUnidade.getValue() : "Todas";
+        final String termo = txtPesquisaUtensilio != null ? txtPesquisaUtensilio.getText() : "";
+        final String status = cbStatus != null && cbStatus.getValue() != null ? cbStatus.getValue() : "Todos";
+        final String laboratorio = cbLaboratorio != null && cbLaboratorio.getValue() != null ? cbLaboratorio.getValue() : "Todos";
+        final String unidade = cbUnidade != null ? cbUnidade.getValue() : null;
 
+        if (unidade == null || unidade.trim().isEmpty()) {
+            if (observableListUtensilios == null) {
+                observableListUtensilios = FXCollections.observableArrayList();
+                tabelaUtensilios.setItems(observableListUtensilios);
+            } else {
+                observableListUtensilios.clear();
+                tabelaUtensilios.refresh();
+            }
+            return;
+        }
 
-        List<Utensilio> utensiliosFiltrados = UtensilioDAO.buscarUtensiliosPorFiltro(termo, status, laboratorio, unidade);
-
-        observableListUtensilios.setAll(utensiliosFiltrados);
-        tabelaUtensilios.refresh();
+        CompletableFuture.supplyAsync(
+                () -> UtensilioDAO.buscarUtensiliosPorFiltro(termo, status, laboratorio, unidade),
+                DB_EXECUTOR
+        ).thenAccept(utensiliosFiltrados -> Platform.runLater(() -> {
+            if (observableListUtensilios == null) {
+                observableListUtensilios = FXCollections.observableArrayList(utensiliosFiltrados);
+                tabelaUtensilios.setItems(observableListUtensilios);
+            } else {
+                observableListUtensilios.setAll(utensiliosFiltrados);
+                tabelaUtensilios.refresh();
+            }
+        }));
     }
 
     @FXML
@@ -151,7 +257,8 @@ public class UtensiliosController implements Initializable {
         try {
             RegistroAvariaUtensilioController.utensilioSelecionado = utensilioSelecionado;
             MainApplication.abrirPopUp("registroAvariaUtensilio.fxml");
-            carregarDadosBanco();
+            carregarOpcoesFiltros();
+            onFiltrarClick(new ActionEvent());
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -175,7 +282,8 @@ public class UtensiliosController implements Initializable {
         try {
             EdicaoUtensilioController.utensilioParaEditar = utensilioSelecionado;
             MainApplication.abrirPopUp("EdicaoUtensilio.fxml");
-            carregarDadosBanco();
+            carregarOpcoesFiltros();
+            onFiltrarClick(new ActionEvent());
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -187,7 +295,8 @@ public class UtensiliosController implements Initializable {
     public void onAdicionarClick(ActionEvent event) {
         try {
             MainApplication.abrirPopUp("CadastroUtensilio.fxml");
-            carregarDadosBanco();
+            carregarOpcoesFiltros();
+            onFiltrarClick(new ActionEvent());
 
         } catch (IOException e) {
             e.printStackTrace();

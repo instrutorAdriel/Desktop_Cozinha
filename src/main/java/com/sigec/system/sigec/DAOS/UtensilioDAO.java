@@ -7,10 +7,113 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 public class UtensilioDAO {
+
+    /**
+     * Verifica se já existe um utensílio cadastrado no banco de dados com o número de patrimônio informado.
+     */
+    public static boolean existeNumeroPatrimonio(int numeroPatrimonio) {
+        String sql = "SELECT COUNT(*) FROM utensilio WHERE numero_patrimonio = ?";
+
+        try (Connection conn = ConfigDataBase.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, numeroPatrimonio);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Erro ao verificar número de patrimônio: " + e.getMessage());
+        }
+        return false;
+    }
+
+    /**
+     * Verifica se já existe outro utensílio (diferente do idUtensilioIgnorar) com o número de patrimônio informado.
+     */
+    public static boolean existeNumeroPatrimonio(int numeroPatrimonio, int idUtensilioIgnorar) {
+        String sql = "SELECT COUNT(*) FROM utensilio WHERE numero_patrimonio = ? AND id_utensilio <> ?";
+
+        try (Connection conn = ConfigDataBase.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, numeroPatrimonio);
+            stmt.setInt(2, idUtensilioIgnorar);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Erro ao verificar número de patrimônio na edição: " + e.getMessage());
+        }
+        return false;
+    }
+
+    /**
+     * Busca no banco de dados apenas os laboratórios que possuem utensílios ativos vinculados na tabela utensilio.
+     */
+    public static List<String> listarOpcoesLaboratorio() {
+        Set<String> opcoes = new LinkedHashSet<>();
+        opcoes.add("Todos");
+
+        String sqlUtensiliosLabs = "SELECT DISTINCT COALESCE(l.nome_laboratorio, 'Estoque Central') AS laboratorio_atual " +
+                "FROM utensilio u " +
+                "LEFT JOIN laboratorio l ON u.id_laboratorio = l.id_laboratorio " +
+                "WHERE u.situacao = 'A' " +
+                "ORDER BY laboratorio_atual ASC";
+
+        try (Connection conn = ConfigDataBase.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sqlUtensiliosLabs);
+             ResultSet rs = stmt.executeQuery()) {
+            while (rs.next()) {
+                String nome = rs.getString("laboratorio_atual");
+                if (nome != null && !nome.isBlank()) {
+                    opcoes.add(nome.trim());
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Erro ao carregar opções de laboratório dos utensílios: " + e.getMessage());
+        }
+
+        return new ArrayList<>(opcoes);
+    }
+
+    /**
+     * Busca no banco de dados apenas as situações/status atualmente presentes nos utensílios ativos.
+     */
+    public static List<String> listarOpcoesSituacao() {
+        Set<String> opcoes = new LinkedHashSet<>();
+        opcoes.add("Todos");
+
+        String sqlDistinctStatus = "SELECT DISTINCT COALESCE(" +
+                "(SELECT estado_atual FROM checklist_utensilio cu WHERE cu.id_utensilio = u.id_utensilio ORDER BY cu.id_checklist_utensilio DESC LIMIT 1), " +
+                "'PRONTO') AS status_atual " +
+                "FROM utensilio u " +
+                "WHERE u.situacao = 'A' " +
+                "ORDER BY status_atual ASC";
+
+        try (Connection conn = ConfigDataBase.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sqlDistinctStatus);
+             ResultSet rs = stmt.executeQuery()) {
+            while (rs.next()) {
+                String status = rs.getString("status_atual");
+                if (status != null && !status.isBlank()) {
+                    opcoes.add(status.trim());
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Erro ao carregar opções de situação dos utensílios: " + e.getMessage());
+        }
+
+        return new ArrayList<>(opcoes);
+    }
 
     public static List<Utensilio> listarUtensilios() {
         List<Utensilio> lista = new ArrayList<>();
@@ -120,20 +223,61 @@ public class UtensilioDAO {
         return "PRONTO";
     }
 
+    private static int obterOuCriarLaboratorioPorUnidade(Connection conn, String nomeLaboratorio, int idUnidade, int idLaboratorioPadrao) throws SQLException {
+        if (idUnidade <= 0 || nomeLaboratorio == null || nomeLaboratorio.isBlank()) {
+            return idLaboratorioPadrao;
+        }
+
+        String sqlSelect = "SELECT id_laboratorio FROM laboratorio WHERE TRIM(nome_laboratorio) = TRIM(?) AND id_unidade = ? AND situacao = 'A' LIMIT 1";
+        try (PreparedStatement stmt = conn.prepareStatement(sqlSelect)) {
+            stmt.setString(1, nomeLaboratorio.trim());
+            stmt.setInt(2, idUnidade);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("id_laboratorio");
+                }
+            }
+        }
+
+        String sqlInsert = "INSERT INTO laboratorio (nome_laboratorio, capacidade, situacao, id_unidade) VALUES (?, 20, 'A', ?)";
+        try (PreparedStatement stmtInsert = conn.prepareStatement(sqlInsert, Statement.RETURN_GENERATED_KEYS)) {
+            stmtInsert.setString(1, nomeLaboratorio.trim());
+            stmtInsert.setInt(2, idUnidade);
+            stmtInsert.executeUpdate();
+            try (ResultSet rsKeys = stmtInsert.getGeneratedKeys()) {
+                if (rsKeys.next()) {
+                    return rsKeys.getInt(1);
+                }
+            }
+        }
+
+        return idLaboratorioPadrao;
+    }
+
     public static boolean adicionarUtensilio(Utensilio novoUtensilio) {
+        if (existeNumeroPatrimonio(novoUtensilio.getNumeroPatrimonio())) {
+            return false;
+        }
+
         String sql = "INSERT INTO utensilio (nome_utensilio, quantidade, situacao, numero_patrimonio, id_categoria_utensilio, id_laboratorio) VALUES (?, ?, 'A', ?, ?, ?)";
 
-        try (Connection conn = ConfigDataBase.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (Connection conn = ConfigDataBase.getConnection()) {
+            int idLabVinculado = obterOuCriarLaboratorioPorUnidade(
+                    conn,
+                    novoUtensilio.getLaboratorio(),
+                    novoUtensilio.getIdUnidade(),
+                    novoUtensilio.getIdLaboratorio()
+            );
 
-            stmt.setString(1, novoUtensilio.getNome());
-            stmt.setInt(2, novoUtensilio.getQtdTotal());
-            stmt.setInt(3, novoUtensilio.getNumeroPatrimonio());
-            stmt.setInt(4, novoUtensilio.getIdCategoria());
-            stmt.setInt(5, novoUtensilio.getIdLaboratorio());
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setString(1, novoUtensilio.getNome());
+                stmt.setInt(2, novoUtensilio.getQtdTotal());
+                stmt.setInt(3, novoUtensilio.getNumeroPatrimonio());
+                stmt.setInt(4, novoUtensilio.getIdCategoria());
+                stmt.setInt(5, idLabVinculado);
 
-            return stmt.executeUpdate() > 0;
-
+                return stmt.executeUpdate() > 0;
+            }
         } catch (SQLException e) {
             System.err.println("Erro ao adicionar utensílio: " + e.getMessage());
             return false;
@@ -141,6 +285,10 @@ public class UtensilioDAO {
     }
 
     public static boolean atualizarUtensilio(Utensilio utensilio) {
+        if (existeNumeroPatrimonio(utensilio.getNumeroPatrimonio(), utensilio.getIdUtensilio())) {
+            return false;
+        }
+
         String sql = "UPDATE utensilio SET nome_utensilio = ?, quantidade = ?, numero_patrimonio = ?, id_categoria_utensilio = ? WHERE id_utensilio = ?";
 
         try (Connection conn = ConfigDataBase.getConnection();
@@ -160,7 +308,6 @@ public class UtensilioDAO {
         }
     }
 
-
     public static List<Utensilio> buscarUtensiliosPorFiltro(String termo, String status, String laboratorio, String unidade) {
         List<Utensilio> lista = new ArrayList<>();
 
@@ -178,30 +325,36 @@ public class UtensilioDAO {
         List<Object> parametros = new ArrayList<>();
 
         if (unidade != null && !unidade.equals("Todas") && !unidade.trim().isEmpty()) {
-            sql.append("    AND un.nome_unidade = ? ");
-            parametros.add(unidade);
+            sql.append("    AND TRIM(un.nome_unidade) = TRIM(?) ");
+            parametros.add(unidade.trim());
         }
 
         sql.append(") AS base WHERE 1=1 ");
 
         if (termo != null && !termo.trim().isEmpty()) {
-            sql.append("AND LOWER(nome_utensilio) LIKE LOWER(?) ");
-            parametros.add("%" + termo.trim() + "%");
+            sql.append("AND (LOWER(nome_utensilio) LIKE LOWER(?) OR CAST(numero_patrimonio AS CHAR) LIKE ?) ");
+            String filtroTermo = "%" + termo.trim() + "%";
+            parametros.add(filtroTermo);
+            parametros.add(filtroTermo);
         }
 
         if (laboratorio != null && !laboratorio.equals("Todos") && !laboratorio.trim().isEmpty()) {
-            sql.append("AND laboratorio_atual = ? ");
-            parametros.add(laboratorio);
+            sql.append("AND TRIM(laboratorio_atual) = TRIM(?) ");
+            parametros.add(laboratorio.trim());
         }
 
         if (status != null && !status.equals("Todos") && !status.trim().isEmpty()) {
-            if (status.equals("Disponível")) {
+            if (status.equalsIgnoreCase("Disponível")) {
                 sql.append("AND status_atual = 'PRONTO' ");
-            } else if (status.equals("Conserto")) {
+            } else if (status.equalsIgnoreCase("Em Manutenção")) {
+                sql.append("AND status_atual = 'EM_MANUTENCAO' ");
+            } else if (status.equalsIgnoreCase("Danificado")) {
+                sql.append("AND status_atual = 'DANIFICADO' ");
+            } else if (status.equalsIgnoreCase("Conserto")) {
                 sql.append("AND status_atual IN ('EM_MANUTENCAO', 'DANIFICADO') ");
             } else {
-                sql.append("AND status_atual = ? ");
-                parametros.add(status);
+                sql.append("AND TRIM(status_atual) = TRIM(?) ");
+                parametros.add(status.trim());
             }
         }
 
@@ -221,15 +374,12 @@ public class UtensilioDAO {
 
                     String labAtual = rs.getString("laboratorio_atual");
                     String statusAtualDB = rs.getString("status_atual");
-                    String statusVisual = statusAtualDB.equals("PRONTO") ? "Disponível" :
-                            statusAtualDB.equals("EM_MANUTENCAO") ? "Em Manutenção" :
-                                    statusAtualDB.equals("DANIFICADO") ? "Danificado" : statusAtualDB;
 
                     Utensilio utensilio = new Utensilio(
                             rs.getInt("id_utensilio"),
                             rs.getString("nome_utensilio"),
                             labAtual,
-                            statusVisual,
+                            statusAtualDB,
                             qtd,
                             qtd,
                             patrimonio,
