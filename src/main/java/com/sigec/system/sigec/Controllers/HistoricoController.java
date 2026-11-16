@@ -84,7 +84,7 @@ public class HistoricoController implements Initializable {
 
         if (cbCurso != null) {
             cbCurso.setConverter(new StringConverter<>() {
-                @Override public String toString(CursoDTO turma) { return turma != null ? turma.getNome() : ""; }
+                @Override public String toString(CursoDTO curso) { return curso != null ? curso.getNome() : ""; }
                 @Override public CursoDTO fromString(String string) { return null; }
             });
             cbCurso.getSelectionModel().selectedItemProperty().addListener(
@@ -102,7 +102,7 @@ public class HistoricoController implements Initializable {
                 @Override public UnidadeDTO fromString(String string) { return null; }
             });
             cbUnidade.getSelectionModel().selectedItemProperty().addListener((obs, antigo, novo) -> {
-                carregarTurmas(novo);
+                carregarCursos();
             });
             cbUnidade.getSelectionModel().selectFirst();
         }
@@ -116,17 +116,15 @@ public class HistoricoController implements Initializable {
         atualizarTabela();
     }
 
-    private void carregarTurmas(UnidadeDTO unidade) {
+    private void carregarCursos() {
         if (cbCurso == null) {
             atualizarTabela();
             return;
         }
-        List<CursoDTO> turmas = new ArrayList<>();
-        turmas.add(new CursoDTO(0, "Todos"));
-        if (unidade != null) {
-            turmas.addAll(HistoryDAO.listarCursos(unidade.getId()));
-        }
-        cbCurso.setItems(FXCollections.observableArrayList(turmas));
+        List<CursoDTO> cursos = new ArrayList<>();
+        cursos.add(new CursoDTO(0, "Todos"));
+        cursos.addAll(HistoryDAO.listarCursosAtivos());
+        cbCurso.setItems(FXCollections.observableArrayList(cursos));
         cbCurso.getSelectionModel().selectFirst();
         atualizarTabela();
     }
@@ -142,9 +140,9 @@ public class HistoricoController implements Initializable {
     public void carregarDadosTabela(int idUnidade) {
         if (tableHistorico == null) return;
         try {
-            CursoDTO turma = cbCurso != null ? cbCurso.getValue() : null;
+            CursoDTO curso = cbCurso != null ? cbCurso.getValue() : null;
             List<HistoryDAO> listaCompras = HistoryDAO.listarListaDeCompras(
-                    idUnidade, turma != null ? turma.getId() : 0);
+                    idUnidade, curso != null ? curso.getId() : 0);
             tableHistorico.setItems(FXCollections.observableArrayList(listaCompras));
         } catch (Exception e) {
             exibirAlerta("Não foi possível carregar os dados da tabela: " + e.getMessage());
@@ -249,8 +247,8 @@ public class HistoricoController implements Initializable {
         }
         int idUnidade = unidadeSelecionada.getId();
 
-        CursoDTO turmaSelecionada = cbCurso != null ? cbCurso.getValue() : null;
-        int idTurma = turmaSelecionada != null ? turmaSelecionada.getId() : 0;
+        CursoDTO cursoSelecionado = cbCurso != null ? cbCurso.getValue() : null;
+        int idCurso = cursoSelecionado != null ? cursoSelecionado.getId() : 0;
 
         LocalDate dataInicio = dataDE != null ? dataDE.getValue() : null;
         LocalDate dataFim = dataATE != null ? dataATE.getValue() : null;
@@ -268,9 +266,9 @@ public class HistoricoController implements Initializable {
         if (dataInicio != null || dataFim != null) {
             LocalDate inicioConsulta = dataInicio != null ? dataInicio : dataFim;
             LocalDate fimConsulta = dataFim != null ? dataFim : dataInicio;
-            listaBase = HistoryDAO.listarComprasPorPeriodo(idUnidade, idTurma, inicioConsulta, fimConsulta);
+            listaBase = HistoryDAO.listarComprasPorPeriodo(idUnidade, idCurso, inicioConsulta, fimConsulta);
         } else {
-            listaBase = HistoryDAO.listarListaDeCompras(idUnidade, idTurma);
+            listaBase = HistoryDAO.listarListaDeCompras(idUnidade, idCurso);
         }
 
         // Aplica o filtro de pesquisa textual com tolerância (Levenshtein) se houver termo digitado

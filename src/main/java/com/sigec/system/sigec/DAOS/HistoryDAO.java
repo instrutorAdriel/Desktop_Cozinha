@@ -27,26 +27,31 @@ public class HistoryDAO {
         return listarListaDeCompras(idUnidade, 0);
     }
 
-    public static List<HistoryDAO> listarListaDeCompras(int idUnidade, int idTurma) {
+    public static List<HistoryDAO> listarListaDeCompras(int idUnidade, int idCurso) {
         List<HistoryDAO> lista = new ArrayList<>();
 
         String sql = "SELECT i.id_insumo, p.nome_produto, c.nome_categoria, i.quantidade, i.quantidade_minima, i.lote " +
                 "FROM insumo i " +
                 "JOIN produto p ON i.id_produto = p.id_produto " +
                 "LEFT JOIN categoria c ON p.id_categoria = c.id_categoria " +
-                "WHERE (i.quantidade <= 0 OR i.quantidade <= i.quantidade_minima) " +
-                "AND i.cancelado = 'N' AND i.id_unidade = ? " +
-                "AND (? <= 0 OR EXISTS (" +
-                "SELECT 1 FROM turma_ficha tf " +
-                "JOIN insumo_ficha fi ON tf.id_ficha = fi.id_ficha " +
-                "WHERE tf.id_turma = ? AND fi.id_produto = i.id_produto))";
+                "WHERE i.cancelado = 'N' AND i.id_unidade = ? " +
+                "AND ((? <= 0 AND (i.quantidade <= 0 OR i.quantidade <= i.quantidade_minima)) " +
+                "OR (? > 0 AND EXISTS (" +
+                "SELECT 1 FROM turma t " +
+                "JOIN turma_ficha tf ON tf.id_turma = t.id_turma " +
+                "JOIN insumo_ficha fi ON fi.id_ficha = tf.id_ficha " +
+                "JOIN laboratorio l ON l.id_laboratorio = t.id_laboratorio " +
+                "WHERE t.id_curso = ? " +
+                "AND l.id_unidade = i.id_unidade " +
+                "AND fi.id_produto = i.id_produto)))";
 
         try (Connection conn = ConfigDataBase.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setInt(1, idUnidade);
-            stmt.setInt(2, idTurma);
-            stmt.setInt(3, idTurma);
+            stmt.setInt(2, idCurso);
+            stmt.setInt(3, idCurso);
+            stmt.setInt(4, idCurso);
 
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
@@ -58,7 +63,9 @@ public class HistoryDAO {
                     alerta.setQtdAtual(rs.getDouble("quantidade"));
                     alerta.setQtdMinima(rs.getDouble("quantidade_minima"));
 
-                    lista.add(alerta);
+                    if (alerta.getQtdComprar() > 0) {
+                        lista.add(alerta);
+                    }
                 }
             }
         } catch (SQLException e) {
@@ -68,20 +75,24 @@ public class HistoryDAO {
         return lista;
     }
 
-    // 2. Lista de compras por período, opcionalmente filtrada por turma.
-    public static List<HistoryDAO> listarComprasPorPeriodo(int idUnidade, int idTurma, LocalDate dataInicio, LocalDate dataFim) {
+    // 2. Lista de compras por período, opcionalmente filtrada por curso.
+    public static List<HistoryDAO> listarComprasPorPeriodo(int idUnidade, int idCurso, LocalDate dataInicio, LocalDate dataFim) {
         List<HistoryDAO> listaResultados = new ArrayList<>();
 
         String sql = "SELECT MIN(i.id_insumo) AS id_insumo, p.nome_produto, cat.nome_categoria, " +
-                "SUM(i.quantidade) AS quantidade_atual, SUM(i.quantidade_minima) AS quantidade_minima, " +
+                "SUM(i.quantidade) AS quantidade_atual, MAX(i.quantidade_minima) AS quantidade_minima, " +
                 "MAX(aloc.qtd_necessaria) AS qtd_necessaria " +
                 "FROM insumo i " +
                 "JOIN produto p ON i.id_produto = p.id_produto " +
                 "LEFT JOIN categoria cat ON p.id_categoria = cat.id_categoria " +
                 "JOIN (SELECT fi.id_produto, SUM(fi.quantidade) AS qtd_necessaria " +
-                "FROM turma_ficha tf " +
-                "JOIN insumo_ficha fi ON tf.id_ficha = fi.id_ficha " +
-                "WHERE tf.data BETWEEN ? AND ? AND (? <= 0 OR tf.id_turma = ?) " +
+                "FROM turma t " +
+                "JOIN turma_ficha tf ON tf.id_turma = t.id_turma " +
+                "JOIN insumo_ficha fi ON fi.id_ficha = tf.id_ficha " +
+                "JOIN laboratorio l ON t.id_laboratorio = l.id_laboratorio " +
+                "WHERE tf.data >= ? AND tf.data < ? " +
+                "AND l.id_unidade = ? " +
+                "AND (? <= 0 OR t.id_curso = ?) " +
                 "GROUP BY fi.id_produto) aloc ON aloc.id_produto = p.id_produto " +
                 "WHERE i.id_unidade = ? AND i.cancelado = 'N' " +
                 "GROUP BY p.id_produto, p.nome_produto, cat.nome_categoria";
@@ -90,17 +101,18 @@ public class HistoryDAO {
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setDate(1, java.sql.Date.valueOf(dataInicio));
-            stmt.setDate(2, java.sql.Date.valueOf(dataFim));
-            stmt.setInt(3, idTurma);
-            stmt.setInt(4, idTurma);
-            stmt.setInt(5, idUnidade);
+            stmt.setDate(2, java.sql.Date.valueOf(dataFim.plusDays(1)));
+            stmt.setInt(3, idUnidade);
+            stmt.setInt(4, idCurso);
+            stmt.setInt(5, idCurso);
+            stmt.setInt(6, idUnidade);
 
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
                     double qtdNecessaria = rs.getDouble("qtd_necessaria");
                     double qtdAtual = rs.getDouble("quantidade_atual");
                     double qtdMinima = rs.getDouble("quantidade_minima");
-                    double qtdComprar = Math.max(0, qtdMinima - (qtdAtual - qtdNecessaria));
+                    double qtdComprar = Math.max(0, qtdMinima + qtdNecessaria - qtdAtual);
 
                     if (qtdComprar > 0) {
                         HistoryDAO item = new HistoryDAO();
@@ -172,35 +184,28 @@ public class HistoryDAO {
         return unidades;
     }
 
-    // 4. Lista turmas da unidade com fichas que usam insumos cadastrados naquela unidade.
-    public static List<CursoDTO> listarCursos(int idUnidade) {
-        List<CursoDTO> turmas = new ArrayList<>();
-        String sql = "SELECT DISTINCT t.id_turma, t.nome_turma " +
-                "FROM turma t " +
-                "JOIN laboratorio l ON t.id_laboratorio = l.id_laboratorio " +
-                "WHERE t.situacao = 'A' AND l.id_unidade = ? " +
-                "AND EXISTS (SELECT 1 FROM turma_ficha tf " +
-                "JOIN insumo_ficha fi ON tf.id_ficha = fi.id_ficha " +
-                "JOIN insumo i ON fi.id_produto = i.id_produto " +
-                "WHERE tf.id_turma = t.id_turma AND i.id_unidade = l.id_unidade " +
-                "AND i.cancelado = 'N') " +
-                "ORDER BY t.nome_turma";
+    // 4. Lista todos os cursos ativos para o filtro do relatório.
+    public static List<CursoDTO> listarCursosAtivos() {
+        List<CursoDTO> cursos = new ArrayList<>();
+        String sql = "SELECT DISTINCT c.id_curso, c.nome_curso " +
+                "FROM curso c " +
+                "ORDER BY c.nome_curso";
 
         try (Connection conn = ConfigDataBase.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, idUnidade);
             try (ResultSet rs = stmt.executeQuery()) {
 
                 while (rs.next()) {
-                    turmas.add(new CursoDTO(
-                            rs.getInt("id_turma"),
-                            rs.getString("nome_turma")
+                    cursos.add(new CursoDTO(
+                            rs.getInt("id_curso"),
+                            rs.getString("nome_curso")
                     ));
                 }
             }
         } catch (SQLException e) {
-            System.err.println("Erro ao listar turmas: " + e.getMessage());
+            System.err.println("Erro ao listar cursos da unidade: " + e.getMessage());
         }
-        return turmas;
+        return cursos;
     }
+
 }
