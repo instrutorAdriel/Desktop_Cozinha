@@ -112,7 +112,7 @@ public class HistoryDAO {
                     double qtdNecessaria = rs.getDouble("qtd_necessaria");
                     double qtdAtual = rs.getDouble("quantidade_atual");
                     double qtdMinima = rs.getDouble("quantidade_minima");
-                    double qtdComprar = Math.max(0, qtdNecessaria - qtdAtual);
+                    double qtdComprar = Math.max(0, qtdMinima + qtdNecessaria - qtdAtual);
 
                     if (qtdComprar > 0) {
                         HistoryDAO item = new HistoryDAO();
