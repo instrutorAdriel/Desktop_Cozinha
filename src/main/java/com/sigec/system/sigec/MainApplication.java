@@ -30,7 +30,7 @@ public class MainApplication extends Application {
         // Carrega a primeira tela
         trocadorDeTelas("login.fxml");
 
-        primaryStage.setTitle("");
+        primaryStage.setTitle("Sistema de Gestão de Estoque da Cozinha");
         stage.getIcons().add(
                 new Image(
                         MainApplication.class.getResource(
