@@ -7,6 +7,7 @@ import com.sigec.system.sigec.DAOS.LaboratorioDAO;
 import com.sigec.system.sigec.DAOS.UnidadeDAO;
 import com.sigec.system.sigec.DAOS.UtensilioDAO;
 import com.sigec.system.sigec.Services.SessaoService;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -23,8 +24,17 @@ import java.net.URL;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class CadastroUtensilioController implements Initializable {
+
+    private static final ExecutorService DB_EXECUTOR = Executors.newCachedThreadPool(r -> {
+        Thread t = new Thread(r, "SIGEC-CadastroUtensilio-Worker");
+        t.setDaemon(true);
+        return t;
+    });
 
     @FXML private TextField txtNomeUtensilio;
     @FXML private TextField txtQuantidade;
@@ -44,59 +54,111 @@ public class CadastroUtensilioController implements Initializable {
     @FXML private Button btnPopupOk;
 
     private boolean fecharModalAoConfirmarPopup = false;
+    private boolean ignorarEventoUnidade = false;
 
     private Map<String, Integer> mapaUnidades = new LinkedHashMap<>();
-    private Map<String, Integer> mapaCategorias;
+    private Map<String, Integer> mapaCategorias = new LinkedHashMap<>();
     private Map<String, Integer> mapaLaboratorios = new LinkedHashMap<>();
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         if (cbUnidade != null) {
-            User usuarioLogado = SessaoService.getUsuarioAtual();
-            if (usuarioLogado != null && usuarioLogado.getIdUsuario() > 0) {
-                mapaUnidades = UnidadeDAO.listarUnidadesPorUsuarioMap(usuarioLogado.getIdUsuario());
-            }
-            cbUnidade.setItems(FXCollections.observableArrayList(mapaUnidades.keySet()));
-
             cbUnidade.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-                carregarLaboratoriosPorUnidade(newValue);
+                if (!ignorarEventoUnidade) {
+                    carregarLaboratoriosPorUnidadeAsync(newValue);
+                }
             });
-
-            if (!mapaUnidades.isEmpty()) {
-                cbUnidade.setValue(mapaUnidades.keySet().iterator().next());
-            } else {
-                carregarLaboratoriosPorUnidade(null);
-            }
         }
 
-        if (cbCategoria != null) {
-            mapaCategorias = CategoriaUtensilioDAO.listarCategoriasAtivas();
-            cbCategoria.setItems(FXCollections.observableArrayList(mapaCategorias.keySet()));
-
-            if (!mapaCategorias.isEmpty()) {
-                cbCategoria.setValue(mapaCategorias.keySet().iterator().next());
-            }
-        }
+        carregarDadosIniciaisEmParalelo();
     }
 
-    private void carregarLaboratoriosPorUnidade(String nomeUnidade) {
+    private void carregarDadosIniciaisEmParalelo() {
+        User usuarioLogado = SessaoService.getUsuarioAtual();
+        final int idUsuario = (usuarioLogado != null && usuarioLogado.getIdUsuario() > 0)
+                ? usuarioLogado.getIdUsuario()
+                : 0;
+
+        // Thread 1: Carrega unidades do usuário e já busca os laboratórios da primeira unidade
+        CompletableFuture.runAsync(() -> {
+            Map<String, Integer> unidadesCarregadas = (idUsuario > 0)
+                    ? UnidadeDAO.listarUnidadesPorUsuarioMap(idUsuario)
+                    : new LinkedHashMap<>();
+
+            String primeiraUnidade = unidadesCarregadas.isEmpty()
+                    ? null
+                    : unidadesCarregadas.keySet().iterator().next();
+            int idPrimeiraUnidade = (primeiraUnidade != null)
+                    ? unidadesCarregadas.getOrDefault(primeiraUnidade, 0)
+                    : 0;
+
+            Map<String, Integer> labsIniciais = (idPrimeiraUnidade > 0)
+                    ? LaboratorioDAO.listarLaboratoriosAtivosPorUnidadeMap(idPrimeiraUnidade)
+                    : new LinkedHashMap<>();
+
+            Platform.runLater(() -> {
+                mapaUnidades = unidadesCarregadas;
+                mapaLaboratorios = labsIniciais;
+
+                if (cbUnidade != null) {
+                    ignorarEventoUnidade = true;
+                    try {
+                        cbUnidade.setItems(FXCollections.observableArrayList(mapaUnidades.keySet()));
+                        if (primeiraUnidade != null) {
+                            cbUnidade.setValue(primeiraUnidade);
+                        }
+                    } finally {
+                        ignorarEventoUnidade = false;
+                    }
+                }
+
+                if (cbLaboratorio != null) {
+                    cbLaboratorio.setItems(FXCollections.observableArrayList(mapaLaboratorios.keySet()));
+                    if (!mapaLaboratorios.isEmpty()) {
+                        cbLaboratorio.setValue(mapaLaboratorios.keySet().iterator().next());
+                    } else {
+                        cbLaboratorio.setValue(null);
+                    }
+                }
+            });
+        }, DB_EXECUTOR);
+
+        // Thread 2 (em paralelo): Carrega categorias ativas
+        CompletableFuture.supplyAsync(CategoriaUtensilioDAO::listarCategoriasAtivas, DB_EXECUTOR)
+                .thenAccept(categoriasCarregadas -> Platform.runLater(() -> {
+                    mapaCategorias = categoriasCarregadas != null ? categoriasCarregadas : new LinkedHashMap<>();
+                    if (cbCategoria != null) {
+                        cbCategoria.setItems(FXCollections.observableArrayList(mapaCategorias.keySet()));
+                        if (!mapaCategorias.isEmpty()) {
+                            cbCategoria.setValue(mapaCategorias.keySet().iterator().next());
+                        }
+                    }
+                }));
+    }
+
+    private void carregarLaboratoriosPorUnidadeAsync(String nomeUnidade) {
         if (cbLaboratorio == null) {
             return;
         }
 
         int idUnidade = (nomeUnidade != null) ? mapaUnidades.getOrDefault(nomeUnidade, 0) : 0;
-        if (idUnidade > 0) {
-            mapaLaboratorios = LaboratorioDAO.listarLaboratoriosAtivosPorUnidadeMap(idUnidade);
-        } else {
+        if (idUnidade <= 0) {
             mapaLaboratorios = new LinkedHashMap<>();
+            cbLaboratorio.setItems(FXCollections.observableArrayList());
+            cbLaboratorio.setValue(null);
+            return;
         }
 
-        cbLaboratorio.setItems(FXCollections.observableArrayList(mapaLaboratorios.keySet()));
-        if (!mapaLaboratorios.isEmpty()) {
-            cbLaboratorio.setValue(mapaLaboratorios.keySet().iterator().next());
-        } else {
-            cbLaboratorio.setValue(null);
-        }
+        CompletableFuture.supplyAsync(() -> LaboratorioDAO.listarLaboratoriosAtivosPorUnidadeMap(idUnidade), DB_EXECUTOR)
+                .thenAccept(labs -> Platform.runLater(() -> {
+                    mapaLaboratorios = labs != null ? labs : new LinkedHashMap<>();
+                    cbLaboratorio.setItems(FXCollections.observableArrayList(mapaLaboratorios.keySet()));
+                    if (!mapaLaboratorios.isEmpty()) {
+                        cbLaboratorio.setValue(mapaLaboratorios.keySet().iterator().next());
+                    } else {
+                        cbLaboratorio.setValue(null);
+                    }
+                }));
     }
 
     @FXML
@@ -116,51 +178,70 @@ public class CadastroUtensilioController implements Initializable {
             return;
         }
 
+        final int qtd;
+        final int patrimonio;
         try {
-            int qtd = 1;
+            int qtdTemp = 1;
             if (txtQuantidade != null && txtQuantidade.getText() != null && !txtQuantidade.getText().trim().isEmpty()) {
-                qtd = Integer.parseInt(txtQuantidade.getText().trim());
+                qtdTemp = Integer.parseInt(txtQuantidade.getText().trim());
             }
+            qtd = qtdTemp;
+            patrimonio = Integer.parseInt(strPatrimonio.trim());
+        } catch (NumberFormatException e) {
+            exibirPopupEstilizado(Alert.AlertType.ERROR, "Erro", "O Nº do Patrimônio deve ser um número válido.", false);
+            return;
+        }
 
-            int patrimonio = Integer.parseInt(strPatrimonio.trim());
+        int idUnidade = mapaUnidades.getOrDefault(nomeUnidade, 0);
+        Integer idCategoria = mapaCategorias.get(nomeCategoria);
+        Integer idLaboratorio = mapaLaboratorios.get(nomeLaboratorio);
 
+        if (idCategoria == null || idLaboratorio == null) {
+            exibirPopupEstilizado(Alert.AlertType.WARNING, "Atenção", "Aguarde o carregamento das opções antes de salvar.", false);
+            return;
+        }
+
+        Utensilio novoUtensilio = new Utensilio(
+                0,
+                nome.trim(),
+                nomeLaboratorio,
+                "A",
+                qtd,
+                qtd,
+                patrimonio,
+                idUnidade,
+                idCategoria,
+                idLaboratorio
+        );
+
+        if (btnSalvar != null) {
+            btnSalvar.setDisable(true);
+        }
+
+        CompletableFuture.runAsync(() -> {
             if (UtensilioDAO.existeNumeroPatrimonio(patrimonio)) {
-                exibirPopupEstilizado(
-                        Alert.AlertType.ERROR,
-                        "Erro no Cadastro",
-                        "Nao foi possivel cadastrar o produto ERROR 890: \nNumero de patrimonio ja existe!",
-                        false
-                );
+                Platform.runLater(() -> {
+                    if (btnSalvar != null) btnSalvar.setDisable(false);
+                    exibirPopupEstilizado(
+                            Alert.AlertType.ERROR,
+                            "Erro no Cadastro",
+                            "Nao foi possivel cadastrar o produto ERROR 890: \nNumero de patrimonio ja existe!",
+                            false
+                    );
+                });
                 return;
             }
 
-            int idUnidade = mapaUnidades.getOrDefault(nomeUnidade, 0);
-            int idCategoria = mapaCategorias.get(nomeCategoria);
-            int idLaboratorio = mapaLaboratorios.get(nomeLaboratorio);
-
-            Utensilio novoUtensilio = new Utensilio(
-                    0,
-                    nome.trim(),
-                    nomeLaboratorio,
-                    "A",
-                    qtd,
-                    qtd,
-                    patrimonio,
-                    idUnidade,
-                    idCategoria,
-                    idLaboratorio
-            );
-
             boolean sucesso = UtensilioDAO.adicionarUtensilio(novoUtensilio);
-
-            if (sucesso) {
-                exibirPopupEstilizado(Alert.AlertType.INFORMATION, "Sucesso", "Utensílio adicionado com sucesso!", true);
-            } else {
-                exibirPopupEstilizado(Alert.AlertType.ERROR, "Erro", "Não foi possível salvar as informações na base de dados.", false);
-            }
-        } catch (NumberFormatException e) {
-            exibirPopupEstilizado(Alert.AlertType.ERROR, "Erro", "O Nº do Patrimônio deve ser um número válido.", false);
-        }
+            Platform.runLater(() -> {
+                if (btnSalvar != null) btnSalvar.setDisable(false);
+                if (sucesso) {
+                    exibirPopupEstilizado(Alert.AlertType.INFORMATION, "Sucesso", "Utensílio adicionado com sucesso!", true);
+                } else {
+                    exibirPopupEstilizado(Alert.AlertType.ERROR, "Erro", "Não foi possível salvar as informações na base de dados.", false);
+                }
+            });
+        }, DB_EXECUTOR);
     }
 
     @FXML

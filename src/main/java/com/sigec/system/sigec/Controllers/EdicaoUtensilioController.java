@@ -4,6 +4,7 @@ import com.sigec.system.sigec.Constructors.Utensilio;
 import com.sigec.system.sigec.DAOS.UtensilioDAO;
 import com.sigec.system.sigec.DAOS.LaboratorioDAO;
 import com.sigec.system.sigec.DAOS.CategoriaUtensilioDAO;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -17,10 +18,20 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.net.URL;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class EdicaoUtensilioController implements Initializable {
+
+    private static final ExecutorService DB_EXECUTOR = Executors.newCachedThreadPool(r -> {
+        Thread t = new Thread(r, "SIGEC-EdicaoUtensilio-Worker");
+        t.setDaemon(true);
+        return t;
+    });
 
     @FXML private TextField txtNomeUtensilio;
     @FXML private TextField txtQuantidade;
@@ -41,34 +52,56 @@ public class EdicaoUtensilioController implements Initializable {
     private boolean fecharModalAoConfirmarPopup = false;
 
     public static Utensilio utensilioParaEditar = null;
-    private Map<String, Integer> mapaCategorias;
-    private Map<String, Integer> mapaLaboratorios;
+    private Map<String, Integer> mapaCategorias = new LinkedHashMap<>();
+    private Map<String, Integer> mapaLaboratorios = new LinkedHashMap<>();
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        if (cbLaboratorio != null) {
-            mapaLaboratorios = LaboratorioDAO.listarLaboratoriosAtivosMap();
-            cbLaboratorio.setItems(FXCollections.observableArrayList(mapaLaboratorios.keySet()));
-        }
+        final Utensilio alvo = utensilioParaEditar;
 
-        if (cbCategoria != null) {
-            mapaCategorias = CategoriaUtensilioDAO.listarCategoriasAtivas();
-            cbCategoria.setItems(FXCollections.observableArrayList(mapaCategorias.keySet()));
-            if (!mapaCategorias.isEmpty()) {
-                cbCategoria.setValue(mapaCategorias.keySet().iterator().next());
-            }
-        }
-
-        if (utensilioParaEditar != null) {
-            txtNomeUtensilio.setText(utensilioParaEditar.getNome());
+        if (alvo != null) {
+            txtNomeUtensilio.setText(alvo.getNome());
             if (txtQuantidade != null) {
-                txtQuantidade.setText(String.valueOf(utensilioParaEditar.getQtdTotal()));
+                txtQuantidade.setText(String.valueOf(alvo.getQtdTotal()));
             }
-            txtPatrimonio.setText(String.valueOf(utensilioParaEditar.getNumeroPatrimonio()));
+            txtPatrimonio.setText(String.valueOf(alvo.getNumeroPatrimonio()));
+        }
 
-            if (utensilioParaEditar.getLaboratorio() != null) {
-                cbLaboratorio.setValue(utensilioParaEditar.getLaboratorio());
-            }
+        // Thread 1: Carrega laboratórios ativos em paralelo
+        if (cbLaboratorio != null) {
+            CompletableFuture.supplyAsync(LaboratorioDAO::listarLaboratoriosAtivosMap, DB_EXECUTOR)
+                    .thenAccept(labs -> Platform.runLater(() -> {
+                        mapaLaboratorios = labs != null ? labs : new LinkedHashMap<>();
+                        cbLaboratorio.setItems(FXCollections.observableArrayList(mapaLaboratorios.keySet()));
+                        if (alvo != null && alvo.getLaboratorio() != null) {
+                            cbLaboratorio.setValue(alvo.getLaboratorio());
+                        }
+                    }));
+        }
+
+        // Thread 2: Carrega categorias ativas em paralelo
+        if (cbCategoria != null) {
+            CompletableFuture.supplyAsync(CategoriaUtensilioDAO::listarCategoriasAtivas, DB_EXECUTOR)
+                    .thenAccept(cats -> Platform.runLater(() -> {
+                        mapaCategorias = cats != null ? cats : new LinkedHashMap<>();
+                        cbCategoria.setItems(FXCollections.observableArrayList(mapaCategorias.keySet()));
+
+                        String categoriaSelecionada = null;
+                        if (alvo != null && alvo.getIdCategoria() > 0) {
+                            for (Map.Entry<String, Integer> entry : mapaCategorias.entrySet()) {
+                                if (entry.getValue() != null && entry.getValue() == alvo.getIdCategoria()) {
+                                    categoriaSelecionada = entry.getKey();
+                                    break;
+                                }
+                            }
+                        }
+
+                        if (categoriaSelecionada != null) {
+                            cbCategoria.setValue(categoriaSelecionada);
+                        } else if (!mapaCategorias.isEmpty()) {
+                            cbCategoria.setValue(mapaCategorias.keySet().iterator().next());
+                        }
+                    }));
         }
     }
 
@@ -86,44 +119,60 @@ public class EdicaoUtensilioController implements Initializable {
             return;
         }
 
+        final int qtd;
+        final int patrimonio;
         try {
-            int qtd = utensilioParaEditar.getQtdTotal() > 0 ? utensilioParaEditar.getQtdTotal() : 1;
+            int qtdTemp = utensilioParaEditar.getQtdTotal() > 0 ? utensilioParaEditar.getQtdTotal() : 1;
             if (txtQuantidade != null && txtQuantidade.getText() != null && !txtQuantidade.getText().trim().isEmpty()) {
-                qtd = Integer.parseInt(txtQuantidade.getText().trim());
+                qtdTemp = Integer.parseInt(txtQuantidade.getText().trim());
             }
+            qtd = qtdTemp;
+            patrimonio = Integer.parseInt(strPatrimonio.trim());
+        } catch (NumberFormatException e) {
+            exibirPopupEstilizado(Alert.AlertType.ERROR, "Erro", "O Nº do Patrimônio deve ser um número válido.", false);
+            return;
+        }
 
-            int patrimonio = Integer.parseInt(strPatrimonio.trim());
+        final Utensilio alvo = utensilioParaEditar;
+        int idCategoria = mapaCategorias.getOrDefault(nomeCategoria, alvo.getIdCategoria() > 0 ? alvo.getIdCategoria() : 1);
+        int idLaboratorio = mapaLaboratorios.getOrDefault(nomeLaboratorio, alvo.getIdLaboratorio() > 0 ? alvo.getIdLaboratorio() : 1);
 
-            if (UtensilioDAO.existeNumeroPatrimonio(patrimonio, utensilioParaEditar.getIdUtensilio())) {
-                exibirPopupEstilizado(
-                        Alert.AlertType.ERROR,
-                        "Erro na Edição",
-                        "Nao foi possivel cadastrar o produto ERROR 890: \nNumero de patrimonio ja existe!",
-                        false
-                );
+        if (btnSalvar != null) {
+            btnSalvar.setDisable(true);
+        }
+
+        CompletableFuture.runAsync(() -> {
+            if (UtensilioDAO.existeNumeroPatrimonio(patrimonio, alvo.getIdUtensilio())) {
+                Platform.runLater(() -> {
+                    if (btnSalvar != null) btnSalvar.setDisable(false);
+                    exibirPopupEstilizado(
+                            Alert.AlertType.ERROR,
+                            "Erro na Edição",
+                            "Nao foi possivel cadastrar o produto ERROR 890: \nNumero de patrimonio ja existe!",
+                            false
+                    );
+                });
                 return;
             }
 
-            int idCategoria = mapaCategorias.getOrDefault(nomeCategoria, 1);
-            int idLaboratorio = mapaLaboratorios.getOrDefault(nomeLaboratorio, 1);
+            alvo.setNome(nome.trim());
+            alvo.setQtdTotal(qtd);
+            alvo.setQtdDisponivel(qtd);
+            alvo.setNumeroPatrimonio(patrimonio);
+            alvo.setIdCategoria(idCategoria);
+            alvo.setIdLaboratorio(idLaboratorio);
 
-            utensilioParaEditar.setNome(nome.trim());
-            utensilioParaEditar.setQtdTotal(qtd);
-            utensilioParaEditar.setQtdDisponivel(qtd);
-            utensilioParaEditar.setNumeroPatrimonio(patrimonio);
-            utensilioParaEditar.setIdCategoria(idCategoria);
-            utensilioParaEditar.setIdLaboratorio(idLaboratorio);
+            boolean sucesso = UtensilioDAO.atualizarUtensilio(alvo);
 
-            boolean sucesso = UtensilioDAO.atualizarUtensilio(utensilioParaEditar);
-
-            if (sucesso) {
-                exibirPopupEstilizado(Alert.AlertType.INFORMATION, "Sucesso", "Utensílio atualizado com sucesso!", true);
-            } else {
-                exibirPopupEstilizado(Alert.AlertType.ERROR, "Erro", "Não foi possível atualizar as informações no banco de dados.", false);
-            }
-        } catch (NumberFormatException e) {
-            exibirPopupEstilizado(Alert.AlertType.ERROR, "Erro", "O Nº do Patrimônio deve ser um número válido.", false);
-        }
+            Platform.runLater(() -> {
+                if (btnSalvar != null) btnSalvar.setDisable(false);
+                if (sucesso) {
+                    exibirPopupEstilizado(Alert.AlertType.INFORMATION, "Sucesso", "Utensílio atualizado com sucesso!", true);
+                } else {
+                    exibirPopupEstilizado(Alert.AlertType.ERROR, "Erro", "Não foi possível atualizar as informações no banco de dados.", false);
+                }
+            });
+        }, DB_EXECUTOR);
     }
 
     @FXML
