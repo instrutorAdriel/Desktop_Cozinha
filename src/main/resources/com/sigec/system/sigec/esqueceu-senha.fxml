@@ -58,18 +58,35 @@
                             <Font name="Arial" size="13.0" />
                         </font>
                     </TextField>
+
                     <HBox alignment="CENTER" prefHeight="45.0">
                         <children>
-                            <Button mnemonicParsing="false" onAction="#onConfirmaEmailClick" prefHeight="35.0" prefWidth="180.0" styleClass="btn-laranja" text="ENVIAR CÓDIGO" textFill="WHITE">
+                            <Button fx:id="btnEnviarCodigo"
+                                    mnemonicParsing="false"
+                                    onAction="#onConfirmaEmailClick"
+                                    prefHeight="35.0"
+                                    prefWidth="180.0"
+                                    styleClass="btn-laranja"
+                                    text="ENVIAR CÓDIGO"
+                                    textFill="WHITE">
                                 <font>
                                     <Font name="Arial Bold" size="13.0" />
                                 </font>
                             </Button>
                         </children>
                         <VBox.margin>
-                            <Insets bottom="6.0" top="6.0" />
+                            <Insets bottom="2.0" top="6.0" />
                         </VBox.margin>
                     </HBox>
+
+                    <Label fx:id="lblContador"
+                           text="Você poderá reenviar em 01:30"
+                           visible="false"
+                           managed="false"
+                           style="-fx-text-fill: #054685;
+              -fx-font-size: 12px;
+              -fx-font-weight: bold;" />
+
                     <Separator prefWidth="200.0">
                         <VBox.margin>
                             <Insets bottom="5.0" top="5.0" />
