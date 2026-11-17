@@ -45,4 +45,26 @@ public class LaboratorioDAO {
         }
         return laboratorios;
     }
+
+    public static java.util.Map<String, Integer> listarLaboratoriosAtivosPorUnidadeMap(int idUnidade) {
+        java.util.Map<String, Integer> laboratorios = new java.util.LinkedHashMap<>();
+        String sql = "SELECT id_laboratorio, nome_laboratorio FROM laboratorio WHERE situacao = 'A' AND id_unidade = ? ORDER BY nome_laboratorio ASC";
+
+        try (Connection conn = ConfigDataBase.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, idUnidade);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    String nome = rs.getString("nome_laboratorio");
+                    if (nome != null) {
+                        laboratorios.put(nome.trim(), rs.getInt("id_laboratorio"));
+                    }
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Erro ao listar laboratórios por unidade (" + idUnidade + "): " + e.getMessage());
+        }
+        return laboratorios;
+    }
 }

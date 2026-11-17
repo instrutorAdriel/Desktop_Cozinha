@@ -33,6 +33,9 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ResourceBundle;
 import java.util.regex.Pattern;
+import javafx.scene.control.TextFormatter;
+import javafx.scene.control.TextInputControl;
+import java.util.function.UnaryOperator;
 
 public class CadastroController implements Initializable {
 
@@ -139,7 +142,10 @@ public class CadastroController implements Initializable {
         if (txtConfirmarSenhaRevelada != null && txtConfirmarSenha != null) {
             txtConfirmarSenhaRevelada.textProperty().bindBidirectional(txtConfirmarSenha.textProperty());
         }
-
+        configurarRestricaoSenha(txtSenha);
+        configurarRestricaoSenha(txtSenhaRevelada);
+        configurarRestricaoSenha(txtConfirmarSenha);
+        configurarRestricaoSenha(txtConfirmarSenhaRevelada);
         configurarNavegacaoCampos();
         configurarSeletorAcesso();
         configurarSeletorUnidade();
@@ -333,6 +339,20 @@ public class CadastroController implements Initializable {
     }
 
     // =====================================================================
+
+    private void configurarRestricaoSenha(TextInputControl campo) {
+        if (campo == null) return;
+
+        UnaryOperator<TextFormatter.Change> filtro = change -> {
+            String novoTexto = change.getControlNewText();
+
+            if (novoTexto.matches(".*\\s.*") || novoTexto.length() > 25) {
+                return null;
+            }
+            return change;
+        };
+        campo.setTextFormatter(new TextFormatter<>(filtro));
+    }
 
     private void configurarSeletorUnidade() {
         if (unidadeSelect != null) {
@@ -730,7 +750,7 @@ public class CadastroController implements Initializable {
     }
 
     private boolean validarSenha(String senha) {
-        if (senha == null || senha.length() < 8) {
+        if (senha == null || senha.length() < 8 || senha.length() > 25) {
             return false;
         }
         boolean temNumero = false;
@@ -738,11 +758,13 @@ public class CadastroController implements Initializable {
         boolean temEspecial = false;
 
         for (char c : senha.toCharArray()) {
-            if (Character.isDigit(c)) {
+            if (Character.isWhitespace(c)) {
+                return false;
+            } else if (Character.isDigit(c)) {
                 temNumero = true;
             } else if (Character.isUpperCase(c)) {
                 temMaiuscula = true;
-            } else if (!Character.isLetterOrDigit(c) && !Character.isWhitespace(c)) {
+            } else if (!Character.isLetterOrDigit(c)) {
                 temEspecial = true;
             }
         }
