@@ -3,7 +3,9 @@ package com.sigec.system.sigec.Controllers;
 import com.sigec.system.sigec.DAOS.RelatorioInsumosDAO;
 import com.sigec.system.sigec.DAOS.RelatorioInsumosDAO.InsumoNecessario;
 import com.sigec.system.sigec.DAOS.RelatorioInsumosDAO.Opcao;
+import com.sigec.system.sigec.Constructors.User;
 import com.sigec.system.sigec.MainApplication;
+import com.sigec.system.sigec.Services.SessaoService;
 import com.sigec.system.sigec.Utils.ButtonBorderLapAnimator;
 import com.sigec.system.sigec.Utils.DropdownBorderLapAnimator;
 import com.sigec.system.sigec.Utils.ScreenTransitionManager;
@@ -32,7 +34,7 @@ import java.util.Locale;
 
 public class CalendarioController {
 
-
+    // Opções "coringa" dos filtros (id 0 = sem filtro)
     private static final Opcao TODOS_CURSOS = new Opcao(0, "Todos");
     private static final Opcao TODAS_TURMAS = new Opcao(0, "Todas");
 
@@ -41,8 +43,12 @@ public class CalendarioController {
 
     private final RelatorioInsumosDAO relatorioDAO = new RelatorioInsumosDAO();
 
+    /** Nome do usuário logado . */
+    private String nomeUsuario = "Usuário";
+
     @FXML private Label dataLabel;
     @FXML private Label horaLabel;
+    @FXML private Label usuarioLabel;
 
     @FXML private VBox submenuEstoque;
     @FXML private Label setaEstoque;
@@ -53,6 +59,7 @@ public class CalendarioController {
     @FXML private Label setaCadastro;
 
     @FXML private TableView<InsumoNecessario> tabelaInsumos;
+    @FXML private TableColumn<InsumoNecessario, String> colCategoria;
     @FXML private TableColumn<InsumoNecessario, String> colInsumo;
     @FXML private TableColumn<InsumoNecessario, Double> colQuantidadeNecessaria;
     @FXML private TableColumn<InsumoNecessario, String> colUnidade;
@@ -67,6 +74,7 @@ public class CalendarioController {
     @FXML
     public void initialize() {
         iniciarRelogio();
+        carregarUsuarioLogado();
         configurarTabela();
         configurarFiltros();
     }
@@ -89,11 +97,44 @@ public class CalendarioController {
         }
     }
 
+    private void carregarUsuarioLogado() {
+        User usuario = SessaoService.getUsuarioLogado();
+
+        if (usuario != null && usuario.getNome() != null && !usuario.getNome().isBlank()) {
+            nomeUsuario = usuario.getNome().trim();
+        } else if (SessaoService.getIdUsuarioLogado() > 0) {
+
+            try {
+                String nome = relatorioDAO.buscarNomeUsuario(SessaoService.getIdUsuarioLogado());
+                nomeUsuario = (nome != null && !nome.isBlank()) ? nome : SessaoService.getNomeExibicao();
+            } catch (SQLException e) {
+                System.err.println("Não foi possível carregar o nome do usuário: " + e.getMessage());
+                nomeUsuario = SessaoService.getNomeExibicao();
+            }
+        } else {
+            nomeUsuario = SessaoService.getNomeExibicao(); // sem sessão: "Administrador"
+        }
+
+        if (usuarioLabel != null) {
+            usuarioLabel.setText(nomeUsuario);
+        }
+    }
+
     private void configurarTabela() {
-        // Lê direto do record (sem PropertyValueFactory, que falha em silêncio se o nome não bater)
+
+        colCategoria.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().categoria()));
         colInsumo.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().nomeProduto()));
         colQuantidadeNecessaria.setCellValueFactory(c -> new SimpleObjectProperty<>(c.getValue().quantidade()));
         colUnidade.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().unidade()));
+
+
+        // Com CONSTRAINED_RESIZE_POLICY, o maxWidth funciona como "peso" de cada coluna.
+        colCategoria.setMaxWidth(1f * Integer.MAX_VALUE * 20);
+        colInsumo.setMaxWidth(1f * Integer.MAX_VALUE * 45);
+        colQuantidadeNecessaria.setMaxWidth(1f * Integer.MAX_VALUE * 20);
+        colUnidade.setMaxWidth(1f * Integer.MAX_VALUE * 15);
+
+
 
         // Exibe 1.200 em vez de 1200.0 e 0,5 em vez de 0.5
         DecimalFormat formato = new DecimalFormat("#,##0.###",
@@ -113,6 +154,11 @@ public class CalendarioController {
         cbCurso.setDisable(true);
         cbTurmaLab.setDisable(true);
 
+        // Mostra o nome completo ao passar o mouse (nomes longos de unidade/turma)
+        configurarTooltip(cbUnidade);
+        configurarTooltip(cbCurso);
+        configurarTooltip(cbTurmaLab);
+
         carregarUnidades();
 
         cbUnidade.getSelectionModel().selectedItemProperty()
@@ -126,9 +172,14 @@ public class CalendarioController {
         dataFim.valueProperty().addListener((obs, a, n) -> limparTabela());
     }
 
-    // ==================================================================
+    private void configurarTooltip(ChoiceBox<Opcao> choiceBox) {
+        choiceBox.valueProperty().addListener((obs, antigo, novo) ->
+                choiceBox.setTooltip(novo == null ? null : new Tooltip(novo.nome())));
+    }
+
+
     // Filtros em cascata: Unidade -> Curso -> Turma
-    // ==================================================================
+
     private void carregarUnidades() {
         try {
             cbUnidade.setItems(FXCollections.observableArrayList(relatorioDAO.listarUnidades()));
@@ -203,9 +254,9 @@ public class CalendarioController {
         }
     }
 
-    // ==================================================================
+
     // Relatório
-    // ==================================================================
+
     @FXML
     public void onGerarRelatorio(ActionEvent event) {
         Opcao unidade = cbUnidade.getValue();
@@ -232,7 +283,7 @@ public class CalendarioController {
             List<InsumoNecessario> insumos =
                     relatorioDAO.buscarInsumosNecessarios(inicio, fim, unidade.id(), idCurso, idTurma);
 
-            tabelaInsumos.setItems(FXCollections.observableArrayList(insumos));
+            tabelaInsumos.getItems().setAll(insumos);
             if (insumos.isEmpty()) {
                 tabelaInsumos.setPlaceholder(new Label("Nenhuma aula agendada com esses filtros no período."));
             }
@@ -242,7 +293,7 @@ public class CalendarioController {
         }
     }
 
-    /** Botão opcional "Limpar" (ver calendario.fxml). */
+
     @FXML
     public void onLimparFiltros(ActionEvent event) {
         cbUnidade.getSelectionModel().clearSelection(); // limpa curso e turma em cascata
@@ -275,9 +326,9 @@ public class CalendarioController {
         alerta.showAndWait();
     }
 
-    // ==================================================================
+
     // Navegação (sem alterações)
-    // ==================================================================
+
     @FXML
     public void onClickHome(ActionEvent event) throws IOException {
         MainApplication.trocadorDeTelas("homeTest.fxml", ScreenTransitionManager.Direction.BACKWARD);

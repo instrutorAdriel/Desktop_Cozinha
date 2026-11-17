@@ -206,6 +206,13 @@ ESTILIZAÇÃO DA TABELA (TABLEVIEW) - FUNDO CLARO E CABEÇALHO ESCURO
     -fx-alignment: CENTER;
 }
 
+/* Colunas numéricas (ex.: Qtd. Necessária): número alinhado à direita.
+   O styleClass da TableColumn é repassado para as células dela. */
+.table-view .table-cell.col-numero {
+    -fx-alignment: CENTER-RIGHT;
+    -fx-padding: 8px 24px 8px 12px;
+}
+
 /* Remove a borda azul ao focar na tabela */
 .table-view:focused {
     -fx-background-color: #ffffff;
@@ -887,6 +894,14 @@ CARTÃO E FORMULÁRIO DE CADASTRO (PADRÃO SENAC)
 
 .btn-action-secondary:hover {
     -fx-background-color: #e2e8f0;
+    -fx-border-color: #94a3b8;
+    -fx-text-fill: #1e293b;
+}
+
+/* Sobrescreve o :pressed azul-escuro (#032e59) herdado do bloco da linha 312,
+   que deixava o texto cinza ilegível durante o clique */
+.btn-action-secondary:pressed {
+    -fx-background-color: #cbd5e1;
     -fx-border-color: #94a3b8;
     -fx-text-fill: #1e293b;
 }
