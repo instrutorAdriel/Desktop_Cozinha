@@ -13,6 +13,8 @@ import com.sigec.system.sigec.Utils.DropdownBorderLapAnimator;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.application.Platform;
+import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -32,6 +34,7 @@ import javafx.util.Duration;
 import javafx.util.StringConverter;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -39,6 +42,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 public class HistoricoController implements Initializable {
@@ -59,8 +63,9 @@ public class HistoricoController implements Initializable {
     @FXML private TableColumn<HistoryDAO, String> codMXM;
     @FXML private TableColumn<HistoryDAO, String> nome_produto;
     @FXML private TableColumn<HistoryDAO, String> tipo_estoque;
-    @FXML private TableColumn<HistoryDAO, Number> quantidade;
-    @FXML private TableColumn<HistoryDAO, Number> qtdcompra;
+    @FXML private TableColumn<HistoryDAO, String> quantidade;
+    @FXML private TableColumn<HistoryDAO, String> qtdcompra;
+    private final AtomicLong requisicaoTabela = new AtomicLong();
 
     @FXML private Button btnNavCadastro;
     @FXML private VBox submenuCadastro;
@@ -133,20 +138,20 @@ public class HistoricoController implements Initializable {
         if (codMXM != null) codMXM.setCellValueFactory(new PropertyValueFactory<>("codMXM"));
         if (nome_produto != null) nome_produto.setCellValueFactory(new PropertyValueFactory<>("nomeProduto"));
         if (tipo_estoque != null) tipo_estoque.setCellValueFactory(new PropertyValueFactory<>("nomeCategoria"));
-        if (quantidade != null) quantidade.setCellValueFactory(new PropertyValueFactory<>("qtdAtual"));
-        if (qtdcompra != null) qtdcompra.setCellValueFactory(new PropertyValueFactory<>("qtdComprar"));
+        if (quantidade != null) {
+            quantidade.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(
+                    formatarQuantidade(cellData.getValue().getQtdAtual(), cellData.getValue().getUnidadeMedida())));
+        }
+        if (qtdcompra != null) {
+            qtdcompra.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(
+                    formatarQuantidade(cellData.getValue().getQtdComprar(), cellData.getValue().getUnidadeMedida())));
+        }
     }
 
     public void carregarDadosTabela(int idUnidade) {
         if (tableHistorico == null) return;
-        try {
-            CursoDTO curso = cbCurso != null ? cbCurso.getValue() : null;
-            List<HistoryDAO> listaCompras = HistoryDAO.listarListaDeCompras(
-                    idUnidade, curso != null ? curso.getId() : 0);
-            tableHistorico.setItems(FXCollections.observableArrayList(listaCompras));
-        } catch (Exception e) {
-            exibirAlerta("Não foi possível carregar os dados da tabela: " + e.getMessage());
-        }
+        CursoDTO curso = cbCurso != null ? cbCurso.getValue() : null;
+        carregarTabelaEmSegundoPlano(idUnidade, curso != null ? curso.getId() : 0, null, null, "");
     }
 
     @FXML
@@ -226,10 +231,6 @@ public class HistoricoController implements Initializable {
         try { MainApplication.trocadorDeTelas("cadastro.fxml"); } catch (IOException e) { exibirAlerta(e.getMessage()); }
     }
     @FXML public void botaoSairAction(ActionEvent event) {
-        try { SessaoService.encerrarSessao(); MainApplication.trocadorDeTelas("login.fxml"); } catch (IOException e) { exibirAlerta(e.getMessage()); }
-
-    @FXML
-    public void botaoSairAction(ActionEvent event) {
         com.sigec.system.sigec.Utils.SidebarNavigationManager.executarLogout();
     }
 
@@ -246,6 +247,7 @@ public class HistoricoController implements Initializable {
         if (tableHistorico == null) return;
         UnidadeDTO unidadeSelecionada = cbUnidade != null ? cbUnidade.getValue() : null;
         if (unidadeSelecionada == null) {
+            requisicaoTabela.incrementAndGet();
             tableHistorico.setItems(FXCollections.observableArrayList());
             return;
         }
@@ -259,37 +261,61 @@ public class HistoricoController implements Initializable {
 
         String termo = txtpesquisa != null ? txtpesquisa.getText().trim() : "";
 
-        List<HistoryDAO> listaBase;
-
         if (dataInicio != null && dataFim != null && dataInicio.isAfter(dataFim)) {
-            tableHistorico.setItems(FXCollections.observableArrayList());
+            requisicaoTabela.incrementAndGet();
             exibirAlerta("A data inicial não pode ser superior à data final.");
             return;
         }
 
-        if (dataInicio != null || dataFim != null) {
-            LocalDate inicioConsulta = dataInicio != null ? dataInicio : dataFim;
-            LocalDate fimConsulta = dataFim != null ? dataFim : dataInicio;
-            listaBase = HistoryDAO.listarComprasPorPeriodo(idUnidade, idCurso, inicioConsulta, fimConsulta);
-        } else {
-            listaBase = HistoryDAO.listarListaDeCompras(idUnidade, idCurso);
-        }
+        LocalDate inicioConsulta = dataInicio != null ? dataInicio : dataFim;
+        LocalDate fimConsulta = dataFim != null ? dataFim : dataInicio;
+        carregarTabelaEmSegundoPlano(idUnidade, idCurso, inicioConsulta, fimConsulta, termo);
+    }
 
-        // Aplica o filtro de pesquisa textual com tolerância (Levenshtein) se houver termo digitado
-        if (!termo.isEmpty()) {
-            String termoLower = termo.toLowerCase();
-            listaBase = listaBase.stream().filter(item -> {
-                if (item.getNomeProduto() == null) return false;
-                String nomeProd = item.getNomeProduto().toLowerCase();
+    private void carregarTabelaEmSegundoPlano(
+            int idUnidade, int idCurso, LocalDate dataInicio, LocalDate dataFim, String termo) {
+        long requisicao = requisicaoTabela.incrementAndGet();
+        Thread thread = new Thread(() -> {
+            try {
+                List<HistoryDAO> resultados = dataInicio != null || dataFim != null
+                        ? HistoryDAO.listarComprasPorPeriodo(idUnidade, idCurso, dataInicio, dataFim)
+                        : HistoryDAO.listarListaDeCompras(idUnidade, idCurso);
 
-                if (nomeProd.contains(termoLower)) return true;
+                if (!termo.isEmpty()) {
+                    String termoLower = termo.toLowerCase();
+                    resultados = resultados.stream().filter(item -> {
+                        if (item.getNomeProduto() == null) return false;
+                        String nomeProd = item.getNomeProduto().toLowerCase();
+                        if (nomeProd.contains(termoLower)) return true;
 
-                int tolerancia = termoLower.length() > 5 ? 2 : 1;
-                return calcularDistanciaLevenshtein(nomeProd, termoLower) <= tolerancia;
-            }).collect(Collectors.toList());
-        }
+                        int tolerancia = termoLower.length() > 5 ? 2 : 1;
+                        return calcularDistanciaLevenshtein(nomeProd, termoLower) <= tolerancia;
+                    }).collect(Collectors.toList());
+                }
 
-        tableHistorico.setItems(FXCollections.observableArrayList(listaBase));
+                List<HistoryDAO> resultadosFinais = resultados;
+                Platform.runLater(() -> {
+                    if (requisicaoTabela.get() == requisicao) {
+                        tableHistorico.setItems(FXCollections.observableArrayList(resultadosFinais));
+                    }
+                });
+            } catch (RuntimeException e) {
+                Platform.runLater(() -> {
+                    if (requisicaoTabela.get() == requisicao) {
+                        exibirAlerta("Não foi possível carregar o relatório: " + e.getMessage());
+                    }
+                });
+            }
+        }, "SIGEC-RelatorioLoader");
+        thread.setDaemon(true);
+        thread.start();
+    }
+
+    private String formatarQuantidade(double valor, String unidade) {
+        String quantidadeFormatada = BigDecimal.valueOf(valor).stripTrailingZeros().toPlainString();
+        return unidade == null || unidade.isBlank()
+                ? quantidadeFormatada
+                : quantidadeFormatada + " " + unidade;
     }
 
     private int calcularDistanciaLevenshtein(String s1, String s2) {

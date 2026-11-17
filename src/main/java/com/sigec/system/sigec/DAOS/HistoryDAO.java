@@ -17,6 +17,7 @@ public class HistoryDAO {
     private String codMXM;
     private String nomeProduto;
     private String nomeCategoria;
+    private String unidadeMedida;
     private String lote;
     private double qtdAtual;
     private double qtdMinima;
@@ -30,7 +31,7 @@ public class HistoryDAO {
     public static List<HistoryDAO> listarListaDeCompras(int idUnidade, int idCurso) {
         List<HistoryDAO> lista = new ArrayList<>();
 
-        String sql = "SELECT i.id_insumo, p.nome_produto, c.nome_categoria, i.quantidade, i.quantidade_minima, i.lote " +
+        String sql = "SELECT i.id_insumo, p.nome_produto, i.unidade_medida, c.nome_categoria, i.quantidade, i.quantidade_minima, i.lote " +
                 "FROM insumo i " +
                 "JOIN produto p ON i.id_produto = p.id_produto " +
                 "LEFT JOIN categoria c ON p.id_categoria = c.id_categoria " +
@@ -58,6 +59,7 @@ public class HistoryDAO {
                     HistoryDAO alerta = new HistoryDAO();
                     alerta.setCodMXM(String.valueOf(rs.getInt("id_insumo")));
                     alerta.setNomeProduto(rs.getString("nome_produto"));
+                    alerta.setUnidadeMedida(rs.getString("unidade_medida"));
                     alerta.setNomeCategoria(rs.getString("nome_categoria"));
                     alerta.setLote(rs.getString("lote"));
                     alerta.setQtdAtual(rs.getDouble("quantidade"));
@@ -69,7 +71,7 @@ public class HistoryDAO {
                 }
             }
         } catch (SQLException e) {
-            System.err.println("Erro ao gerar lista de compras: " + e.getMessage());
+            throw new IllegalStateException("Erro ao gerar lista de compras: " + e.getMessage(), e);
         }
 
         return lista;
@@ -79,7 +81,8 @@ public class HistoryDAO {
     public static List<HistoryDAO> listarComprasPorPeriodo(int idUnidade, int idCurso, LocalDate dataInicio, LocalDate dataFim) {
         List<HistoryDAO> listaResultados = new ArrayList<>();
 
-        String sql = "SELECT MIN(i.id_insumo) AS id_insumo, p.nome_produto, cat.nome_categoria, " +
+        String sql = "SELECT MIN(i.id_insumo) AS id_insumo, p.nome_produto, " +
+                "MAX(i.unidade_medida) AS unidade_medida, cat.nome_categoria, " +
                 "SUM(i.quantidade) AS quantidade_atual, MAX(i.quantidade_minima) AS quantidade_minima, " +
                 "MAX(aloc.qtd_necessaria) AS qtd_necessaria " +
                 "FROM insumo i " +
@@ -118,6 +121,7 @@ public class HistoryDAO {
                         HistoryDAO item = new HistoryDAO();
                         item.setCodMXM(String.valueOf(rs.getInt("id_insumo")));
                         item.setNomeProduto(rs.getString("nome_produto"));
+                        item.setUnidadeMedida(rs.getString("unidade_medida"));
                         item.setNomeCategoria(rs.getString("nome_categoria"));
                         item.setQtdAtual(qtdAtual);
                         item.setQtdMinima(qtdMinima);
@@ -128,7 +132,7 @@ public class HistoryDAO {
                 }
             }
         } catch (SQLException e) {
-            System.err.println("Erro ao listar compras por período: " + e.getMessage());
+            throw new IllegalStateException("Erro ao listar compras por período: " + e.getMessage(), e);
         }
 
         return listaResultados;
@@ -152,6 +156,8 @@ public class HistoryDAO {
     public void setNomeProduto(String nomeProduto) { this.nomeProduto = nomeProduto; }
     public String getNomeCategoria() { return nomeCategoria; }
     public void setNomeCategoria(String nomeCategoria) { this.nomeCategoria = nomeCategoria; }
+    public String getUnidadeMedida() { return unidadeMedida; }
+    public void setUnidadeMedida(String unidadeMedida) { this.unidadeMedida = unidadeMedida; }
     public String getLote() { return lote; }
     public void setLote(String lote) { this.lote = lote; }
     public double getQtdAtual() { return qtdAtual; }
