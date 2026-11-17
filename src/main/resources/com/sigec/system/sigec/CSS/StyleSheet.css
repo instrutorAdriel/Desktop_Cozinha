@@ -1131,6 +1131,7 @@ VALIDAÇÃO DENTRO DOS CAMPOS (CadastroController: nome e e-mail)
 
 /* Texto da mensagem de erro, mostrado dentro do campo */
 .mensagem-erro-campo {
+    -fx-alignment: center-right;
     -fx-background-color: #ffffff;
     -fx-background-radius: 4px;
     -fx-padding: 1px 4px;

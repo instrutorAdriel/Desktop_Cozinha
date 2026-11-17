@@ -190,8 +190,9 @@ public class CadastroController implements Initializable {
 
         campo.setMaxWidth(Double.MAX_VALUE);
         StackPane.setAlignment(erro, Pos.CENTER_RIGHT);
-        StackPane.setMargin(erro, new Insets(0, 6, 0, 0));
-        erro.maxWidthProperty().bind(wrapper.widthProperty().multiply(0.55));
+        erro.setAlignment(Pos.CENTER_RIGHT);
+        StackPane.setMargin(erro, new Insets(0, 8, 0, 0));
+        erro.maxWidthProperty().bind(wrapper.widthProperty().multiply(0.75));
 
         wrapper.getChildren().addAll(campo, erro);
         return erro;
@@ -261,7 +262,7 @@ public class CadastroController implements Initializable {
             return "Preencha o nome completo";
         }
         if (!nome.matches("[\\p{L} '\\-]*")) {
-            return "Use apenas letras (sem números ou símbolos)";
+            return "Use Apenas letras (sem números ou símbolos)";
         }
         if (!validarNomeCompleto(nome.trim())) {
             return "Informe nome e sobrenome";
