@@ -320,7 +320,7 @@ public class CadastroController implements Initializable {
             return "Falta o @ no e-mail";
         }
         if (!EMAIL_RFC_5322.matcher(e).matches()) {
-            return "E-mail fora do padrão RFC 5322";
+            return "E-mail Inválido";
         }
         if (!e.endsWith(DOMINIO_INSTITUCIONAL)) {
             return "Use " + DOMINIO_INSTITUCIONAL;
