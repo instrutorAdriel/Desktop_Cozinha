@@ -112,14 +112,14 @@ public class CadastroController implements Initializable {
     private Label erroNome;
     private Label erroEmail;
 
-    // Caracteres permitidos em um e-mail segundo a RFC 5322 (parte local + @ + domínio)
+    // Caracteres permitidos em um e-mail institucional (letras, números, ponto, hífen, underline e @)
     private static final Pattern EMAIL_CARACTERES_VALIDOS =
-            Pattern.compile("[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~@-]*");
+            Pattern.compile("[a-zA-Z0-9._@-]*");
 
     // Formato conforme RFC 5322 (dot-atom): não aceita ponto no início/fim
-    // nem dois pontos seguidos na parte local (ex.: ".jean", "jean.", "je..an")
+    // nem dois pontos seguidos na parte local
     private static final Pattern EMAIL_RFC_5322 = Pattern.compile(
-            "^[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+)*@" +
+            "^[a-zA-Z0-9_-]+(?:\\.[a-zA-Z0-9_-]+)*@" +
                     "[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?" +
                     "(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?)*$");
 
@@ -287,13 +287,13 @@ public class CadastroController implements Initializable {
         }
         erroEmail = instalarMensagemNoCampo(txtEmail);
 
-        // Enquanto digita: só avisa de caracteres que a RFC 5322 não permite (ex.: espaço, acento)
-        // (o resto é conferido ao sair do campo, senão daria erro antes de terminar de digitar)
+        // Enquanto digita: avisa na hora se digitar caractere inválido (ex.: símbolos especiais, espaço, acento)
+        // (o formato completo com @ e domínio é conferido ao sair do campo)
         txtEmail.textProperty().addListener((obs, antigo, novo) -> {
             if (novo == null || novo.isEmpty()) {
                 ocultarErro(txtEmail, erroEmail);
             } else if (!EMAIL_CARACTERES_VALIDOS.matcher(novo).matches()) {
-                mostrarErro(txtEmail, erroEmail, "Caractere inválido (padrão RFC 5322)");
+                mostrarErro(txtEmail, erroEmail, "Caractere inválido no e-mail");
             } else {
                 ocultarErro(txtEmail, erroEmail);
             }
@@ -314,7 +314,7 @@ public class CadastroController implements Initializable {
         }
         String e = email.trim().toLowerCase();
         if (!EMAIL_CARACTERES_VALIDOS.matcher(e).matches()) {
-            return "Caractere inválido (padrão RFC 5322)";
+            return "Caractere inválido no e-mail";
         }
         if (!e.contains("@")) {
             return "Falta o @ no e-mail";
