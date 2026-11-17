@@ -323,7 +323,7 @@ public class CadastroController implements Initializable {
             return "E-mail fora do padrão RFC 5322";
         }
         if (!e.endsWith(DOMINIO_INSTITUCIONAL)) {
-            return "Use " + DOMINIO_INSTITUCIONAL;
+            return "Use o domínio " + DOMINIO_INSTITUCIONAL;
         }
         return null;
     }
