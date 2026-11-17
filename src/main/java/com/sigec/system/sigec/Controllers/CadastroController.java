@@ -190,7 +190,7 @@ public class CadastroController implements Initializable {
 
         campo.setMaxWidth(Double.MAX_VALUE);
         StackPane.setAlignment(erro, Pos.CENTER_RIGHT);
-        StackPane.setMargin(erro, new Insets(0, 12, 0, 0));
+        StackPane.setMargin(erro, new Insets(0, 6, 0, 0));
         erro.maxWidthProperty().bind(wrapper.widthProperty().multiply(0.55));
 
         wrapper.getChildren().addAll(campo, erro);
