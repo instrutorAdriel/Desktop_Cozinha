@@ -21,128 +21,90 @@ public class HistoryDAO {
     private String lote;
     private double qtdAtual;
     private double qtdMinima;
-    private double qtdComprarOverride = -1;
+    private double qtdComprarOverride;
 
-    // 1. Lista de Compras padrão (Estoque Baixo ou Zerado)
+    // Lista os insumos necessários para todas as aulas alocadas, sem filtro de período.
     public static List<HistoryDAO> listarListaDeCompras(int idUnidade) {
         return listarListaDeCompras(idUnidade, 0);
     }
 
     public static List<HistoryDAO> listarListaDeCompras(int idUnidade, int idCurso) {
-        List<HistoryDAO> lista = new ArrayList<>();
-
-        String sql = "SELECT i.id_insumo, p.nome_produto, i.unidade_medida, c.nome_categoria, i.quantidade, i.quantidade_minima, i.lote " +
-                "FROM insumo i " +
-                "JOIN produto p ON i.id_produto = p.id_produto " +
-                "LEFT JOIN categoria c ON p.id_categoria = c.id_categoria " +
-                "WHERE i.cancelado = 'N' AND i.id_unidade = ? " +
-                "AND ((? <= 0 AND (i.quantidade <= 0 OR i.quantidade <= i.quantidade_minima)) " +
-                "OR (? > 0 AND EXISTS (" +
-                "SELECT 1 FROM turma t " +
-                "JOIN turma_ficha tf ON tf.id_turma = t.id_turma " +
-                "JOIN insumo_ficha fi ON fi.id_ficha = tf.id_ficha " +
-                "JOIN laboratorio l ON l.id_laboratorio = t.id_laboratorio " +
-                "WHERE t.id_curso = ? " +
-                "AND l.id_unidade = i.id_unidade " +
-                "AND fi.id_produto = i.id_produto)))";
-
-        try (Connection conn = ConfigDataBase.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            stmt.setInt(1, idUnidade);
-            stmt.setInt(2, idCurso);
-            stmt.setInt(3, idCurso);
-            stmt.setInt(4, idCurso);
-
-            try (ResultSet rs = stmt.executeQuery()) {
-                while (rs.next()) {
-                    HistoryDAO alerta = new HistoryDAO();
-                    alerta.setCodMXM(String.valueOf(rs.getInt("id_insumo")));
-                    alerta.setNomeProduto(rs.getString("nome_produto"));
-                    alerta.setUnidadeMedida(rs.getString("unidade_medida"));
-                    alerta.setNomeCategoria(rs.getString("nome_categoria"));
-                    alerta.setLote(rs.getString("lote"));
-                    alerta.setQtdAtual(rs.getDouble("quantidade"));
-                    alerta.setQtdMinima(rs.getDouble("quantidade_minima"));
-
-                    if (alerta.getQtdComprar() > 0) {
-                        lista.add(alerta);
-                    }
-                }
-            }
-        } catch (SQLException e) {
-            throw new IllegalStateException("Erro ao gerar lista de compras: " + e.getMessage(), e);
-        }
-
-        return lista;
+        return listarComprasNecessarias(idUnidade, idCurso, null, null);
     }
 
-    // 2. Lista de compras por período, opcionalmente filtrada por curso.
+    // Lista apenas os insumos necessários para as aulas alocadas no período selecionado.
     public static List<HistoryDAO> listarComprasPorPeriodo(int idUnidade, int idCurso, LocalDate dataInicio, LocalDate dataFim) {
-        List<HistoryDAO> listaResultados = new ArrayList<>();
+        if (dataInicio == null || dataFim == null || dataInicio.isAfter(dataFim)) {
+            throw new IllegalArgumentException("Informe um período válido para consultar as compras.");
+        }
+        return listarComprasNecessarias(idUnidade, idCurso, dataInicio, dataFim);
+    }
 
-        String sql = "SELECT MIN(i.id_insumo) AS id_insumo, p.nome_produto, " +
-                "MAX(i.unidade_medida) AS unidade_medida, cat.nome_categoria, " +
-                "SUM(i.quantidade) AS quantidade_atual, MAX(i.quantidade_minima) AS quantidade_minima, " +
-                "MAX(aloc.qtd_necessaria) AS qtd_necessaria " +
-                "FROM insumo i " +
-                "JOIN produto p ON i.id_produto = p.id_produto " +
-                "LEFT JOIN categoria cat ON p.id_categoria = cat.id_categoria " +
-                "JOIN (SELECT fi.id_produto, SUM(fi.quantidade) AS qtd_necessaria " +
+    private static List<HistoryDAO> listarComprasNecessarias(
+            int idUnidade, int idCurso, LocalDate dataInicio, LocalDate dataFim) {
+        List<HistoryDAO> resultados = new ArrayList<>();
+        boolean filtrarPeriodo = dataInicio != null;
+
+        String sql = "SELECT COALESCE(estoque.id_insumo, 0) AS id_insumo, p.nome_produto, " +
+                "p.unidade_m AS unidade_m, c.nome_categoria, " +
+                "COALESCE(estoque.quantidade_atual, 0) AS quantidade_atual, demanda.qtd_necessaria " +
+                "FROM (" +
+                "SELECT fi.id_produto, SUM(fi.quantidade) AS qtd_necessaria " +
                 "FROM turma t " +
                 "JOIN turma_ficha tf ON tf.id_turma = t.id_turma " +
                 "JOIN insumo_ficha fi ON fi.id_ficha = tf.id_ficha " +
-                "JOIN laboratorio l ON t.id_laboratorio = l.id_laboratorio " +
-                "WHERE tf.data >= ? AND tf.data < ? " +
-                "AND l.id_unidade = ? " +
+                "JOIN laboratorio l ON l.id_laboratorio = t.id_laboratorio " +
+                "WHERE l.id_unidade = ? " +
+                (filtrarPeriodo ? "AND tf.data >= ? AND tf.data < ? " : "") +
                 "AND (? <= 0 OR t.id_curso = ?) " +
-                "GROUP BY fi.id_produto) aloc ON aloc.id_produto = p.id_produto " +
+                "GROUP BY fi.id_produto" +
+                ") demanda " +
+                "JOIN produto p ON p.id_produto = demanda.id_produto " +
+                "LEFT JOIN categoria c ON c.id_categoria = p.id_categoria " +
+                "LEFT JOIN (" +
+                "SELECT i.id_produto, MIN(i.id_insumo) AS id_insumo, " +
+                "SUM(COALESCE(i.quantidade, 0)) AS quantidade_atual " +
+                "FROM insumo i " +
                 "WHERE i.id_unidade = ? AND i.cancelado = 'N' " +
-                "GROUP BY p.id_produto, p.nome_produto, cat.nome_categoria";
+                "GROUP BY i.id_produto" +
+                ") estoque ON estoque.id_produto = demanda.id_produto " +
+                "WHERE demanda.qtd_necessaria > COALESCE(estoque.quantidade_atual, 0)";
 
         try (Connection conn = ConfigDataBase.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            stmt.setDate(1, java.sql.Date.valueOf(dataInicio));
-            stmt.setDate(2, java.sql.Date.valueOf(dataFim.plusDays(1)));
-            stmt.setInt(3, idUnidade);
-            stmt.setInt(4, idCurso);
-            stmt.setInt(5, idCurso);
-            stmt.setInt(6, idUnidade);
+            int parametro = 1;
+            stmt.setInt(parametro++, idUnidade);
+            if (filtrarPeriodo) {
+                stmt.setDate(parametro++, java.sql.Date.valueOf(dataInicio));
+                stmt.setDate(parametro++, java.sql.Date.valueOf(dataFim.plusDays(1)));
+            }
+            stmt.setInt(parametro++, idCurso);
+            stmt.setInt(parametro++, idCurso);
+            stmt.setInt(parametro, idUnidade);
 
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
-                    double qtdNecessaria = rs.getDouble("qtd_necessaria");
                     double qtdAtual = rs.getDouble("quantidade_atual");
-                    double qtdMinima = rs.getDouble("quantidade_minima");
-                    double qtdComprar = Math.max(0, qtdNecessaria - qtdAtual);
-
-                    if (qtdComprar > 0) {
-                        HistoryDAO item = new HistoryDAO();
-                        item.setCodMXM(String.valueOf(rs.getInt("id_insumo")));
-                        item.setNomeProduto(rs.getString("nome_produto"));
-                        item.setUnidadeMedida(rs.getString("unidade_medida"));
-                        item.setNomeCategoria(rs.getString("nome_categoria"));
-                        item.setQtdAtual(qtdAtual);
-                        item.setQtdMinima(qtdMinima);
-                        item.setQtdComprarOverride(qtdComprar);
-
-                        listaResultados.add(item);
-                    }
+                    double qtdComprar = rs.getDouble("qtd_necessaria") - qtdAtual;
+                    HistoryDAO item = new HistoryDAO();
+                    item.setCodMXM(String.valueOf(rs.getInt("id_insumo")));
+                    item.setNomeProduto(rs.getString("nome_produto"));
+                    item.setUnidadeMedida(rs.getString("unidade_m"));
+                    item.setNomeCategoria(rs.getString("nome_categoria"));
+                    item.setQtdAtual(qtdAtual);
+                    item.setQtdComprarOverride(qtdComprar);
+                    resultados.add(item);
                 }
             }
         } catch (SQLException e) {
-            throw new IllegalStateException("Erro ao listar compras por período: " + e.getMessage(), e);
+            throw new IllegalStateException("Erro ao listar compras necessárias: " + e.getMessage(), e);
         }
 
-        return listaResultados;
+        return resultados;
     }
 
     public double getQtdComprar() {
-        if (qtdComprarOverride >= 0) {
-            return qtdComprarOverride;
-        }
-        return Math.max(0, qtdMinima - qtdAtual);
+        return qtdComprarOverride;
     }
 
     public void setQtdComprarOverride(double qtdComprarOverride) {

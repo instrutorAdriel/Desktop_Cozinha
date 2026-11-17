@@ -332,7 +332,7 @@
                                                         <Font name="Arial Bold" size="13.0" />
                                                     </font>
                                                 </Label>
-                                                <ChoiceBox fx:id="cbUnidade" prefHeight="35.0" prefWidth="130.0" styleClass="custom-choice-box" />
+                                                <ChoiceBox fx:id="cbUnidade" prefHeight="35.0" prefWidth="230.0" styleClass="custom-choice-box" />
                                             </children>
                                         </HBox>
 

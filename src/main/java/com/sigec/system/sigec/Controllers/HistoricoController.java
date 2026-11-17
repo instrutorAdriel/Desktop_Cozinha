@@ -27,6 +27,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextFormatter;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
@@ -39,6 +40,8 @@ import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.time.format.ResolverStyle;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -46,6 +49,9 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 public class HistoricoController implements Initializable {
+
+    private static final DateTimeFormatter DATE_PICKER_FORMATTER =
+            DateTimeFormatter.ofPattern("dd/MM/uuuu").withResolverStyle(ResolverStyle.STRICT);
 
     @FXML private AnchorPane topBarPane;
     @FXML private Label dataLabel;
@@ -84,6 +90,8 @@ public class HistoricoController implements Initializable {
         configurarDataHora();
         configurarUsuario();
         configurarFiltroCategorias();
+        configurarDatePicker(dataDE);
+        configurarDatePicker(dataATE);
 
         configurarTabela();
 
@@ -119,6 +127,70 @@ public class HistoricoController implements Initializable {
             dataATE.valueProperty().addListener((obs, antiga, nova) -> atualizarTabela());
         }
         atualizarTabela();
+    }
+
+    private void configurarDatePicker(DatePicker datePicker) {
+        if (datePicker == null) return;
+
+        datePicker.setEditable(true);
+        datePicker.setConverter(new StringConverter<>() {
+            @Override
+            public String toString(LocalDate data) {
+                return data == null ? "" : DATE_PICKER_FORMATTER.format(data);
+            }
+
+            @Override
+            public LocalDate fromString(String texto) {
+                if (texto == null || texto.isBlank()) return null;
+                try {
+                    return LocalDate.parse(texto, DATE_PICKER_FORMATTER);
+                } catch (DateTimeParseException e) {
+                    return datePicker.getValue();
+                }
+            }
+        });
+        datePicker.getEditor().setTextFormatter(new TextFormatter<String>(change -> {
+            String texto = change.getControlNewText();
+            if (texto.length() > 10) return null;
+
+            for (int i = 0; i < texto.length(); i++) {
+                char caractere = texto.charAt(i);
+                boolean separador = i == 2 || i == 5;
+                if (separador ? caractere != '/' : caractere < '0' || caractere > '9') {
+                    return null;
+                }
+            }
+
+            if (texto.length() >= 2) {
+                int dia = Integer.parseInt(texto.substring(0, 2));
+                if (dia < 1 || dia > 31) return null;
+            }
+            if (texto.length() >= 5) {
+                int mes = Integer.parseInt(texto.substring(3, 5));
+                if (mes < 1 || mes > 12) return null;
+            }
+            if (texto.length() == 10) {
+                try {
+                    LocalDate.parse(texto, DATE_PICKER_FORMATTER);
+                } catch (DateTimeParseException e) {
+                    return null;
+                }
+            }
+            return change;
+        }));
+        datePicker.getEditor().focusedProperty().addListener((observable, antigo, focado) -> {
+            if (!focado) {
+                try {
+                    LocalDate dataDigitada = LocalDate.parse(
+                            datePicker.getEditor().getText(), DATE_PICKER_FORMATTER);
+                    datePicker.setValue(dataDigitada);
+                } catch (DateTimeParseException e) {
+                    datePicker.getEditor().setText(datePicker.getValue() == null
+                            ? ""
+                            : DATE_PICKER_FORMATTER.format(datePicker.getValue()));
+                }
+            }
+        });
     }
 
     private void carregarCursos() {
