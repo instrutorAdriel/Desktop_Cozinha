@@ -12,8 +12,6 @@ public class ListaEstoque {
     private double quantidadeProduto;
     private String unidadeProduto;
 
-    public ListaEstoque() {
-    }
 
     public ListaEstoque(int idInsumo, int idProduto, String nomeProduto, String lote, String tipoProduto, double quantidadeProduto, String unidadeProduto) {
         this.idInsumo = idInsumo;
@@ -23,6 +21,9 @@ public class ListaEstoque {
         this.tipoProduto = tipoProduto;
         this.quantidadeProduto = quantidadeProduto;
         this.unidadeProduto = unidadeProduto;
+    }
+
+    public ListaEstoque(int i, String nomeProduto, String paraAulas, double quantidadeTotal, String unidadeM) {
     }
 
     public int getIdInsumo() {
