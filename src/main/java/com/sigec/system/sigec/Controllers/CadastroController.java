@@ -192,7 +192,7 @@ public class CadastroController implements Initializable {
         StackPane.setAlignment(erro, Pos.CENTER_RIGHT);
         erro.setAlignment(Pos.CENTER_RIGHT);
         StackPane.setMargin(erro, new Insets(0, 8, 0, 0));
-        erro.maxWidthProperty().bind(wrapper.widthProperty().multiply(0.75));
+        erro.setMaxWidth(Region.USE_PREF_SIZE);
 
         wrapper.getChildren().addAll(campo, erro);
         return erro;
@@ -248,10 +248,12 @@ public class CadastroController implements Initializable {
             }
         });
 
-        // Ao sair do campo: confere se tem nome e sobrenome
+        // Ao sair do campo: confere se tem nome e sobrenome; ao focar: limpa aviso para permitir digitação livre
         txtNome.focusedProperty().addListener((obs, tinhaFoco, temFoco) -> {
             if (!temFoco && !txtNome.getText().isBlank()) {
                 aplicarValidacaoNome();
+            } else if (temFoco && (txtNome.getText() == null || txtNome.getText().matches("[\\p{L} '\\-]*"))) {
+                ocultarErro(txtNome, erroNome);
             }
         });
     }
@@ -300,10 +302,12 @@ public class CadastroController implements Initializable {
             }
         });
 
-        // Ao sair do campo: valida o e-mail completo
+        // Ao sair do campo: valida o e-mail completo; ao focar: limpa aviso para permitir digitação livre
         txtEmail.focusedProperty().addListener((obs, tinhaFoco, temFoco) -> {
             if (!temFoco && !txtEmail.getText().isBlank()) {
                 aplicarValidacaoEmail();
+            } else if (temFoco && (txtEmail.getText() == null || EMAIL_CARACTERES_VALIDOS.matcher(txtEmail.getText()).matches())) {
+                ocultarErro(txtEmail, erroEmail);
             }
         });
     }
@@ -321,7 +325,7 @@ public class CadastroController implements Initializable {
             return "Falta o @ no e-mail";
         }
         if (!EMAIL_RFC_5322.matcher(e).matches()) {
-            return "E-mail Inválido";
+            return "Use o domínio @df.senac.br";
         }
         if (!e.endsWith(DOMINIO_INSTITUCIONAL)) {
             return "Use " + DOMINIO_INSTITUCIONAL;
