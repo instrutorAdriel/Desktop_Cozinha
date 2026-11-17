@@ -227,6 +227,10 @@ public class HistoricoController implements Initializable {
     }
     @FXML public void botaoSairAction(ActionEvent event) {
         try { SessaoService.encerrarSessao(); MainApplication.trocadorDeTelas("login.fxml"); } catch (IOException e) { exibirAlerta(e.getMessage()); }
+
+    @FXML
+    public void botaoSairAction(ActionEvent event) {
+        com.sigec.system.sigec.Utils.SidebarNavigationManager.executarLogout();
     }
 
     // =========================================================================

@@ -1,5 +1,8 @@
 package com.sigec.system.sigec.Controllers;
 
+import com.sigec.system.sigec.DAOS.CursoDAO;
+import com.sigec.system.sigec.DAOS.SolicitacaoDAO;
+import com.sigec.system.sigec.DAOS.UnidadeDAO;
 import com.sigec.system.sigec.MainApplication;
 import com.sigec.system.sigec.Utils.ButtonBorderLapAnimator;
 import com.sigec.system.sigec.Utils.DropdownBorderLapAnimator;
@@ -8,15 +11,19 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 public class SolicitacoesController {
 
@@ -59,17 +66,40 @@ public class SolicitacoesController {
     @FXML
     private Button btnNavEstoque;
 
+    @FXML
+    private ChoiceBox<String> cbUnidade;
+    @FXML
+    private ChoiceBox<String> cbCurso;
+
     private ObservableList<SolicitacaoMock> listaSolicitacoes = FXCollections.observableArrayList();
+    private FilteredList<SolicitacaoMock> filteredData;
 
     @FXML
     public void initialize() {
         iniciarRelogio();
         usuarioLabel.setText("Administrador");
-        cbStatusFiltro.setItems(FXCollections.observableArrayList("Todos", "Pendente", "Aprovado", "Recusado"));
-        cbStatusFiltro.setValue("Pendente");
 
         configurarTabela();
-        carregarDadosDeTeste();
+        configurarFiltroEBusca();
+
+        carregarUnidadesDoBanco();
+        carregarCursosDoBanco();
+
+        cbStatusFiltro.setItems(FXCollections.observableArrayList("Todos", "Pendente", "Aprovado", "Recusado"));
+        cbStatusFiltro.setValue("Todos");
+
+        // FILTROS AUTOMÁTICOS DO CANTO SUPERIOR E STATUS
+        if (cbUnidade != null) {
+            cbUnidade.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> aplicarFiltros());
+        }
+        if (cbCurso != null) {
+            cbCurso.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> aplicarFiltros());
+        }
+        if (cbStatusFiltro != null) {
+            cbStatusFiltro.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> aplicarFiltros());
+        }
+
+        carregarDadosDoBanco();
     }
 
     private void configurarTabela() {
@@ -84,6 +114,61 @@ public class SolicitacoesController {
         tabelaSolicitacoes.setItems(listaSolicitacoes);
     }
 
+    private void configurarFiltroEBusca() {
+        filteredData = new FilteredList<>(listaSolicitacoes, p -> true);
+
+        SortedList<SolicitacaoMock> sortedData = new SortedList<>(filteredData);
+        sortedData.comparatorProperty().bind(tabelaSolicitacoes.comparatorProperty());
+
+        tabelaSolicitacoes.setItems(sortedData);
+    }
+
+    private void aplicarFiltros() {
+        String textoBusca = txtPesquisa != null && txtPesquisa.getText() != null ? txtPesquisa.getText().toLowerCase().trim() : "";
+        String statusSelecionado = cbStatusFiltro != null ? cbStatusFiltro.getValue() : "Todos";
+        String cursoSelecionado = cbCurso != null ? cbCurso.getValue() : "Todos";
+        String unidadeSelecionada = cbUnidade != null ? cbUnidade.getValue() : "Todas";
+
+        filteredData.setPredicate(solicitacao -> {
+            // 1. Filtro por Unidade
+            if (unidadeSelecionada != null && !unidadeSelecionada.equalsIgnoreCase("Todas")) {
+                String uniSolicitacao = solicitacao.getUnidade() != null ? solicitacao.getUnidade().toLowerCase().trim() : "";
+                String uniFiltro = unidadeSelecionada.toLowerCase().trim();
+
+                if (!uniSolicitacao.contains(uniFiltro) && !uniFiltro.contains(uniSolicitacao) && !uniSolicitacao.equals("todas")) {
+                    return false;
+                }
+            }
+
+            // 2. Filtro por Curso (Verifica o curso trazido pela turma da solicitação ou do usuário)
+            if (cursoSelecionado != null && !cursoSelecionado.equalsIgnoreCase("Todos")) {
+                String curFiltro = cursoSelecionado.toLowerCase().trim();
+                String nomeCursoSol = solicitacao.getNomeCurso() != null ? solicitacao.getNomeCurso().toLowerCase().trim() : "";
+
+                if (!nomeCursoSol.equals(curFiltro) && !nomeCursoSol.contains(curFiltro)) {
+                    return false;
+                }
+            }
+
+            // 3. Filtro por Status
+            if (statusSelecionado != null && !statusSelecionado.equalsIgnoreCase("Todos")) {
+                if (!solicitacao.getStatus().equalsIgnoreCase(statusSelecionado)) {
+                    return false;
+                }
+            }
+
+            // 4. Filtro por Texto (Insumo ou Solicitante - acionado no botão Buscar)
+            if (!textoBusca.isEmpty()) {
+                boolean bateInsumo = solicitacao.getInsumo() != null && solicitacao.getInsumo().toLowerCase().contains(textoBusca);
+                boolean bateSolicitante = solicitacao.getSolicitante() != null && solicitacao.getSolicitante().toLowerCase().contains(textoBusca);
+
+                return bateInsumo || bateSolicitante;
+            }
+
+            return true;
+        });
+    }
+
     private void iniciarRelogio() {
         DateTimeFormatter formatadorData = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         DateTimeFormatter formatadorHora = DateTimeFormatter.ofPattern("HH:mm:ss");
@@ -96,105 +181,104 @@ public class SolicitacoesController {
         timeline.play();
     }
 
-    // ==========================================
-    // AÇÕES DA TELA DE SOLICITAÇÕES
-    // ==========================================
     @FXML
     void onFiltrarClick(ActionEvent event) {
-        System.out.println("Filtrando status: " + cbStatusFiltro.getValue() + " | Busca: " + txtPesquisa.getText());
+        carregarDadosDoBanco();
     }
 
     @FXML
     void onAprovarClick(ActionEvent event) {
         SolicitacaoMock selecionada = tabelaSolicitacoes.getSelectionModel().getSelectedItem();
-        if (selecionada != null && selecionada.getStatus().equals("Pendente")) {
-            // Lógica para abater do estoque e atualizar no banco
+
+        if (selecionada == null) {
+            exibirAlerta(Alert.AlertType.WARNING, "Seleção Necessária", "Selecione uma solicitação na tabela para aprovar.");
+            return;
+        }
+
+        if (!selecionada.getStatus().equalsIgnoreCase("Pendente")) {
+            exibirAlerta(Alert.AlertType.INFORMATION, "Ação Não Permitida", "Esta solicitação já foi finalizada (" + selecionada.getStatus() + ") e não pode ser alterada.");
+            return;
+        }
+
+        boolean sucesso = SolicitacaoDAO.atualizarStatus(selecionada.getId(), "A", selecionada.getTipo());
+
+        if (sucesso) {
             selecionada.setStatus("Aprovado");
             tabelaSolicitacoes.refresh();
-            System.out.println("Solicitação Aprovada: " + selecionada.getInsumo());
+            aplicarFiltros();
+            exibirAlerta(Alert.AlertType.INFORMATION, "Sucesso", "Solicitação do item '" + selecionada.getInsumo() + "' foi APROVADA!");
         } else {
-            System.out.println("Selecione uma solicitação 'Pendente' para aprovar.");
+            exibirAlerta(Alert.AlertType.ERROR, "Erro", "Não foi possível atualizar a solicitação no banco de dados.");
         }
     }
 
     @FXML
     void onRecusarClick(ActionEvent event) {
         SolicitacaoMock selecionada = tabelaSolicitacoes.getSelectionModel().getSelectedItem();
-        if (selecionada != null && selecionada.getStatus().equals("Pendente")) {
-            // Aqui chamaria um modal pedindo o motivo da recusa
+
+        if (selecionada == null) {
+            exibirAlerta(Alert.AlertType.WARNING, "Seleção Necessária", "Selecione uma solicitação na tabela para recusar.");
+            return;
+        }
+
+        if (!selecionada.getStatus().equalsIgnoreCase("Pendente")) {
+            exibirAlerta(Alert.AlertType.INFORMATION, "Ação Não Permitida", "Esta solicitação já foi finalizada (" + selecionada.getStatus() + ") e não pode ser alterada.");
+            return;
+        }
+
+        boolean sucesso = SolicitacaoDAO.atualizarStatus(selecionada.getId(), "R", selecionada.getTipo());
+
+        if (sucesso) {
             selecionada.setStatus("Recusado");
             tabelaSolicitacoes.refresh();
-            System.out.println("Solicitação Recusada: " + selecionada.getInsumo());
+            aplicarFiltros();
+            exibirAlerta(Alert.AlertType.WARNING, "Recusado", "Solicitação do item '" + selecionada.getInsumo() + "' foi RECUSADA!");
         } else {
-            System.out.println("Selecione uma solicitação 'Pendente' para recusar.");
+            exibirAlerta(Alert.AlertType.ERROR, "Erro", "Não foi possível atualizar a solicitação no banco de dados.");
         }
     }
 
-    // ==========================================
-    // AÇÕES DO MENU LATERAL
-    // ==========================================
+    private void exibirAlerta(Alert.AlertType tipo, String titulo, String mensagem) {
+        Alert alert = new Alert(tipo);
+        alert.setTitle(titulo);
+        alert.setHeaderText(null);
+        alert.setContentText(mensagem);
+        alert.showAndWait();
+    }
 
     @FXML
     public void onClickHome(ActionEvent event) {
-        try {
-            MainApplication.trocadorDeTelas("homeTest.fxml");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        try { MainApplication.trocadorDeTelas("homeTest.fxml"); } catch (Exception e) { e.printStackTrace(); }
     }
 
     @FXML
     public void onClickRelatorio(ActionEvent event) {
-        try {
-            MainApplication.trocadorDeTelas("historico.fxml");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        try { MainApplication.trocadorDeTelas("historico.fxml"); } catch (Exception e) { e.printStackTrace(); }
     }
 
     @FXML
     public void onClickSolicitacoes(ActionEvent event) {
-        try {
-            MainApplication.trocadorDeTelas("solicitacoes-extras.fxml");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        try { MainApplication.trocadorDeTelas("solicitacoes-extras.fxml"); } catch (Exception e) { e.printStackTrace(); }
     }
 
     @FXML
     public void botaoCalendarioAction(ActionEvent event) {
-        try {
-            MainApplication.trocadorDeTelas("calendario.fxml");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        try { MainApplication.trocadorDeTelas("calendario.fxml"); } catch (Exception e) { e.printStackTrace(); }
     }
 
     @FXML
     public void onClickCadastroUsuario(ActionEvent event) {
-        try {
-            MainApplication.trocadorDeTelas("cadastro.fxml");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        try { MainApplication.trocadorDeTelas("cadastro.fxml"); } catch (Exception e) { e.printStackTrace(); }
     }
 
     @FXML
     public void onClickCadastroTurma(ActionEvent event) {
-        try {
-            MainApplication.trocadorDeTelas("cadastro-turma.fxml");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        try { MainApplication.trocadorDeTelas("cadastro-turma.fxml"); } catch (Exception e) { e.printStackTrace(); }
     }
 
     @FXML
     public void botaoSairAction(ActionEvent event) {
-        try {
-            MainApplication.trocadorDeTelas("login.fxml");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        try { MainApplication.trocadorDeTelas("login.fxml"); } catch (Exception e) { e.printStackTrace(); }
     }
 
     @FXML
@@ -203,9 +287,7 @@ public class SolicitacoesController {
             boolean expandido = !submenuCadastro.isVisible();
             submenuCadastro.setVisible(expandido);
             submenuCadastro.setManaged(expandido);
-            if (setaCadastro != null) {
-                setaCadastro.setText(expandido ? "▲" : "▼");
-            }
+            if (setaCadastro != null) { setaCadastro.setText(expandido ? "▲" : "▼"); }
             if (expandido && btnNavCadastro != null) {
                 ButtonBorderLapAnimator.animarDropdown(btnNavCadastro, submenuCadastro);
             } else if (!expandido && btnNavCadastro != null) {
@@ -223,23 +305,18 @@ public class SolicitacoesController {
         if (submenuEstoque != null && btnNavEstoque != null) {
             boolean expandido = !submenuEstoque.isVisible();
 
-            if (setaEstoque != null) {
-                setaEstoque.setText(expandido ? "▲" : "▼");
-            }
+            if (setaEstoque != null) { setaEstoque.setText(expandido ? "▲" : "▼"); }
 
             if (expandido) {
                 submenuEstoque.setVisible(true);
                 submenuEstoque.setManaged(true);
-
                 DropdownBorderLapAnimator.animarDropdown(btnNavEstoque, submenuEstoque);
             } else {
                 ButtonBorderLapAnimator.cancelarAnimacaoAtiva();
-
                 btnNavEstoque.getStyleClass().remove("btn-dropdown-ativo");
                 btnNavEstoque.setStyle(null);
                 submenuEstoque.getStyleClass().remove("submenu-lateral-ativo");
                 submenuEstoque.setStyle(null);
-
                 submenuEstoque.setVisible(false);
                 submenuEstoque.setManaged(false);
             }
@@ -247,89 +324,86 @@ public class SolicitacoesController {
     }
 
     @FXML
-    public void onClickInsumos(javafx.event.ActionEvent event) {
-        try {
-            com.sigec.system.sigec.MainApplication.trocadorDeTelas("lista-estoque.fxml");
-        } catch (java.io.IOException e) {
-            e.printStackTrace();
-            System.out.println("Erro ao carregar a tela de Insumos: " + e.getMessage());
-        }
+    public void onClickInsumos(ActionEvent event) {
+        try { MainApplication.trocadorDeTelas("lista-estoque.fxml"); } catch (Exception e) { e.printStackTrace(); }
     }
 
     @FXML
-    public void onClickUtensilios(javafx.event.ActionEvent event) {
-        try {
-            com.sigec.system.sigec.MainApplication.trocadorDeTelas("gestao-utensilios.fxml");
-        } catch (java.io.IOException e) {
-            e.printStackTrace();
-            System.out.println("Erro ao carregar a tela de Utensílios: " + e.getMessage());
+    public void onClickUtensilios(ActionEvent event) {
+        try { MainApplication.trocadorDeTelas("gestao-utensilios.fxml"); } catch (Exception e) { e.printStackTrace(); }
+    }
+
+    private void carregarDadosDoBanco() {
+        listaSolicitacoes.clear();
+        List<SolicitacaoMock> dados = SolicitacaoDAO.listarTodasSolicitacoes();
+        listaSolicitacoes.addAll(dados);
+        aplicarFiltros();
+    }
+
+    private void carregarUnidadesDoBanco() {
+        List<String> unidadesDB = UnidadeDAO.listarNomesUnidades();
+        ObservableList<String> items = FXCollections.observableArrayList(unidadesDB);
+
+        cbUnidade.setItems(items);
+
+        if (items.contains("Todas")) {
+            cbUnidade.setValue("Todas");
+        } else if (!items.isEmpty()) {
+            cbUnidade.getSelectionModel().selectFirst();
         }
     }
 
-    // ==========================================
-    // DADOS MOCK (Exemplo visual)
-    // ==========================================
-    private void carregarDadosDeTeste() {
-        listaSolicitacoes.addAll(
-                new SolicitacaoMock("20/10/2026 14:30", "Prof. João Gastronomia", "Cozinha Quente A",
-                        "Farinha de Trigo", "2 kg", "Receita rendeu menos que o esperado", "Pendente"),
-                new SolicitacaoMock("20/10/2026 15:10", "Prof. Maria Confeitaria", "Confeitaria B",
-                        "Chocolate Meio Amargo", "500 g", "Teste extra de temperagem", "Pendente"),
-                new SolicitacaoMock("19/10/2026 09:00", "Prof. Carlos", "Panificação", "Fermento Biológico", "50 g",
-                        "O fermento anterior estava inativo", "Aprovado"));
+    private void carregarCursosDoBanco() {
+        List<String> cursosDB = CursoDAO.listarNomesCursos();
+        ObservableList<String> items = FXCollections.observableArrayList(cursosDB);
+
+        cbCurso.setItems(items);
+        if (items.contains("Todos")) {
+            cbCurso.setValue("Todos");
+        } else if (!items.isEmpty()) {
+            cbCurso.getSelectionModel().selectFirst();
+        }
     }
 
-    // CLASSE INTERNA MOCK PARA A TABELA
     public static class SolicitacaoMock {
+        private int id;
         private String data;
         private String solicitante;
+        private String nomeCurso;
         private String turma;
+        private String unidade;
         private String insumo;
         private String quantidade;
         private String justificativa;
         private String status;
+        private String tipo;
 
-        public SolicitacaoMock(String data, String solicitante, String turma, String insumo, String quantidade,
-                String justificativa, String status) {
+        public SolicitacaoMock(int id, String data, String solicitante, String nomeCurso, String turma, String unidade,
+                               String insumo, String quantidade, String justificativa, String status, String tipo) {
+            this.id = id;
             this.data = data;
             this.solicitante = solicitante;
+            this.nomeCurso = nomeCurso;
             this.turma = turma;
+            this.unidade = unidade;
             this.insumo = insumo;
             this.quantidade = quantidade;
             this.justificativa = justificativa;
             this.status = status;
+            this.tipo = tipo;
         }
 
-        public String getData() {
-            return data;
-        }
-
-        public String getSolicitante() {
-            return solicitante;
-        }
-
-        public String getTurma() {
-            return turma;
-        }
-
-        public String getInsumo() {
-            return insumo;
-        }
-
-        public String getQuantidade() {
-            return quantidade;
-        }
-
-        public String getJustificativa() {
-            return justificativa;
-        }
-
-        public String getStatus() {
-            return status;
-        }
-
-        public void setStatus(String status) {
-            this.status = status;
-        }
+        public int getId() { return id; }
+        public String getData() { return data; }
+        public String getSolicitante() { return solicitante; }
+        public String getNomeCurso() { return nomeCurso; }
+        public String getTurma() { return turma; }
+        public String getUnidade() { return unidade; }
+        public String getInsumo() { return insumo; }
+        public String getQuantidade() { return quantidade; }
+        public String getJustificativa() { return justificativa; }
+        public String getStatus() { return status; }
+        public String getTipo() { return tipo; }
+        public void setStatus(String status) { this.status = status; }
     }
 }

@@ -2,6 +2,7 @@ package com.sigec.system.sigec.Controllers;
 
 import com.sigec.system.sigec.Constructors.Utensilio;
 import com.sigec.system.sigec.DAOS.UtensilioDAO;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -15,8 +16,17 @@ import javafx.stage.Stage;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class RegistroAvariaUtensilioController implements Initializable {
+
+    private static final ExecutorService DB_EXECUTOR = Executors.newCachedThreadPool(r -> {
+        Thread t = new Thread(r, "SIGEC-RegistroAvaria-Worker");
+        t.setDaemon(true);
+        return t;
+    });
 
     @FXML private TextField txtUtensilio;
     @FXML private ChoiceBox<String> cbEstado;
@@ -29,21 +39,32 @@ public class RegistroAvariaUtensilioController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-
         if (cbEstado != null) {
             // Valores correspondentes ao ENUM do banco de dados
             cbEstado.setItems(FXCollections.observableArrayList("PRONTO", "EM_MANUTENCAO", "DANIFICADO"));
         }
 
-
-        if (utensilioSelecionado != null) {
+        final Utensilio alvo = utensilioSelecionado;
+        if (alvo != null) {
             if (txtUtensilio != null) {
-                txtUtensilio.setText(utensilioSelecionado.getNome());
+                txtUtensilio.setText(alvo.getNome());
             }
 
             if (cbEstado != null) {
-                String estadoAtualBanco = UtensilioDAO.buscarUltimoEstadoUtensilio(utensilioSelecionado.getIdUtensilio());
-                cbEstado.setValue(estadoAtualBanco);
+                // Preenche imediatamente com o status já carregado na tabela (0ms de espera)
+                String statusMemoria = (alvo.getStatus() != null && !alvo.getStatus().isBlank())
+                        ? alvo.getStatus().trim()
+                        : "PRONTO";
+                cbEstado.setValue(statusMemoria);
+
+                // Confirma em background o último estado diretamente no banco sem travar a abertura da janela
+                final int idUtensilio = alvo.getIdUtensilio();
+                CompletableFuture.supplyAsync(() -> UtensilioDAO.buscarUltimoEstadoUtensilio(idUtensilio), DB_EXECUTOR)
+                        .thenAccept(estadoAtualBanco -> Platform.runLater(() -> {
+                            if (cbEstado != null && estadoAtualBanco != null) {
+                                cbEstado.setValue(estadoAtualBanco);
+                            }
+                        }));
             }
         } else {
             if (cbEstado != null) {
@@ -62,15 +83,23 @@ public class RegistroAvariaUtensilioController implements Initializable {
             return;
         }
 
-
-        boolean sucesso = UtensilioDAO.registrarAvaria(utensilioSelecionado.getIdUtensilio(), observacao, estado);
-
-        if (sucesso) {
-            exibirAlerta(Alert.AlertType.INFORMATION, "Sucesso", "Avaria registada com sucesso!");
-            fecharModal();
-        } else {
-            exibirAlerta(Alert.AlertType.ERROR, "Erro", "Não foi possível registar a avaria.");
+        final int idUtensilio = utensilioSelecionado.getIdUtensilio();
+        if (btnSalvar != null) {
+            btnSalvar.setDisable(true);
         }
+
+        CompletableFuture.supplyAsync(() -> UtensilioDAO.registrarAvaria(idUtensilio, observacao, estado), DB_EXECUTOR)
+                .thenAccept(sucesso -> Platform.runLater(() -> {
+                    if (btnSalvar != null) {
+                        btnSalvar.setDisable(false);
+                    }
+                    if (sucesso) {
+                        exibirAlerta(Alert.AlertType.INFORMATION, "Sucesso", "Avaria registada com sucesso!");
+                        fecharModal();
+                    } else {
+                        exibirAlerta(Alert.AlertType.ERROR, "Erro", "Não foi possível registar a avaria.");
+                    }
+                }));
     }
 
     @FXML

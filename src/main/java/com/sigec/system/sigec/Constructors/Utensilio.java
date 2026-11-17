@@ -8,10 +8,11 @@ public class Utensilio {
     private int qtdTotal;
     private int qtdDisponivel;
     private int numeroPatrimonio;
+    private int idUnidade;
     private int idCategoria;
     private int idLaboratorio;
 
-    public Utensilio(int idUtensilio, String nome, String laboratorio, String status, int qtdTotal, int qtdDisponivel, int numeroPatrimonio, int idCategoria, int idLaboratorio) {
+    public Utensilio(int idUtensilio, String nome, String laboratorio, String status, int qtdTotal, int qtdDisponivel, int numeroPatrimonio, int idUnidade, int idCategoria, int idLaboratorio) {
         this.idUtensilio = idUtensilio;
         this.nome = nome;
         this.laboratorio = laboratorio;
@@ -19,10 +20,14 @@ public class Utensilio {
         this.qtdTotal = qtdTotal;
         this.qtdDisponivel = qtdDisponivel;
         this.numeroPatrimonio = numeroPatrimonio;
+        this.idUnidade = idUnidade;
         this.idCategoria = idCategoria;
         this.idLaboratorio = idLaboratorio;
     }
 
+    public Utensilio(int idUtensilio, String nome, String laboratorio, String status, int qtdTotal, int qtdDisponivel, int numeroPatrimonio, int idCategoria, int idLaboratorio) {
+        this(idUtensilio, nome, laboratorio, status, qtdTotal, qtdDisponivel, numeroPatrimonio, 0, idCategoria, idLaboratorio);
+    }
 
     public int getIdUtensilio() { return idUtensilio; }
     public String getNome() { return nome; }
@@ -31,14 +36,15 @@ public class Utensilio {
     public int getQtdTotal() { return qtdTotal; }
     public int getQtdDisponivel() { return qtdDisponivel; }
     public int getNumeroPatrimonio() { return numeroPatrimonio; }
+    public int getIdUnidade() { return idUnidade; }
     public int getIdCategoria() { return idCategoria; }
     public int getIdLaboratorio() { return idLaboratorio; }
-
 
     public void setNome(String nome) { this.nome = nome; }
     public void setQtdTotal(int qtdTotal) { this.qtdTotal = qtdTotal; }
     public void setQtdDisponivel(int qtdDisponivel) { this.qtdDisponivel = qtdDisponivel; }
     public void setNumeroPatrimonio(int numeroPatrimonio) { this.numeroPatrimonio = numeroPatrimonio; }
+    public void setIdUnidade(int idUnidade) { this.idUnidade = idUnidade; }
     public void setIdCategoria(int idCategoria) { this.idCategoria = idCategoria; }
     public void setIdLaboratorio(int idLaboratorio) { this.idLaboratorio = idLaboratorio; }
 }
