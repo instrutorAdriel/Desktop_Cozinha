@@ -1106,3 +1106,36 @@ ESTILOS DA PÁGINA INICIAL (HOME)
 /* 4. Estoque Zerado (Vermelho Escuro/Laranja Forte) */
 .card-zerado { -fx-border-color: #3e3b38; }
 .header-zerado { -fx-background-color: #3e3b38; }
+
+/* ==========================================================================
+VALIDAÇÃO DENTRO DOS CAMPOS (CadastroController: nome e e-mail)
+========================================================================== */
+
+/* Borda vermelha do campo com erro (vence os estilos :hover e :focused) */
+.text-field.campo-erro,
+.text-field.campo-erro:hover,
+.conteudo-pagina .text-field.campo-erro,
+.conteudo-pagina .text-field.campo-erro:hover {
+    -fx-border-color: #d93025;
+    -fx-border-width: 1.5px;
+    -fx-border-radius: 8px;
+}
+
+.text-field.campo-erro:focused,
+.conteudo-pagina .text-field.campo-erro:focused {
+    -fx-border-color: #d93025;
+    -fx-border-width: 1.5px;
+    -fx-border-radius: 8px;
+    -fx-effect: dropshadow(three-pass-box, rgba(217, 48, 37, 0.25), 6, 0.25, 0, 1);
+}
+
+/* Texto da mensagem de erro, mostrado dentro do campo */
+.mensagem-erro-campo {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 4px;
+    -fx-padding: 1px 4px;
+    -fx-text-fill: #d93025;
+    -fx-font-family: "Arial";
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+}
