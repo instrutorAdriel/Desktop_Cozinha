@@ -12,16 +12,14 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
-import javafx.scene.control.ToggleButton;
+import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.PopupWindow;
 import javafx.stage.Window;
@@ -34,6 +32,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ResourceBundle;
+import java.util.regex.Pattern;
 import javafx.scene.control.TextFormatter;
 import javafx.scene.control.TextInputControl;
 import java.util.function.UnaryOperator;
@@ -82,7 +81,7 @@ public class CadastroController implements Initializable {
     @FXML
     private PasswordField txtSenha;
 
-    // --- NOVOS CAMPOS DO OLHO (SENHA) ---
+    // --- CAMPOS DO OLHO (SENHA) ---
     @FXML
     private TextField txtSenhaRevelada;
     @FXML
@@ -91,7 +90,7 @@ public class CadastroController implements Initializable {
     @FXML
     private PasswordField txtConfirmarSenha;
 
-    // --- NOVOS CAMPOS DO OLHO (CONFIRMAR SENHA) ---
+    // --- CAMPOS DO OLHO (CONFIRMAR SENHA) ---
     @FXML
     private TextField txtConfirmarSenhaRevelada;
     @FXML
@@ -104,6 +103,27 @@ public class CadastroController implements Initializable {
 
     @FXML
     private VBox loadingOverlay;
+
+    // --- MENSAGENS DE ERRO DENTRO DOS CAMPOS ---
+    // Os estilos ficam no arquivo CSS (classes "campo-erro" e "mensagem-erro-campo")
+    private static final String CLASSE_CAMPO_ERRO = "campo-erro";
+    private static final String CLASSE_MENSAGEM_ERRO = "mensagem-erro-campo";
+
+    private Label erroNome;
+    private Label erroEmail;
+
+    // Caracteres permitidos em um e-mail institucional (letras, números, ponto, hífen, underline e @)
+    private static final Pattern EMAIL_CARACTERES_VALIDOS =
+            Pattern.compile("[a-zA-Z0-9._@-]*");
+
+    // Formato conforme RFC 5322 (dot-atom): não aceita ponto no início/fim
+    // nem dois pontos seguidos na parte local
+    private static final Pattern EMAIL_RFC_5322 = Pattern.compile(
+            "^[a-zA-Z0-9_-]+(?:\\.[a-zA-Z0-9_-]+)*@" +
+                    "[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?" +
+                    "(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?)*$");
+
+    private static final String DOMINIO_INSTITUCIONAL = "@df.senac.br";
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -129,7 +149,201 @@ public class CadastroController implements Initializable {
         configurarNavegacaoCampos();
         configurarSeletorAcesso();
         configurarSeletorUnidade();
+        configurarValidacaoVisualNome();
+        configurarValidacaoVisualEmail();
     }
+
+    // =====================================================================
+    // MENSAGENS DE ERRO DENTRO DA CAIXA DE TEXTO
+    // =====================================================================
+
+    /**
+     * Coloca o campo dentro de um StackPane (no mesmo lugar do layout) e adiciona
+     * um Label por cima do campo, alinhado à direita. Assim a mensagem aparece
+     * DENTRO da caixinha sem precisar alterar o FXML.
+     * A aparência do label e da borda de erro vem do CSS.
+     */
+    private Label instalarMensagemNoCampo(TextField campo) {
+        if (campo == null || !(campo.getParent() instanceof Pane pai)) {
+            return null;
+        }
+
+        Label erro = new Label();
+        erro.getStyleClass().add(CLASSE_MENSAGEM_ERRO);
+        erro.setVisible(false);
+        erro.setMouseTransparent(true); // o clique continua indo para o campo
+
+        StackPane wrapper = new StackPane();
+        // Copia as restrições de layout do pai (margens, anchors, grow, linha/coluna...)
+        wrapper.getProperties().putAll(campo.getProperties());
+        wrapper.setLayoutX(campo.getLayoutX());
+        wrapper.setLayoutY(campo.getLayoutY());
+        wrapper.setMinWidth(campo.getMinWidth());
+        wrapper.setPrefWidth(campo.getPrefWidth());
+        wrapper.setMaxWidth(campo.getMaxWidth());
+        wrapper.setMinHeight(campo.getMinHeight());
+        wrapper.setPrefHeight(campo.getPrefHeight());
+        wrapper.setMaxHeight(campo.getMaxHeight());
+
+        int indice = pai.getChildren().indexOf(campo);
+        pai.getChildren().set(indice, wrapper);
+
+        campo.setMaxWidth(Double.MAX_VALUE);
+        StackPane.setAlignment(erro, Pos.CENTER_RIGHT);
+        erro.setAlignment(Pos.CENTER_RIGHT);
+        StackPane.setMargin(erro, new Insets(0, 8, 0, 0));
+        erro.setMaxWidth(Region.USE_PREF_SIZE);
+
+        wrapper.getChildren().addAll(campo, erro);
+        return erro;
+    }
+
+    private void mostrarErro(TextField campo, Label erro, String mensagem) {
+        if (campo == null) {
+            return;
+        }
+        if (!campo.getStyleClass().contains(CLASSE_CAMPO_ERRO)) {
+            campo.getStyleClass().add(CLASSE_CAMPO_ERRO);
+        }
+
+        if (erro != null) {
+            erro.setText(mensagem);
+            erro.setVisible(true);
+        } else {
+            // Plano B: se não foi possível instalar o label, usa tooltip
+            campo.setTooltip(new Tooltip(mensagem));
+        }
+    }
+
+    private void ocultarErro(TextField campo, Label erro) {
+        if (campo == null) {
+            return;
+        }
+        campo.getStyleClass().remove(CLASSE_CAMPO_ERRO);
+
+        if (erro != null) {
+            erro.setVisible(false);
+            erro.setText("");
+        } else {
+            campo.setTooltip(null);
+        }
+    }
+
+    // ---------------- NOME ----------------
+
+    private void configurarValidacaoVisualNome() {
+        if (txtNome == null) {
+            return;
+        }
+        erroNome = instalarMensagemNoCampo(txtNome);
+
+        // Enquanto digita: avisa na hora se tiver número ou símbolo
+        txtNome.textProperty().addListener((obs, antigo, novo) -> {
+            if (novo == null || novo.isEmpty()) {
+                ocultarErro(txtNome, erroNome);
+            } else if (!novo.matches("[\\p{L} '\\-]*")) {
+                mostrarErro(txtNome, erroNome, "Use apenas letras (sem números ou símbolos)");
+            } else {
+                ocultarErro(txtNome, erroNome);
+            }
+        });
+
+        // Ao sair do campo: confere se tem nome e sobrenome; ao focar: limpa aviso para permitir digitação livre
+        txtNome.focusedProperty().addListener((obs, tinhaFoco, temFoco) -> {
+            if (!temFoco && !txtNome.getText().isBlank()) {
+                aplicarValidacaoNome();
+            } else if (temFoco && (txtNome.getText() == null || txtNome.getText().matches("[\\p{L} '\\-]*"))) {
+                ocultarErro(txtNome, erroNome);
+            }
+        });
+    }
+
+    /** Retorna a mensagem de erro do nome, ou null se estiver válido. */
+    private String mensagemErroNome(String nome) {
+        if (nome == null || nome.isBlank()) {
+            return "Preencha o nome completo";
+        }
+        if (!nome.matches("[\\p{L} '\\-]*")) {
+            return "Use Apenas letras (sem números ou símbolos)";
+        }
+        if (!validarNomeCompleto(nome.trim())) {
+            return "Informe nome e sobrenome";
+        }
+        return null;
+    }
+
+    private boolean aplicarValidacaoNome() {
+        String msg = mensagemErroNome(txtNome.getText());
+        if (msg != null) {
+            mostrarErro(txtNome, erroNome, msg);
+            return false;
+        }
+        ocultarErro(txtNome, erroNome);
+        return true;
+    }
+
+    // ---------------- E-MAIL ----------------
+
+    private void configurarValidacaoVisualEmail() {
+        if (txtEmail == null) {
+            return;
+        }
+        erroEmail = instalarMensagemNoCampo(txtEmail);
+
+        // Enquanto digita: avisa na hora se digitar caractere inválido (ex.: símbolos especiais, espaço, acento)
+        // (o formato completo com @ e domínio é conferido ao sair do campo)
+        txtEmail.textProperty().addListener((obs, antigo, novo) -> {
+            if (novo == null || novo.isEmpty()) {
+                ocultarErro(txtEmail, erroEmail);
+            } else if (!EMAIL_CARACTERES_VALIDOS.matcher(novo).matches()) {
+                mostrarErro(txtEmail, erroEmail, "Caractere inválido no e-mail");
+            } else {
+                ocultarErro(txtEmail, erroEmail);
+            }
+        });
+
+        // Ao sair do campo: valida o e-mail completo; ao focar: limpa aviso para permitir digitação livre
+        txtEmail.focusedProperty().addListener((obs, tinhaFoco, temFoco) -> {
+            if (!temFoco && !txtEmail.getText().isBlank()) {
+                aplicarValidacaoEmail();
+            } else if (temFoco && (txtEmail.getText() == null || EMAIL_CARACTERES_VALIDOS.matcher(txtEmail.getText()).matches())) {
+                ocultarErro(txtEmail, erroEmail);
+            }
+        });
+    }
+
+    /** Retorna a mensagem de erro do e-mail, ou null se estiver válido. */
+    private String mensagemErroEmail(String email) {
+        if (email == null || email.isBlank()) {
+            return "Preencha o e-mail institucional";
+        }
+        String e = email.trim().toLowerCase();
+        if (!EMAIL_CARACTERES_VALIDOS.matcher(e).matches()) {
+            return "Caractere inválido no e-mail";
+        }
+        if (!e.contains("@")) {
+            return "Falta o @ no e-mail";
+        }
+        if (!EMAIL_RFC_5322.matcher(e).matches()) {
+            return "Use o domínio @df.senac.br";
+        }
+        if (!e.endsWith(DOMINIO_INSTITUCIONAL)) {
+            return "Use " + DOMINIO_INSTITUCIONAL;
+        }
+        return null;
+    }
+
+    private boolean aplicarValidacaoEmail() {
+        String msg = mensagemErroEmail(txtEmail.getText());
+        if (msg != null) {
+            mostrarErro(txtEmail, erroEmail, msg);
+            return false;
+        }
+        ocultarErro(txtEmail, erroEmail);
+        return true;
+    }
+
+    // =====================================================================
 
     private void configurarRestricaoSenha(TextInputControl campo) {
         if (campo == null) return;
@@ -419,29 +633,33 @@ public class CadastroController implements Initializable {
 
     @FXML
     public void onCadastrar(ActionEvent event) {
-        String nome = txtNome != null ? txtNome.getText() : null;
-        String email = txtEmail != null ? txtEmail.getText() : null;
-        String senha = txtSenha != null ? txtSenha.getText() : null;
-        String confirmarSenha = txtConfirmarSenha != null ? txtConfirmarSenha.getText() : null;
+        // Nome e e-mail são validados DENTRO dos próprios campos (sem Alert).
+        // Os dois são conferidos juntos, para o usuário ver todos os erros de uma vez.
+        boolean nomeOk = aplicarValidacaoNome();
+        boolean emailOk = aplicarValidacaoEmail();
 
-        if (nome == null || nome.trim().isEmpty() ||
-                email == null || email.trim().isEmpty() ||
-                senha == null || senha.isEmpty() ||
-                confirmarSenha == null || confirmarSenha.isEmpty()) {
-            exibirAlerta(Alert.AlertType.WARNING, "Campos Obrigatórios",
-                    "Por favor, preencha todos os campos obrigatórios para continuar.");
+        if (!nomeOk) {
+            if (txtNome != null) {
+                txtNome.requestFocus();
+            }
             return;
         }
-
-        String nomeLimpo = nome.trim();
-        String emailLimpo = email.trim();
-
-        if (!validarEmailInstitucional(emailLimpo)) {
-            exibirAlerta(Alert.AlertType.WARNING, "E-mail Institucional Inválido",
-                    "O e-mail institucional deve pertencer obrigatoriamente ao domínio @df.senac.br (ex: usuario@df.senac.br).");
+        if (!emailOk) {
             if (txtEmail != null) {
                 txtEmail.requestFocus();
             }
+            return;
+        }
+
+        String nomeLimpo = txtNome.getText().trim();
+        String emailLimpo = txtEmail.getText().trim();
+        String senha = txtSenha != null ? txtSenha.getText() : null;
+        String confirmarSenha = txtConfirmarSenha != null ? txtConfirmarSenha.getText() : null;
+
+        if (senha == null || senha.isEmpty() ||
+                confirmarSenha == null || confirmarSenha.isEmpty()) {
+            exibirAlerta(Alert.AlertType.WARNING, "Campos Obrigatórios",
+                    "Por favor, preencha todos os campos obrigatórios para continuar.");
             return;
         }
 
@@ -465,9 +683,9 @@ public class CadastroController implements Initializable {
 
         String nivelAcesso = (acessoSelect != null && acessoSelect.getValue() != null
                 && !acessoSelect.getValue().trim().isEmpty())
-                        ? acessoSelect.getValue().trim()
-                        : ((txtAcesso != null && !txtAcesso.getText().trim().isEmpty()) ? txtAcesso.getText().trim()
-                                : "Instrutor");
+                ? acessoSelect.getValue().trim()
+                : ((txtAcesso != null && !txtAcesso.getText().trim().isEmpty()) ? txtAcesso.getText().trim()
+                : "Instrutor");
 
         // Exibe a tela de loading enquanto realiza o cadastro no banco de dados em segundo plano
         exibirLoading(true);
@@ -518,16 +736,22 @@ public class CadastroController implements Initializable {
         if (acessoSelect != null)
             acessoSelect.setValue("Instrutor");
 
+        // Garante que as mensagens de erro somem ao limpar
+        ocultarErro(txtNome, erroNome);
+        ocultarErro(txtEmail, erroEmail);
+
         if (txtNome != null) {
             txtNome.requestFocus();
         }
     }
 
-    private boolean validarEmailInstitucional(String email) {
-        if (email == null || email.isBlank()) {
+    // Exige nome e sobrenome, somente letras (com acento), espaço, apóstrofo e hífen
+    private boolean validarNomeCompleto(String nome) {
+        if (nome == null || nome.isBlank()) {
             return false;
         }
-        return email.trim().toLowerCase().matches("^[a-z0-9._%+-]+@df\\.senac\\.br$");
+        return nome.trim().replaceAll("\\s+", " ")
+                .matches("^\\p{L}{2,}(?:[ '\\-]\\p{L}+)+$");
     }
 
     private boolean validarSenha(String senha) {
