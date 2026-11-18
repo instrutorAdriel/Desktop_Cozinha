@@ -206,6 +206,13 @@ ESTILIZAÇÃO DA TABELA (TABLEVIEW) - FUNDO CLARO E CABEÇALHO ESCURO
     -fx-alignment: CENTER;
 }
 
+/* Colunas numéricas (ex.: Qtd. Necessária): número alinhado à direita.
+   O styleClass da TableColumn é repassado para as células dela. */
+.table-view .table-cell.col-numero {
+    -fx-alignment: CENTER-RIGHT;
+    -fx-padding: 8px 24px 8px 12px;
+}
+
 /* Remove a borda azul ao focar na tabela */
 .table-view:focused {
     -fx-background-color: #ffffff;
@@ -213,6 +220,7 @@ ESTILIZAÇÃO DA TABELA (TABLEVIEW) - FUNDO CLARO E CABEÇALHO ESCURO
 
 /* ========================================================================== */
 
+/* Botão de relatório */
 .btn-relatorio {
     -fx-background-color:  #aecae6;
     -fx-background-radius: 5;
@@ -224,7 +232,7 @@ ESTILIZAÇÃO DA TABELA (TABLEVIEW) - FUNDO CLARO E CABEÇALHO ESCURO
     -fx-cursor: hand;
 }
 
-.btn-relatorio:hover{
+.btn-relatorio:hover {
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.4), 10, 0.5, 5, 5);
 }
 
@@ -342,7 +350,238 @@ CONTEÚDO DA PÁGINA (ESTOQUE, HISTÓRICO/RELATÓRIOS E CONSULTAS)
     -fx-background-color: #8e0000;
 }
 
-/* --- Campo de Busca / Searchbox Moderno --- */
+
+/* ==========================================================================
+   3. MENU LATERAL E NAVEGAÇÃO
+========================================================================== */
+
+.painel-lateral {
+    -fx-background-color: #0b2647;
+    -fx-border-color: #0b2647;
+    -fx-border-width: 0 1 0 0;
+}
+
+.painel-lateral:disabled,
+.painel-lateral .button:disabled,
+.painel-lateral .btn-padrao:disabled,
+.painel-lateral .btn-ativo:disabled,
+.painel-lateral .btn-sair:disabled {
+    -fx-opacity: 1.0;
+}
+
+.painel-center {
+    -fx-border-color: #054584;
+    -fx-border-width: 3.5;
+}
+
+.top-bar-pane,
+.painel-superior {
+    -fx-background-color: #f6f8fb;
+}
+
+/* Botão principal do submenu ativo */
+.btn-padrao.btn-dropdown-ativo,
+.btn-dropdown-ativo {
+    -fx-background-color: linear-gradient(to right, #005bb5, #1877f2);
+    -fx-background-radius: 10 10 0 0;
+    -fx-border-color: #ff9800;
+    -fx-border-radius: 5 0 0 0;
+    -fx-border-width: 0 0 0 6;
+    -fx-pref-width: 185;
+    -fx-pref-height: 40;
+    -fx-font-family: "Arial";
+    -fx-font-size: 15;
+    -fx-font-weight: bold;
+    -fx-text-fill: #ffffff;
+    -fx-effect: dropshadow(three-pass-box, rgba(24,119,242,0.5), 14, 0.45, 0, 0);
+}
+
+.btn-padrao.btn-dropdown-ativo:hover,
+.btn-dropdown-ativo:hover {
+    -fx-background-color: linear-gradient(to right, #006ce6, #2d88ff);
+    -fx-border-color: #ffb74d;
+    -fx-effect: dropshadow(three-pass-box, rgba(24,119,242,0.7), 16, 0.55, 0, 0);
+}
+
+/* Container do submenu */
+.submenu-lateral,
+.submenu-lateral-ativo {
+    -fx-pref-width: 185;
+    -fx-max-width: 185;
+    -fx-padding: 0;
+    -fx-spacing: 0;
+    -fx-background-color: transparent;
+}
+
+.submenu-lateral-ativo {
+    -fx-border-width: 0;
+}
+
+/* Opções do submenu */
+.btn-sub-opcao {
+    -fx-background-color: #071f3a;
+    -fx-background-radius: 0;
+    -fx-border-color: #ff9800;
+    -fx-border-radius: 0;
+    -fx-border-width: 0 0 1.2 6;
+    -fx-pref-width: 185;
+    -fx-max-width: 185;
+    -fx-pref-height: 36;
+    -fx-font-family: "Arial";
+    -fx-font-size: 13;
+    -fx-font-weight: bold;
+    -fx-text-fill: #e2e8f0;
+    -fx-cursor: hand;
+    -fx-padding: 0 10 0 14;
+}
+
+.btn-sub-opcao:hover {
+    -fx-background-color: #0d3663;
+    -fx-text-fill: #ffffff;
+    -fx-border-color: #ff9800;
+    -fx-border-width: 0 0 1.2 6;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.35), 8, 0.4, 2, 2);
+}
+
+.btn-sub-ativo {
+    -fx-background-color: linear-gradient(to right, #005bb5, #1877f2);
+    -fx-background-radius: 0;
+    -fx-border-color: #ff9800;
+    -fx-border-radius: 0;
+    -fx-border-width: 0 0 1.2 6;
+    -fx-pref-width: 185;
+    -fx-max-width: 185;
+    -fx-pref-height: 36;
+    -fx-font-family: "Arial";
+    -fx-font-size: 13;
+    -fx-font-weight: bold;
+    -fx-text-fill: #ffffff;
+    -fx-effect: dropshadow(three-pass-box, rgba(24,119,242,0.4), 10, 0.4, 0, 0);
+}
+
+.btn-sub-ativo:hover {
+    -fx-background-color: linear-gradient(to right, #006ce6, #2d88ff);
+    -fx-border-color: #ffb74d;
+    -fx-border-width: 0 0 1.2 6;
+}
+
+#btnSubNavTurma,
+#btnSubNavTurma:hover,
+#btnSubNavTurma.btn-sub-ativo {
+    -fx-background-radius: 0 0 10 0;
+}
+
+
+/* ==========================================================================
+   4. TABELAS
+========================================================================== */
+
+.table-view {
+    -fx-font-family: "Arial";
+    -fx-font-size: 14px;
+    -fx-background-color: #ffffff;
+    -fx-control-inner-background: #ffffff;
+    -fx-control-inner-background-alt: #f8fafc;
+    -fx-border-color: transparent;
+    -fx-border-width: 0px;
+    -fx-border-radius: 6px;
+    -fx-background-radius: 6px;
+}
+
+/* Células */
+.table-view .table-cell {
+    -fx-text-fill: #1e293b;
+    -fx-font-family: "Arial";
+    -fx-padding: 8px 12px;
+    -fx-alignment: CENTER_LEFT;
+}
+
+/* Linhas */
+.table-view .table-row-cell {
+    -fx-background-color: #ffffff;
+    -fx-border-color: transparent transparent #e2e8f0 transparent;
+    -fx-border-width: 0 0 1px 0;
+}
+
+/* Linhas alternadas */
+.table-view .table-row-cell:odd {
+    -fx-background-color: #f8fafc;
+}
+
+/* Hover da linha */
+.table-view .table-row-cell:hover {
+    -fx-background-color: #f1f5f9;
+}
+
+/* Linha selecionada */
+.table-view .table-row-cell:filled:selected {
+    -fx-background-color: #054584;
+    -fx-text-background-color: #ffffff;
+}
+
+.table-view .table-row-cell:filled:selected .table-cell {
+    -fx-text-fill: #ffffff;
+}
+
+/* Cabeçalho */
+.table-view .column-header-background,
+.table-view .column-header,
+.table-view .column-header-background .filler {
+    -fx-background-color: #054584;
+    -fx-border-color: transparent #ffffff #054584 transparent;
+    -fx-border-width: 0 1px 0 0;
+    -fx-size: 38px;
+}
+
+/* Texto do cabeçalho */
+.table-view .column-header .label {
+    -fx-text-fill: #ffffff;
+    -fx-font-family: "Arial Bold";
+    -fx-font-size: 13px;
+    -fx-alignment: CENTER;
+}
+
+.table-view:focused {
+    -fx-background-color: #ffffff;
+}
+
+/* Tabela de alertas */
+.tabela-alertas-custom {
+    -fx-background-radius: 0 0 5px 5px;
+    -fx-border-color: transparent;
+}
+
+
+/* ==========================================================================
+   5. CONTEÚDO E FUNDOS DAS PÁGINAS
+========================================================================== */
+
+.conteudo-pagina {
+    -fx-background-color: #f6f8fb;
+}
+
+.workspace-bg {
+    -fx-background-color: #f4f7fb;
+}
+
+.bg-transparent {
+    -fx-background-color: transparent;
+}
+
+.borda-separadora-lateral {
+    -fx-border-color: #054584;
+    -fx-border-width: 0 0 0 1;
+}
+
+.painel-secundario {
+    -fx-background-color: #e4891b;
+}
+
+
+/* ==========================================================================
+   6. CAMPOS DE TEXTO E BUSCA
+========================================================================== */
+
 .search-field,
 .conteudo-pagina .text-field {
     -fx-background-color: #ffffff;
@@ -366,10 +605,38 @@ CONTEÚDO DA PÁGINA (ESTOQUE, HISTÓRICO/RELATÓRIOS E CONSULTAS)
 .search-field:focused,
 .conteudo-pagina .text-field:focused {
     -fx-border-color: #054685;
-    -fx-effect: dropshadow(three-pass-box, rgba(5, 70, 133, 0.25), 6, 0.25, 0, 1);
+    -fx-effect: dropshadow(three-pass-box, rgba(5,70,133,0.25), 6, 0.25, 0, 1);
 }
 
-/* --- CheckBoxes Padronizados (Perecível, Não Perecível, Utensílios) --- */
+/* Campos do formulário de cadastro */
+.form-field-input {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #cbd5e1;
+    -fx-border-width: 1.5px;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-font-family: "Arial";
+    -fx-font-size: 13px;
+    -fx-text-fill: #1e293b;
+    -fx-prompt-text-fill: #94a3b8;
+    -fx-pref-height: 36px;
+    -fx-padding: 0 12px;
+}
+
+.form-field-input:hover {
+    -fx-border-color: #94a3b8;
+}
+
+.form-field-input:focused {
+    -fx-border-color: #054685;
+    -fx-effect: dropshadow(three-pass-box, rgba(5,70,133,0.25), 6, 0.25, 0, 1);
+}
+
+
+/* ==========================================================================
+   7. CHECKBOXES
+========================================================================== */
+
 .check-box,
 .filtro-checkbox {
     -fx-font-family: "Arial";
@@ -398,7 +665,7 @@ CONTEÚDO DA PÁGINA (ESTOQUE, HISTÓRICO/RELATÓRIOS E CONSULTAS)
 .check-box:hover .box,
 .filtro-checkbox:hover .box {
     -fx-border-color: #054685;
-    -fx-effect: dropshadow(three-pass-box, rgba(5, 70, 133, 0.25), 4, 0.2, 0, 1);
+    -fx-effect: dropshadow(three-pass-box, rgba(5,70,133,0.25), 4, 0.2, 0, 1);
 }
 
 .check-box:selected .box,
@@ -413,7 +680,11 @@ CONTEÚDO DA PÁGINA (ESTOQUE, HISTÓRICO/RELATÓRIOS E CONSULTAS)
     -fx-shape: "M 0 4 L 3 7 L 8 1 L 7 0 L 3 5 L 1 3 Z";
 }
 
-/* --- DatePicker (Seleção de Datas) Harmonizado --- */
+
+/* ==========================================================================
+   8. DATE PICKER
+========================================================================== */
+
 .date-picker,
 .custom-date-picker {
     -fx-background-color: transparent;
@@ -469,6 +740,7 @@ CONTEÚDO DA PÁGINA (ESTOQUE, HISTÓRICO/RELATÓRIOS E CONSULTAS)
     -fx-background-color: #ffffff;
 }
 
+/* Popup do calendário */
 .date-picker-popup {
     -fx-background-color: #ffffff;
     -fx-border-color: #054685;
@@ -504,7 +776,12 @@ CONTEÚDO DA PÁGINA (ESTOQUE, HISTÓRICO/RELATÓRIOS E CONSULTAS)
     -fx-font-weight: bold;
 }
 
-/* --- ChoiceBox (Categorias / Filtros) Harmonizado --- */
+
+/* ==========================================================================
+   9. CHOICEBOX GERAL
+========================================================================== */
+
+/* Estilo dos ChoiceBox comuns */
 .choice-box,
 .custom-choice-box {
     -fx-background-color: #ffffff;
@@ -527,7 +804,7 @@ CONTEÚDO DA PÁGINA (ESTOQUE, HISTÓRICO/RELATÓRIOS E CONSULTAS)
 .choice-box:focused,
 .custom-choice-box:focused {
     -fx-border-color: #054685;
-    -fx-effect: dropshadow(three-pass-box, rgba(5, 70, 133, 0.2), 6, 0.2, 0, 1);
+    -fx-effect: dropshadow(three-pass-box, rgba(5,70,133,0.2), 6, 0.2, 0, 1);
 }
 
 .choice-box .label,
@@ -541,6 +818,7 @@ CONTEÚDO DA PÁGINA (ESTOQUE, HISTÓRICO/RELATÓRIOS E CONSULTAS)
     -fx-background-color: #054685;
 }
 
+/* Popup dos ChoiceBox comuns */
 .choice-box .context-menu,
 .custom-choice-box .context-menu {
     -fx-background-color: #ffffff;
@@ -565,9 +843,13 @@ CONTEÚDO DA PÁGINA (ESTOQUE, HISTÓRICO/RELATÓRIOS E CONSULTAS)
     -fx-text-fill: #ffffff;
 }
 
-/* --- ChoiceBox de Acesso (Cadastro de Instrutor) --- */
-.choice-box-cadastro,
-#acessoSelect {
+
+/* ==========================================================================
+   10. CHOICEBOX DO CADASTRO
+   Estilo visual compartilhado pelos campos da classe choice-box-cadastro
+========================================================================== */
+
+.choice-box-cadastro {
     -fx-pref-width: 400px;
     -fx-min-width: 400px;
     -fx-pref-height: 35px;
@@ -600,17 +882,20 @@ CONTEÚDO DA PÁGINA (ESTOQUE, HISTÓRICO/RELATÓRIOS E CONSULTAS)
     -fx-font-size: 13px;
 }
 
-.choice-box-cadastro .context-menu,
-#acessoSelect .context-menu {
-    -fx-min-width: 400px;
-    -fx-pref-width: 400px;
-    -fx-max-width: 400px;
+
+/* ==========================================================================
+   11. POPUP EXCLUSIVO DO ACESSOSELECT
+   Não aplica estes estilos ao unidadeSelect.
+========================================================================== */
+
+/* Fundo e borda do menu */
+.acesso-popup {
     -fx-background-color: #ffffff;
-    -fx-border-color: #054685;
-    -fx-border-width: 1.5px;
-    -fx-border-radius: 8px;
     -fx-background-radius: 8px;
-    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.18), 10, 0.2, 0, 4);
+    -fx-border-color: #054685;
+    -fx-border-width: 1px;
+    -fx-border-radius: 8px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.18), 10, 0.2, 0, 4);
     -fx-padding: 4px;
 }
 
@@ -620,6 +905,8 @@ CONTEÚDO DA PÁGINA (ESTOQUE, HISTÓRICO/RELATÓRIOS E CONSULTAS)
     -fx-pref-width: 390px;
     -fx-pref-height: 35px;
     -fx-padding: 8px 14px;
+    -fx-cursor: hand;
+    -fx-background-radius: 6px;
     -fx-cursor: hand;
     -fx-background-radius: 6px;
 }
@@ -645,24 +932,49 @@ CONTEÚDO DA PÁGINA (ESTOQUE, HISTÓRICO/RELATÓRIOS E CONSULTAS)
     -fx-text-fill: #ffffff;
 }
 
-.choice-box-cadastro .radio-menu-item:checked .label,
-#acessoSelect .radio-menu-item:checked .label {
+/* Indicador ✓ da opção selecionada */
+.acesso-popup .radio-menu-item:checked > .left-container > .radio {
+    -fx-opacity: 1.0;
+    -fx-background-color: #054685;
+    -fx-shape: "M0,5H2L4,8L8,0H10L5,10H3Z";
+    -fx-scale-shape: false;
+}
+
+/* Mantém o ✓ azul quando a opção selecionada recebe foco */
+.acesso-popup .radio-menu-item:focused:checked > .left-container > .radio {
+    -fx-opacity: 1.0;
+    -fx-background-color: #054685;
+}
+
+/* ✓ branco quando o mouse está sobre a própria opção selecionada */
+.acesso-popup .radio-menu-item:checked:hover > .left-container > .radio {
+    -fx-opacity: 1.0;
+    -fx-background-color: #ffffff;
+}
+
+/* Texto da opção selecionada */
+.acesso-popup .radio-menu-item:checked .label {
     -fx-text-fill: #054685;
     -fx-font-weight: bold;
 }
 
-.choice-box-cadastro .radio-menu-item:checked:hover .label,
-#acessoSelect .radio-menu-item:checked:hover .label {
+/* Texto da opção selecionada durante o hover */
+.acesso-popup .radio-menu-item:checked:hover .label {
     -fx-text-fill: #ffffff;
 }
 
-/* Configura as cores de fundo alternadas (Zebra) */
+
+/* ==========================================================================
+   12. LISTAS
+========================================================================== */
+
+/* Lista geral */
 .list-view {
     -fx-control-inner-background: #aecae6;
     -fx-control-inner-background-alt: #f3ad50;
 }
 
-/* Configura as linhas divisórias */
+/* Células gerais */
 .list-cell {
     -fx-border-color: #054584;
     -fx-border-width: 1;
@@ -814,6 +1126,7 @@ SUBMENU DROPDOWN DE NAVEGAÇÃO LATERAL (CADASTROS)
 CARTÃO E FORMULÁRIO DE CADASTRO (PADRÃO SENAC)
 ========================================================================== */
 
+/* Card de formulário */
 .card-form-cadastro {
     -fx-background-color: #ffffff;
     -fx-background-radius: 12px;
@@ -824,6 +1137,7 @@ CARTÃO E FORMULÁRIO DE CADASTRO (PADRÃO SENAC)
     -fx-padding: 24px 32px;
 }
 
+/* Rótulos dos campos */
 .form-label {
     -fx-font-family: "Arial Bold";
     -fx-font-size: 13px;
@@ -891,6 +1205,14 @@ CARTÃO E FORMULÁRIO DE CADASTRO (PADRÃO SENAC)
     -fx-text-fill: #1e293b;
 }
 
+/* Sobrescreve o :pressed azul-escuro (#032e59) herdado do bloco da linha 312,
+   que deixava o texto cinza ilegível durante o clique */
+.btn-action-secondary:pressed {
+    -fx-background-color: #cbd5e1;
+    -fx-border-color: #94a3b8;
+    -fx-text-fill: #1e293b;
+}
+
 /* ==========================================================================
 TELA DE CADASTRO DE TURMAS (SEÇÕES LADO A LADO)
 ========================================================================== */
@@ -905,6 +1227,7 @@ TELA DE CADASTRO DE TURMAS (SEÇÕES LADO A LADO)
     -fx-padding: 20px 24px;
 }
 
+/* Títulos de seção */
 .section-title {
     -fx-font-family: "Arial Bold";
     -fx-font-size: 16px;
@@ -947,6 +1270,7 @@ TELA DE CADASTRO DE TURMAS (SEÇÕES LADO A LADO)
     -fx-border-width: 0 0 1px 4px;
 }
 
+/* Indicadores da lista de instrutores */
 .badge-instrutor-selecionado {
     -fx-background-color: #054685;
     -fx-background-radius: 12px;
@@ -965,9 +1289,37 @@ TELA DE CADASTRO DE TURMAS (SEÇÕES LADO A LADO)
     -fx-text-fill: #64748b;
 }
 
+
 /* ==========================================================================
-BOTÃO DE REVELAR SENHA (OLHO)
+   14. LOGIN
 ========================================================================== */
+
+.fundo-login {
+    -fx-background-color: #f6f8fb;
+}
+
+.onda-azul {
+    -fx-fill: #0b2647;
+    -fx-stroke: transparent;
+}
+
+.onda-laranja {
+    -fx-fill: transparent;
+    -fx-stroke: #e47d1b;
+    -fx-stroke-width: 6;
+    -fx-stroke-line-cap: round;
+}
+
+.particula-luz {
+    -fx-fill: #ffffff;
+    -fx-effect: dropshadow(three-pass-box, #ff9900, 20, 0.7, 0, 0);
+}
+
+
+/* ==========================================================================
+   15. BOTÃO DE REVELAR SENHA
+========================================================================== */
+
 .btn-olho {
     -fx-background-color: transparent;
     -fx-cursor: hand;
@@ -975,8 +1327,6 @@ BOTÃO DE REVELAR SENHA (OLHO)
     -fx-min-width: 32px;
     -fx-pref-height: 25px;
     -fx-min-height: 25px;
-
-    /* Imagem Padrão: Olho Aberto */
     -fx-background-image: url("../imagens/olho-aberto.png");
     -fx-background-repeat: no-repeat;
     -fx-background-position: center;
@@ -995,33 +1345,18 @@ BOTÃO DE REVELAR SENHA (OLHO)
     -fx-background-image: url("../imagens/olho-fechado.png");
 }
 
+
 /* ==========================================================================
-ESTILOS DA PÁGINA INICIAL (HOME)
+   16. PÁGINA INICIAL (HOME)
 ========================================================================== */
 
-/* Fundo da área de trabalho */
-.workspace-bg {
-    -fx-background-color: #f4f7fb;
-}
-
-/* Borda que separa o menu lateral do conteúdo */
-.borda-separadora-lateral {
-    -fx-border-color: #054584;
-    -fx-border-width: 0 0 0 1;
-}
-
-/* Faixa laranja de status no topo */
+/* Faixa de status */
 .status-orange-banner {
     -fx-background-color: #ea7a04;
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.15), 4, 0, 0, 2);
 }
 
-/* Fundo transparente para o VBox principal */
-.bg-transparent {
-    -fx-background-color: transparent;
-}
-
-/* Linha sutil separando o título da página */
+/* Linha abaixo do cabeçalho */
 .header-alertas-border {
     -fx-border-color: transparent transparent #e2e8f0 transparent;
     -fx-border-width: 0 0 1 0;
@@ -1063,8 +1398,12 @@ ESTILOS DA PÁGINA INICIAL (HOME)
     -fx-border-color: transparent;
 }
 
-/* teste */
-/* Estado de Célula Selecionada (Para múltipla seleção) */
+
+/* ==========================================================================
+   17. CALENDÁRIO PERSONALIZADO
+========================================================================== */
+
+/* Dia selecionado */
 .calendar-cell-selected {
     -fx-background-color: #005ea6;
     -fx-border-color: #002f6c;
@@ -1074,7 +1413,7 @@ ESTILOS DA PÁGINA INICIAL (HOME)
     -fx-cursor: hand;
 }
 
-/* Força o texto do dia a ficar branco quando selecionado */
+/* Texto do dia selecionado */
 .calendar-cell-selected .label {
     -fx-text-fill: #ffffff;
 }
@@ -1108,7 +1447,7 @@ ESTILOS DA PÁGINA INICIAL (HOME)
 .header-zerado { -fx-background-color: #3e3b38; }
 
 /* ==========================================================================
-VALIDAÇÃO DENTRO DOS CAMPOS (CadastroController: nome e e-mail)
+   18. BADGES E BOTÕES AUXILIARES
 ========================================================================== */
 
 /* Borda vermelha do campo com erro (vence os estilos :hover e :focused) */
@@ -1139,4 +1478,25 @@ VALIDAÇÃO DENTRO DOS CAMPOS (CadastroController: nome e e-mail)
     -fx-font-family: "Arial";
     -fx-font-size: 11px;
     -fx-font-weight: bold;
+    -fx-text-fill: white;
+}
+
+.btn-laranja:hover {
+    -fx-background-color: #ba7119;
+}
+/* ==========================================================================
+   19. INDICADOR DE CARREGAMENTO
+   Usado no login e nas telas que consultam o banco (ex.: Calendário).
+========================================================================== */
+
+/* Spinner na cor laranja do sistema (o padrão do JavaFX é azul) */
+.loader-laranja {
+    -fx-progress-color: #e4891b;
+}
+
+/* Texto que acompanha o spinner dentro das tabelas */
+.loader-texto {
+    -fx-font-family: "Arial Bold";
+    -fx-font-size: 13px;
+    -fx-text-fill: #64748b;
 }

@@ -1,112 +1,475 @@
 package com.sigec.system.sigec.Controllers;
 
+import com.sigec.system.sigec.DAOS.RelatorioInsumosDAO;
+import com.sigec.system.sigec.DAOS.RelatorioInsumosDAO.InsumoNecessario;
+import com.sigec.system.sigec.DAOS.RelatorioInsumosDAO.Opcao;
+import com.sigec.system.sigec.Constructors.User;
 import com.sigec.system.sigec.MainApplication;
+import com.sigec.system.sigec.Services.SessaoService;
 import com.sigec.system.sigec.Utils.ButtonBorderLapAnimator;
 import com.sigec.system.sigec.Utils.DropdownBorderLapAnimator;
+import com.sigec.system.sigec.Utils.RelatorioInsumosPdf;
 import com.sigec.system.sigec.Utils.ScreenTransitionManager;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.beans.binding.Bindings;
+import javafx.collections.FXCollections;
+import javafx.concurrent.Task;
+import javafx.geometry.Pos;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
+import javafx.scene.control.*;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
 import javafx.util.Duration;
-import com.sigec.system.sigec.Constructors.ListaEstoque;
-import com.sigec.system.sigec.DAOS.ProductStorageDAO;
 
-import javafx.collections.FXCollections;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.cell.PropertyValueFactory;
-
+import java.io.File;
 import java.io.IOException;
+import java.sql.SQLException;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
 
 public class CalendarioController {
 
-    @FXML
-    private Label dataLabel;
+    // Opções "coringa" dos filtros (id 0 = sem filtro)
+    private static final Opcao TODOS_CURSOS = new Opcao(0, "Todos");
+    private static final Opcao TODAS_TURMAS = new Opcao(0, "Todas");
 
-    @FXML
-    private Label horaLabel;
+    private static final String MSG_INICIAL =
+            "Selecione a unidade e o período e clique em \"Gerar Relatório de Insumos\".";
 
-    @FXML
-    private VBox submenuEstoque;
+    private final RelatorioInsumosDAO relatorioDAO = new RelatorioInsumosDAO();
 
-    @FXML
-    private Label setaEstoque;
+    /** Nome do usuário logado . */
+    private String nomeUsuario = "Usuário";
 
-    @FXML
-    private Button btnNavCadastro;
+    /**
+     * Número da geração atual do relatório. Cada clique em "Gerar" ou mudança de filtro
+     * incrementa; uma consulta que termina com número antigo é descartada.
+     */
+    private long geracaoAtual = 0;
 
-    @FXML
-    private VBox submenuCadastro;
+    /** Texto original do botão Gerar (restaurado ao fim do carregamento). */
+    private String textoBotaoGerar;
 
-    @FXML
-    private Label setaCadastro;
+    /** Filtros da última geração: o PDF sai exatamente com o que está na tabela. */
+    private RelatorioInsumosPdf.Cabecalho ultimoCabecalho;
 
-    @FXML
-    private Button btnNavEstoque;
-    @FXML
-    private TableView<ListaEstoque> tabelaInsumos;
+    @FXML private Label dataLabel;
+    @FXML private Label horaLabel;
+    @FXML private Label usuarioLabel;
 
-    @FXML
-    private TableColumn<ListaEstoque, String> colInsumo;
+    @FXML private VBox submenuEstoque;
+    @FXML private Label setaEstoque;
+    @FXML private Button btnNavEstoque;
 
-    @FXML
-    private TableColumn<ListaEstoque, Double> colQuantidadeNecessaria;
+    @FXML private Button btnNavCadastro;
+    @FXML private VBox submenuCadastro;
+    @FXML private Label setaCadastro;
 
-    @FXML
-    private TableColumn<ListaEstoque, String> colUnidade;
+    @FXML private TableView<InsumoNecessario> tabelaInsumos;
+    @FXML private TableColumn<InsumoNecessario, String> colCategoria;
+    @FXML private TableColumn<InsumoNecessario, String> colInsumo;
+    @FXML private TableColumn<InsumoNecessario, Double> colQuantidadeNecessaria;
+    @FXML private TableColumn<InsumoNecessario, String> colUnidade;
+
+    @FXML private ChoiceBox<Opcao> cbUnidade;
+    @FXML private ChoiceBox<Opcao> cbCurso;
+    @FXML private ChoiceBox<Opcao> cbTurmaLab;
+
+    @FXML private DatePicker dataInicio;
+    @FXML private DatePicker dataFim;
+
+    @FXML private Button btnGerarLista;
+    @FXML private Button btnSalvarPdf;
 
     @FXML
     public void initialize() {
-        // Formata e injeta a data atual (Ex: 19/10/2026)
+        iniciarRelogio();
+        carregarUsuarioLogado();
+        configurarTabela();
+        configurarFiltros();
+    }
+
+    // ==================================================================
+    // Inicialização
+    // ==================================================================
+    private void iniciarRelogio() {
         DateTimeFormatter dataFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         if (dataLabel != null) {
             dataLabel.setText(LocalDate.now().format(dataFormatter));
         }
-
-        // Cria a linha do tempo para atualizar o relógio a cada segundo (Ex: 11:04:15)
         if (horaLabel != null) {
             DateTimeFormatter horaFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
-            Timeline clock = new Timeline(new KeyFrame(Duration.ZERO, e -> {
-                horaLabel.setText(LocalTime.now().format(horaFormatter));
-            }), new KeyFrame(Duration.seconds(1)));
-
+            Timeline clock = new Timeline(
+                    new KeyFrame(Duration.ZERO, e -> horaLabel.setText(LocalTime.now().format(horaFormatter))),
+                    new KeyFrame(Duration.seconds(1)));
             clock.setCycleCount(Animation.INDEFINITE);
             clock.play();
         }
-        colInsumo.setCellValueFactory(
-                new PropertyValueFactory<>("nomeProduto"));
-
-        colQuantidadeNecessaria.setCellValueFactory(
-                new PropertyValueFactory<>("quantidadeProduto"));
-
-        colUnidade.setCellValueFactory(
-                new PropertyValueFactory<>("unidadeProduto"));
     }
 
-    @FXML
-    public void onBuscarInsumos(ActionEvent event) {
+    private void carregarUsuarioLogado() {
+        User usuario = SessaoService.getUsuarioLogado();
 
-        ProductStorageDAO dao = new ProductStorageDAO();
+        if (usuario != null && usuario.getNome() != null && !usuario.getNome().isBlank()) {
+            nomeUsuario = usuario.getNome().trim();
+        } else if (SessaoService.getIdUsuarioLogado() > 0) {
 
-        tabelaInsumos.setItems(
-                FXCollections.observableArrayList(
-                        dao.buscarTodosProdutosEstoque()
-                )
-        );
+            try {
+                String nome = relatorioDAO.buscarNomeUsuario(SessaoService.getIdUsuarioLogado());
+                nomeUsuario = (nome != null && !nome.isBlank()) ? nome : SessaoService.getNomeExibicao();
+            } catch (SQLException e) {
+                System.err.println("Não foi possível carregar o nome do usuário: " + e.getMessage());
+                nomeUsuario = SessaoService.getNomeExibicao();
+            }
+        } else {
+            nomeUsuario = SessaoService.getNomeExibicao(); // sem sessão: "Administrador"
+        }
+
+        if (usuarioLabel != null) {
+            usuarioLabel.setText(nomeUsuario);
+        }
     }
+
+    private void configurarTabela() {
+
+        colCategoria.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().categoria()));
+        colInsumo.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().nomeProduto()));
+        colQuantidadeNecessaria.setCellValueFactory(c -> new SimpleObjectProperty<>(c.getValue().quantidade()));
+        colUnidade.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().unidade()));
+
+
+        // Com CONSTRAINED_RESIZE_POLICY, o maxWidth funciona como "peso" de cada coluna.
+        colCategoria.setMaxWidth(1f * Integer.MAX_VALUE * 20);
+        colInsumo.setMaxWidth(1f * Integer.MAX_VALUE * 45);
+        colQuantidadeNecessaria.setMaxWidth(1f * Integer.MAX_VALUE * 20);
+        colUnidade.setMaxWidth(1f * Integer.MAX_VALUE * 15);
+
+
+
+        // Exibe 1.200 em vez de 1200.0 e 0,5 em vez de 0.5
+        DecimalFormat formato = new DecimalFormat("#,##0.###",
+                DecimalFormatSymbols.getInstance(Locale.forLanguageTag("pt-BR")));
+        colQuantidadeNecessaria.setCellFactory(col -> new TableCell<>() {
+            @Override
+            protected void updateItem(Double valor, boolean vazio) {
+                super.updateItem(valor, vazio);
+                setText(vazio || valor == null ? null : formato.format(valor));
+            }
+        });
+
+        tabelaInsumos.setPlaceholder(new Label(MSG_INICIAL));
+
+        // O botão de PDF só fica ativo quando há itens na tabela
+        // (a lista é sempre a mesma: setAll/clear, então o vínculo continua valendo)
+        btnSalvarPdf.disableProperty().bind(Bindings.isEmpty(tabelaInsumos.getItems()));
+    }
+
+    private void configurarFiltros() {
+        cbCurso.setDisable(true);
+        cbTurmaLab.setDisable(true);
+
+        // Mostra o nome completo ao passar o mouse (nomes longos de unidade/turma)
+        configurarTooltip(cbUnidade);
+        configurarTooltip(cbCurso);
+        configurarTooltip(cbTurmaLab);
+
+        carregarUnidades();
+
+        cbUnidade.getSelectionModel().selectedItemProperty()
+                .addListener((obs, antiga, nova) -> onUnidadeSelecionada(nova));
+        cbCurso.getSelectionModel().selectedItemProperty()
+                .addListener((obs, antigo, novo) -> onCursoSelecionado(novo));
+
+        // Qualquer mudança de filtro invalida o resultado que está na tela
+        cbTurmaLab.getSelectionModel().selectedItemProperty().addListener((obs, a, n) -> limparTabela());
+        dataInicio.valueProperty().addListener((obs, a, n) -> limparTabela());
+        dataFim.valueProperty().addListener((obs, a, n) -> limparTabela());
+    }
+
+    private void configurarTooltip(ChoiceBox<Opcao> choiceBox) {
+        choiceBox.valueProperty().addListener((obs, antigo, novo) ->
+                choiceBox.setTooltip(novo == null ? null : new Tooltip(novo.nome())));
+    }
+
+
+    // Filtros em cascata: Unidade -> Curso -> Turma
+
+    private void carregarUnidades() {
+        try {
+            cbUnidade.setItems(FXCollections.observableArrayList(relatorioDAO.listarUnidades()));
+            // Se o usuário só tem uma unidade, já deixa selecionada
+            if (cbUnidade.getItems().size() == 1) {
+                cbUnidade.getSelectionModel().selectFirst();
+            }
+        } catch (SQLException e) {
+            mostrarErro("Não foi possível carregar as unidades.", e);
+        }
+    }
+
+    private void onUnidadeSelecionada(Opcao unidade) {
+        limparTabela();
+        cbCurso.getItems().clear();
+        cbTurmaLab.getItems().clear();
+        cbTurmaLab.setDisable(true);
+
+        if (unidade == null) {
+            cbCurso.setDisable(true);
+            return;
+        }
+
+        try {
+            List<Opcao> cursos = new ArrayList<>();
+            cursos.add(TODOS_CURSOS);
+            cursos.addAll(relatorioDAO.listarCursosPorUnidade(unidade.id()));
+
+            cbCurso.setItems(FXCollections.observableArrayList(cursos));
+            cbCurso.setDisable(false);
+            cbCurso.getSelectionModel().select(TODOS_CURSOS); // dispara onCursoSelecionado
+        } catch (SQLException e) {
+            cbCurso.setDisable(true);
+            mostrarErro("Não foi possível carregar os cursos da unidade.", e);
+        }
+    }
+
+    private void onCursoSelecionado(Opcao curso) {
+        limparTabela();
+        cbTurmaLab.getItems().clear();
+
+        if (curso == null) {
+            cbTurmaLab.setDisable(true);
+            return;
+        }
+
+        // "Todos" os cursos -> turma fica travada em "Todas"
+        if (curso.equals(TODOS_CURSOS)) {
+            cbTurmaLab.setItems(FXCollections.observableArrayList(TODAS_TURMAS));
+            cbTurmaLab.getSelectionModel().select(TODAS_TURMAS);
+            cbTurmaLab.setDisable(true);
+            return;
+        }
+
+        Opcao unidade = cbUnidade.getValue();
+        if (unidade == null) {
+            cbTurmaLab.setDisable(true);
+            return;
+        }
+
+        try {
+            List<Opcao> turmas = new ArrayList<>();
+            turmas.add(TODAS_TURMAS);
+            turmas.addAll(relatorioDAO.listarTurmasPorCursoEUnidade(curso.id(), unidade.id()));
+
+            cbTurmaLab.setItems(FXCollections.observableArrayList(turmas));
+            cbTurmaLab.getSelectionModel().select(TODAS_TURMAS);
+            cbTurmaLab.setDisable(false);
+        } catch (SQLException e) {
+            cbTurmaLab.setDisable(true);
+            mostrarErro("Não foi possível carregar as turmas do curso.", e);
+        }
+    }
+
+
+    // Relatório
 
     @FXML
     public void onGerarRelatorio(ActionEvent event) {
-        // Lógica para gerar o relatório PDF/XLSX
+        Opcao unidade = cbUnidade.getValue();
+        LocalDate inicio = dataInicio.getValue();
+        LocalDate fim = dataFim.getValue();
+
+        if (unidade == null) {
+            mostrarAviso("Selecione a unidade.");
+            return;
+        }
+        if (inicio == null || fim == null) {
+            mostrarAviso("Selecione a data inicial e a data final.");
+            return;
+        }
+        if (fim.isBefore(inicio)) {
+            mostrarAviso("A data final não pode ser anterior à data inicial.");
+            return;
+        }
+
+        int idUnidade = unidade.id();
+        Integer idCurso = idOuNulo(cbCurso.getValue());
+        Integer idTurma = idOuNulo(cbTurmaLab.getValue());
+
+        // A consulta roda em outra thread; a tela continua respondendo (mesmo padrão do login)
+        Task<List<InsumoNecessario>> tarefa = new Task<>() {
+            @Override
+            protected List<InsumoNecessario> call() throws Exception {
+                // Só banco aqui: nada de tela fora da thread do JavaFX
+                return relatorioDAO.buscarInsumosNecessarios(inicio, fim, idUnidade, idCurso, idTurma);
+            }
+        };
+
+        long minhaGeracao = ++geracaoAtual;
+        mostrarCarregando(true);
+
+        tarefa.setOnSucceeded(e -> {
+            if (minhaGeracao != geracaoAtual) {
+                return; // filtros mudaram durante a consulta: resultado descartado
+            }
+            mostrarCarregando(false);
+            List<InsumoNecessario> insumos = tarefa.getValue();
+            tabelaInsumos.getItems().setAll(insumos);
+            ultimoCabecalho = new RelatorioInsumosPdf.Cabecalho(
+                    unidade.nome(),
+                    cbCurso.getValue() == null ? TODOS_CURSOS.nome() : cbCurso.getValue().nome(),
+                    cbTurmaLab.getValue() == null ? TODAS_TURMAS.nome() : cbTurmaLab.getValue().nome(),
+                    inicio, fim, nomeUsuario);
+            if (insumos.isEmpty()) {
+                tabelaInsumos.setPlaceholder(new Label("Nenhuma aula agendada com esses filtros no período."));
+            }
+        });
+
+        tarefa.setOnFailed(e -> {
+            if (minhaGeracao != geracaoAtual) {
+                return;
+            }
+            limparTabela();
+            Throwable erro = tarefa.getException();
+            mostrarErro("Não foi possível gerar a lista de insumos.",
+                    erro instanceof Exception ex ? ex : new Exception(erro));
+        });
+
+        Thread thread = new Thread(tarefa, "relatorio-insumos");
+        thread.setDaemon(true); // não segura o fechamento do sistema
+        thread.start();
     }
+
+    /** Liga/desliga o estado de carregamento: botão travado + spinner laranja na tabela. */
+    private void mostrarCarregando(boolean carregando) {
+        if (textoBotaoGerar == null) {
+            textoBotaoGerar = btnGerarLista.getText();
+        }
+        btnGerarLista.setDisable(carregando);
+        btnGerarLista.setText(carregando ? "Gerando relatório..." : textoBotaoGerar);
+
+        if (carregando) {
+            tabelaInsumos.getItems().clear();
+            tabelaInsumos.setPlaceholder(criarIndicadorCarregando());
+        }
+    }
+
+    private VBox criarIndicadorCarregando() {
+        ProgressIndicator spinner = new ProgressIndicator();
+        spinner.getStyleClass().add("loader-laranja");
+        spinner.setPrefSize(40, 40);
+
+        Label texto = new Label("Carregando insumos...");
+        texto.getStyleClass().add("loader-texto");
+
+        VBox caixa = new VBox(10, spinner, texto);
+        caixa.setAlignment(Pos.CENTER);
+        return caixa;
+    }
+
+
+    // Exportação em PDF
+
+    @FXML
+    public void onSalvarPdf(ActionEvent event) {
+        if (tabelaInsumos.getItems().isEmpty() || ultimoCabecalho == null) {
+            mostrarAviso("Gere a lista de insumos antes de salvar o PDF.");
+            return;
+        }
+
+        DateTimeFormatter f = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        FileChooser chooser = new FileChooser();
+        chooser.setTitle("Salvar relatório em PDF");
+        chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Arquivo PDF (*.pdf)", "*.pdf"));
+        chooser.setInitialFileName("previsao-insumos_" + ultimoCabecalho.inicio().format(f)
+                + "_a_" + ultimoCabecalho.fim().format(f) + ".pdf");
+
+        File destino = chooser.showSaveDialog(tabelaInsumos.getScene().getWindow());
+        if (destino == null) {
+            return; // usuário cancelou
+        }
+        if (!destino.getName().toLowerCase().endsWith(".pdf")) {
+            destino = new File(destino.getParentFile(), destino.getName() + ".pdf");
+        }
+
+        try {
+            RelatorioInsumosPdf.gerar(destino, ultimoCabecalho, List.copyOf(tabelaInsumos.getItems()));
+        } catch (Exception e) {
+            mostrarErro("Não foi possível salvar o PDF. Verifique se o arquivo não está aberto em outro programa.", e);
+            return;
+        }
+
+        Alert ok = new Alert(Alert.AlertType.CONFIRMATION,
+                "PDF salvo em:\n" + destino.getAbsolutePath() + "\n\nDeseja abrir o arquivo agora?",
+                ButtonType.YES, ButtonType.NO);
+        ok.setHeaderText(null);
+        ok.setTitle("Relatório salvo");
+        Optional<ButtonType> resposta = ok.showAndWait();
+        if (resposta.isPresent() && resposta.get() == ButtonType.YES) {
+            abrirArquivo(destino);
+        }
+    }
+
+    /** Abre o PDF no leitor padrão do Windows, fora da thread da interface. */
+    private void abrirArquivo(File arquivo) {
+        Thread t = new Thread(() -> {
+            try {
+                java.awt.Desktop.getDesktop().open(arquivo);
+            } catch (Exception e) {
+                System.err.println("Não foi possível abrir o PDF: " + e.getMessage());
+            }
+        }, "abrir-pdf");
+        t.setDaemon(true);
+        t.start();
+    }
+
+    @FXML
+    public void onLimparFiltros(ActionEvent event) {
+        cbUnidade.getSelectionModel().clearSelection(); // limpa curso e turma em cascata
+        dataInicio.setValue(null);
+        dataFim.setValue(null);
+        limparTabela();
+    }
+
+    private Integer idOuNulo(Opcao opcao) {
+        return (opcao == null || opcao.id() == 0) ? null : opcao.id();
+    }
+
+    private void limparTabela() {
+        geracaoAtual++;            // invalida uma consulta que ainda esteja rodando
+        mostrarCarregando(false);
+        ultimoCabecalho = null;
+        tabelaInsumos.getItems().clear();
+        tabelaInsumos.setPlaceholder(new Label(MSG_INICIAL));
+    }
+
+    private void mostrarAviso(String mensagem) {
+        Alert alerta = new Alert(Alert.AlertType.WARNING, mensagem, ButtonType.OK);
+        alerta.setHeaderText(null);
+        alerta.setTitle("Atenção");
+        alerta.showAndWait();
+    }
+
+    private void mostrarErro(String mensagem, Exception e) {
+        e.printStackTrace();
+        Alert alerta = new Alert(Alert.AlertType.ERROR, mensagem + "\n\nDetalhe: " + e.getMessage(), ButtonType.OK);
+        alerta.setHeaderText(null);
+        alerta.setTitle("Erro");
+        alerta.showAndWait();
+    }
+
+
+    // Navegação
 
     @FXML
     public void onClickHome(ActionEvent event) throws IOException {
@@ -165,16 +528,13 @@ public class CalendarioController {
             if (expandido) {
                 submenuEstoque.setVisible(true);
                 submenuEstoque.setManaged(true);
-
                 DropdownBorderLapAnimator.animarDropdown(btnNavEstoque, submenuEstoque);
             } else {
                 ButtonBorderLapAnimator.cancelarAnimacaoAtiva();
-
                 btnNavEstoque.getStyleClass().remove("btn-dropdown-ativo");
                 btnNavEstoque.setStyle(null);
                 submenuEstoque.getStyleClass().remove("submenu-lateral-ativo");
                 submenuEstoque.setStyle(null);
-
                 submenuEstoque.setVisible(false);
                 submenuEstoque.setManaged(false);
             }
@@ -182,20 +542,20 @@ public class CalendarioController {
     }
 
     @FXML
-    public void onClickInsumos(javafx.event.ActionEvent event) {
+    public void onClickInsumos(ActionEvent event) {
         try {
-            com.sigec.system.sigec.MainApplication.trocadorDeTelas("lista-estoque.fxml");
-        } catch (java.io.IOException e) {
+            MainApplication.trocadorDeTelas("lista-estoque.fxml");
+        } catch (IOException e) {
             e.printStackTrace();
             System.out.println("Erro ao carregar a tela de Insumos: " + e.getMessage());
         }
     }
 
     @FXML
-    public void onClickUtensilios(javafx.event.ActionEvent event) {
+    public void onClickUtensilios(ActionEvent event) {
         try {
-            com.sigec.system.sigec.MainApplication.trocadorDeTelas("gestao-utensilios.fxml");
-        } catch (java.io.IOException e) {
+            MainApplication.trocadorDeTelas("gestao-utensilios.fxml");
+        } catch (IOException e) {
             e.printStackTrace();
             System.out.println("Erro ao carregar a tela de Utensílios: " + e.getMessage());
         }
@@ -215,5 +575,4 @@ public class CalendarioController {
     public void botaoSairAction(ActionEvent event) {
         com.sigec.system.sigec.Utils.SidebarNavigationManager.executarLogout();
     }
-
 }

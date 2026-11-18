@@ -7,6 +7,8 @@ module com.sigec.system.sigec {
     requires atlantafx.base;
     requires jakarta.mail;
     requires javafx.graphics;
+    requires com.github.librepdf.openpdf; // relatório em PDF
+    requires java.desktop;
 
     opens com.sigec.system.sigec to javafx.fxml;
     opens com.sigec.system.sigec.Controllers to javafx.fxml;

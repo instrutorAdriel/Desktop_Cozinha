@@ -243,7 +243,7 @@
                 </VBox>
 
                 <Region VBox.vgrow="ALWAYS" />
-                <Button fx:id="botaoSair" alignment="CENTER" mnemonicParsing="false" onAction="#botaoSairAction" maxWidth="1.7976931348623157E308" prefHeight="45.0" styleClass="btn-sair" text="Sair">
+                <Button fx:id="botaoSair" alignment="CENTER" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#botaoSairAction" prefHeight="45.0" styleClass="btn-sair" text="Sair">
                     <font>
                         <Font name="Arial Bold" size="15.0" />
                     </font>
@@ -307,87 +307,81 @@
                                         <Insets bottom="15.0" left="20.0" right="20.0" top="15.0" />
                                     </padding>
                                     <children>
-                                        <Label text="SELECIONE O PERÍODO PARA GERAR A LISTA DE INSUMOS" textFill="#002f6c">
+                                        <!-- Título da tela -->
+                                        <Label text="PREVISÃO DE INSUMOS PARA AS AULAS" textFill="#002f6c">
                                             <font>
                                                 <Font name="Arial Bold" size="14.0" />
                                             </font>
                                         </Label>
-                                        <HBox alignment="CENTER_LEFT" spacing="15.0">
-                                            <children>
 
-                                                <!-- NOVO: Seletor de Unidade -->
-                                                <VBox spacing="5.0">
+                                        <!-- Linha 1: Unidade / Curso / Turma (dividem a largura e crescem com a janela) -->
+                                        <HBox alignment="BOTTOM_LEFT" spacing="15.0">
+                                            <children>
+                                                <VBox spacing="5.0" prefWidth="300.0" HBox.hgrow="ALWAYS">
                                                     <children>
                                                         <Label text="Unidade" textFill="#64748b">
                                                             <font><Font name="Arial Bold" size="12.0" /></font>
                                                         </Label>
-                                                        <ChoiceBox fx:id="cbUnidade" prefWidth="160.0" styleClass="custom-choice-box" />
+                                                        <ChoiceBox fx:id="cbUnidade" maxWidth="1.7976931348623157E308" minWidth="220.0" prefWidth="300.0" styleClass="custom-choice-box" />
                                                     </children>
                                                 </VBox>
 
-                                                <!-- NOVO: Seletor de Curso -->
-                                                <VBox spacing="5.0">
+                                                <VBox spacing="5.0" prefWidth="300.0" HBox.hgrow="ALWAYS">
                                                     <children>
                                                         <Label text="Curso" textFill="#64748b">
                                                             <font><Font name="Arial Bold" size="12.0" /></font>
                                                         </Label>
-                                                        <ChoiceBox fx:id="cbCurso" prefWidth="160.0" styleClass="custom-choice-box" />
+                                                        <ChoiceBox fx:id="cbCurso" maxWidth="1.7976931348623157E308" minWidth="220.0" prefWidth="300.0" styleClass="custom-choice-box" />
                                                     </children>
                                                 </VBox>
 
-                                                <!-- Seletor de Turma -->
-                                                <VBox spacing="5.0">
+                                                <VBox spacing="5.0" prefWidth="300.0" HBox.hgrow="ALWAYS">
                                                     <children>
-                                                        <Label text="Turma " textFill="#64748b">
+                                                        <Label text="Turma" textFill="#64748b">
                                                             <font><Font name="Arial Bold" size="12.0" /></font>
                                                         </Label>
-                                                        <ChoiceBox fx:id="cbTurmaLab" prefWidth="180.0" styleClass="custom-choice-box" />
+                                                        <ChoiceBox fx:id="cbTurmaLab" maxWidth="1.7976931348623157E308" minWidth="220.0" prefWidth="300.0" styleClass="custom-choice-box" />
                                                     </children>
                                                 </VBox>
+                                            </children>
+                                        </HBox>
 
-                                                <!-- DatePicker Nativo - Data Inicial -->
+                                        <!-- Linha 2: período + ações -->
+                                        <HBox alignment="BOTTOM_LEFT" spacing="15.0">
+                                            <children>
                                                 <VBox spacing="5.0">
                                                     <children>
                                                         <Label text="Data Inicial" textFill="#64748b">
                                                             <font><Font name="Arial Bold" size="12.0" /></font>
                                                         </Label>
-                                                        <DatePicker fx:id="dataInicio" prefWidth="140.0" promptText="De" styleClass="custom-date-picker" />
+                                                        <DatePicker fx:id="dataInicio" editable="false" prefWidth="160.0" promptText="De" styleClass="custom-date-picker" />
                                                     </children>
                                                 </VBox>
 
-                                                <!-- DatePicker Nativo - Data Final -->
                                                 <VBox spacing="5.0">
                                                     <children>
                                                         <Label text="Data Final" textFill="#64748b">
                                                             <font><Font name="Arial Bold" size="12.0" /></font>
                                                         </Label>
-                                                        <DatePicker fx:id="dataFim" prefWidth="140.0" promptText="Até" styleClass="custom-date-picker" />
-                                                    </children>
-                                                </VBox>
-
-                                                <!-- BOTÃO DE BUSCAR NO LOCAL DO QUADRADO VERMELHO -->
-                                                <VBox alignment="BOTTOM_CENTER">
-                                                    <children>
-                                                        <Button fx:id="btnBuscarInsumos" mnemonicParsing="false" onAction="#onBuscarInsumos" styleClass="btn-action-secondary" text="Buscar">
-                                                            <padding>
-                                                                <Insets bottom="8.0" left="15.0" right="15.0" top="8.0" />
-                                                            </padding>
-                                                        </Button>
+                                                        <DatePicker fx:id="dataFim" editable="false" prefWidth="160.0" promptText="Até" styleClass="custom-date-picker" />
                                                     </children>
                                                 </VBox>
 
                                                 <Region HBox.hgrow="ALWAYS" />
 
-                                                <!-- Botão Gerar Relatório -->
-                                                <VBox alignment="BOTTOM_CENTER">
-                                                    <children>
-                                                        <Button fx:id="btnGerarLista" mnemonicParsing="false" onAction="#onGerarRelatorio" styleClass="btn-action-primary" text="📄 Gerar Relatório de Insumos">
-                                                            <padding>
-                                                                <Insets bottom="8.0" left="15.0" right="15.0" top="8.0" />
-                                                            </padding>
-                                                        </Button>
-                                                    </children>
-                                                </VBox>
+                                                <!-- Ação secundária: discreta, ao lado da principal -->
+                                                <Button fx:id="btnLimparFiltros" mnemonicParsing="false" onAction="#onLimparFiltros" styleClass="btn-action-secondary" text="Limpar filtros">
+                                                    <padding>
+                                                        <Insets bottom="8.0" left="15.0" right="15.0" top="8.0" />
+                                                    </padding>
+                                                </Button>
+
+                                                <!-- Ação principal -->
+                                                <Button fx:id="btnGerarLista" mnemonicParsing="false" onAction="#onGerarRelatorio" styleClass="btn-action-primary" text="📄 Gerar Relatório de Insumos">
+                                                    <padding>
+                                                        <Insets bottom="8.0" left="15.0" right="15.0" top="8.0" />
+                                                    </padding>
+                                                </Button>
                                             </children>
                                         </HBox>
                                     </children>
@@ -402,11 +396,20 @@
                                                 <Insets left="20.0" right="20.0" />
                                             </padding>
                                             <children>
-                                                <Label text="LISTA DE INSUMOS SOLICITADOS NO PERÍODO" textFill="WHITE">
+                                                <Label text="LISTA DE INSUMOS NECESSÁRIOS NO PERÍODO" textFill="WHITE">
                                                     <font>
                                                         <Font name="Arial Bold" size="13.0" />
                                                     </font>
                                                 </Label>
+
+                                                <Region HBox.hgrow="ALWAYS" />
+
+                                                <!-- Exporta a lista atual (habilitado só quando há itens na tabela) -->
+                                                <Button fx:id="btnSalvarPdf" disable="true" mnemonicParsing="false" onAction="#onSalvarPdf" prefHeight="28.0" styleClass="btn-action-secondary" text="Salvar relatório em PDF">
+                                                    <padding>
+                                                        <Insets bottom="4.0" left="12.0" right="12.0" top="4.0" />
+                                                    </padding>
+                                                </Button>
                                             </children>
                                         </HBox>
 
@@ -418,8 +421,9 @@
                                             </styleClass>
                                             <columns>
 
+                                                <TableColumn fx:id="colCategoria" prefWidth="150.0" text="Categoria" />
                                                 <TableColumn fx:id="colInsumo" prefWidth="250.0" text="Insumo / Produto" />
-                                                <TableColumn fx:id="colQuantidadeNecessaria" prefWidth="150.0" text="Qtd. Necessária" />
+                                                <TableColumn fx:id="colQuantidadeNecessaria" prefWidth="150.0" styleClass="col-numero" text="Qtd. Necessária" />
                                                 <TableColumn fx:id="colUnidade" prefWidth="100.0" text="Unidade" />
                                             </columns>
                                             <columnResizePolicy>

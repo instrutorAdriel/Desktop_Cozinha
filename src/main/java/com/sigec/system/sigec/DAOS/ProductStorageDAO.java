@@ -412,4 +412,39 @@ public class ProductStorageDAO {
         }
         return null;
     }
+
+    public List<ListaEstoque> buscarInsumosParaAulas(LocalDate inicio, LocalDate fim) {
+        List<ListaEstoque> lista = new ArrayList<>();
+
+        // Esta query cruza o agendamento (turma_ficha) com a receita (insumo_ficha) e soma as quantidades
+        String sql = "SELECT p.nome_produto, p.unidade_m, SUM(inf.quantidade) AS quantidade_total " +
+                "FROM turma_ficha tf " +
+                "JOIN insumo_ficha inf ON tf.id_ficha = inf.id_ficha " +
+                "JOIN produto p ON inf.id_produto = p.id_produto " +
+                "WHERE tf.data BETWEEN ? AND ? " +
+                "GROUP BY p.nome_produto, p.unidade_m";
+
+        try (Connection conn = ConfigDataBase.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setDate(1, java.sql.Date.valueOf(inicio));
+            stmt.setDate(2, java.sql.Date.valueOf(fim));
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    ListaEstoque item = new ListaEstoque(
+                            0, // ID fictício, pois não precisamos dele na listagem
+                            rs.getString("nome_produto"),
+                            "Para Aulas", // Tipo genérico para a coluna de categoria
+                            rs.getDouble("quantidade_total"),
+                            rs.getString("unidade_m")
+                    );
+                    lista.add(item);
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Erro ao buscar insumos para aulas: " + e.getMessage());
+        }
+        return lista;
+    }
 }
