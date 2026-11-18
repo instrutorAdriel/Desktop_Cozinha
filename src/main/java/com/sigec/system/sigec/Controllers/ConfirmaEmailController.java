@@ -2,6 +2,7 @@ package com.sigec.system.sigec.Controllers;
 
 import com.sigec.system.sigec.MainApplication;
 import com.sigec.system.sigec.Services.EmailService;
+import com.sigec.system.sigec.Services.SenhaService;
 import com.sigec.system.sigec.Utils.BackgroundAnimator;
 
 import javafx.event.ActionEvent;
@@ -65,9 +66,23 @@ public class ConfirmaEmailController {
             exibirAlerta(Alert.AlertType.WARNING, "Formato Inválido", "Por favor, digite um endereço de e-mail válido.");
             return;
         }
+        int token = SenhaService.gerarTokenRecuperacao();
 
-        exibirAlerta(Alert.AlertType.INFORMATION, "Código Enviado",
-                "Se o e-mail estiver cadastrado, um código de verificação foi enviado. Por favor, verifique sua caixa de entrada.");
+        boolean enviado = EmailService.enviarTokenRecuperacao(
+                email.trim(),
+                token
+        );
+
+        if (enviado) {
+            exibirAlerta(Alert.AlertType.INFORMATION,
+                    "Código Enviado",
+                    "Código enviado para: " + email);
+        } else {
+            exibirAlerta(Alert.AlertType.ERROR,
+                    "Erro",
+                    "Falha ao enviar o código.");
+        }
+
     }
 
     @FXML
