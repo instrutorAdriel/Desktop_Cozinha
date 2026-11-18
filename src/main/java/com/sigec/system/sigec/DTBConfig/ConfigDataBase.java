@@ -60,7 +60,7 @@ public final class ConfigDataBase {
         }
     }
 
-    private static String getEnvVar(String key, String defaultValue) {
+    public static String getEnvVar(String key, String defaultValue){
         String val = System.getenv(key);
         if (val != null && !val.isBlank()) {
             return val;
