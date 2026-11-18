@@ -8,10 +8,12 @@ import com.sigec.system.sigec.MainApplication;
 import com.sigec.system.sigec.Services.SessaoService;
 import com.sigec.system.sigec.Utils.ButtonBorderLapAnimator;
 import com.sigec.system.sigec.Utils.DropdownBorderLapAnimator;
+import com.sigec.system.sigec.Utils.RelatorioInsumosPdf;
 import com.sigec.system.sigec.Utils.ScreenTransitionManager;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.concurrent.Task;
 import javafx.geometry.Pos;
@@ -21,8 +23,10 @@ import javafx.scene.control.*;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
 import javafx.util.Duration;
 
+import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
@@ -33,6 +37,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 
 public class CalendarioController {
 
@@ -56,6 +61,9 @@ public class CalendarioController {
 
     /** Texto original do botão Gerar (restaurado ao fim do carregamento). */
     private String textoBotaoGerar;
+
+    /** Filtros da última geração: o PDF sai exatamente com o que está na tabela. */
+    private RelatorioInsumosPdf.Cabecalho ultimoCabecalho;
 
     @FXML private Label dataLabel;
     @FXML private Label horaLabel;
@@ -83,6 +91,7 @@ public class CalendarioController {
     @FXML private DatePicker dataFim;
 
     @FXML private Button btnGerarLista;
+    @FXML private Button btnSalvarPdf;
 
     @FXML
     public void initialize() {
@@ -161,6 +170,10 @@ public class CalendarioController {
         });
 
         tabelaInsumos.setPlaceholder(new Label(MSG_INICIAL));
+
+        // O botão de PDF só fica ativo quando há itens na tabela
+        // (a lista é sempre a mesma: setAll/clear, então o vínculo continua valendo)
+        btnSalvarPdf.disableProperty().bind(Bindings.isEmpty(tabelaInsumos.getItems()));
     }
 
     private void configurarFiltros() {
@@ -312,6 +325,11 @@ public class CalendarioController {
             mostrarCarregando(false);
             List<InsumoNecessario> insumos = tarefa.getValue();
             tabelaInsumos.getItems().setAll(insumos);
+            ultimoCabecalho = new RelatorioInsumosPdf.Cabecalho(
+                    unidade.nome(),
+                    cbCurso.getValue() == null ? TODOS_CURSOS.nome() : cbCurso.getValue().nome(),
+                    cbTurmaLab.getValue() == null ? TODAS_TURMAS.nome() : cbTurmaLab.getValue().nome(),
+                    inicio, fim, nomeUsuario);
             if (insumos.isEmpty()) {
                 tabelaInsumos.setPlaceholder(new Label("Nenhuma aula agendada com esses filtros no período."));
             }
@@ -360,6 +378,61 @@ public class CalendarioController {
     }
 
 
+    // Exportação em PDF
+
+    @FXML
+    public void onSalvarPdf(ActionEvent event) {
+        if (tabelaInsumos.getItems().isEmpty() || ultimoCabecalho == null) {
+            mostrarAviso("Gere a lista de insumos antes de salvar o PDF.");
+            return;
+        }
+
+        DateTimeFormatter f = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        FileChooser chooser = new FileChooser();
+        chooser.setTitle("Salvar relatório em PDF");
+        chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Arquivo PDF (*.pdf)", "*.pdf"));
+        chooser.setInitialFileName("previsao-insumos_" + ultimoCabecalho.inicio().format(f)
+                + "_a_" + ultimoCabecalho.fim().format(f) + ".pdf");
+
+        File destino = chooser.showSaveDialog(tabelaInsumos.getScene().getWindow());
+        if (destino == null) {
+            return; // usuário cancelou
+        }
+        if (!destino.getName().toLowerCase().endsWith(".pdf")) {
+            destino = new File(destino.getParentFile(), destino.getName() + ".pdf");
+        }
+
+        try {
+            RelatorioInsumosPdf.gerar(destino, ultimoCabecalho, List.copyOf(tabelaInsumos.getItems()));
+        } catch (Exception e) {
+            mostrarErro("Não foi possível salvar o PDF. Verifique se o arquivo não está aberto em outro programa.", e);
+            return;
+        }
+
+        Alert ok = new Alert(Alert.AlertType.CONFIRMATION,
+                "PDF salvo em:\n" + destino.getAbsolutePath() + "\n\nDeseja abrir o arquivo agora?",
+                ButtonType.YES, ButtonType.NO);
+        ok.setHeaderText(null);
+        ok.setTitle("Relatório salvo");
+        Optional<ButtonType> resposta = ok.showAndWait();
+        if (resposta.isPresent() && resposta.get() == ButtonType.YES) {
+            abrirArquivo(destino);
+        }
+    }
+
+    /** Abre o PDF no leitor padrão do Windows, fora da thread da interface. */
+    private void abrirArquivo(File arquivo) {
+        Thread t = new Thread(() -> {
+            try {
+                java.awt.Desktop.getDesktop().open(arquivo);
+            } catch (Exception e) {
+                System.err.println("Não foi possível abrir o PDF: " + e.getMessage());
+            }
+        }, "abrir-pdf");
+        t.setDaemon(true);
+        t.start();
+    }
+
     @FXML
     public void onLimparFiltros(ActionEvent event) {
         cbUnidade.getSelectionModel().clearSelection(); // limpa curso e turma em cascata
@@ -375,6 +448,7 @@ public class CalendarioController {
     private void limparTabela() {
         geracaoAtual++;            // invalida uma consulta que ainda esteja rodando
         mostrarCarregando(false);
+        ultimoCabecalho = null;
         tabelaInsumos.getItems().clear();
         tabelaInsumos.setPlaceholder(new Label(MSG_INICIAL));
     }
@@ -395,7 +469,7 @@ public class CalendarioController {
     }
 
 
-    // Navegação (sem alterações)
+    // Navegação
 
     @FXML
     public void onClickHome(ActionEvent event) throws IOException {

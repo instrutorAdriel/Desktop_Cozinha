@@ -401,6 +401,15 @@
                                                         <Font name="Arial Bold" size="13.0" />
                                                     </font>
                                                 </Label>
+
+                                                <Region HBox.hgrow="ALWAYS" />
+
+                                                <!-- Exporta a lista atual (habilitado só quando há itens na tabela) -->
+                                                <Button fx:id="btnSalvarPdf" disable="true" mnemonicParsing="false" onAction="#onSalvarPdf" prefHeight="28.0" styleClass="btn-action-secondary" text="Salvar relatório em PDF">
+                                                    <padding>
+                                                        <Insets bottom="4.0" left="12.0" right="12.0" top="4.0" />
+                                                    </padding>
+                                                </Button>
                                             </children>
                                         </HBox>
 
