@@ -1,3 +1,4 @@
+
 package com.sigec.system.sigec.Controllers;
 
 import com.sigec.system.sigec.MainApplication;
@@ -18,11 +19,7 @@ import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
 
 import java.io.IOException;
-import java.security.SecureRandom;
 
-/**
- * Controlador da etapa de confirmação de e-mail e validação de token de recuperação.
- */
 public class ConfirmaEmailController {
 
     @FXML
@@ -43,26 +40,14 @@ public class ConfirmaEmailController {
     @FXML
     private AnchorPane animatedBackground;
 
-    // Contador da tela atual
     private Timeline contador;
 
-    private int segundosRestantes = 0;
-
-    // ==========================================
-    // DADOS PERSISTENTES DURANTE A EXECUÇÃO
-    // ==========================================
-
+    // Dados mantidos enquanto a aplicação estiver aberta
     private static Integer tokenGerado = null;
-
     private static String emailDoToken = null;
-
-    // Horário exato em que o usuário poderá reenviar
     private static long horarioLiberacaoReenvio = 0;
 
-    // Tempo de espera: 90 segundos
     private static final int TEMPO_REENVIO = 90;
-
-    private final SecureRandom random = new SecureRandom();
 
     // ==========================================
     // INICIALIZAÇÃO
@@ -70,6 +55,7 @@ public class ConfirmaEmailController {
 
     @FXML
     public void initialize() {
+
         if (animatedBackground != null && rootPane != null) {
             BackgroundAnimator.startAnimation(
                     animatedBackground,
@@ -77,132 +63,343 @@ public class ConfirmaEmailController {
             );
         }
 
-        // Recupera o e-mail utilizado anteriormente
         if (emailDoToken != null && emailDigitar != null) {
             emailDigitar.setText(emailDoToken);
         }
 
-        // Atualiza o botão quando o e-mail for alterado
         if (emailDigitar != null) {
-
             emailDigitar.textProperty().addListener(
                     (observable, antigo, novo) -> atualizarEstadoBotao()
             );
         }
 
-        // Permite confirmar o código pressionando Enter
         if (codigoDigitar != null) {
             codigoDigitar.setOnAction(this::onConfirmaToken);
         }
 
-        // Se já houve envio anteriormente, altera o texto
-        if (btnEnviarCodigo != null && tokenGerado != null) {
+        if (tokenGerado != null && btnEnviarCodigo != null) {
             btnEnviarCodigo.setText("REENVIAR CÓDIGO");
         }
 
-        // Recupera a contagem sem reiniciar os 90 segundos
         restaurarContagem();
-
         atualizarEstadoBotao();
     }
 
     // ==========================================
-    // ENVIO E REENVIO DO CÓDIGO
+    // ENVIAR / REENVIAR CÓDIGO
     // ==========================================
 
     @FXML
     public void onConfirmaEmailClick(ActionEvent event) {
 
-        String email = emailDigitar.getText() != null
-                ? emailDigitar.getText().trim()
-                : "";
+        if (emailDigitar == null) {
+            return;
+        }
 
-        // Verifica se o campo está vazio
+        String email = emailDigitar.getText() == null
+                ? ""
+                : emailDigitar.getText().trim();
+
         if (email.isEmpty()) {
-
             exibirAlerta(
                     Alert.AlertType.WARNING,
                     "Atenção",
                     "Informe seu e-mail antes de solicitar o código."
             );
-
             atualizarEstadoBotao();
             return;
         }
 
-        // Valida o formato do e-mail
         if (!EmailService.validarFormatoEmail(email)) {
-
             exibirAlerta(
                     Alert.AlertType.WARNING,
-                    "Formato inválido",
+                    "E-mail inválido",
                     "Digite um endereço de e-mail válido."
             );
-
             return;
         }
 
-        // Impede o envio durante a contagem
+        // Não permite novo envio antes de terminar os 90 segundos
         if (System.currentTimeMillis() < horarioLiberacaoReenvio) {
+            atualizarEstadoBotao();
+            return;
+        }
+
+        // Gera o token pelo serviço já existente no projeto
+        int novoToken = SenhaService.gerarTokenRecuperacao();
+
+        // Envia o token pelo serviço SMTP
+        boolean enviado = EmailService.enviarTokenRecuperacao(
+                email,
+                novoToken
+        );
+
+        if (!enviado) {
+            exibirAlerta(
+                    Alert.AlertType.ERROR,
+                    "Falha no envio",
+                    "Não foi possível enviar o código para o e-mail informado. "
+                            + "Verifique a configuração do serviço de e-mail e tente novamente."
+            );
 
             atualizarEstadoBotao();
             return;
         }
-        int token = SenhaService.gerarTokenRecuperacao();
 
-        boolean enviado = EmailService.enviarTokenRecuperacao(
-                email.trim(),
-                token
-        );
+        // Só salva o token depois que o envio retornar sucesso
+        tokenGerado = novoToken;
+        emailDoToken = email;
 
-        if (enviado) {
-            exibirAlerta(Alert.AlertType.INFORMATION,
-                    "Código Enviado",
-                    "Código enviado para: " + email);
-        } else {
-            exibirAlerta(Alert.AlertType.ERROR,
-                    "Erro",
-                    "Falha ao enviar o código.");
+        // Inicia os 90 segundos somente após o envio bem-sucedido
+        iniciarContagem();
+
+        if (btnEnviarCodigo != null) {
+            btnEnviarCodigo.setText("REENVIAR CÓDIGO");
         }
 
+        exibirAlerta(
+                Alert.AlertType.INFORMATION,
+                "Código enviado",
+                "O código de recuperação foi enviado para:\n" + email
+        );
+
+        atualizarEstadoBotao();
     }
+
+    // ==========================================
+    // CONTADOR DE 90 SEGUNDOS
+    // ==========================================
+
+    private void iniciarContagem() {
+
+        horarioLiberacaoReenvio =
+                System.currentTimeMillis() + (TEMPO_REENVIO * 1000L);
+
+        if (lblContador != null) {
+            lblContador.setVisible(true);
+            lblContador.setManaged(true);
+        }
+
+        iniciarTimelineRestante();
+    }
+
+    private void restaurarContagem() {
+
+        if (horarioLiberacaoReenvio == 0) {
+            if (lblContador != null) {
+                lblContador.setVisible(false);
+                lblContador.setManaged(false);
+            }
+            return;
+        }
+
+        long restante =
+                horarioLiberacaoReenvio - System.currentTimeMillis();
+
+        if (restante > 0) {
+            if (lblContador != null) {
+                lblContador.setVisible(true);
+                lblContador.setManaged(true);
+            }
+
+            iniciarTimelineRestante();
+
+        } else {
+            if (lblContador != null) {
+                lblContador.setText(
+                        "Você já pode solicitar um novo código."
+                );
+                lblContador.setVisible(true);
+                lblContador.setManaged(true);
+            }
+
+            atualizarEstadoBotao();
+        }
+    }
+
+    private void iniciarTimelineRestante() {
+
+        if (contador != null) {
+            contador.stop();
+        }
+
+        atualizarTempoRestante();
+
+        contador = new Timeline(
+                new KeyFrame(
+                        Duration.seconds(1),
+                        event -> atualizarTempoRestante()
+                )
+        );
+
+        contador.setCycleCount(Timeline.INDEFINITE);
+        contador.play();
+    }
+
+    private void atualizarTempoRestante() {
+
+        long restante =
+                horarioLiberacaoReenvio - System.currentTimeMillis();
+
+        if (restante <= 0) {
+
+            if (contador != null) {
+                contador.stop();
+            }
+
+            if (lblContador != null) {
+                lblContador.setText(
+                        "Você já pode solicitar um novo código."
+                );
+            }
+
+            atualizarEstadoBotao();
+            return;
+        }
+
+        int segundosRestantes =
+                (int) Math.ceil(restante / 1000.0);
+
+        int minutos = segundosRestantes / 60;
+        int segundos = segundosRestantes % 60;
+
+        if (lblContador != null) {
+            lblContador.setText(
+                    String.format(
+                            "Você poderá reenviar o código em %02d:%02d",
+                            minutos,
+                            segundos
+                    )
+            );
+        }
+
+        atualizarEstadoBotao();
+    }
+
+    // ==========================================
+    // ESTADO DO BOTÃO
+    // ==========================================
+
+    private void atualizarEstadoBotao() {
+
+        if (btnEnviarCodigo == null) {
+            return;
+        }
+
+        boolean emailVazio =
+                emailDigitar == null
+                        || emailDigitar.getText() == null
+                        || emailDigitar.getText().trim().isEmpty();
+
+        boolean aguardando =
+                System.currentTimeMillis() < horarioLiberacaoReenvio;
+
+        btnEnviarCodigo.setDisable(emailVazio || aguardando);
+    }
+
+    // ==========================================
+    // VALIDAR TOKEN
+    // ==========================================
 
     @FXML
     public void onConfirmaToken(ActionEvent event) {
-        String codigo = codigoDigitar != null ? codigoDigitar.getText() : null;
 
-        if (codigo == null || codigo.trim().isEmpty()) {
-            exibirAlerta(Alert.AlertType.WARNING, "Atenção", "Digite o código recebido no seu e-mail.");
+        if (codigoDigitar == null || emailDigitar == null) {
             return;
         }
 
-        exibirAlerta(Alert.AlertType.INFORMATION, "Código Confirmado",
-                "Código validado com sucesso! Você será redirecionado para a alteração de senha.");
+        String codigo = codigoDigitar.getText() == null
+                ? ""
+                : codigoDigitar.getText().trim();
+
+        String emailAtual = emailDigitar.getText() == null
+                ? ""
+                : emailDigitar.getText().trim();
+
+        if (codigo.isEmpty()) {
+            exibirAlerta(
+                    Alert.AlertType.WARNING,
+                    "Atenção",
+                    "Digite o código recebido no seu e-mail."
+            );
+            return;
+        }
+
+        if (tokenGerado == null || emailDoToken == null) {
+            exibirAlerta(
+                    Alert.AlertType.WARNING,
+                    "Código não solicitado",
+                    "Solicite um código de recuperação antes de continuar."
+            );
+            return;
+        }
+
+        if (!emailDoToken.equalsIgnoreCase(emailAtual)) {
+            exibirAlerta(
+                    Alert.AlertType.WARNING,
+                    "E-mail diferente",
+                    "O código informado foi enviado para outro endereço de e-mail."
+            );
+            return;
+        }
+
+        if (!codigo.matches("\\d{6}")) {
+            exibirAlerta(
+                    Alert.AlertType.WARNING,
+                    "Código inválido",
+                    "O código deve conter exatamente 6 números."
+            );
+            return;
+        }
+
+        if (!codigo.equals(String.valueOf(tokenGerado))) {
+            exibirAlerta(
+                    Alert.AlertType.ERROR,
+                    "Código incorreto",
+                    "O código informado está incorreto. Verifique seu e-mail."
+            );
+            return;
+        }
 
         try {
+
+            // Só limpa o token depois que a navegação for realizada
             MainApplication.trocadorDeTelas("alterar-senha.fxml");
 
-            // Limpa os dados após a validação
+            if (contador != null) {
+                contador.stop();
+            }
+
             tokenGerado = null;
             emailDoToken = null;
             horarioLiberacaoReenvio = 0;
 
         } catch (IOException e) {
-            exibirAlerta(Alert.AlertType.ERROR, "Erro", "Não foi possível carregar a tela de alteração de senha: " + e.getMessage());
+
+            exibirAlerta(
+                    Alert.AlertType.ERROR,
+                    "Erro",
+                    "Não foi possível carregar a tela de alteração de senha: "
+                            + e.getMessage()
+            );
         }
     }
+
+    // ==========================================
+    // VOLTAR PARA LOGIN
+    // ==========================================
 
     @FXML
     public void onVoltarClick(ActionEvent event) {
 
-        // Para somente o Timeline desta tela.
-        // O horário de liberação permanece armazenado.
         if (contador != null) {
             contador.stop();
         }
 
         try {
+
             MainApplication.trocadorDeTelas("login.fxml");
+
         } catch (IOException e) {
 
             exibirAlerta(
