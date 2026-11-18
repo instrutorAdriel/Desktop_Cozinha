@@ -1370,3 +1370,19 @@ ESTILOS DA PÁGINA INICIAL (HOME)
 .btn-laranja:hover {
     -fx-background-color: #ba7119;
 }
+/* ==========================================================================
+   19. INDICADOR DE CARREGAMENTO
+   Usado no login e nas telas que consultam o banco (ex.: Calendário).
+========================================================================== */
+
+/* Spinner na cor laranja do sistema (o padrão do JavaFX é azul) */
+.loader-laranja {
+    -fx-progress-color: #e4891b;
+}
+
+/* Texto que acompanha o spinner dentro das tabelas */
+.loader-texto {
+    -fx-font-family: "Arial Bold";
+    -fx-font-size: 13px;
+    -fx-text-fill: #64748b;
+}

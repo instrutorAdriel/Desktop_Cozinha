@@ -13,6 +13,8 @@ import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.collections.FXCollections;
+import javafx.concurrent.Task;
+import javafx.geometry.Pos;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -46,6 +48,15 @@ public class CalendarioController {
     /** Nome do usuário logado . */
     private String nomeUsuario = "Usuário";
 
+    /**
+     * Número da geração atual do relatório. Cada clique em "Gerar" ou mudança de filtro
+     * incrementa; uma consulta que termina com número antigo é descartada.
+     */
+    private long geracaoAtual = 0;
+
+    /** Texto original do botão Gerar (restaurado ao fim do carregamento). */
+    private String textoBotaoGerar;
+
     @FXML private Label dataLabel;
     @FXML private Label horaLabel;
     @FXML private Label usuarioLabel;
@@ -70,6 +81,8 @@ public class CalendarioController {
 
     @FXML private DatePicker dataInicio;
     @FXML private DatePicker dataFim;
+
+    @FXML private Button btnGerarLista;
 
     @FXML
     public void initialize() {
@@ -276,21 +289,74 @@ public class CalendarioController {
             return;
         }
 
+        int idUnidade = unidade.id();
         Integer idCurso = idOuNulo(cbCurso.getValue());
         Integer idTurma = idOuNulo(cbTurmaLab.getValue());
 
-        try {
-            List<InsumoNecessario> insumos =
-                    relatorioDAO.buscarInsumosNecessarios(inicio, fim, unidade.id(), idCurso, idTurma);
+        // A consulta roda em outra thread; a tela continua respondendo (mesmo padrão do login)
+        Task<List<InsumoNecessario>> tarefa = new Task<>() {
+            @Override
+            protected List<InsumoNecessario> call() throws Exception {
+                // Só banco aqui: nada de tela fora da thread do JavaFX
+                return relatorioDAO.buscarInsumosNecessarios(inicio, fim, idUnidade, idCurso, idTurma);
+            }
+        };
 
+        long minhaGeracao = ++geracaoAtual;
+        mostrarCarregando(true);
+
+        tarefa.setOnSucceeded(e -> {
+            if (minhaGeracao != geracaoAtual) {
+                return; // filtros mudaram durante a consulta: resultado descartado
+            }
+            mostrarCarregando(false);
+            List<InsumoNecessario> insumos = tarefa.getValue();
             tabelaInsumos.getItems().setAll(insumos);
             if (insumos.isEmpty()) {
                 tabelaInsumos.setPlaceholder(new Label("Nenhuma aula agendada com esses filtros no período."));
             }
-        } catch (SQLException e) {
+        });
+
+        tarefa.setOnFailed(e -> {
+            if (minhaGeracao != geracaoAtual) {
+                return;
+            }
             limparTabela();
-            mostrarErro("Não foi possível gerar a lista de insumos.", e);
+            Throwable erro = tarefa.getException();
+            mostrarErro("Não foi possível gerar a lista de insumos.",
+                    erro instanceof Exception ex ? ex : new Exception(erro));
+        });
+
+        Thread thread = new Thread(tarefa, "relatorio-insumos");
+        thread.setDaemon(true); // não segura o fechamento do sistema
+        thread.start();
+    }
+
+    /** Liga/desliga o estado de carregamento: botão travado + spinner laranja na tabela. */
+    private void mostrarCarregando(boolean carregando) {
+        if (textoBotaoGerar == null) {
+            textoBotaoGerar = btnGerarLista.getText();
         }
+        btnGerarLista.setDisable(carregando);
+        btnGerarLista.setText(carregando ? "Gerando relatório..." : textoBotaoGerar);
+
+        if (carregando) {
+            tabelaInsumos.getItems().clear();
+            tabelaInsumos.setPlaceholder(criarIndicadorCarregando());
+        }
+    }
+
+    private VBox criarIndicadorCarregando() {
+        ProgressIndicator spinner = new ProgressIndicator();
+        spinner.getStyleClass().add("loader-laranja");
+        spinner.setPrefSize(40, 40);
+
+        Label texto = new Label("Carregando insumos...");
+        texto.getStyleClass().add("loader-texto");
+
+        VBox caixa = new VBox(10, spinner, texto);
+        caixa.setAlignment(Pos.CENTER);
+        return caixa;
     }
 
 
@@ -307,6 +373,8 @@ public class CalendarioController {
     }
 
     private void limparTabela() {
+        geracaoAtual++;            // invalida uma consulta que ainda esteja rodando
+        mostrarCarregando(false);
         tabelaInsumos.getItems().clear();
         tabelaInsumos.setPlaceholder(new Label(MSG_INICIAL));
     }
