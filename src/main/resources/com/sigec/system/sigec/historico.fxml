@@ -344,7 +344,7 @@
                                                         <Font name="Arial Bold" size="13.0" />
                                                     </font>
                                                 </Label>
-                                                <ChoiceBox fx:id="cbCurso" prefHeight="35.0" prefWidth="130.0" styleClass="custom-choice-box" />
+                                                <ChoiceBox fx:id="cbCurso" prefHeight="35.0" prefWidth="330.0" styleClass="custom-choice-box" />
                                                 <Label text="De" />
                                                 <DatePicker fx:id="dataDE" prefHeight="30.0" prefWidth="130.0" />
                                                 <Label text="Até" />

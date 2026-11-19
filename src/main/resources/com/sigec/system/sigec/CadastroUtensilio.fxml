@@ -73,7 +73,7 @@
                                             </font>
                                         </Label>
                                         <Region HBox.hgrow="ALWAYS" />
-                                        <ChoiceBox fx:id="cbUnidade" prefHeight="30.0" prefWidth="220.0" />
+                                        <ChoiceBox fx:id="cbUnidade" prefHeight="30.0" prefWidth="260.0" />
                                     </children>
                                 </HBox>
                                 <HBox alignment="CENTER_LEFT" prefHeight="35.0">
@@ -95,7 +95,7 @@
                                             </font>
                                         </Label>
                                         <Region HBox.hgrow="ALWAYS" />
-                                        <ChoiceBox fx:id="cbLaboratorio" prefHeight="30.0" prefWidth="220.0" />
+                                        <ChoiceBox fx:id="cbLaboratorio" prefHeight="30.0" prefWidth="260.0" />
                                     </children>
                                 </HBox>
                             </children>

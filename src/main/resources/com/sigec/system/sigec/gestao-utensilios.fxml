@@ -319,7 +319,7 @@
                                                                 <Font name="Arial Bold" size="13.0" />
                                                             </font>
                                                         </Label>
-                                                        <ChoiceBox fx:id="cbUnidade" prefHeight="35.0" prefWidth="160.0" styleClass="custom-choice-box" />
+                                                        <ChoiceBox fx:id="cbUnidade" prefHeight="35.0" prefWidth="265.0"  styleClass="custom-choice-box" />
                                                     </children>
                                                 </HBox>
 
@@ -361,7 +361,7 @@
                                                         <Font name="Arial Bold" size="13.0" />
                                                     </font>
                                                 </Label>
-                                                <ChoiceBox fx:id="cbLaboratorio" prefHeight="35.0" prefWidth="160.0" styleClass="custom-choice-box" />
+                                                <ChoiceBox fx:id="cbLaboratorio" prefHeight="35.0" prefWidth="265.0" styleClass="custom-choice-box" />
                                             </children>
                                         </HBox>
 
@@ -373,7 +373,7 @@
                                                         <Font name="Arial Bold" size="13.0" />
                                                     </font>
                                                 </Label>
-                                                <ChoiceBox fx:id="cbStatus" prefHeight="35.0" prefWidth="130.0" styleClass="custom-choice-box" />
+                                                <ChoiceBox fx:id="cbStatus" prefHeight="35.0" prefWidth="180.0" styleClass="custom-choice-box" />
                                             </children>
                                         </HBox>
 

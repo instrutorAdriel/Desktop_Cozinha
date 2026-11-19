@@ -294,7 +294,7 @@
                             <children>
                                 <HBox alignment="CENTER_LEFT" prefHeight="45.0" spacing="12.0">
                                     <children>
-                                        <TextField fx:id="FiltrarProdutos" prefHeight="35.0" prefWidth="250.0" promptText="🔍 Buscar no estoque..." styleClass="search-field">
+                                        <TextField fx:id="FiltrarProdutos" prefHeight="35.0" prefWidth="300.0" promptText="🔍 Buscar no estoque..." styleClass="search-field">
                                             <font>
                                                 <Font name="Arial" size="13.0" />
                                             </font>
@@ -314,7 +314,7 @@
                                                         <Font name="Arial Bold" size="13.0" />
                                                     </font>
                                                 </Label>
-                                                <ChoiceBox fx:id="cbUnidade" prefHeight="35.0" prefWidth="130.0" styleClass="custom-choice-box" />
+                                                <ChoiceBox fx:id="cbUnidade" prefHeight="35.0" prefWidth="300.0" styleClass="custom-choice-box" />
                                             </children>
                                         </HBox>
 
@@ -326,7 +326,7 @@
                                                         <Font name="Arial Bold" size="13.0" />
                                                     </font>
                                                 </Label>
-                                                <ChoiceBox fx:id="cbCurso" prefHeight="35.0" prefWidth="130.0" styleClass="custom-choice-box" />
+                                                <ChoiceBox fx:id="cbCurso" prefHeight="35.0" prefWidth="320.0" styleClass="custom-choice-box" />
                                             </children>
                                         </HBox>
 

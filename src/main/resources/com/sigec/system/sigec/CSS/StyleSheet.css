@@ -978,8 +978,8 @@ CONTEÚDO DA PÁGINA (ESTOQUE, HISTÓRICO/RELATÓRIOS E CONSULTAS)
 .list-cell {
     -fx-border-color: #054584;
     -fx-border-width: 1;
-    -fx-alignment: CENTER;
-    -fx-padding: 30px;
+    -fx-alignment: CENTER_LEFT;
+    -fx-padding: 5px;
 }
 
 .list-view:focused {
