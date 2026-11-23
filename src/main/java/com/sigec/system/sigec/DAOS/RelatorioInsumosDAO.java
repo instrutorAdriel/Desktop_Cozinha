@@ -13,9 +13,10 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Consultas da tela de Calendário:
+ * Consultas das telas de Calendário e Relatório:
  *  - filtros em cascata (Unidade -> Curso -> Turma)
- *  - relatório de insumos necessários para as aulas agendadas no período.
+ *  - insumos necessários para as aulas agendadas no período (Calendário)
+ *  - lista de compras: necessário x estoque disponível da unidade (Relatório)
  *
  * Caminho entre as tabelas:
  *   unidade <- laboratorio.id_unidade <- turma.id_laboratorio -> turma.id_curso -> curso
@@ -34,6 +35,17 @@ public class RelatorioInsumosDAO {
     /** Uma linha do relatório: categoria, produto, quantidade somada e unidade de medida. */
     public record InsumoNecessario(int idProduto, String categoria, String nomeProduto,
                                    double quantidade, String unidade) {
+    }
+
+    /**
+     * Uma linha da lista de compras. Os três números estão na mesma unidade (a de compra do produto).
+     * aComprar = necessário + mínimo - estoque, nunca negativo.
+     */
+    public record ItemCompra(int idProduto, String codigoMxm, String categoria, String nomeProduto,
+                             double necessario, double emEstoque, double aComprar, String unidade) {
+        public boolean precisaComprar() {
+            return aComprar > 0.0005;
+        }
     }
 
     public static final String SEM_CATEGORIA = "Sem categoria";
@@ -92,8 +104,23 @@ public class RelatorioInsumosDAO {
 
     public List<InsumoNecessario> buscarInsumosNecessarios(LocalDate inicio, LocalDate fim, int idUnidade,
                                                            Integer idCurso, Integer idTurma) throws SQLException {
+        List<InsumoNecessario> lista = new ArrayList<>();
+        for (Acumulado a : somarNecessidade(inicio, fim, idUnidade, idCurso, idTurma).values()) {
+            Medida exibicao = naUnidadeDoProduto(a.quantidade, a.unidadeBase, a.unidadeProduto);
+            lista.add(new InsumoNecessario(a.idProduto, a.categoria, a.nomeProduto,
+                    exibicao.quantidade(), exibicao.unidade()));
+        }
+        return lista;
+    }
+
+    /**
+     * Soma o que as aulas do período pedem, por produto, já na unidade base (g, ml ou contagem).
+     * Chave do mapa: "idProduto|unidadeBase". A ordem segue o SQL (categoria, nome).
+     */
+    private Map<String, Acumulado> somarNecessidade(LocalDate inicio, LocalDate fim, int idUnidade,
+                                                    Integer idCurso, Integer idTurma) throws SQLException {
         StringBuilder sql = new StringBuilder();
-        sql.append("SELECT p.id_produto, p.nome_produto, ");
+        sql.append("SELECT p.id_produto, p.codigo_mxm, p.nome_produto, ");
         sql.append("       COALESCE(cat.nome_categoria, '" + SEM_CATEGORIA + "') AS categoria, ");
         sql.append("       LOWER(COALESCE(inf.unidade_medida, p.unidade_m)) AS unidade, ");
         sql.append("       p.unidade_m AS unidade_produto, ");
@@ -109,6 +136,8 @@ public class RelatorioInsumosDAO {
         sql.append("JOIN produto p        ON p.id_produto = inf.id_produto ");
         sql.append("LEFT JOIN categoria cat ON cat.id_categoria = p.id_categoria ");
         sql.append("WHERE a.situacao = 'A' AND f.situacao = 'A' ");
+        // Aula concluída já teve o material retirado do estoque: não entra de novo na necessidade
+        sql.append("  AND COALESCE(a.concluido, 'N') <> 'S' ");
         sql.append("  AND a.data BETWEEN ? AND ? ");
         sql.append("  AND l.id_unidade = ? ");
 
@@ -126,11 +155,11 @@ public class RelatorioInsumosDAO {
             parametros.add(idTurma);
         }
 
-        sql.append("GROUP BY p.id_produto, p.nome_produto, p.unidade_m, cat.nome_categoria, unidade ");
+        sql.append("GROUP BY p.id_produto, p.codigo_mxm, p.nome_produto, p.unidade_m, cat.nome_categoria, unidade ");
         // Ordena por categoria (as sem categoria por último) e depois pelo nome
         sql.append("ORDER BY (cat.nome_categoria IS NULL), cat.nome_categoria, p.nome_produto");
 
-        List<InsumoNecessario> lista = new ArrayList<>();
+        Map<String, Acumulado> porProduto = new LinkedHashMap<>();
         try (Connection conn = ConfigDataBase.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql.toString())) {
 
@@ -142,45 +171,102 @@ public class RelatorioInsumosDAO {
             //  1. cada linha é convertida para a unidade base (g, ml) e somada por produto;
             //  2. o total é exibido na unidade de compra do produto (produto.unidade_m).
             // LinkedHashMap mantém a ordem do SQL (categoria, nome).
-            Map<String, Acumulado> porProduto = new LinkedHashMap<>();
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
                     int idProduto = rs.getInt("id_produto");
                     String categoria = rs.getString("categoria");
                     String nome = rs.getString("nome_produto");
+                    String codigoMxm = rs.getString("codigo_mxm");
                     String unidadeProduto = normalizarUnidade(rs.getString("unidade_produto"));
 
-                    Medida base = paraUnidadeBase(rs.getDouble("quantidade_total"), rs.getString("unidade"));
-                    // Contagem (un, maço...): sem conversão possível, vale a unidade do produto
-                    if (!ehMassaOuVolume(base.unidade()) && !ehMassaOuVolume(unidadeProduto)) {
-                        base = new Medida(base.quantidade(), unidadeProduto);
-                    }
-                    Medida b = base;
+                    Medida b = paraBaseDoProduto(rs.getDouble("quantidade_total"), rs.getString("unidade"), unidadeProduto);
                     porProduto.computeIfAbsent(idProduto + "|" + b.unidade(),
-                            k -> new Acumulado(idProduto, categoria, nome, b.unidade(), unidadeProduto))
+                            k -> new Acumulado(idProduto, codigoMxm, categoria, nome, b.unidade(), unidadeProduto))
                             .quantidade += b.quantidade();
                 }
             }
-            for (Acumulado a : porProduto.values()) {
-                Medida exibicao = naUnidadeDoProduto(a.quantidade, a.unidadeBase, a.unidadeProduto);
-                lista.add(new InsumoNecessario(a.idProduto, a.categoria, a.nomeProduto,
-                        exibicao.quantidade(), exibicao.unidade()));
-            }
+        }
+        return porProduto;
+    }
+
+    //  Lista de compras: necessário x estoque disponível na unidade
+    //    Necessário = aulas ativas e ainda não concluídas do período
+    //    Estoque disponível = lotes não cancelados da unidade, com validade >= data final
+    //    (ou sem validade). Mínimo = maior quantidade_minima entre os lotes do produto.
+
+    public List<ItemCompra> buscarListaDeCompras(LocalDate inicio, LocalDate fim, int idUnidade,
+                                                 Integer idCurso, Integer idTurma) throws SQLException {
+        Map<String, Acumulado> necessidade = somarNecessidade(inicio, fim, idUnidade, idCurso, idTurma);
+        List<ItemCompra> lista = new ArrayList<>();
+        if (necessidade.isEmpty()) {
+            return lista;
+        }
+
+        Map<String, double[]> estoque = somarEstoque(idUnidade, fim); // chave -> {quantidade, mínimo}
+
+        for (Map.Entry<String, Acumulado> e : necessidade.entrySet()) {
+            Acumulado a = e.getValue();
+            double[] est = estoque.getOrDefault(e.getKey(), new double[]{0, 0});
+            double aComprarBase = Math.max(0, a.quantidade + est[1] - est[0]);
+
+            // Os três números na mesma unidade de exibição (a de compra do produto)
+            Medida exibicao = naUnidadeDoProduto(a.quantidade, a.unidadeBase, a.unidadeProduto);
+            double fator = paraUnidadeBase(1, exibicao.unidade()).quantidade(); // ex.: 1 kg = 1000 g
+            lista.add(new ItemCompra(a.idProduto, a.codigoMxm, a.categoria, a.nomeProduto,
+                    a.quantidade / fator, est[0] / fator, aComprarBase / fator, exibicao.unidade()));
         }
         return lista;
+    }
+
+    /** Estoque válido da unidade por produto, na unidade base. Valor: {quantidade, mínimo}. */
+    private Map<String, double[]> somarEstoque(int idUnidade, LocalDate fim) throws SQLException {
+        String sql = "SELECT i.id_produto, " +
+                "       LOWER(COALESCE(i.unidade_medida, p.unidade_m)) AS unidade, " +
+                "       p.unidade_m AS unidade_produto, " +
+                "       SUM(i.quantidade) AS quantidade, " +
+                "       MAX(COALESCE(i.quantidade_minima, 0)) AS minimo " +
+                "FROM insumo i " +
+                "JOIN produto p ON p.id_produto = i.id_produto " +
+                "WHERE i.cancelado = 'N' AND i.id_unidade = ? " +
+                "  AND (i.data_validade IS NULL OR i.data_validade >= ?) " +
+                "GROUP BY i.id_produto, unidade, p.unidade_m";
+
+        Map<String, double[]> porProduto = new LinkedHashMap<>();
+        try (Connection conn = ConfigDataBase.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, idUnidade);
+            stmt.setDate(2, java.sql.Date.valueOf(fim));
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    String unidadeLote = rs.getString("unidade");
+                    String unidadeProduto = normalizarUnidade(rs.getString("unidade_produto"));
+                    Medida qtd = paraBaseDoProduto(rs.getDouble("quantidade"), unidadeLote, unidadeProduto);
+                    Medida min = paraBaseDoProduto(rs.getDouble("minimo"), unidadeLote, unidadeProduto);
+
+                    double[] v = porProduto.computeIfAbsent(rs.getInt("id_produto") + "|" + qtd.unidade(),
+                            k -> new double[]{0, 0});
+                    v[0] += qtd.quantidade();
+                    v[1] = Math.max(v[1], min.quantidade());
+                }
+            }
+        }
+        return porProduto;
     }
 
     /** Soma parcial de um produto numa unidade base. */
     private static final class Acumulado {
         final int idProduto;
+        final String codigoMxm;
         final String categoria;
         final String nomeProduto;
         final String unidadeBase;
         final String unidadeProduto;
         double quantidade;
 
-        Acumulado(int idProduto, String categoria, String nomeProduto, String unidadeBase, String unidadeProduto) {
+        Acumulado(int idProduto, String codigoMxm, String categoria, String nomeProduto,
+                  String unidadeBase, String unidadeProduto) {
             this.idProduto = idProduto;
+            this.codigoMxm = codigoMxm;
             this.categoria = categoria;
             this.nomeProduto = nomeProduto;
             this.unidadeBase = unidadeBase;
@@ -211,6 +297,18 @@ public class RelatorioInsumosDAO {
 
     /** Quantidade + unidade. */
     record Medida(double quantidade, String unidade) {
+    }
+
+    /**
+     * Converte para a base usada nas somas. Massa/volume: g ou ml.
+     * Contagem (un, maço...): sem conversão possível, vale a unidade do produto.
+     */
+    static Medida paraBaseDoProduto(double quantidade, String unidade, String unidadeProduto) {
+        Medida base = paraUnidadeBase(quantidade, unidade);
+        if (!ehMassaOuVolume(base.unidade()) && !ehMassaOuVolume(unidadeProduto)) {
+            return new Medida(base.quantidade(), unidadeProduto);
+        }
+        return base;
     }
 
     /** Converte para a unidade base da grandeza: 3 kg -> 3000 g; 2 L -> 2000 ml. */

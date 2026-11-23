@@ -12,11 +12,12 @@
     -fx-cursor: hand;
 }
 
-.btn-padrao:hover{
+.btn-padrao:hover {
     -fx-background-color: #0c569e;
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.4), 10, 0.5, 5, 5);
 }
 
+/* Botão ativo */
 .btn-ativo {
     -fx-background-color: linear-gradient(to right, #005bb5, #1877f2);
     -fx-background-radius: 10;
@@ -29,15 +30,16 @@
     -fx-font-size: 15;
     -fx-font-weight: bold;
     -fx-text-fill: #ffffff;
-    -fx-effect: dropshadow(three-pass-box, rgba(24, 119, 242, 0.5), 14, 0.45, 0, 0);
+    -fx-effect: dropshadow(three-pass-box, rgba(24,119,242,0.5), 14, 0.45, 0, 0);
 }
 
 .btn-ativo:hover {
     -fx-background-color: linear-gradient(to right, #006ce6, #2d88ff);
     -fx-border-color: #ffb74d;
-    -fx-effect: dropshadow(three-pass-box, rgba(24, 119, 242, 0.7), 16, 0.55, 0, 0);
+    -fx-effect: dropshadow(three-pass-box, rgba(24,119,242,0.7), 16, 0.55, 0, 0);
 }
 
+/* Botões com efeito de clique */
 .btn-click {
     -fx-background-color: #054685;
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 10, 0.5, 5, 5);
@@ -47,8 +49,9 @@
     -fx-effect: dropshadow(three-pass-box, rgba(0,225,225,0.4), 10, 0.5, 5, 5);
 }
 
+/* Botão transparente */
 .btn-padrao-transparent {
-    -fx-background-color:  transparent;
+    -fx-background-color: transparent;
     -fx-background-radius: 10;
     -fx-pref-width: 150;
     -fx-pref-height: 40;
@@ -63,6 +66,22 @@
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.4), 10, 0.5, 5, 5);
 }
 
+/* Botão transparente para áreas escuras */
+.btn-padrao-transparent-2 {
+    -fx-background-color: transparent;
+    -fx-background-radius: 10;
+    -fx-font-family: "Arial";
+    -fx-font-size: 14;
+    -fx-text-fill: WHITE;
+    -fx-cursor: hand;
+    -fx-text-alignment: CENTER_LEFT;
+}
+
+.btn-padrao-transparent-2:hover {
+    -fx-effect: dropshadow(three-pass-box, rgba(225,225,225,0.5), 10, 0.5, 5, 5);
+}
+
+/* Botão padrão da página inicial */
 .btn-padrao-home {
     -fx-background-color: #054685;
     -fx-background-radius: 10;
@@ -79,29 +98,7 @@
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.4), 10, 0.5, 5, 5);
 }
 
-.painel-lateral {
-    -fx-background-color: #0b2647;
-    -fx-border-color: #0b2647;
-    -fx-border-width: 0 1 0 0;
-}
-
-.painel-lateral:disabled,
-.painel-lateral .button:disabled,
-.painel-lateral .btn-padrao:disabled,
-.painel-lateral .btn-ativo:disabled,
-.painel-lateral .btn-sair:disabled {
-    -fx-opacity: 1.0;
-}
-
-.painel-center{
-    -fx-border-color: #054584;
-    -fx-border-width: 3.5;
-}
-
-.top-bar-pane,
-.painel-superior {
-    -fx-background-color: #f6f8fb;
-}
+/* Botão de saída */
 .btn-sair {
     -fx-background-color: #e4891b;
     -fx-background-radius: 8;
@@ -213,6 +210,13 @@ ESTILIZAÇÃO DA TABELA (TABLEVIEW) - FUNDO CLARO E CABEÇALHO ESCURO
     -fx-padding: 8px 24px 8px 12px;
 }
 
+/* Cabeçalho da coluna numérica alinhado com os números
+   (mesmo recuo à direita das células: 24px) */
+.table-view .column-header.col-numero .label {
+    -fx-alignment: CENTER-RIGHT;
+    -fx-padding: 0 24px 0 12px;
+}
+
 /* Remove a borda azul ao focar na tabela */
 .table-view:focused {
     -fx-background-color: #ffffff;
@@ -236,14 +240,7 @@ ESTILIZAÇÃO DA TABELA (TABLEVIEW) - FUNDO CLARO E CABEÇALHO ESCURO
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.4), 10, 0.5, 5, 5);
 }
 
-/* ==========================================================================
-CONTEÚDO DA PÁGINA (ESTOQUE, HISTÓRICO/RELATÓRIOS E CONSULTAS)
-========================================================================== */
-
-.conteudo-pagina {
-    -fx-background-color: #f6f8fb;
-}
-
+/* Botão padrão secundário */
 .btn-padrao-2 {
     -fx-background-color: #054685;
     -fx-background-radius: 8;
@@ -254,20 +251,46 @@ CONTEÚDO DA PÁGINA (ESTOQUE, HISTÓRICO/RELATÓRIOS E CONSULTAS)
     -fx-text-fill: #ffffff;
     -fx-cursor: hand;
     -fx-text-alignment: center;
-    -fx-effect: dropshadow(three-pass-box, rgba(5, 70, 133, 0.25), 6, 0.2, 0, 1);
+    -fx-effect: dropshadow(three-pass-box, rgba(5,70,133,0.25), 6, 0.2, 0, 1);
 }
 
 .btn-padrao-2:hover {
     -fx-background-color: #0c569e;
-    -fx-effect: dropshadow(three-pass-box, rgba(5, 70, 133, 0.4), 8, 0.3, 0, 2);
+    -fx-effect: dropshadow(three-pass-box, rgba(5,70,133,0.4), 8, 0.3, 0, 2);
 }
 
 .btn-padrao-2:pressed {
     -fx-background-color: #032e59;
 }
 
-/* Botão de Destaque / Ação Principal (ex: Adicionar Produto, Ações em Laranja) */
-.btn-action-primary,
+
+/* ==========================================================================
+   2. BOTÕES DE AÇÃO
+========================================================================== */
+
+/* Ação principal do formulário */
+.btn-action-primary {
+    -fx-background-color: linear-gradient(to right, #e4891b, #f59e0b);
+    -fx-background-radius: 8;
+    -fx-pref-height: 35;
+    -fx-font-family: "Arial Bold";
+    -fx-font-size: 13;
+    -fx-text-fill: #ffffff;
+    -fx-cursor: hand;
+    -fx-text-alignment: center;
+    -fx-effect: dropshadow(three-pass-box, rgba(228,137,27,0.35), 8, 0.3, 0, 2);
+}
+
+.btn-action-primary:hover {
+    -fx-background-color: linear-gradient(to right, #d97706, #e4891b);
+    -fx-effect: dropshadow(three-pass-box, rgba(228,137,27,0.55), 12, 0.4, 0, 3);
+}
+
+.btn-action-primary:pressed {
+    -fx-background-color: #b45309;
+}
+
+/* Botão de adicionar */
 .btn-adicionar {
     -fx-background-color: #e4891b;
     -fx-background-radius: 8;
@@ -278,22 +301,19 @@ CONTEÚDO DA PÁGINA (ESTOQUE, HISTÓRICO/RELATÓRIOS E CONSULTAS)
     -fx-text-fill: #ffffff;
     -fx-cursor: hand;
     -fx-text-alignment: center;
-    -fx-effect: dropshadow(three-pass-box, rgba(228, 137, 27, 0.35), 6, 0.25, 0, 2);
+    -fx-effect: dropshadow(three-pass-box, rgba(228,137,27,0.35), 6, 0.25, 0, 2);
 }
 
-.btn-action-primary:hover,
 .btn-adicionar:hover {
     -fx-background-color: #d17810;
-    -fx-effect: dropshadow(three-pass-box, rgba(228, 137, 27, 0.5), 8, 0.35, 0, 2);
+    -fx-effect: dropshadow(three-pass-box, rgba(228,137,27,0.5), 8, 0.35, 0, 2);
 }
 
-.btn-action-primary:pressed,
 .btn-adicionar:pressed {
     -fx-background-color: #b86809;
 }
 
-/* Botão Secundário / Busca / Filtro / Edição (Azul Institucional Senac #054685) */
-.btn-action-secondary,
+/* Botões secundários azuis */
 .btn-pesquisar,
 .btn-filtrar,
 .btn-editar {
@@ -306,25 +326,46 @@ CONTEÚDO DA PÁGINA (ESTOQUE, HISTÓRICO/RELATÓRIOS E CONSULTAS)
     -fx-text-fill: #ffffff;
     -fx-cursor: hand;
     -fx-text-alignment: center;
-    -fx-effect: dropshadow(three-pass-box, rgba(5, 70, 133, 0.25), 6, 0.2, 0, 1);
+    -fx-effect: dropshadow(three-pass-box, rgba(5,70,133,0.25), 6, 0.2, 0, 1);
 }
 
-.btn-action-secondary:hover,
 .btn-pesquisar:hover,
 .btn-filtrar:hover,
 .btn-editar:hover {
     -fx-background-color: #0c569e;
-    -fx-effect: dropshadow(three-pass-box, rgba(5, 70, 133, 0.4), 8, 0.3, 0, 2);
+    -fx-effect: dropshadow(three-pass-box, rgba(5,70,133,0.4), 8, 0.3, 0, 2);
 }
 
-.btn-action-secondary:pressed,
 .btn-pesquisar:pressed,
 .btn-filtrar:pressed,
 .btn-editar:pressed {
     -fx-background-color: #032e59;
 }
 
-/* Botão de Exclusão / Ação Destrutiva (Vermelho Corporativo Elegante) */
+/* Botão secundário de formulário */
+.btn-action-secondary {
+    -fx-background-color: #f1f5f9;
+    -fx-background-radius: 8;
+    -fx-border-color: #cbd5e1;
+    -fx-border-width: 1.5px;
+    -fx-border-radius: 8;
+    -fx-font-family: "Arial Bold";
+    -fx-font-size: 13;
+    -fx-text-fill: #475569;
+    -fx-cursor: hand;
+}
+
+.btn-action-secondary:hover {
+    -fx-background-color: #e2e8f0;
+    -fx-border-color: #94a3b8;
+    -fx-text-fill: #1e293b;
+}
+
+.btn-action-secondary:pressed {
+    -fx-background-color: #cbd5e1;
+}
+
+/* Botões de exclusão */
 .btn-action-danger,
 .btn-excluir {
     -fx-background-color: #d32f2f;
@@ -336,13 +377,13 @@ CONTEÚDO DA PÁGINA (ESTOQUE, HISTÓRICO/RELATÓRIOS E CONSULTAS)
     -fx-text-fill: #ffffff;
     -fx-cursor: hand;
     -fx-text-alignment: center;
-    -fx-effect: dropshadow(three-pass-box, rgba(211, 47, 47, 0.3), 6, 0.25, 0, 2);
+    -fx-effect: dropshadow(three-pass-box, rgba(211,47,47,0.3), 6, 0.25, 0, 2);
 }
 
 .btn-action-danger:hover,
 .btn-excluir:hover {
     -fx-background-color: #b71c1c;
-    -fx-effect: dropshadow(three-pass-box, rgba(211, 47, 47, 0.45), 8, 0.35, 0, 2);
+    -fx-effect: dropshadow(three-pass-box, rgba(211,47,47,0.45), 8, 0.35, 0, 2);
 }
 
 .btn-action-danger:pressed,
@@ -747,7 +788,7 @@ CONTEÚDO DA PÁGINA (ESTOQUE, HISTÓRICO/RELATÓRIOS E CONSULTAS)
     -fx-border-width: 1.5px;
     -fx-border-radius: 8px;
     -fx-background-radius: 8px;
-    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.15), 10, 0.2, 0, 4);
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.15), 10, 0.2, 0, 4);
 }
 
 .date-picker-popup .month-year-pane {
@@ -864,21 +905,18 @@ CONTEÚDO DA PÁGINA (ESTOQUE, HISTÓRICO/RELATÓRIOS E CONSULTAS)
     -fx-padding: 0 10px 0 12px;
 }
 
-.choice-box-cadastro:hover,
-#acessoSelect:hover {
+.choice-box-cadastro:hover {
     -fx-border-color: #94a3b8;
 }
 
-.choice-box-cadastro:focused,
-#acessoSelect:focused {
+.choice-box-cadastro:focused {
     -fx-border-color: #054685;
-    -fx-effect: dropshadow(three-pass-box, rgba(5, 70, 133, 0.2), 6, 0.2, 0, 1);
+    -fx-effect: dropshadow(three-pass-box, rgba(5,70,133,0.2), 6, 0.2, 0, 1);
 }
 
-.choice-box-cadastro .label,
-#acessoSelect .label {
+.choice-box-cadastro .label {
     -fx-text-fill: #1e293b;
-    -fx-font-family: "Arial Bold";
+    -fx-font-family: "Arial";
     -fx-font-size: 13px;
 }
 
@@ -899,36 +937,31 @@ CONTEÚDO DA PÁGINA (ESTOQUE, HISTÓRICO/RELATÓRIOS E CONSULTAS)
     -fx-padding: 4px;
 }
 
-.choice-box-cadastro .menu-item,
-#acessoSelect .menu-item {
-    -fx-min-width: 390px;
-    -fx-pref-width: 390px;
+/* Opções */
+.acesso-popup .menu-item {
+    -fx-background-color: #ffffff;
     -fx-pref-height: 35px;
     -fx-padding: 8px 14px;
     -fx-cursor: hand;
     -fx-background-radius: 6px;
     -fx-cursor: hand;
-    -fx-background-radius: 6px;
 }
 
-.choice-box-cadastro .menu-item .label,
-#acessoSelect .menu-item .label {
-    -fx-font-family: "Arial Bold";
+/* Texto das opções */
+.acesso-popup .menu-item .label {
+    -fx-font-family: "Arial";
     -fx-font-size: 13px;
     -fx-text-fill: #1e293b;
 }
 
-.choice-box-cadastro .menu-item:hover,
-.choice-box-cadastro .menu-item:focused,
-#acessoSelect .menu-item:hover,
-#acessoSelect .menu-item:focused {
+/* Hover e foco */
+.acesso-popup .menu-item:hover,
+.acesso-popup .menu-item:focused {
     -fx-background-color: #054685;
 }
 
-.choice-box-cadastro .menu-item:hover .label,
-.choice-box-cadastro .menu-item:focused .label,
-#acessoSelect .menu-item:hover .label,
-#acessoSelect .menu-item:focused .label {
+.acesso-popup .menu-item:hover .label,
+.acesso-popup .menu-item:focused .label {
     -fx-text-fill: #ffffff;
 }
 
@@ -987,143 +1020,39 @@ CONTEÚDO DA PÁGINA (ESTOQUE, HISTÓRICO/RELATÓRIOS E CONSULTAS)
     -fx-background-insets: -1.4, 0, 1;
 }
 
-.painel-secundario {
-    -fx-background-color: #e4891b;
-}
-
-.btn-laranja {
-    -fx-background-color:#e4891b;
-    -fx-font-family: SansSerif;
-    -fx-font-weight: bold;
-    -fx-text-fill: white;
-}
-
-.btn-laranja:hover{
-    -fx-background-color: #ba7119;
-}
-
-/* --- Novos estilos do Login Inteiramente em CSS --- */
-.fundo-login {
-    -fx-background-color: #f6f8fb;
-}
-
-.onda-azul {
-    -fx-fill: #0b2647;
-    -fx-stroke: transparent;
-}
-
-.onda-laranja {
-    -fx-fill: transparent;
-    -fx-stroke: #e47d1b;
-    -fx-stroke-width: 6;
-    -fx-stroke-line-cap: round;
-}
-
-.particula-luz {
-    -fx-fill: #ffffff;
-    -fx-effect: dropshadow(three-pass-box, #ff9900, 20, 0.7, 0, 0);
-}
-
-/* ==========================================================================
-SUBMENU DROPDOWN DE NAVEGAÇÃO LATERAL (CADASTROS)
-========================================================================== */
-
-.btn-padrao.btn-dropdown-ativo,
-.btn-dropdown-ativo {
-    -fx-background-color: linear-gradient(to right, #005bb5, #1877f2);
-    -fx-background-radius: 10 10 0 0;
-    -fx-border-color: #ff9800;
-    -fx-border-radius: 5 0 0 0;
-    -fx-border-width: 0 0 0 6;
-    -fx-pref-width: 185;
-    -fx-pref-height: 40;
-    -fx-font-family: "Arial";
-    -fx-font-size: 15;
-    -fx-font-weight: bold;
-    -fx-text-fill: #ffffff;
-    -fx-effect: dropshadow(three-pass-box, rgba(24, 119, 242, 0.5), 14, 0.45, 0, 0);
-}
-
-.btn-padrao.btn-dropdown-ativo:hover,
-.btn-dropdown-ativo:hover {
-    -fx-background-color: linear-gradient(to right, #006ce6, #2d88ff);
-    -fx-border-color: #ffb74d;
-    -fx-effect: dropshadow(three-pass-box, rgba(24, 119, 242, 0.7), 16, 0.55, 0, 0);
-}
-
-.submenu-lateral {
-    -fx-pref-width: 185;
-    -fx-max-width: 185;
-    -fx-padding: 0;
-    -fx-spacing: 0;
+/* Lista de instrutores */
+.lista-instrutores-view {
     -fx-background-color: transparent;
-}
-
-/* Container do submenu quando ativo */
-.submenu-lateral-ativo {
-    -fx-pref-width: 185;
-    -fx-max-width: 185;
+    -fx-background-insets: 0;
     -fx-padding: 0;
-    -fx-spacing: 0;
-    -fx-background-color: transparent;
-    -fx-border-width: 0;
+    -fx-border-color: #e2e8f0;
+    -fx-border-width: 1px;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
 }
 
-.btn-sub-opcao {
-    -fx-background-color: #071f3a;
-    -fx-background-radius: 0;
-    -fx-border-color: #ff9800;
-    -fx-border-radius: 0;
-    -fx-border-width: 0 0 1.2 6;
-    -fx-pref-width: 185;
-    -fx-max-width: 185;
-    -fx-pref-height: 36;
-    -fx-font-family: "Arial";
-    -fx-font-size: 13;
-    -fx-font-weight: bold;
-    -fx-text-fill: #e2e8f0;
+.lista-instrutores-view .list-cell {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #f1f5f9;
+    -fx-border-width: 0 0 1px 0;
+    -fx-padding: 10px 14px;
+    -fx-alignment: CENTER_LEFT;
     -fx-cursor: hand;
-    -fx-padding: 0 10 0 14;
 }
 
-.btn-sub-opcao:hover {
-    -fx-background-color: #0d3663;
-    -fx-text-fill: #ffffff;
+.lista-instrutores-view .list-cell:hover {
+    -fx-background-color: #f8fafc;
+}
+
+.lista-instrutores-view .list-cell:filled:selected {
+    -fx-background-color: #f0f7ff;
     -fx-border-color: #ff9800;
-    -fx-border-width: 0 0 1.2 6;
-    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.35), 8, 0.4, 2, 2);
+    -fx-border-width: 0 0 1px 4px;
 }
 
-.btn-sub-ativo {
-    -fx-background-color: linear-gradient(to right, #005bb5, #1877f2);
-    -fx-background-radius: 0;
-    -fx-border-color: #ff9800;
-    -fx-border-radius: 0;
-    -fx-border-width: 0 0 1.2 6;
-    -fx-pref-width: 185;
-    -fx-max-width: 185;
-    -fx-pref-height: 36;
-    -fx-font-family: "Arial";
-    -fx-font-size: 13;
-    -fx-font-weight: bold;
-    -fx-text-fill: #ffffff;
-    -fx-effect: dropshadow(three-pass-box, rgba(24, 119, 242, 0.4), 10, 0.4, 0, 0);
-}
-
-.btn-sub-ativo:hover {
-    -fx-background-color: linear-gradient(to right, #006ce6, #2d88ff);
-    -fx-border-color: #ffb74d;
-    -fx-border-width: 0 0 1.2 6;
-}
-
-#btnSubNavTurma,
-#btnSubNavTurma:hover,
-#btnSubNavTurma.btn-sub-ativo {
-    -fx-background-radius: 0 0 10 0;
-}
 
 /* ==========================================================================
-CARTÃO E FORMULÁRIO DE CADASTRO (PADRÃO SENAC)
+   13. FORMULÁRIOS E CARDS
 ========================================================================== */
 
 /* Card de formulário */
@@ -1133,7 +1062,7 @@ CARTÃO E FORMULÁRIO DE CADASTRO (PADRÃO SENAC)
     -fx-border-color: #cbd5e1;
     -fx-border-width: 1.5px;
     -fx-border-radius: 12px;
-    -fx-effect: dropshadow(three-pass-box, rgba(11, 38, 71, 0.10), 16, 0.25, 0, 4);
+    -fx-effect: dropshadow(three-pass-box, rgba(11,38,71,0.10), 16, 0.25, 0, 4);
     -fx-padding: 24px 32px;
 }
 
@@ -1240,34 +1169,15 @@ TELA DE CADASTRO DE TURMAS (SEÇÕES LADO A LADO)
     -fx-text-fill: #64748b;
 }
 
-/* Lista de Instrutores */
-.lista-instrutores-view {
-    -fx-background-color: transparent;
-    -fx-background-insets: 0;
-    -fx-padding: 0;
-    -fx-border-color: #e2e8f0;
-    -fx-border-width: 1px;
-    -fx-border-radius: 8px;
-    -fx-background-radius: 8px;
-}
-
-.lista-instrutores-view .list-cell {
+/* Card de turma */
+.card-turma-section {
     -fx-background-color: #ffffff;
-    -fx-border-color: #f1f5f9;
-    -fx-border-width: 0 0 1px 0;
-    -fx-padding: 10px 14px;
-    -fx-alignment: CENTER_LEFT;
-    -fx-cursor: hand;
-}
-
-.lista-instrutores-view .list-cell:hover {
-    -fx-background-color: #f8fafc;
-}
-
-.lista-instrutores-view .list-cell:filled:selected {
-    -fx-background-color: #f0f7ff;
-    -fx-border-color: #ff9800;
-    -fx-border-width: 0 0 1px 4px;
+    -fx-background-radius: 12px;
+    -fx-border-color: #cbd5e1;
+    -fx-border-width: 1.5px;
+    -fx-border-radius: 12px;
+    -fx-effect: dropshadow(three-pass-box, rgba(11,38,71,0.10), 16, 0.25, 0, 4);
+    -fx-padding: 20px 24px;
 }
 
 /* Indicadores da lista de instrutores */
@@ -1317,7 +1227,7 @@ TELA DE CADASTRO DE TURMAS (SEÇÕES LADO A LADO)
 
 
 /* ==========================================================================
-   15. BOTÃO DE REVELAR SENHA
+BOTÃO DE REVELAR SENHA (OLHO)
 ========================================================================== */
 
 .btn-olho {
@@ -1331,23 +1241,20 @@ TELA DE CADASTRO DE TURMAS (SEÇÕES LADO A LADO)
     -fx-background-repeat: no-repeat;
     -fx-background-position: center;
     -fx-background-size: 20px 20px;
-
-
 }
 
 .btn-olho:hover {
-    -fx-background-color: #f1f5f9; /* Fundo cinza bem clarinho ao passar o mouse */
+    -fx-background-color: #f1f5f9;
     -fx-background-radius: 4px;
 }
 
 .btn-olho:selected {
-    /* Quando o botão estiver pressionado: Olho Fechado */
     -fx-background-image: url("../imagens/olho-fechado.png");
 }
 
 
 /* ==========================================================================
-   16. PÁGINA INICIAL (HOME)
+ESTILOS DA PÁGINA INICIAL (HOME)
 ========================================================================== */
 
 /* Faixa de status */
@@ -1362,7 +1269,7 @@ TELA DE CADASTRO DE TURMAS (SEÇÕES LADO A LADO)
     -fx-border-width: 0 0 1 0;
 }
 
-/* Botão de notificações (Sino) */
+/* Botão de notificações */
 .btn-notificacao {
     -fx-background-color: #ffffff;
     -fx-border-color: #cbd5e1;
@@ -1392,10 +1299,37 @@ TELA DE CADASTRO DE TURMAS (SEÇÕES LADO A LADO)
     -fx-background-radius: 5px 5px 0 0;
 }
 
-/* Remove a borda padrão da tabela e ajusta o raio no rodapé do card */
-.tabela-alertas-custom {
-    -fx-background-radius: 0 0 5px 5px;
-    -fx-border-color: transparent;
+/* Cores de alerta */
+.card-vencido {
+    -fx-border-color: #d32f2f;
+}
+
+.header-vencido {
+    -fx-background-color: #b71c1c;
+}
+
+.card-proximo {
+    -fx-border-color: #f57c00;
+}
+
+.header-proximo {
+    -fx-background-color: #e65100;
+}
+
+.card-baixo {
+    -fx-border-color: #fbc02d;
+}
+
+.header-baixo {
+    -fx-background-color: #f57f17;
+}
+
+.card-zerado {
+    -fx-border-color: #3e3b38;
+}
+
+.header-zerado {
+    -fx-background-color: #3e3b38;
 }
 
 
@@ -1418,65 +1352,24 @@ TELA DE CADASTRO DE TURMAS (SEÇÕES LADO A LADO)
     -fx-text-fill: #ffffff;
 }
 
-/* Força a cor dos pontos quando o fundo é azul escuro */
+/* Marcador de aula */
 .calendar-cell-selected .dot-aula {
     -fx-fill: #ffb74d;
 }
+
+/* Marcador de feriado */
 .calendar-cell-selected .dot-feriado {
     -fx-fill: #fca5a5;
 }
 
 
-
-/* === CORES DE ALERTA PARA A PÁGINA INICIAL === */
-
-/* 1. Produtos Vencidos (Vermelho Crítico) */
-.card-vencido { -fx-border-color: #d32f2f; }
-.header-vencido { -fx-background-color: #b71c1c; }
-
-/* 2. Próximos ao Vencimento (Laranja) */
-.card-proximo { -fx-border-color: #f57c00; }
-.header-proximo { -fx-background-color: #e65100; }
-
-/* 3. Estoque Baixo (Amarelo/Mostarda) */
-.card-baixo { -fx-border-color: #fbc02d; }
-.header-baixo { -fx-background-color: #f57f17; }
-
-/* 4. Estoque Zerado (Vermelho Escuro/Laranja Forte) */
-.card-zerado { -fx-border-color: #3e3b38; }
-.header-zerado { -fx-background-color: #3e3b38; }
-
 /* ==========================================================================
    18. BADGES E BOTÕES AUXILIARES
 ========================================================================== */
 
-/* Borda vermelha do campo com erro (vence os estilos :hover e :focused) */
-.text-field.campo-erro,
-.text-field.campo-erro:hover,
-.conteudo-pagina .text-field.campo-erro,
-.conteudo-pagina .text-field.campo-erro:hover {
-    -fx-border-color: #d93025;
-    -fx-border-width: 1.5px;
-    -fx-border-radius: 8px;
-}
-
-.text-field.campo-erro:focused,
-.conteudo-pagina .text-field.campo-erro:focused {
-    -fx-border-color: #d93025;
-    -fx-border-width: 1.5px;
-    -fx-border-radius: 8px;
-    -fx-effect: dropshadow(three-pass-box, rgba(217, 48, 37, 0.25), 6, 0.25, 0, 1);
-}
-
-/* Texto da mensagem de erro, mostrado dentro do campo */
-.mensagem-erro-campo {
-    -fx-alignment: center-right;
-    -fx-background-color: #ffffff;
-    -fx-background-radius: 4px;
-    -fx-padding: 1px 4px;
-    -fx-text-fill: #d93025;
-    -fx-font-family: "Arial";
-    -fx-font-size: 11px;
+.btn-laranja {
+    -fx-background-color: #e4891b;
+    -fx-font-family: SansSerif;
     -fx-font-weight: bold;
     -fx-text-fill: white;
 }
@@ -1484,6 +1377,8 @@ TELA DE CADASTRO DE TURMAS (SEÇÕES LADO A LADO)
 .btn-laranja:hover {
     -fx-background-color: #ba7119;
 }
+
+
 /* ==========================================================================
    19. INDICADOR DE CARREGAMENTO
    Usado no login e nas telas que consultam o banco (ex.: Calendário).
@@ -1499,4 +1394,27 @@ TELA DE CADASTRO DE TURMAS (SEÇÕES LADO A LADO)
     -fx-font-family: "Arial Bold";
     -fx-font-size: 13px;
     -fx-text-fill: #64748b;
+}
+
+
+/* ==========================================================================
+   20. LISTA DE COMPRAS (TELA RELATÓRIO)
+========================================================================== */
+
+/* Coluna "A comprar": valor a comprar em destaque */
+.table-view .table-cell.valor-comprar {
+    -fx-text-fill: #c2410c;
+    -fx-font-family: "Arial Bold";
+}
+
+/* Coluna "A comprar": estoque suficiente ("—") */
+.table-view .table-cell.valor-ok {
+    -fx-text-fill: #94a3b8;
+}
+
+/* Resumo no cabeçalho do card ("3 de 21 itens precisam ser comprados") */
+.resumo-compras {
+    -fx-text-fill: #ffd8a8;
+    -fx-font-family: "Arial Bold";
+    -fx-font-size: 12px;
 }

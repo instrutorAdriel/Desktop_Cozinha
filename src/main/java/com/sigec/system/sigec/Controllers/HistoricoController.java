@@ -1,271 +1,445 @@
 package com.sigec.system.sigec.Controllers;
 
-import com.sigec.system.sigec.Constructors.UnidadeDTO;
-import com.sigec.system.sigec.Constructors.CursoDTO;
-import com.sigec.system.sigec.DAOS.HistoryDAO;
-import com.sigec.system.sigec.MainApplication;
 import com.sigec.system.sigec.Constructors.User;
+import com.sigec.system.sigec.DAOS.RelatorioInsumosDAO;
+import com.sigec.system.sigec.DAOS.RelatorioInsumosDAO.ItemCompra;
+import com.sigec.system.sigec.DAOS.RelatorioInsumosDAO.Opcao;
+import com.sigec.system.sigec.MainApplication;
 import com.sigec.system.sigec.Services.SessaoService;
 import com.sigec.system.sigec.Utils.BackgroundAnimator;
-import com.sigec.system.sigec.Utils.ButtonBorderLapAnimator;
-import com.sigec.system.sigec.Utils.DropdownBorderLapAnimator;
+import com.sigec.system.sigec.Utils.PdfSigec;
+import com.sigec.system.sigec.Utils.RelatorioComprasPdf;
 
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import javafx.application.Platform;
-import javafx.beans.property.ReadOnlyStringWrapper;
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.DatePicker;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
-import javafx.scene.control.TextFormatter;
-import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.geometry.Pos;
+import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
 import javafx.util.Duration;
-import javafx.util.StringConverter;
 
+import java.io.File;
 import java.io.IOException;
-import java.math.BigDecimal;
-import java.net.URL;
+import java.sql.SQLException;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
-import java.time.format.ResolverStyle;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.ResourceBundle;
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.stream.Collectors;
+import java.util.Locale;
+import java.util.Optional;
 
-public class HistoricoController implements Initializable {
+public class HistoricoController {
 
-    private static final DateTimeFormatter DATE_PICKER_FORMATTER =
-            DateTimeFormatter.ofPattern("dd/MM/uuuu").withResolverStyle(ResolverStyle.STRICT);
+    private static final String MSG_INICIAL =
+            "Selecione a unidade e o período e clique em \"Gerar Lista de Compras\".";
+
+    private final RelatorioInsumosDAO relatorioDAO = new RelatorioInsumosDAO();
+    private final DecimalFormat formato = new DecimalFormat("#,##0.###",
+            DecimalFormatSymbols.getInstance(Locale.forLanguageTag("pt-BR")));
+
+    private String nomeUsuario = "Usuário";
+
+    /** Cada geração ou mudança de filtro incrementa; resultado de número antigo é descartado. */
+    private long geracaoAtual = 0;
+
+    /** Texto original do botão Gerar (restaurado ao fim do carregamento). */
+    private String textoBotaoGerar;
+
+    /** Filtros da última geração: o PDF sai exatamente com o que está na tabela. */
+    private PdfSigec.Filtros ultimosFiltros;
 
     @FXML private AnchorPane topBarPane;
     @FXML private Label dataLabel;
-    @FXML private Label usuarioLabel;
     @FXML private Label horaLabel;
-    @FXML private TextField txtpesquisa;
-    @FXML @SuppressWarnings("unused") private Button btnbuscardata;
-    @FXML @SuppressWarnings("unused") private DatePicker dataDE;
-    @FXML @SuppressWarnings("unused") private DatePicker dataATE;
-    @FXML private ChoiceBox<String> filtro;
-    @FXML private ChoiceBox<UnidadeDTO> cbUnidade;
-    @FXML private ChoiceBox<CursoDTO> cbCurso;
+    @FXML private Label usuarioLabel;
 
-    @FXML private TableView<HistoryDAO> tableHistorico;
-    @FXML private TableColumn<HistoryDAO, String> codMXM;
-    @FXML private TableColumn<HistoryDAO, String> nome_produto;
-    @FXML private TableColumn<HistoryDAO, String> tipo_estoque;
-    @FXML private TableColumn<HistoryDAO, String> quantidade;
-    @FXML private TableColumn<HistoryDAO, String> qtdcompra;
-    private final AtomicLong requisicaoTabela = new AtomicLong();
+    @FXML private VBox submenuEstoque;
+    @FXML private Label setaEstoque;
+    @FXML private Button btnNavEstoque;
 
     @FXML private Button btnNavCadastro;
     @FXML private VBox submenuCadastro;
     @FXML private Label setaCadastro;
-    @FXML @SuppressWarnings("unused") private Button botaoSair;
-    @FXML private VBox submenuEstoque;
-    @FXML private Label setaEstoque;
-    @FXML private Button btnNavEstoque;
-    @FXML @SuppressWarnings("unused") private Button btnExportarCompras;
 
-    @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
+    @FXML private ChoiceBox<Opcao> cbUnidade;
+
+    @FXML private DatePicker dataInicio;
+    @FXML private DatePicker dataFim;
+
+    @FXML private Button btnGerarLista;
+    @FXML private Button btnSalvarPdf;
+    @FXML private Label lblResumo;
+
+    @FXML private TableView<ItemCompra> tabelaCompras;
+    @FXML private TableColumn<ItemCompra, String> colCodigo;
+    @FXML private TableColumn<ItemCompra, String> colCategoria;
+    @FXML private TableColumn<ItemCompra, String> colInsumo;
+    @FXML private TableColumn<ItemCompra, Double> colNecessario;
+    @FXML private TableColumn<ItemCompra, Double> colEstoque;
+    @FXML private TableColumn<ItemCompra, Double> colComprar;
+    @FXML private TableColumn<ItemCompra, String> colUnidade;
+
+    @FXML
+    public void initialize() {
         if (topBarPane != null) {
             BackgroundAnimator.startTopBarAnimation(topBarPane);
         }
-        configurarDataHora();
-        configurarUsuario();
-        configurarFiltroCategorias();
-        configurarDatePicker(dataDE);
-        configurarDatePicker(dataATE);
-
+        iniciarRelogio();
+        carregarUsuarioLogado();
         configurarTabela();
-
-        if (cbCurso != null) {
-            cbCurso.setConverter(new StringConverter<>() {
-                @Override public String toString(CursoDTO curso) { return curso != null ? curso.getNome() : ""; }
-                @Override public CursoDTO fromString(String string) { return null; }
-            });
-            cbCurso.getSelectionModel().selectedItemProperty().addListener(
-                    (obs, antigo, novo) -> atualizarTabela());
-        }
-
-        if (cbUnidade != null) {
-            User usuarioLogado = SessaoService.getUsuarioAtual();
-            List<UnidadeDTO> unidades = usuarioLogado == null || usuarioLogado.getIdUsuario() <= 0
-                    ? List.of()
-                    : HistoryDAO.listarUnidadesDoUsuario(usuarioLogado.getIdUsuario());
-            cbUnidade.setItems(FXCollections.observableArrayList(unidades));
-            cbUnidade.setConverter(new StringConverter<>() {
-                @Override public String toString(UnidadeDTO unidade) { return unidade != null ? unidade.getNome() : ""; }
-                @Override public UnidadeDTO fromString(String string) { return null; }
-            });
-            cbUnidade.getSelectionModel().selectedItemProperty().addListener((obs, antigo, novo) -> {
-                carregarCursos();
-            });
-            cbUnidade.getSelectionModel().selectFirst();
-        }
-
-        if (dataDE != null) {
-            dataDE.valueProperty().addListener((obs, antiga, nova) -> atualizarTabela());
-        }
-        if (dataATE != null) {
-            dataATE.valueProperty().addListener((obs, antiga, nova) -> atualizarTabela());
-        }
-        atualizarTabela();
+        configurarFiltros();
     }
 
-    private void configurarDatePicker(DatePicker datePicker) {
-        if (datePicker == null) return;
-
-        datePicker.setEditable(true);
-        datePicker.setConverter(new StringConverter<>() {
-            @Override
-            public String toString(LocalDate data) {
-                return data == null ? "" : DATE_PICKER_FORMATTER.format(data);
-            }
-
-            @Override
-            public LocalDate fromString(String texto) {
-                if (texto == null || texto.isBlank()) return null;
-                try {
-                    return LocalDate.parse(texto, DATE_PICKER_FORMATTER);
-                } catch (DateTimeParseException e) {
-                    return datePicker.getValue();
-                }
-            }
-        });
-        datePicker.getEditor().setTextFormatter(new TextFormatter<String>(change -> {
-            String texto = change.getControlNewText();
-            if (texto.length() > 10) return null;
-
-            for (int i = 0; i < texto.length(); i++) {
-                char caractere = texto.charAt(i);
-                boolean separador = i == 2 || i == 5;
-                if (separador ? caractere != '/' : caractere < '0' || caractere > '9') {
-                    return null;
-                }
-            }
-
-            if (texto.length() >= 2) {
-                int dia = Integer.parseInt(texto.substring(0, 2));
-                if (dia < 1 || dia > 31) return null;
-            }
-            if (texto.length() >= 5) {
-                int mes = Integer.parseInt(texto.substring(3, 5));
-                if (mes < 1 || mes > 12) return null;
-            }
-            if (texto.length() == 10) {
-                try {
-                    LocalDate.parse(texto, DATE_PICKER_FORMATTER);
-                } catch (DateTimeParseException e) {
-                    return null;
-                }
-            }
-            return change;
-        }));
-        datePicker.getEditor().focusedProperty().addListener((observable, antigo, focado) -> {
-            if (!focado) {
-                try {
-                    LocalDate dataDigitada = LocalDate.parse(
-                            datePicker.getEditor().getText(), DATE_PICKER_FORMATTER);
-                    datePicker.setValue(dataDigitada);
-                } catch (DateTimeParseException e) {
-                    datePicker.getEditor().setText(datePicker.getValue() == null
-                            ? ""
-                            : DATE_PICKER_FORMATTER.format(datePicker.getValue()));
-                }
-            }
-        });
+    // ==================================================================
+    // Inicialização
+    // ==================================================================
+    private void iniciarRelogio() {
+        DateTimeFormatter dataFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        if (dataLabel != null) {
+            dataLabel.setText(LocalDate.now().format(dataFormatter));
+        }
+        if (horaLabel != null) {
+            DateTimeFormatter horaFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+            Timeline clock = new Timeline(
+                    new KeyFrame(Duration.ZERO, e -> horaLabel.setText(LocalTime.now().format(horaFormatter))),
+                    new KeyFrame(Duration.seconds(1)));
+            clock.setCycleCount(Animation.INDEFINITE);
+            clock.play();
+        }
     }
 
-    private void carregarCursos() {
-        if (cbCurso == null) {
-            atualizarTabela();
-            return;
+    private void carregarUsuarioLogado() {
+        User usuario = SessaoService.getUsuarioLogado();
+
+        if (usuario != null && usuario.getNome() != null && !usuario.getNome().isBlank()) {
+            nomeUsuario = usuario.getNome().trim();
+        } else if (SessaoService.getIdUsuarioLogado() > 0) {
+            try {
+                String nome = relatorioDAO.buscarNomeUsuario(SessaoService.getIdUsuarioLogado());
+                nomeUsuario = (nome != null && !nome.isBlank()) ? nome : SessaoService.getNomeExibicao();
+            } catch (SQLException e) {
+                System.err.println("Não foi possível carregar o nome do usuário: " + e.getMessage());
+                nomeUsuario = SessaoService.getNomeExibicao();
+            }
+        } else {
+            nomeUsuario = SessaoService.getNomeExibicao(); // sem sessão: "Administrador"
         }
-        List<CursoDTO> cursos = new ArrayList<>();
-        cursos.add(new CursoDTO(0, "Todos"));
-        cursos.addAll(HistoryDAO.listarCursosAtivos());
-        cbCurso.setItems(FXCollections.observableArrayList(cursos));
-        cbCurso.getSelectionModel().selectFirst();
-        atualizarTabela();
+
+        if (usuarioLabel != null) {
+            usuarioLabel.setText(nomeUsuario);
+        }
     }
 
     private void configurarTabela() {
-        if (codMXM != null) codMXM.setCellValueFactory(new PropertyValueFactory<>("codMXM"));
-        if (nome_produto != null) nome_produto.setCellValueFactory(new PropertyValueFactory<>("nomeProduto"));
-        if (tipo_estoque != null) tipo_estoque.setCellValueFactory(new PropertyValueFactory<>("nomeCategoria"));
-        if (quantidade != null) {
-            quantidade.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(
-                    formatarQuantidade(cellData.getValue().getQtdAtual(), cellData.getValue().getUnidadeMedida())));
-        }
-        if (qtdcompra != null) {
-            qtdcompra.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(
-                    formatarQuantidade(cellData.getValue().getQtdComprar(), cellData.getValue().getUnidadeMedida())));
+        colCodigo.setCellValueFactory(c -> new SimpleStringProperty(
+                c.getValue().codigoMxm() == null ? "—" : c.getValue().codigoMxm()));
+        colCategoria.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().categoria()));
+        colInsumo.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().nomeProduto()));
+        colNecessario.setCellValueFactory(c -> new SimpleObjectProperty<>(c.getValue().necessario()));
+        colEstoque.setCellValueFactory(c -> new SimpleObjectProperty<>(c.getValue().emEstoque()));
+        colComprar.setCellValueFactory(c -> new SimpleObjectProperty<>(c.getValue().aComprar()));
+        colUnidade.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().unidade()));
+
+        // Com CONSTRAINED_RESIZE_POLICY, o maxWidth funciona como "peso" de cada coluna.
+        colCodigo.setMaxWidth(1f * Integer.MAX_VALUE * 12);
+        colCategoria.setMaxWidth(1f * Integer.MAX_VALUE * 14);
+        colInsumo.setMaxWidth(1f * Integer.MAX_VALUE * 28);
+        colNecessario.setMaxWidth(1f * Integer.MAX_VALUE * 12);
+        colEstoque.setMaxWidth(1f * Integer.MAX_VALUE * 12);
+        colComprar.setMaxWidth(1f * Integer.MAX_VALUE * 12);
+        colUnidade.setMaxWidth(1f * Integer.MAX_VALUE * 10);
+
+        colNecessario.setCellFactory(col -> celulaNumero(false));
+        colEstoque.setCellFactory(col -> celulaNumero(false));
+        colComprar.setCellFactory(col -> celulaNumero(true));
+
+        tabelaCompras.setPlaceholder(new Label(MSG_INICIAL));
+
+        // O botão de PDF só fica ativo quando há itens na tabela
+        // (a lista é sempre a mesma: setAll/clear, então o vínculo continua valendo)
+        btnSalvarPdf.disableProperty().bind(Bindings.isEmpty(tabelaCompras.getItems()));
+    }
+
+    /**
+     * Número no padrão brasileiro (1.200 / 0,5). Na coluna "A comprar":
+     * valor > 0 em destaque (classe valor-comprar) e zero como "—" (classe valor-ok).
+     */
+    private TableCell<ItemCompra, Double> celulaNumero(boolean colunaComprar) {
+        return new TableCell<>() {
+            @Override
+            protected void updateItem(Double valor, boolean vazio) {
+                super.updateItem(valor, vazio);
+                getStyleClass().removeAll("valor-comprar", "valor-ok");
+                if (vazio || valor == null) {
+                    setText(null);
+                    return;
+                }
+                if (colunaComprar && valor <= 0.0005) {
+                    setText("—");
+                    getStyleClass().add("valor-ok");
+                } else {
+                    setText(formato.format(valor));
+                    if (colunaComprar) {
+                        getStyleClass().add("valor-comprar");
+                    }
+                }
+            }
+        };
+    }
+
+    private void configurarFiltros() {
+        // Mostra o nome completo ao passar o mouse (nomes longos de unidade)
+        configurarTooltip(cbUnidade);
+
+        carregarUnidades();
+
+        // Qualquer mudança de filtro invalida o resultado que está na tela
+        cbUnidade.getSelectionModel().selectedItemProperty().addListener((obs, a, n) -> limparTabela());
+        dataInicio.valueProperty().addListener((obs, a, n) -> limparTabela());
+        dataFim.valueProperty().addListener((obs, a, n) -> limparTabela());
+    }
+
+    private void configurarTooltip(ChoiceBox<Opcao> choiceBox) {
+        choiceBox.valueProperty().addListener((obs, antigo, novo) ->
+                choiceBox.setTooltip(novo == null ? null : new Tooltip(novo.nome())));
+    }
+
+    // ==================================================================
+    // Filtro de unidade
+    // ==================================================================
+    private void carregarUnidades() {
+        try {
+            cbUnidade.setItems(FXCollections.observableArrayList(relatorioDAO.listarUnidades()));
+            // Se o usuário só tem uma unidade, já deixa selecionada
+            if (cbUnidade.getItems().size() == 1) {
+                cbUnidade.getSelectionModel().selectFirst();
+            }
+        } catch (SQLException e) {
+            mostrarErro("Não foi possível carregar as unidades.", e);
         }
     }
 
-    public void carregarDadosTabela(int idUnidade) {
-        if (tableHistorico == null) return;
-        CursoDTO curso = cbCurso != null ? cbCurso.getValue() : null;
-        carregarTabelaEmSegundoPlano(idUnidade, curso != null ? curso.getId() : 0, null, null, "");
+    // ==================================================================
+    // Lista de compras
+    // ==================================================================
+    @FXML
+    public void onGerarRelatorio(ActionEvent event) {
+        Opcao unidade = cbUnidade.getValue();
+        LocalDate inicio = dataInicio.getValue();
+        LocalDate fim = dataFim.getValue();
+
+        if (unidade == null) {
+            mostrarAviso("Selecione a unidade.");
+            return;
+        }
+        if (inicio == null || fim == null) {
+            mostrarAviso("Selecione a data inicial e a data final.");
+            return;
+        }
+        if (fim.isBefore(inicio)) {
+            mostrarAviso("A data final não pode ser anterior à data inicial.");
+            return;
+        }
+
+        int idUnidade = unidade.id();
+
+        // A consulta roda em outra thread; a tela continua respondendo
+        Task<List<ItemCompra>> tarefa = new Task<>() {
+            @Override
+            protected List<ItemCompra> call() throws Exception {
+                // Só banco aqui: nada de tela fora da thread do JavaFX
+                // Lista da unidade inteira: sem filtro de curso/turma
+                return relatorioDAO.buscarListaDeCompras(inicio, fim, idUnidade, null, null);
+            }
+        };
+
+        long minhaGeracao = ++geracaoAtual;
+        mostrarCarregando(true);
+
+        tarefa.setOnSucceeded(e -> {
+            if (minhaGeracao != geracaoAtual) {
+                return; // filtros mudaram durante a consulta: resultado descartado
+            }
+            mostrarCarregando(false);
+            List<ItemCompra> itens = tarefa.getValue();
+            tabelaCompras.getItems().setAll(itens);
+            // Curso/turma não se aplicam a este relatório (o PDF não mostra esses campos)
+            ultimosFiltros = new PdfSigec.Filtros(unidade.nome(), null, null, inicio, fim, nomeUsuario);
+            atualizarResumo(itens);
+            if (itens.isEmpty()) {
+                tabelaCompras.setPlaceholder(new Label("Nenhuma aula agendada nesta unidade no período."));
+            }
+        });
+
+        tarefa.setOnFailed(e -> {
+            if (minhaGeracao != geracaoAtual) {
+                return;
+            }
+            limparTabela();
+            Throwable erro = tarefa.getException();
+            mostrarErro("Não foi possível gerar a lista de compras.",
+                    erro instanceof Exception ex ? ex : new Exception(erro));
+        });
+
+        Thread thread = new Thread(tarefa, "lista-compras");
+        thread.setDaemon(true); // não segura o fechamento do sistema
+        thread.start();
+    }
+
+    private void atualizarResumo(List<ItemCompra> itens) {
+        if (itens.isEmpty()) {
+            lblResumo.setText("");
+            return;
+        }
+        long comprar = itens.stream().filter(ItemCompra::precisaComprar).count();
+        lblResumo.setText(comprar == 0
+                ? "Estoque suficiente para todas as aulas"
+                : comprar + " de " + itens.size() + " itens precisam ser comprados");
+    }
+
+    /** Liga/desliga o estado de carregamento: botão travado + spinner laranja na tabela. */
+    private void mostrarCarregando(boolean carregando) {
+        if (textoBotaoGerar == null) {
+            textoBotaoGerar = btnGerarLista.getText();
+        }
+        btnGerarLista.setDisable(carregando);
+        btnGerarLista.setText(carregando ? "Gerando lista..." : textoBotaoGerar);
+
+        if (carregando) {
+            tabelaCompras.getItems().clear();
+            lblResumo.setText("");
+            tabelaCompras.setPlaceholder(criarIndicadorCarregando());
+        }
+    }
+
+    private VBox criarIndicadorCarregando() {
+        ProgressIndicator spinner = new ProgressIndicator();
+        spinner.getStyleClass().add("loader-laranja");
+        spinner.setPrefSize(40, 40);
+
+        Label texto = new Label("Comparando com o estoque...");
+        texto.getStyleClass().add("loader-texto");
+
+        VBox caixa = new VBox(10, spinner, texto);
+        caixa.setAlignment(Pos.CENTER);
+        return caixa;
+    }
+
+    // ==================================================================
+    // Exportação em PDF (só os itens que precisam ser comprados)
+    // ==================================================================
+    @FXML
+    public void onSalvarPdf(ActionEvent event) {
+        if (tabelaCompras.getItems().isEmpty() || ultimosFiltros == null) {
+            mostrarAviso("Gere a lista de compras antes de salvar o PDF.");
+            return;
+        }
+        if (tabelaCompras.getItems().stream().noneMatch(ItemCompra::precisaComprar)) {
+            mostrarInfo("O estoque da unidade é suficiente para todas as aulas do período.\n"
+                    + "Não há itens para comprar.");
+            return;
+        }
+
+        FileChooser chooser = new FileChooser();
+        chooser.setTitle("Salvar lista de compras em PDF");
+        chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Arquivo PDF (*.pdf)", "*.pdf"));
+        chooser.setInitialDirectory(PdfSigec.pastaRelatorios()); // Documentos\SIGEC\Relatórios
+        chooser.setInitialFileName(PdfSigec.nomeArquivo("lista-compras", ultimosFiltros));
+
+        File destino = chooser.showSaveDialog(tabelaCompras.getScene().getWindow());
+        if (destino == null) {
+            return; // usuário cancelou
+        }
+        if (!destino.getName().toLowerCase().endsWith(".pdf")) {
+            destino = new File(destino.getParentFile(), destino.getName() + ".pdf");
+        }
+
+        try {
+            RelatorioComprasPdf.gerar(destino, ultimosFiltros, List.copyOf(tabelaCompras.getItems()));
+        } catch (Exception e) {
+            mostrarErro("Não foi possível salvar o PDF. Verifique se o arquivo não está aberto em outro programa.", e);
+            return;
+        }
+
+        Alert ok = new Alert(Alert.AlertType.CONFIRMATION,
+                "PDF salvo em:\n" + destino.getAbsolutePath() + "\n\nDeseja abrir o arquivo agora?",
+                ButtonType.YES, ButtonType.NO);
+        ok.setHeaderText(null);
+        ok.setTitle("Lista de compras salva");
+        Optional<ButtonType> resposta = ok.showAndWait();
+        if (resposta.isPresent() && resposta.get() == ButtonType.YES) {
+            abrirArquivo(destino);
+        }
+    }
+
+    /** Abre o PDF no leitor padrão do Windows, fora da thread da interface. */
+    private void abrirArquivo(File arquivo) {
+        Thread t = new Thread(() -> {
+            try {
+                java.awt.Desktop.getDesktop().open(arquivo);
+            } catch (Exception e) {
+                System.err.println("Não foi possível abrir o PDF: " + e.getMessage());
+            }
+        }, "abrir-pdf");
+        t.setDaemon(true);
+        t.start();
     }
 
     @FXML
-    public void onExportarComprasAction(ActionEvent event) {
-        System.out.println("Iniciando a exportação de compras...");
+    public void onLimparFiltros(ActionEvent event) {
+        cbUnidade.getSelectionModel().clearSelection();
+        dataInicio.setValue(null);
+        dataFim.setValue(null);
+        limparTabela();
     }
 
-    private void configurarUsuario() {
-        if (usuarioLabel != null) {
-            usuarioLabel.setText(SessaoService.getNomeUsuarioLogado());
-        }
+    private void limparTabela() {
+        geracaoAtual++;            // invalida uma consulta que ainda esteja rodando
+        mostrarCarregando(false);
+        ultimosFiltros = null;
+        tabelaCompras.getItems().clear();
+        lblResumo.setText("");
+        tabelaCompras.setPlaceholder(new Label(MSG_INICIAL));
     }
 
-    private void configurarFiltroCategorias() {
-        if (filtro != null) {
-            filtro.setItems(FXCollections.observableArrayList("Todos", "Entrada", "Saída", "Ajuste", "Descarte"));
-            filtro.getSelectionModel().selectFirst();
-        }
+    private void mostrarAviso(String mensagem) {
+        Alert alerta = new Alert(Alert.AlertType.WARNING, mensagem, ButtonType.OK);
+        alerta.setHeaderText(null);
+        alerta.setTitle("Atenção");
+        alerta.showAndWait();
     }
 
-    private void configurarDataHora() {
-        DateTimeFormatter dataFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-        DateTimeFormatter horaFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
-
-        if (dataLabel != null) dataLabel.setText(LocalDate.now().format(dataFormatter));
-
-        if (horaLabel != null) {
-            horaLabel.setText(LocalTime.now().format(horaFormatter));
-            Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(1), event ->
-                    horaLabel.setText(LocalTime.now().format(horaFormatter))
-            ));
-            timeline.setCycleCount(Animation.INDEFINITE);
-            timeline.play();
-        }
+    private void mostrarInfo(String mensagem) {
+        Alert alerta = new Alert(Alert.AlertType.INFORMATION, mensagem, ButtonType.OK);
+        alerta.setHeaderText(null);
+        alerta.setTitle("Lista de compras");
+        alerta.showAndWait();
     }
 
-    // =========================================================================
-    // NAVEGAÇÃO
-    // =========================================================================
+    private void mostrarErro(String mensagem, Exception e) {
+        e.printStackTrace();
+        Alert alerta = new Alert(Alert.AlertType.ERROR, mensagem + "\n\nDetalhe: " + e.getMessage(), ButtonType.OK);
+        alerta.setHeaderText(null);
+        alerta.setTitle("Erro");
+        alerta.showAndWait();
+    }
 
+    // ==================================================================
+    // Navegação (mantida como estava nesta tela)
+    // ==================================================================
     @FXML public void onClickHome(ActionEvent event) {
-        try { MainApplication.trocadorDeTelas("home.fxml"); } catch (IOException e) { exibirAlerta("Erro ao navegar: " + e.getMessage()); }
+        try { MainApplication.trocadorDeTelas("home.fxml"); } catch (IOException e) { mostrarErro("Erro ao navegar.", e); }
     }
     @FXML protected void botaoCalendarioAction(ActionEvent event) {
         try { MainApplication.trocadorDeTelas("calendario.fxml"); } catch (IOException e) { System.err.println(e.getMessage()); }
@@ -295,129 +469,13 @@ public class HistoricoController implements Initializable {
     @FXML public void onClickUtensilios(ActionEvent event) {
         try { MainApplication.trocadorDeTelas("gestao-utensilios.fxml"); } catch (IOException e) { System.err.println(e.getMessage()); }
     }
-    @FXML public void onClickCadastroUsuario(ActionEvent event) { navegarParaCadastro(); }
-    @FXML public void onClickCadastroTurma(ActionEvent event) {
-        try { MainApplication.trocadorDeTelas("cadastro-turma.fxml"); } catch (IOException e) { exibirAlerta(e.getMessage()); }
+    @FXML public void onClickCadastroUsuario(ActionEvent event) {
+        try { MainApplication.trocadorDeTelas("cadastro.fxml"); } catch (IOException e) { mostrarErro("Erro ao navegar.", e); }
     }
-    private void navegarParaCadastro() {
-        try { MainApplication.trocadorDeTelas("cadastro.fxml"); } catch (IOException e) { exibirAlerta(e.getMessage()); }
+    @FXML public void onClickCadastroTurma(ActionEvent event) {
+        try { MainApplication.trocadorDeTelas("cadastro-turma.fxml"); } catch (IOException e) { mostrarErro("Erro ao navegar.", e); }
     }
     @FXML public void botaoSairAction(ActionEvent event) {
         com.sigec.system.sigec.Utils.SidebarNavigationManager.executarLogout();
-    }
-
-    // =========================================================================
-    // Os filtros de turma e período são opcionais e independentes.
-    // =========================================================================
-
-    @FXML
-    public void filtrarHistorico(ActionEvent event) {
-        atualizarTabela();
-    }
-
-    private void atualizarTabela() {
-        if (tableHistorico == null) return;
-        UnidadeDTO unidadeSelecionada = cbUnidade != null ? cbUnidade.getValue() : null;
-        if (unidadeSelecionada == null) {
-            requisicaoTabela.incrementAndGet();
-            tableHistorico.setItems(FXCollections.observableArrayList());
-            return;
-        }
-        int idUnidade = unidadeSelecionada.getId();
-
-        CursoDTO cursoSelecionado = cbCurso != null ? cbCurso.getValue() : null;
-        int idCurso = cursoSelecionado != null ? cursoSelecionado.getId() : 0;
-
-        LocalDate dataInicio = dataDE != null ? dataDE.getValue() : null;
-        LocalDate dataFim = dataATE != null ? dataATE.getValue() : null;
-
-        String termo = txtpesquisa != null ? txtpesquisa.getText().trim() : "";
-
-        if (dataInicio != null && dataFim != null && dataInicio.isAfter(dataFim)) {
-            requisicaoTabela.incrementAndGet();
-            exibirAlerta("A data inicial não pode ser superior à data final.");
-            return;
-        }
-
-        LocalDate inicioConsulta = dataInicio != null ? dataInicio : dataFim;
-        LocalDate fimConsulta = dataFim != null ? dataFim : dataInicio;
-        carregarTabelaEmSegundoPlano(idUnidade, idCurso, inicioConsulta, fimConsulta, termo);
-    }
-
-    private void carregarTabelaEmSegundoPlano(
-            int idUnidade, int idCurso, LocalDate dataInicio, LocalDate dataFim, String termo) {
-        long requisicao = requisicaoTabela.incrementAndGet();
-        Thread thread = new Thread(() -> {
-            try {
-                List<HistoryDAO> resultados = dataInicio != null || dataFim != null
-                        ? HistoryDAO.listarComprasPorPeriodo(idUnidade, idCurso, dataInicio, dataFim)
-                        : HistoryDAO.listarListaDeCompras(idUnidade, idCurso);
-
-                if (!termo.isEmpty()) {
-                    String termoLower = termo.toLowerCase();
-                    resultados = resultados.stream().filter(item -> {
-                        if (item.getNomeProduto() == null) return false;
-                        String nomeProd = item.getNomeProduto().toLowerCase();
-                        if (nomeProd.contains(termoLower)) return true;
-
-                        int tolerancia = termoLower.length() > 5 ? 2 : 1;
-                        return calcularDistanciaLevenshtein(nomeProd, termoLower) <= tolerancia;
-                    }).collect(Collectors.toList());
-                }
-
-                List<HistoryDAO> resultadosFinais = resultados;
-                Platform.runLater(() -> {
-                    if (requisicaoTabela.get() == requisicao) {
-                        tableHistorico.setItems(FXCollections.observableArrayList(resultadosFinais));
-                    }
-                });
-            } catch (RuntimeException e) {
-                Platform.runLater(() -> {
-                    if (requisicaoTabela.get() == requisicao) {
-                        exibirAlerta("Não foi possível carregar o relatório: " + e.getMessage());
-                    }
-                });
-            }
-        }, "SIGEC-RelatorioLoader");
-        thread.setDaemon(true);
-        thread.start();
-    }
-
-    private String formatarQuantidade(double valor, String unidade) {
-        String quantidadeFormatada = BigDecimal.valueOf(valor).stripTrailingZeros().toPlainString();
-        return unidade == null || unidade.isBlank()
-                ? quantidadeFormatada
-                : quantidadeFormatada + " " + unidade;
-    }
-
-    private int calcularDistanciaLevenshtein(String s1, String s2) {
-        int[] custos = new int[s2.length() + 1];
-        for (int i = 0; i <= s1.length(); i++) {
-            int ultimoValor = i;
-            for (int j = 0; j <= s2.length(); j++) {
-                if (i == 0) {
-                    custos[j] = j;
-                } else {
-                    if (j > 0) {
-                        int novoValor = custos[j - 1];
-                        if (s1.charAt(i - 1) != s2.charAt(j - 1)) {
-                            novoValor = Math.min(Math.min(novoValor, ultimoValor), custos[j]) + 1;
-                        }
-                        custos[j - 1] = ultimoValor;
-                        ultimoValor = novoValor;
-                    }
-                }
-            }
-            if (i > 0) custos[s2.length()] = ultimoValor;
-        }
-        return custos[s2.length()];
-    }
-
-    private void exibirAlerta(String mensagem) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("Erro");
-        alert.setHeaderText(null);
-        alert.setContentText(mensagem);
-        alert.showAndWait();
     }
 }
