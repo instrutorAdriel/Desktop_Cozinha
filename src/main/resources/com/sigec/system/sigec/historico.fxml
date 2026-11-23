@@ -366,7 +366,7 @@
                                                 <Insets left="20.0" right="20.0" />
                                             </padding>
                                             <children>
-                                                <Label text="NECESSÁRIO PARA AS AULAS x ESTOQUE DA UNIDADE" textFill="WHITE">
+                                                <Label text="ITENS PARA COMPRA NO PERÍODO" textFill="WHITE">
                                                     <font>
                                                         <Font name="Arial Bold" size="13.0" />
                                                     </font>
