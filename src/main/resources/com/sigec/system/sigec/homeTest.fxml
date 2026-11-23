@@ -329,7 +329,7 @@
                                                             </font>
                                                         </Label>
                                                         <!-- Dropdown de Unidade adicionado aqui -->
-                                                        <ChoiceBox fx:id="cbUnidade" prefHeight="35.0" prefWidth="180.0" styleClass="custom-choice-box" />
+                                                        <ChoiceBox fx:id="cbUnidade" prefHeight="35.0" prefWidth="300.0" styleClass="custom-choice-box" />
                                                     </children>
                                                 </HBox>
                                             </children>
