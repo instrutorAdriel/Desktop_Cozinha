@@ -1,5 +1,6 @@
 package com.sigec.system.sigec.Services;
 
+import com.sigec.system.sigec.Constructors.UnidadeDTO;
 import com.sigec.system.sigec.Constructors.User;
 
 /**
@@ -76,6 +77,11 @@ public final class SessaoService {
         }
         return "Administrador";
     }
+
+    private static UnidadeDTO unidadeSelecionada;
+
+    public static UnidadeDTO getUnidadeSelecionada() { return unidadeSelecionada; }
+    public static void setUnidadeSelecionada(UnidadeDTO u) { unidadeSelecionada = u; }
 
 
     public static String getNomeUsuarioLogado() {

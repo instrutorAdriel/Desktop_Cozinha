@@ -2,7 +2,9 @@ package com.sigec.system.sigec.Controllers;
 
 import com.sigec.system.sigec.Constructors.Curso;
 import com.sigec.system.sigec.Constructors.Laboratorio;
+import com.sigec.system.sigec.Constructors.UnidadeDTO;
 import com.sigec.system.sigec.Constructors.User;
+import com.sigec.system.sigec.DAOS.HomeDAO;
 import com.sigec.system.sigec.DAOS.TurmaDAO;
 import com.sigec.system.sigec.MainApplication;
 import com.sigec.system.sigec.Services.SessaoService;
@@ -35,6 +37,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
+import javafx.util.StringConverter;
 
 import java.io.IOException;
 import java.net.URL;
@@ -98,6 +101,9 @@ public class CadastroTurmaController implements Initializable {
     // SEÇÃO 1: FORMULÁRIO DE CADASTRO DA TURMA
     // =========================================================================
     @FXML
+    private ChoiceBox<UnidadeDTO> cbUnidade;
+
+    @FXML
     private TextField txtNomeTurma;
 
     @FXML
@@ -151,6 +157,7 @@ public class CadastroTurmaController implements Initializable {
         configurarUsuario();
         configurarMenuInicial();
         configurarFormularioTurma();
+        configurarUnidade(); // depois do formulário: dispara o carregamento dos laboratórios da unidade
         configurarListaInstrutores();
         configurarPesquisaInstrutor();
 
@@ -193,36 +200,8 @@ public class CadastroTurmaController implements Initializable {
 
     private void configurarFormularioTurma() {
         if (laboratorioSelect != null) {
+            // Os laboratórios são carregados por unidade em carregarLaboratorios(UnidadeDTO)
             laboratorioSelect.getItems().clear();
-            // Carrega os laboratórios ativos do banco de dados em segundo plano
-            Thread bgLabLoader = new Thread(() -> {
-                try {
-                    List<Laboratorio> labsDb = TurmaDAO.listarLaboratoriosAtivos();
-                    Platform.runLater(() -> {
-                        laboratorioSelect.getItems().clear();
-                        if (labsDb != null && !labsDb.isEmpty()) {
-                            for (Laboratorio lab : labsDb) {
-                                laboratorioSelect.getItems().add(lab.getNomeLaboratorio());
-                            }
-                        } else {
-                            // Fallback caso não haja nenhum cadastrado
-                            laboratorioSelect.getItems().addAll(
-                                    "Cozinha Quente Principal",
-                                    "Cozinha Pedagógica 01",
-                                    "Cozinha Pedagógica 02 (Panificação e Confeitaria)",
-                                    "Cozinha Fria / Garde Manger",
-                                    "Laboratório de Bebidas e Barismo",
-                                    "Cozinha Demonstrativa");
-                        }
-                        laboratorioSelect.getSelectionModel().selectFirst();
-                    });
-                } catch (Exception e) {
-                    System.err.println("Aviso: Falha ao carregar laboratórios: " + e.getMessage());
-                }
-            });
-            bgLabLoader.setDaemon(true);
-            bgLabLoader.setName("SIGEC-LabLoader");
-            bgLabLoader.start();
         }
 
         if (cursoSelect != null) {
@@ -263,6 +242,101 @@ public class CadastroTurmaController implements Initializable {
             // O padrão da situação deve vir como Ativo
             situacaoSelect.setValue("Ativo");
         }
+    }
+
+    // =========================================================================
+    // UNIDADE E LABORATÓRIOS DA UNIDADE
+    // =========================================================================
+
+    /**
+     * Preenche o campo Unidade com as unidades do usuário logado, pré-seleciona a
+     * unidade escolhida na tela Home (guardada em SessaoService) e recarrega os
+     * laboratórios sempre que a unidade mudar.
+     */
+    private void configurarUnidade() {
+        if (cbUnidade == null) {
+            return;
+        }
+
+        cbUnidade.setConverter(new StringConverter<UnidadeDTO>() {
+            @Override
+            public String toString(UnidadeDTO unidade) {
+                return unidade != null ? unidade.getNome() : "";
+            }
+
+            @Override
+            public UnidadeDTO fromString(String string) {
+                return null;
+            }
+        });
+
+        List<UnidadeDTO> unidades = new HomeDAO().listarUnidadesDoUsuario(SessaoService.getIdUsuarioLogado());
+        cbUnidade.setItems(FXCollections.observableArrayList(unidades));
+
+        // Listener registrado ANTES de selecionar, para já carregar os labs da unidade inicial
+        cbUnidade.getSelectionModel().selectedItemProperty().addListener((obs, antiga, nova) -> {
+            SessaoService.setUnidadeSelecionada(nova);
+            carregarLaboratorios(nova);
+        });
+
+        if (unidades.isEmpty()) {
+            cbUnidade.setDisable(true);
+            carregarLaboratorios(null);
+            return;
+        }
+
+        // Seleciona a unidade que veio da Home; se não houver, usa a primeira
+        UnidadeDTO daHome = SessaoService.getUnidadeSelecionada();
+        UnidadeDTO inicial = unidades.get(0);
+        if (daHome != null) {
+            for (UnidadeDTO u : unidades) {
+                if (u.getId() == daHome.getId()) {
+                    inicial = u;
+                    break;
+                }
+            }
+        }
+        cbUnidade.getSelectionModel().select(inicial);
+    }
+
+    /**
+     * Carrega apenas os laboratórios ativos da unidade informada.
+     */
+    private void carregarLaboratorios(UnidadeDTO unidade) {
+        if (laboratorioSelect == null) {
+            return;
+        }
+        laboratorioSelect.getItems().clear();
+
+        if (unidade == null) {
+            return;
+        }
+
+        final int idUnidade = unidade.getId();
+        Thread bgLabLoader = new Thread(() -> {
+            try {
+                List<Laboratorio> labsDb = TurmaDAO.listarLaboratoriosAtivosPorUnidade(idUnidade);
+                Platform.runLater(() -> {
+                    // Ignora resposta atrasada se o usuário já trocou de unidade
+                    UnidadeDTO atual = cbUnidade != null ? cbUnidade.getValue() : null;
+                    if (atual == null || atual.getId() != idUnidade) {
+                        return;
+                    }
+                    laboratorioSelect.getItems().clear();
+                    if (labsDb != null) {
+                        for (Laboratorio lab : labsDb) {
+                            laboratorioSelect.getItems().add(lab.getNomeLaboratorio());
+                        }
+                    }
+                    laboratorioSelect.getSelectionModel().selectFirst();
+                });
+            } catch (Exception e) {
+                System.err.println("Aviso: Falha ao carregar laboratórios da unidade: " + e.getMessage());
+            }
+        });
+        bgLabLoader.setDaemon(true);
+        bgLabLoader.setName("SIGEC-LabLoader");
+        bgLabLoader.start();
     }
 
     private void configurarListaInstrutores() {
@@ -408,10 +482,16 @@ public class CadastroTurmaController implements Initializable {
     @FXML
     public void onCadastrarTurma(ActionEvent event) {
         String nomeTurma = txtNomeTurma != null ? txtNomeTurma.getText() : null;
+        UnidadeDTO unidade = cbUnidade != null ? cbUnidade.getValue() : null;
         String laboratorio = laboratorioSelect != null ? laboratorioSelect.getValue() : null;
         String curso = cursoSelect != null ? cursoSelect.getValue() : null;
         String professor = txtProfessorResponsavel != null ? txtProfessorResponsavel.getText() : null;
         String situacao = situacaoSelect != null ? situacaoSelect.getValue() : "Ativo";
+
+        if (unidade == null) {
+            exibirAlerta(Alert.AlertType.WARNING, "Campo Obrigatório", "Por favor, selecione uma Unidade.");
+            return;
+        }
 
         if (nomeTurma == null || nomeTurma.trim().isEmpty()) {
             exibirAlerta(Alert.AlertType.WARNING, "Campo Obrigatório", "Por favor, informe o Nome da Turma.");
@@ -444,7 +524,7 @@ public class CadastroTurmaController implements Initializable {
 
         Thread bgCadastro = new Thread(() -> {
             try {
-                int idLaboratorio = TurmaDAO.buscarIdLaboratorioPorNome(laboratorio);
+                int idLaboratorio = TurmaDAO.buscarIdLaboratorioPorNome(laboratorio, unidade.getId());
                 if (idLaboratorio <= 0) {
                     Platform.runLater(() -> {
                         exibirLoading(false);
