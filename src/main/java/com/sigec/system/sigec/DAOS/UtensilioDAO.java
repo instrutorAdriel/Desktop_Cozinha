@@ -91,7 +91,6 @@ public class UtensilioDAO {
     public static List<String> listarOpcoesSituacao() {
         Set<String> opcoes = new LinkedHashSet<>();
         opcoes.add("Todos");
-        opcoes.add("EM MANUTENÇÃO");
 
         String sqlDistinctStatus = "SELECT DISTINCT COALESCE(" +
                 "(SELECT estado_atual FROM checklist_utensilio cu WHERE cu.id_utensilio = u.id_utensilio ORDER BY cu.id_checklist_utensilio DESC LIMIT 1), " +
@@ -106,7 +105,12 @@ public class UtensilioDAO {
             while (rs.next()) {
                 String status = rs.getString("status_atual");
                 if (status != null && !status.isBlank()) {
-                    opcoes.add(status.trim());
+
+                    if ("EM_MANUTENCAO".equalsIgnoreCase(status.trim())) {
+                        opcoes.add("EM MANUTENÇÃO");
+                    } else {
+                        opcoes.add(status.trim());
+                    }
                 }
             }
         } catch (SQLException e) {
