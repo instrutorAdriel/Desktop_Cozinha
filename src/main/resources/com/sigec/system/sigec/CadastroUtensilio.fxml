@@ -14,93 +14,114 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane prefHeight="550.0" prefWidth="520.0" stylesheets="@CSS/StyleSheet.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sigec.system.sigec.Controllers.CadastroUtensilioController">
+<BorderPane prefHeight="550.0" prefWidth="560.0" stylesheets="@CSS/StyleSheet.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sigec.system.sigec.Controllers.CadastroUtensilioController">
     <center>
-        <StackPane prefHeight="550.0" prefWidth="520.0" styleClass="painel-center" BorderPane.alignment="CENTER">
+        <StackPane prefHeight="550.0" prefWidth="560.0" styleClass="painel-center" BorderPane.alignment="CENTER">
             <children>
-                <ImageView fitHeight="380.0" fitWidth="380.0" opacity="0.15" pickOnBounds="true" preserveRatio="true">
+                <ImageView fitHeight="380.0" fitWidth="380.0" opacity="0.08" pickOnBounds="true" preserveRatio="true">
                     <image>
                         <Image url="@imagens/LogocoloridaSenac.png" />
                     </image>
                 </ImageView>
-                <VBox alignment="CENTER" maxWidth="450.0" prefHeight="550.0" prefWidth="450.0" spacing="12.0">
+                <VBox alignment="TOP_CENTER" maxWidth="450.0" prefHeight="550.0" prefWidth="450.0" spacing="12.0">
                     <children>
+                        <ImageView fitHeight="50.0"
+                                   fitWidth="150.0"
+                                   pickOnBounds="true"
+                                   preserveRatio="true">
+                            <image>
+                                <Image url="@imagens/LogocoloridaSenac.png" />
+                            </image>
+                        </ImageView>
+
                         <Label alignment="CENTER" text="ADICIONAR UTENSÍLIO" textFill="#054685">
                             <font>
                                 <Font name="Arial Bold" size="20.0" />
                             </font>
                             <VBox.margin>
-                                <Insets bottom="10.0" top="10.0" />
+                                <Insets bottom="5.0" top="5.0" />
                             </VBox.margin>
                         </Label>
                         <VBox spacing="12.0">
                             <children>
-                                <HBox alignment="CENTER_LEFT" prefHeight="35.0">
+                                <HBox alignment="CENTER"
+                                      prefHeight="35.0"
+                                      spacing="15.0">
                                     <children>
-                                        <Label prefWidth="170.0" text="NOME DO UTENSÍLIO">
+                                        <Label prefWidth="150.0" text="NOME DO UTENSÍLIO">
                                             <font>
                                                 <Font name="Arial Bold" size="13.0" />
                                             </font>
                                         </Label>
-                                        <Region HBox.hgrow="ALWAYS" />
-                                        <TextField fx:id="txtNomeUtensilio" prefHeight="30.0" prefWidth="220.0" promptText="Ex: Faca do Chef">
+
+                                        <TextField fx:id="txtNomeUtensilio" prefHeight="35.0" prefWidth="240.0" promptText="Ex: Faca do Chef">
                                             <font>
                                                 <Font name="Arial" size="12.0" />
                                             </font>
                                         </TextField>
                                     </children>
                                 </HBox>
-                                <HBox alignment="CENTER_LEFT" prefHeight="35.0">
+                                <HBox alignment="CENTER_LEFT"
+                                      prefHeight="35.0"
+                                      spacing="15.0">
                                     <children>
-                                        <Label prefWidth="170.0" text="Nº DO PATRIMÔNIO">
+                                        <Label prefWidth="150.0" text="Nº DO PATRIMÔNIO">
                                             <font>
                                                 <Font name="Arial Bold" size="13.0" />
                                             </font>
                                         </Label>
-                                        <Region HBox.hgrow="ALWAYS" />
-                                        <TextField fx:id="txtPatrimonio" prefHeight="30.0" prefWidth="220.0" promptText="Ex: 202601">
+
+                                        <TextField fx:id="txtPatrimonio" prefHeight="35.0" prefWidth="240.0" promptText="Ex: 202601">
                                             <font>
                                                 <Font name="Arial" size="12.0" />
                                             </font>
                                         </TextField>
                                     </children>
                                 </HBox>
-                                <HBox alignment="CENTER_LEFT" prefHeight="35.0">
+                                <HBox alignment="CENTER_LEFT"
+                                      prefHeight="35.0"
+                                      spacing="15.0">
                                     <children>
-                                        <Label prefWidth="170.0" text="UNIDADE">
+                                        <Label prefWidth="150.0" text="UNIDADE">
                                             <font>
                                                 <Font name="Arial Bold" size="13.0" />
                                             </font>
                                         </Label>
-                                        <Region HBox.hgrow="ALWAYS" />
-                                        <ChoiceBox fx:id="cbUnidade" prefHeight="30.0" prefWidth="220.0" />
+
+                                        <ChoiceBox fx:id="cbUnidade" prefHeight="35.0" prefWidth="240.0" />
                                     </children>
                                 </HBox>
-                                <HBox alignment="CENTER_LEFT" prefHeight="35.0">
+                                <HBox alignment="CENTER_LEFT"
+                                      prefHeight="35.0"
+                                      spacing="15.0">
                                     <children>
-                                        <Label prefWidth="170.0" text="CATEGORIA">
+                                        <Label prefWidth="150.0" text="CATEGORIA">
                                             <font>
                                                 <Font name="Arial Bold" size="13.0" />
                                             </font>
                                         </Label>
-                                        <Region HBox.hgrow="ALWAYS" />
-                                        <ChoiceBox fx:id="cbCategoria" prefHeight="30.0" prefWidth="220.0" />
+
+                                        <ChoiceBox fx:id="cbCategoria" prefHeight="35.0" prefWidth="240.0" />
                                     </children>
                                 </HBox>
-                                <HBox alignment="CENTER_LEFT" prefHeight="35.0">
+                                <HBox alignment="CENTER_LEFT"
+                                      prefHeight="35.0"
+                                      spacing="15.0">
                                     <children>
-                                        <Label prefWidth="170.0" text="LABORATÓRIO">
+                                        <Label prefWidth="150.0" text="LABORATÓRIO">
                                             <font>
                                                 <Font name="Arial Bold" size="13.0" />
                                             </font>
                                         </Label>
-                                        <Region HBox.hgrow="ALWAYS" />
-                                        <ChoiceBox fx:id="cbLaboratorio" prefHeight="30.0" prefWidth="220.0" />
+
+                                        <ChoiceBox fx:id="cbLaboratorio" prefHeight="35.0" prefWidth="240.0" />
                                     </children>
                                 </HBox>
                             </children>
                         </VBox>
-                        <HBox alignment="CENTER" prefHeight="50.0" spacing="40.0">
+                        <HBox alignment="CENTER_LEFT"
+                              prefHeight="35.0"
+                              spacing="15.0">
                             <children>
                                 <Button fx:id="btnVoltar" mnemonicParsing="false" onAction="#voltarTela" prefHeight="35.0" prefWidth="120.0" styleClass="btn-padrao-2" text="VOLTAR">
                                     <font>
