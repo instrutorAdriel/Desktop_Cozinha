@@ -126,11 +126,8 @@ public class RelatorioInsumosDAO {
         sql.append("       p.unidade_m AS unidade_produto, ");
         sql.append("       SUM(inf.quantidade) AS quantidade_total ");
         sql.append("FROM agendamento a ");
-        // O agendamento pode apontar para a ficha direto ou via turma_ficha
-        sql.append("LEFT JOIN turma_ficha tf ON tf.id_turma_ficha = a.id_turma_ficha ");
-        sql.append("JOIN ficha f          ON f.id_ficha = COALESCE(a.id_ficha, tf.id_ficha) ");
-        // A turma vem do agendamento; se faltar, da turma_ficha; se faltar, da própria ficha
-        sql.append("JOIN turma t          ON t.id_turma = COALESCE(a.id_turma, tf.id_turma, f.id_turma) ");
+        sql.append("JOIN ficha f          ON f.id_ficha = a.id_ficha ");
+        sql.append("JOIN turma t          ON t.id_turma = a.id_turma ");
         sql.append("JOIN laboratorio l    ON l.id_laboratorio = t.id_laboratorio ");
         sql.append("JOIN insumo_ficha inf ON inf.id_ficha = f.id_ficha ");
         sql.append("JOIN produto p        ON p.id_produto = inf.id_produto ");
