@@ -8,20 +8,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
-/**
- * Consultas das telas de Calendário e Relatório:
- *  - filtros em cascata (Unidade -> Curso -> Turma)
- *  - insumos necessários para as aulas agendadas no período (Calendário)
- *  - lista de compras: necessário x estoque disponível da unidade (Relatório)
- *
- * Caminho entre as tabelas:
- *   unidade <- laboratorio.id_unidade <- turma.id_laboratorio -> turma.id_curso -> curso
- *   agendamento -> ficha -> insumo_ficha -> produto
- */
+
 public class RelatorioInsumosDAO {
 
     /** Item simples para os ChoiceBox (id + nome). O toString() é o texto exibido. */
@@ -124,6 +117,7 @@ public class RelatorioInsumosDAO {
         sql.append("       COALESCE(cat.nome_categoria, '" + SEM_CATEGORIA + "') AS categoria, ");
         sql.append("       LOWER(COALESCE(inf.unidade_medida, p.unidade_m)) AS unidade, ");
         sql.append("       p.unidade_m AS unidade_produto, ");
+        sql.append("       a.data AS data_aula, ");
         sql.append("       SUM(inf.quantidade) AS quantidade_total ");
         sql.append("FROM agendamento a ");
         sql.append("JOIN ficha f          ON f.id_ficha = a.id_ficha ");
@@ -152,9 +146,9 @@ public class RelatorioInsumosDAO {
             parametros.add(idTurma);
         }
 
-        sql.append("GROUP BY p.id_produto, p.codigo_mxm, p.nome_produto, p.unidade_m, cat.nome_categoria, unidade ");
-        // Ordena por categoria (as sem categoria por último) e depois pelo nome
-        sql.append("ORDER BY (cat.nome_categoria IS NULL), cat.nome_categoria, p.nome_produto");
+        sql.append("GROUP BY p.id_produto, p.codigo_mxm, p.nome_produto, p.unidade_m, cat.nome_categoria, unidade, a.data ");
+        // Ordena por categoria (as sem categoria por último), nome e data da aula
+        sql.append("ORDER BY (cat.nome_categoria IS NULL), cat.nome_categoria, p.nome_produto, a.data");
 
         Map<String, Acumulado> porProduto = new LinkedHashMap<>();
         try (Connection conn = ConfigDataBase.getConnection();
@@ -176,10 +170,13 @@ public class RelatorioInsumosDAO {
                     String codigoMxm = rs.getString("codigo_mxm");
                     String unidadeProduto = normalizarUnidade(rs.getString("unidade_produto"));
 
+                    LocalDate dataAula = rs.getDate("data_aula").toLocalDate();
+
                     Medida b = paraBaseDoProduto(rs.getDouble("quantidade_total"), rs.getString("unidade"), unidadeProduto);
-                    porProduto.computeIfAbsent(idProduto + "|" + b.unidade(),
-                            k -> new Acumulado(idProduto, codigoMxm, categoria, nome, b.unidade(), unidadeProduto))
-                            .quantidade += b.quantidade();
+                    Acumulado acc = porProduto.computeIfAbsent(idProduto + "|" + b.unidade(),
+                            k -> new Acumulado(idProduto, codigoMxm, categoria, nome, b.unidade(), unidadeProduto));
+                    acc.quantidade += b.quantidade();
+                    acc.porData.merge(dataAula, b.quantidade(), Double::sum);
                 }
             }
         }
@@ -187,9 +184,14 @@ public class RelatorioInsumosDAO {
     }
 
     //  Lista de compras: necessário x estoque disponível na unidade
-    //    Necessário = aulas ativas e ainda não concluídas do período
-    //    Estoque disponível = lotes não cancelados da unidade, com validade >= data final
-    //    (ou sem validade). Mínimo = maior quantidade_minima entre os lotes do produto.
+    //    Necessário = aulas ativas e ainda não concluídas do período.
+    //    Cada lote só atende aulas que acontecem até a data de validade dele
+    //    (lote sem validade atende qualquer aula). O consumo é FEFO: em cada aula,
+    //    gasta primeiro o lote que vence antes.
+    //    Em estoque = quanto dos lotes é aproveitável: o que as aulas usam
+    //                 + a sobra que ainda está válida no fim do período.
+    //    A comprar  = necessário + mínimo - em estoque, nunca negativo.
+    //    Mínimo = maior quantidade_minima entre os lotes não cancelados do produto.
 
     public List<ItemCompra> buscarListaDeCompras(LocalDate inicio, LocalDate fim, int idUnidade,
                                                  Integer idCurso, Integer idTurma) throws SQLException {
@@ -199,55 +201,115 @@ public class RelatorioInsumosDAO {
             return lista;
         }
 
-        Map<String, double[]> estoque = somarEstoque(idUnidade, fim); // chave -> {quantidade, mínimo}
+        Map<String, EstoqueProduto> estoque = listarLotes(idUnidade);
 
         for (Map.Entry<String, Acumulado> e : necessidade.entrySet()) {
             Acumulado a = e.getValue();
-            double[] est = estoque.getOrDefault(e.getKey(), new double[]{0, 0});
-            double aComprarBase = Math.max(0, a.quantidade + est[1] - est[0]);
+            EstoqueProduto est = estoque.getOrDefault(e.getKey(), new EstoqueProduto());
+            double aproveitavel = calcularAproveitavel(a, est, fim);
+            double aComprarBase = Math.max(0, a.quantidade + est.minimo - aproveitavel);
 
             // Os três números na mesma unidade de exibição (a de compra do produto)
             Medida exibicao = naUnidadeDoProduto(a.quantidade, a.unidadeBase, a.unidadeProduto);
             double fator = paraUnidadeBase(1, exibicao.unidade()).quantidade(); // ex.: 1 kg = 1000 g
             lista.add(new ItemCompra(a.idProduto, a.codigoMxm, a.categoria, a.nomeProduto,
-                    a.quantidade / fator, est[0] / fator, aComprarBase / fator, exibicao.unidade()));
+                    a.quantidade / fator, aproveitavel / fator, aComprarBase / fator, exibicao.unidade()));
         }
         return lista;
     }
 
-    /** Estoque válido da unidade por produto, na unidade base. Valor: {quantidade, mínimo}. */
-    private Map<String, double[]> somarEstoque(int idUnidade, LocalDate fim) throws SQLException {
+    /**
+     * Simula as aulas em ordem de data, consumindo os lotes por FEFO.
+     * Devolve o total aproveitável: consumido nas aulas + sobra válida no fim do período.
+     */
+    private static double calcularAproveitavel(Acumulado a, EstoqueProduto est, LocalDate fim) {
+        // Cópia dos saldos para não alterar o estoque original
+        List<Lote> lotes = new ArrayList<>();
+        for (Lote l : est.lotes) {
+            lotes.add(new Lote(l.validade, l.saldo));
+        }
+        // Vence antes = usa antes; sem validade vai para o fim da fila
+        lotes.sort(Comparator.comparing((Lote l) -> l.validade,
+                Comparator.nullsLast(Comparator.naturalOrder())));
+
+        double consumido = 0;
+        for (Map.Entry<LocalDate, Double> aula : a.porData.entrySet()) {
+            LocalDate dia = aula.getKey();
+            double falta = aula.getValue();
+            for (Lote l : lotes) {
+                if (falta <= 0) break;
+                if (l.saldo <= 0 || !l.validoEm(dia)) continue;
+                double usa = Math.min(falta, l.saldo);
+                l.saldo -= usa;
+                falta -= usa;
+                consumido += usa;
+            }
+        }
+
+        double sobraValida = 0;
+        for (Lote l : lotes) {
+            if (l.saldo > 0 && l.validoEm(fim)) {
+                sobraValida += l.saldo;
+            }
+        }
+        return consumido + sobraValida;
+    }
+
+    /** Lotes não cancelados da unidade, por produto, na unidade base. */
+    private Map<String, EstoqueProduto> listarLotes(int idUnidade) throws SQLException {
         String sql = "SELECT i.id_produto, " +
                 "       LOWER(COALESCE(i.unidade_medida, p.unidade_m)) AS unidade, " +
                 "       p.unidade_m AS unidade_produto, " +
-                "       SUM(i.quantidade) AS quantidade, " +
-                "       MAX(COALESCE(i.quantidade_minima, 0)) AS minimo " +
+                "       i.quantidade, " +
+                "       COALESCE(i.quantidade_minima, 0) AS minimo, " +
+                "       i.data_validade " +
                 "FROM insumo i " +
                 "JOIN produto p ON p.id_produto = i.id_produto " +
-                "WHERE i.cancelado = 'N' AND i.id_unidade = ? " +
-                "  AND (i.data_validade IS NULL OR i.data_validade >= ?) " +
-                "GROUP BY i.id_produto, unidade, p.unidade_m";
+                "WHERE i.cancelado = 'N' AND i.id_unidade = ?";
 
-        Map<String, double[]> porProduto = new LinkedHashMap<>();
+        Map<String, EstoqueProduto> porProduto = new LinkedHashMap<>();
         try (Connection conn = ConfigDataBase.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, idUnidade);
-            stmt.setDate(2, java.sql.Date.valueOf(fim));
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
                     String unidadeLote = rs.getString("unidade");
                     String unidadeProduto = normalizarUnidade(rs.getString("unidade_produto"));
                     Medida qtd = paraBaseDoProduto(rs.getDouble("quantidade"), unidadeLote, unidadeProduto);
                     Medida min = paraBaseDoProduto(rs.getDouble("minimo"), unidadeLote, unidadeProduto);
+                    java.sql.Date validade = rs.getDate("data_validade");
 
-                    double[] v = porProduto.computeIfAbsent(rs.getInt("id_produto") + "|" + qtd.unidade(),
-                            k -> new double[]{0, 0});
-                    v[0] += qtd.quantidade();
-                    v[1] = Math.max(v[1], min.quantidade());
+                    EstoqueProduto ep = porProduto.computeIfAbsent(
+                            rs.getInt("id_produto") + "|" + qtd.unidade(), k -> new EstoqueProduto());
+                    ep.minimo = Math.max(ep.minimo, min.quantidade());
+                    if (qtd.quantidade() > 0) {
+                        ep.lotes.add(new Lote(validade == null ? null : validade.toLocalDate(), qtd.quantidade()));
+                    }
                 }
             }
         }
         return porProduto;
+    }
+
+    /** Um lote com saldo na unidade base. Validade null = não vence. */
+    private static final class Lote {
+        final LocalDate validade;
+        double saldo;
+
+        Lote(LocalDate validade, double saldo) {
+            this.validade = validade;
+            this.saldo = saldo;
+        }
+
+        boolean validoEm(LocalDate dia) {
+            return validade == null || !validade.isBefore(dia);
+        }
+    }
+
+    /** Lotes e estoque mínimo de um produto na unidade. */
+    private static final class EstoqueProduto {
+        final List<Lote> lotes = new ArrayList<>();
+        double minimo;
     }
 
     /** Soma parcial de um produto numa unidade base. */
@@ -259,6 +321,8 @@ public class RelatorioInsumosDAO {
         final String unidadeBase;
         final String unidadeProduto;
         double quantidade;
+        /** Necessidade por data de aula (unidade base), em ordem cronológica. */
+        final TreeMap<LocalDate, Double> porData = new TreeMap<>();
 
         Acumulado(int idProduto, String codigoMxm, String categoria, String nomeProduto,
                   String unidadeBase, String unidadeProduto) {

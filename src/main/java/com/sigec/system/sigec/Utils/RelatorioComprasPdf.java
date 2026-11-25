@@ -11,7 +11,7 @@ import java.util.List;
 
 /**
  * PDF "Lista de Compras" (tela de Relatório).
- * Traz só os itens que precisam ser comprados; o visual comum fica em {@link PdfSigec}.
+ * Traz só os itens que precisam ser comprados; o visual comum fica em { PdfSigec}.
  */
 public final class RelatorioComprasPdf {
 
@@ -31,7 +31,7 @@ public final class RelatorioComprasPdf {
             // Lista da unidade inteira: só Unidade e Período (sem Curso/Turma)
             PdfSigec.adicionarFiltrosUnidade(doc, filtros,
                     new String[]{"ITENS A COMPRAR", comprar.size() + " de " + itens.size()},
-                    new String[]{"ESTOQUE CONSIDERADO", "Lotes válidos até " + filtros.fim().format(PdfSigec.DATA)});
+                    new String[]{"ESTOQUE CONSIDERADO", "Validade conferida por aula"});
 
             int esq = Element.ALIGN_LEFT, dir = Element.ALIGN_RIGHT;
             PdfPTable tabela = PdfSigec.novaTabela(
@@ -52,9 +52,11 @@ public final class RelatorioComprasPdf {
             }
             doc.add(tabela);
 
-            PdfSigec.adicionarNota(doc, "A comprar = necessário para as aulas não concluídas + estoque mínimo - estoque disponível. "
-                    + "Estoque disponível: lotes não cancelados da unidade com validade a partir de "
-                    + filtros.fim().format(PdfSigec.DATA) + " (ou sem validade).");
+            PdfSigec.adicionarNota(doc, "A comprar = necessário para as aulas não concluídas + estoque mínimo - estoque aproveitável. "
+                    + "Cada lote não cancelado da unidade só atende as aulas que ocorrem até a sua data de validade "
+                    + "(lotes sem validade atendem todas), usando primeiro o que vence antes. "
+                    + "Estoque aproveitável = o que as aulas consomem + a sobra ainda válida em "
+                    + filtros.fim().format(PdfSigec.DATA) + ".");
         });
     }
 }
