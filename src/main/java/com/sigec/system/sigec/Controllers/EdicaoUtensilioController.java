@@ -25,6 +25,9 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+
+import javafx.collections.FXCollections;
+
 public class EdicaoUtensilioController implements Initializable {
 
     private static final ExecutorService DB_EXECUTOR = Executors.newCachedThreadPool(r -> {
@@ -32,7 +35,8 @@ public class EdicaoUtensilioController implements Initializable {
         t.setDaemon(true);
         return t;
     });
-
+    @FXML
+    private ChoiceBox<String> cbStatus;
     @FXML private TextField txtNomeUtensilio;
     @FXML private TextField txtQuantidade;
     @FXML private TextField txtPatrimonio;
@@ -49,6 +53,8 @@ public class EdicaoUtensilioController implements Initializable {
     @FXML private Label lblPopupMensagem;
     @FXML private Button btnPopupOk;
 
+
+
     private boolean fecharModalAoConfirmarPopup = false;
 
     public static Utensilio utensilioParaEditar = null;
@@ -58,6 +64,12 @@ public class EdicaoUtensilioController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         final Utensilio alvo = utensilioParaEditar;
+
+        cbStatus.setItems(FXCollections.observableArrayList(
+                "PRONTO",
+                "DANIFICADO",
+                "EM MANUTENÇÃO"
+        ));
 
         if (alvo != null) {
             txtNomeUtensilio.setText(alvo.getNome());
