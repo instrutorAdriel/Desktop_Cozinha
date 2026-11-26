@@ -8,7 +8,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<BorderPane prefHeight="600.0" prefWidth="800.0" stylesheets="@CSS/StyleSheet.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sigec.system.sigec.Controllers.HistoricoController">
+<BorderPane prefHeight="768.0" prefWidth="1366.0" stylesheets="@CSS/StyleSheet.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sigec.system.sigec.Controllers.HistoricoController">
     <top>
         <AnchorPane fx:id="topBarPane" prefHeight="50.0" prefWidth="800.0" style="-fx-background-color: #f6f8fb;" BorderPane.alignment="CENTER">
             <children>
@@ -250,20 +250,21 @@
         </VBox>
     </left>
     <center>
-        <StackPane prefHeight="550.0" prefWidth="600.0" BorderPane.alignment="CENTER">
+        <StackPane prefHeight="550.0" prefWidth="600.0" styleClass="workspace-bg" BorderPane.alignment="CENTER">
             <children>
-                <ImageView fitHeight="400.0" fitWidth="400.0" opacity="0.12" pickOnBounds="true" preserveRatio="true">
+                <ImageView fitHeight="400.0" fitWidth="400.0" opacity="0.05" pickOnBounds="true" preserveRatio="true">
                     <image>
                         <Image url="@imagens/LogocoloridaSenac.png" />
                     </image>
                 </ImageView>
-                <VBox alignment="TOP_CENTER" prefHeight="550.0" prefWidth="600.0" style="-fx-border-color: #054584; -fx-border-width: 0 0 0 1;">
+                <VBox alignment="TOP_CENTER" prefHeight="550.0" prefWidth="600.0" styleClass="borda-separadora-lateral">
                     <children>
-                        <HBox alignment="CENTER" maxHeight="40.0" minHeight="40.0" prefHeight="40.0" styleClass="status-orange-banner">
+                        <!-- Banner Laranja de Status -->
+                        <HBox alignment="CENTER" prefHeight="40.0" styleClass="status-orange-banner">
                             <children>
                                 <Label fx:id="dataLabel" textFill="WHITE">
                                     <font>
-                                        <Font name="Arial Bold" size="16.0" />
+                                        <Font name="Arial Bold" size="14.0" />
                                     </font>
                                     <HBox.margin>
                                         <Insets left="20.0" />
@@ -272,13 +273,13 @@
                                 <Region HBox.hgrow="ALWAYS" />
                                 <Label fx:id="usuarioLabel" text="Administrador" textFill="WHITE">
                                     <font>
-                                        <Font name="Arial Bold" size="16.0" />
+                                        <Font name="Arial Bold" size="15.0" />
                                     </font>
                                 </Label>
                                 <Region HBox.hgrow="ALWAYS" />
-                                <Label fx:id="horaLabel" textFill="WHITE">
+                                <Label fx:id="horaLabel" textFill="#fffbeb">
                                     <font>
-                                        <Font name="Arial Bold" size="16.0" />
+                                        <Font name="Arial Bold" size="15.0" />
                                     </font>
                                     <HBox.margin>
                                         <Insets right="20.0" />
@@ -286,95 +287,132 @@
                                 </Label>
                             </children>
                         </HBox>
-                        <VBox fx:id="conteudoPagina" styleClass="conteudo-pagina" VBox.vgrow="ALWAYS">
+
+                        <VBox fx:id="conteudoPagina" spacing="15.0" styleClass="bg-transparent" VBox.vgrow="ALWAYS">
+                            <padding>
+                                <Insets bottom="25.0" left="25.0" right="25.0" top="20.0" />
+                            </padding>
                             <children>
-                                <!-- CABEÇALHO E BOTÃO DE EXPORTAÇÃO DE COMPRAS -->
-                                <HBox alignment="CENTER_LEFT" prefHeight="45.0" spacing="12.0">
+
+                                <!-- Barra de Ferramentas / Filtros para o Relatório -->
+                                <VBox spacing="15.0" styleClass="calendar-toolbar">
+                                    <padding>
+                                        <Insets bottom="15.0" left="20.0" right="20.0" top="15.0" />
+                                    </padding>
                                     <children>
-                                        <Label text=" Relatórios" textFill="#054685">
+                                        <!-- Título da tela -->
+                                        <Label text="LISTA DE COMPRAS" textFill="#002f6c">
                                             <font>
-                                                <Font name="Arial Bold" size="18.0" />
+                                                <Font name="Arial Bold" size="14.0" />
                                             </font>
                                         </Label>
-                                        <Region HBox.hgrow="ALWAYS" />
-                                        <Button fx:id="btnExportarCompras" mnemonicParsing="false" onAction="#onExportarComprasAction" prefHeight="35.0" prefWidth="210.0" styleClass="btn-laranja" text="Exportar Relatório de Compras" textFill="WHITE">
-                                            <font>
-                                                <Font name="Arial Bold" size="12.0" />
-                                            </font>
-                                        </Button>
-                                    </children>
-                                    <VBox.margin>
-                                        <Insets left="20.0" right="20.0" top="15.0" />
-                                    </VBox.margin>
-                                </HBox>
 
-                                <!-- BARRA DE FILTROS -->
-                                <HBox alignment="CENTER_LEFT" prefHeight="45.0" spacing="12.0">
+                                        <!-- Filtros: Unidade + período + ações (a lista é sempre da unidade inteira) -->
+                                        <HBox alignment="BOTTOM_LEFT" spacing="15.0">
+                                            <children>
+                                                <VBox spacing="5.0">
+                                                    <children>
+                                                        <Label text="Unidade" textFill="#64748b">
+                                                            <font><Font name="Arial Bold" size="12.0" /></font>
+                                                        </Label>
+                                                        <ChoiceBox fx:id="cbUnidade" maxWidth="520.0" minWidth="260.0" prefWidth="400.0" styleClass="custom-choice-box" />
+                                                    </children>
+                                                </VBox>
+
+                                                <VBox spacing="5.0">
+                                                    <children>
+                                                        <Label text="Data Inicial" textFill="#64748b">
+                                                            <font><Font name="Arial Bold" size="12.0" /></font>
+                                                        </Label>
+                                                        <DatePicker fx:id="dataInicio" editable="false" prefWidth="160.0" promptText="De" styleClass="custom-date-picker" />
+                                                    </children>
+                                                </VBox>
+
+                                                <VBox spacing="5.0">
+                                                    <children>
+                                                        <Label text="Data Final" textFill="#64748b">
+                                                            <font><Font name="Arial Bold" size="12.0" /></font>
+                                                        </Label>
+                                                        <DatePicker fx:id="dataFim" editable="false" prefWidth="160.0" promptText="Até" styleClass="custom-date-picker" />
+                                                    </children>
+                                                </VBox>
+
+                                                <Region HBox.hgrow="ALWAYS" />
+
+                                                <!-- Ação secundária: discreta, ao lado da principal -->
+                                                <Button fx:id="btnLimparFiltros" mnemonicParsing="false" onAction="#onLimparFiltros" styleClass="btn-action-secondary" text="Limpar filtros">
+                                                    <padding>
+                                                        <Insets bottom="8.0" left="15.0" right="15.0" top="8.0" />
+                                                    </padding>
+                                                </Button>
+
+                                                <!-- Ação principal -->
+                                                <Button fx:id="btnGerarLista" mnemonicParsing="false" onAction="#onGerarRelatorio" styleClass="btn-action-primary" text="Gerar Lista de Compras">
+                                                    <padding>
+                                                        <Insets bottom="8.0" left="15.0" right="15.0" top="8.0" />
+                                                    </padding>
+                                                </Button>
+                                            </children>
+                                        </HBox>
+                                    </children>
+                                </VBox>
+
+                                <!-- Card da Tabela de Resultados do Relatório -->
+                                <VBox styleClass="card-alertas" VBox.vgrow="ALWAYS">
                                     <children>
-                                        <TextField fx:id="txtpesquisa" prefHeight="35.0" prefWidth="220.0" promptText="  Pesquisar..." styleClass="search-field">
-                                            <font>
-                                                <Font name="Arial" size="13.0" />
-                                            </font>
-                                        </TextField>
-
-                                        <!-- BOTÃO CORRIGIDO -->
-                                        <Button fx:id="btnbuscardata" mnemonicParsing="false" onAction="#filtrarHistorico" prefHeight="35.0" prefWidth="95.0" styleClass="btn-action-primary" text="Pesquisar">
-                                            <font>
-                                                <Font name="Arial Bold" size="13.0" />
-                                            </font>
-                                        </Button>
-
-                                        <!-- Filtro de Unidade -->
-                                        <HBox alignment="CENTER_LEFT" spacing="8.0">
+                                        <!-- Header da Tabela -->
+                                        <HBox alignment="CENTER_LEFT" prefHeight="40.0" styleClass="card-alertas-header">
+                                            <padding>
+                                                <Insets left="20.0" right="20.0" />
+                                            </padding>
                                             <children>
-                                                <Label text="Unidade:" textFill="#475569">
+                                                <Label text="ITENS PARA COMPRA NO PERÍODO" textFill="WHITE">
                                                     <font>
                                                         <Font name="Arial Bold" size="13.0" />
                                                     </font>
                                                 </Label>
-                                                <ChoiceBox fx:id="cbUnidade" prefHeight="35.0" prefWidth="230.0" styleClass="custom-choice-box" />
-                                            </children>
-                                        </HBox>
 
-                                        <!-- Filtro de Curso -->
-                                        <HBox alignment="CENTER_LEFT" spacing="8.0">
-                                            <children>
-                                                <Label text="Curso:" textFill="#475569">
-                                                    <font>
-                                                        <Font name="Arial Bold" size="13.0" />
-                                                    </font>
+                                                <Region HBox.hgrow="ALWAYS" />
+
+                                                <!-- Resumo: quantos itens precisam ser comprados -->
+                                                <Label fx:id="lblResumo" styleClass="resumo-compras">
+                                                    <HBox.margin>
+                                                        <Insets right="12.0" />
+                                                    </HBox.margin>
                                                 </Label>
-                                                <ChoiceBox fx:id="cbCurso" prefHeight="35.0" prefWidth="130.0" styleClass="custom-choice-box" />
-                                                <Label text="De" />
-                                                <DatePicker fx:id="dataDE" prefHeight="30.0" prefWidth="130.0" />
-                                                <Label text="Até" />
-                                                <DatePicker fx:id="dataATE" layoutX="160.0" layoutY="12.0" prefHeight="30.0" prefWidth="130.0" />
+
+                                                <!-- Exporta a lista atual (habilitado só quando há itens na tabela) -->
+                                                <Button fx:id="btnSalvarPdf" disable="true" mnemonicParsing="false" onAction="#onSalvarPdf" prefHeight="28.0" styleClass="btn-action-secondary" text="Salvar lista de compras em PDF">
+                                                    <padding>
+                                                        <Insets bottom="4.0" left="12.0" right="12.0" top="4.0" />
+                                                    </padding>
+                                                </Button>
                                             </children>
                                         </HBox>
 
-                                        <Region HBox.hgrow="ALWAYS" />
+                                        <!-- Tabela de Compras -->
+                                        <TableView fx:id="tabelaCompras" VBox.vgrow="ALWAYS">
+                                            <styleClass>
+                                                <String fx:value="table-view" />
+                                                <String fx:value="tabela-alertas-custom" />
+                                            </styleClass>
+                                            <columns>
+
+                                                <TableColumn fx:id="colCodigo" prefWidth="110.0" text="Código MXM" />
+                                                <TableColumn fx:id="colCategoria" prefWidth="150.0" text="Categoria" />
+                                                <TableColumn fx:id="colInsumo" prefWidth="250.0" text="Insumo / Produto" />
+                                                <TableColumn fx:id="colNecessario" prefWidth="120.0" styleClass="col-numero" text="Necessário" />
+                                                <TableColumn fx:id="colEstoque" prefWidth="120.0" styleClass="col-numero" text="Em estoque" />
+                                                <TableColumn fx:id="colComprar" prefWidth="120.0" styleClass="col-numero" text="A comprar" />
+                                                <TableColumn fx:id="colUnidade" prefWidth="90.0" text="Unidade de Medida" />
+                                            </columns>
+                                            <columnResizePolicy>
+                                                <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                                            </columnResizePolicy>
+                                        </TableView>
                                     </children>
-                                    <VBox.margin>
-                                        <Insets left="20.0" right="20.0" top="5.0" />
-                                    </VBox.margin>
-                                </HBox>
+                                </VBox>
 
-                                <!-- TABELA -->
-                                <TableView fx:id="tableHistorico" prefHeight="390.0" prefWidth="560.0" styleClass="table-view" VBox.vgrow="ALWAYS">
-                                    <columns>
-                                        <TableColumn fx:id="codMXM" prefWidth="100.0" text="Código  " />
-                                        <TableColumn fx:id="nome_produto" prefWidth="150.0" text="Produto" />
-                                        <TableColumn fx:id="tipo_estoque" prefWidth="90.0" text="Tipo" />
-                                        <TableColumn fx:id="quantidade" prefWidth="60.0" text="Qtd" />
-                                        <TableColumn fx:id="qtdcompra" prefWidth="75.0" text="Qtd.Compra" />
-                                    </columns>
-                                    <columnResizePolicy>
-                                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
-                                    </columnResizePolicy>
-                                    <VBox.margin>
-                                        <Insets bottom="20.0" left="20.0" right="20.0" top="12.0" />
-                                    </VBox.margin>
-                                </TableView>
                             </children>
                         </VBox>
                     </children>

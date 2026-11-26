@@ -156,6 +156,8 @@ public class HomeController implements Initializable {
             //  Listener: Sempre que a seleção mudar, buscar os dados daquela unidade
             cbUnidade.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
                 if (newValue != null) {
+                    // Guarda a unidade na sessão para as outras telas (ex.: Cadastro de Turma)
+                    SessaoService.setUnidadeSelecionada(newValue);
                     carregarDadosDashboard(newValue.getId());
                 }
             });
@@ -165,6 +167,7 @@ public class HomeController implements Initializable {
                 cbUnidade.getSelectionModel().selectFirst();
             } else {
                 // Usuário sem unidade vinculada: não exibe nenhum dado
+                SessaoService.setUnidadeSelecionada(null);
                 cbUnidade.setDisable(true);
                 limparTabelas();
             }

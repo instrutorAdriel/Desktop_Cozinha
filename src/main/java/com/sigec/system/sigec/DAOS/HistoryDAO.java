@@ -23,7 +23,7 @@ public class HistoryDAO {
     private double qtdMinima;
     private double qtdComprarOverride;
 
-    // Lista os insumos necessários para todas as aulas alocadas, sem filtro de período.
+    // Lista os insumos necessários para todas as aulas agendadas, sem filtro de período.
     public static List<HistoryDAO> listarListaDeCompras(int idUnidade) {
         return listarListaDeCompras(idUnidade, 0);
     }
@@ -32,7 +32,7 @@ public class HistoryDAO {
         return listarComprasNecessarias(idUnidade, idCurso, null, null);
     }
 
-    // Lista apenas os insumos necessários para as aulas alocadas no período selecionado.
+    // Lista apenas os insumos necessários para as aulas agendadas no período selecionado.
     public static List<HistoryDAO> listarComprasPorPeriodo(int idUnidade, int idCurso, LocalDate dataInicio, LocalDate dataFim) {
         if (dataInicio == null || dataFim == null || dataInicio.isAfter(dataFim)) {
             throw new IllegalArgumentException("Informe um período válido para consultar as compras.");
@@ -40,35 +40,38 @@ public class HistoryDAO {
         return listarComprasNecessarias(idUnidade, idCurso, dataInicio, dataFim);
     }
 
+
     private static List<HistoryDAO> listarComprasNecessarias(
             int idUnidade, int idCurso, LocalDate dataInicio, LocalDate dataFim) {
         List<HistoryDAO> resultados = new ArrayList<>();
         boolean filtrarPeriodo = dataInicio != null;
 
-        String sql = "SELECT COALESCE(estoque.id_insumo, 0) AS id_insumo, p.nome_produto, " +
+        String sql = "SELECT p.codigo_mxm, p.nome_produto, " +
                 "p.unidade_m AS unidade_m, c.nome_categoria, " +
                 "COALESCE(estoque.quantidade_atual, 0) AS quantidade_atual, demanda.qtd_necessaria " +
                 "FROM (" +
                 "SELECT fi.id_produto, SUM(fi.quantidade) AS qtd_necessaria " +
-                "FROM turma t " +
-                "JOIN turma_ficha tf ON tf.id_turma = t.id_turma " +
-                "JOIN insumo_ficha fi ON fi.id_ficha = tf.id_ficha " +
+                "FROM agendamento a " +
+                "JOIN turma t ON t.id_turma = a.id_turma " +
                 "JOIN laboratorio l ON l.id_laboratorio = t.id_laboratorio " +
+                "JOIN insumo_ficha fi ON fi.id_ficha = a.id_ficha " +
                 "WHERE l.id_unidade = ? " +
-                (filtrarPeriodo ? "AND tf.data >= ? AND tf.data < ? " : "") +
+                "AND a.situacao = 'A' " +        // ignora agendamentos inativados
+                "AND a.concluido = 'N' " +       // aula já dada não gera compra
+                (filtrarPeriodo ? "AND a.data >= ? AND a.data < ? " : "") +
                 "AND (? <= 0 OR t.id_curso = ?) " +
                 "GROUP BY fi.id_produto" +
                 ") demanda " +
                 "JOIN produto p ON p.id_produto = demanda.id_produto " +
                 "LEFT JOIN categoria c ON c.id_categoria = p.id_categoria " +
                 "LEFT JOIN (" +
-                "SELECT i.id_produto, MIN(i.id_insumo) AS id_insumo, " +
-                "SUM(COALESCE(i.quantidade, 0)) AS quantidade_atual " +
+                "SELECT i.id_produto, SUM(COALESCE(i.quantidade, 0)) AS quantidade_atual " +
                 "FROM insumo i " +
                 "WHERE i.id_unidade = ? AND i.cancelado = 'N' " +
                 "GROUP BY i.id_produto" +
                 ") estoque ON estoque.id_produto = demanda.id_produto " +
-                "WHERE demanda.qtd_necessaria > COALESCE(estoque.quantidade_atual, 0)";
+                "WHERE demanda.qtd_necessaria > COALESCE(estoque.quantidade_atual, 0) " +
+                "ORDER BY c.nome_categoria, p.nome_produto";
 
         try (Connection conn = ConfigDataBase.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -87,7 +90,7 @@ public class HistoryDAO {
                     double qtdAtual = rs.getDouble("quantidade_atual");
                     double qtdComprar = rs.getDouble("qtd_necessaria") - qtdAtual;
                     HistoryDAO item = new HistoryDAO();
-                    item.setCodMXM(String.valueOf(rs.getInt("id_insumo")));
+                    item.setCodMXM(rs.getString("codigo_mxm")); // agora existe produto.codigo_mxm
                     item.setNomeProduto(rs.getString("nome_produto"));
                     item.setUnidadeMedida(rs.getString("unidade_m"));
                     item.setNomeCategoria(rs.getString("nome_categoria"));
@@ -127,7 +130,7 @@ public class HistoryDAO {
     public double getQtdMinima() { return qtdMinima; }
     public void setQtdMinima(double qtdMinima) { this.qtdMinima = qtdMinima; }
 
-    // 3. Lista somente as unidades associadas ao usuário na tabela usuario_unidade.
+    // Lista somente as unidades associadas ao usuário na tabela usuario_unidade.
     public static List<UnidadeDTO> listarUnidadesDoUsuario(int idUsuario) {
         List<UnidadeDTO> unidades = new ArrayList<>();
         String sql = "SELECT DISTINCT u.id_unidade, u.nome_unidade " +
@@ -152,17 +155,17 @@ public class HistoryDAO {
         return unidades;
     }
 
-    // 4. Lista todos os cursos ativos para o filtro do relatório.
+    // Lista todos os cursos ativos para o filtro do relatório.
     public static List<CursoDTO> listarCursosAtivos() {
         List<CursoDTO> cursos = new ArrayList<>();
-        String sql = "SELECT DISTINCT c.id_curso, c.nome_curso " +
+        String sql = "SELECT c.id_curso, c.nome_curso " +
                 "FROM curso c " +
+                "WHERE c.situacao = 'A' " +
                 "ORDER BY c.nome_curso";
 
         try (Connection conn = ConfigDataBase.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             try (ResultSet rs = stmt.executeQuery()) {
-
                 while (rs.next()) {
                     cursos.add(new CursoDTO(
                             rs.getInt("id_curso"),
@@ -171,9 +174,8 @@ public class HistoryDAO {
                 }
             }
         } catch (SQLException e) {
-            System.err.println("Erro ao listar cursos da unidade: " + e.getMessage());
+            System.err.println("Erro ao listar cursos: " + e.getMessage());
         }
         return cursos;
     }
-
 }
