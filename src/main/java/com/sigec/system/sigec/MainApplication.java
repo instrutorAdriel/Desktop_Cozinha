@@ -34,7 +34,7 @@ public class MainApplication extends Application {
         stage.getIcons().add(
                 new Image(
                         MainApplication.class.getResource(
-                                "/com/sigec/system/sigec/imagens/logo-white.png"
+                                "/com/sigec/system/sigec/imagens/ic_launcher-playstore.png"
                         ).toExternalForm()
                 )
         );
