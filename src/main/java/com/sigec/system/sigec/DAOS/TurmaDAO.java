@@ -148,8 +148,8 @@ public final class TurmaDAO {
                 "ORDER BY nome_usuario ASC";
 
         try (Connection conn = ConfigDataBase.getConnection();
-                PreparedStatement stmt = conn.prepareStatement(sql);
-                ResultSet rs = stmt.executeQuery()) {
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
 
             while (rs.next()) {
                 User professor = new User(
@@ -183,8 +183,8 @@ public final class TurmaDAO {
                 "ORDER BY nome_laboratorio ASC";
 
         try (Connection conn = ConfigDataBase.getConnection();
-                PreparedStatement stmt = conn.prepareStatement(sql);
-                ResultSet rs = stmt.executeQuery()) {
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
 
             while (rs.next()) {
                 Laboratorio lab = new Laboratorio(
@@ -203,6 +203,76 @@ public final class TurmaDAO {
     }
 
     /**
+     * Retorna apenas os laboratórios ativos da unidade informada.
+     *
+     * @param idUnidade ID da unidade selecionada na tela
+     * @return Lista de laboratórios ativos da unidade
+     */
+    public static List<Laboratorio> listarLaboratoriosAtivosPorUnidade(int idUnidade) {
+        List<Laboratorio> laboratorios = new ArrayList<>();
+        String sql = "SELECT id_laboratorio, nome_laboratorio, capacidade, situacao, id_unidade " +
+                "FROM laboratorio " +
+                "WHERE id_unidade = ? AND (UPPER(situacao) = 'A' OR UPPER(situacao) = 'ATIVO') " +
+                "ORDER BY nome_laboratorio ASC";
+
+        try (Connection conn = ConfigDataBase.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, idUnidade);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    Laboratorio lab = new Laboratorio(
+                            rs.getInt("id_laboratorio"),
+                            rs.getString("nome_laboratorio"),
+                            rs.getInt("capacidade"),
+                            rs.getString("situacao"),
+                            rs.getInt("id_unidade"));
+                    laboratorios.add(lab);
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Aviso: Falha ao listar laboratórios da unidade: " + e.getMessage());
+        }
+
+        return laboratorios;
+    }
+
+    /**
+     * Busca o ID do laboratório pelo nome dentro de uma unidade específica.
+     * Não usa fallback: se não existir na unidade, retorna -1 para nunca vincular
+     * a turma a um laboratório de outra unidade.
+     *
+     * @param nomeLaboratorio Nome do laboratório selecionado na interface
+     * @param idUnidade       ID da unidade selecionada na interface
+     * @return ID do laboratório ou -1 se não encontrado na unidade
+     * @throws SQLException Em caso de erro na consulta
+     */
+    public static int buscarIdLaboratorioPorNome(String nomeLaboratorio, int idUnidade) throws SQLException {
+        if (nomeLaboratorio == null || nomeLaboratorio.trim().isEmpty() || idUnidade <= 0) {
+            return -1;
+        }
+
+        String sql = "SELECT id_laboratorio FROM laboratorio " +
+                "WHERE LOWER(TRIM(nome_laboratorio)) = LOWER(TRIM(?)) AND id_unidade = ? LIMIT 1";
+
+        try (Connection conn = ConfigDataBase.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, nomeLaboratorio.trim());
+            stmt.setInt(2, idUnidade);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("id_laboratorio");
+                }
+            }
+        }
+
+        return -1;
+    }
+
+    /**
      * Busca o ID do laboratório pelo seu nome.
      * Útil quando o ChoiceBox da interface disponibiliza os nomes como String.
      *
@@ -218,7 +288,7 @@ public final class TurmaDAO {
         String sql = "SELECT id_laboratorio FROM laboratorio WHERE LOWER(TRIM(nome_laboratorio)) = LOWER(TRIM(?)) LIMIT 1";
 
         try (Connection conn = ConfigDataBase.getConnection();
-                PreparedStatement stmt = conn.prepareStatement(sql)) {
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, nomeLaboratorio.trim());
 
@@ -233,8 +303,8 @@ public final class TurmaDAO {
         // fallback
         String sqlFallback = "SELECT id_laboratorio FROM laboratorio WHERE UPPER(situacao) = 'A' LIMIT 1";
         try (Connection conn = ConfigDataBase.getConnection();
-                PreparedStatement stmt = conn.prepareStatement(sqlFallback);
-                ResultSet rs = stmt.executeQuery()) {
+             PreparedStatement stmt = conn.prepareStatement(sqlFallback);
+             ResultSet rs = stmt.executeQuery()) {
             if (rs.next()) {
                 return rs.getInt("id_laboratorio");
             }
@@ -257,8 +327,8 @@ public final class TurmaDAO {
                 "ORDER BY nome_curso ASC";
 
         try (Connection conn = ConfigDataBase.getConnection();
-                PreparedStatement stmt = conn.prepareStatement(sql);
-                ResultSet rs = stmt.executeQuery()) {
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
 
             while (rs.next()) {
                 Curso curso = new Curso(
@@ -290,7 +360,7 @@ public final class TurmaDAO {
         String sql = "SELECT id_curso FROM curso WHERE LOWER(TRIM(nome_curso)) = LOWER(TRIM(?)) LIMIT 1";
 
         try (Connection conn = ConfigDataBase.getConnection();
-                PreparedStatement stmt = conn.prepareStatement(sql)) {
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, nomeCurso.trim());
 
@@ -304,8 +374,8 @@ public final class TurmaDAO {
         // Se não encontrou pelo nome exato, tenta o primeiro curso ativo como fallback
         String sqlFallback = "SELECT id_curso FROM curso WHERE UPPER(situacao) = 'A' LIMIT 1";
         try (Connection conn = ConfigDataBase.getConnection();
-                PreparedStatement stmt = conn.prepareStatement(sqlFallback);
-                ResultSet rs = stmt.executeQuery()) {
+             PreparedStatement stmt = conn.prepareStatement(sqlFallback);
+             ResultSet rs = stmt.executeQuery()) {
             if (rs.next()) {
                 return rs.getInt("id_curso");
             }
@@ -313,4 +383,5 @@ public final class TurmaDAO {
 
         return -1;
     }
+
 }

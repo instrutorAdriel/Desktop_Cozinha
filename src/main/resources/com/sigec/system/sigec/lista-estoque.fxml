@@ -56,7 +56,6 @@
                     </VBox.margin>
                 </Button>
 
-
                 <VBox alignment="TOP_CENTER" spacing="0.0">
                     <children>
                         <Button id="btnNavEstoque" fx:id="btnNavEstoque" alignment="CENTER_LEFT" mnemonicParsing="false" onAction="#toggleDropdownEstoque" styleClass="btn-padrao">
@@ -77,7 +76,6 @@
                                             </font>
                                         </Label>
                                         <Region HBox.hgrow="ALWAYS" />
-                                        <!-- Como a tela de insumos está ativa, o menu começa aberto (seta pra cima) -->
                                         <Label fx:id="setaEstoque" text="▲" textFill="WHITE">
                                             <font>
                                                 <Font name="Arial Bold" size="11.0" />
@@ -88,10 +86,8 @@
                             </graphic>
                         </Button>
 
-                        <!-- Submenu com Insumos e Utensílios -->
                         <VBox fx:id="submenuEstoque" alignment="TOP_CENTER" managed="true" spacing="0.0" styleClass="submenu-lateral" visible="true">
                             <children>
-                                <!-- Botão Insumos ATIVO -->
                                 <Button id="btnSubNavInsumos" fx:id="btnSubNavInsumos" alignment="BASELINE_LEFT" graphicTextGap="8.0" mnemonicParsing="false" onAction="#onClickInsumos" text="Insumos">
                                     <styleClass>
                                         <String fx:value="btn-sub-opcao" />
@@ -106,7 +102,6 @@
                                     </graphic>
                                 </Button>
 
-                                <!-- Botão Utensílios NORMAL -->
                                 <Button id="btnSubNavUtensilios" fx:id="btnSubNavUtensilios" alignment="BASELINE_LEFT" graphicTextGap="8.0" mnemonicParsing="false" onAction="#onClickUtensilios" styleClass="btn-sub-opcao" text="Utensílios">
                                     <graphic>
                                         <Label text="•" textFill="#94a3b8">
@@ -181,7 +176,6 @@
                     </VBox.margin>
                 </Button>
 
-                <!-- Container do Menu Dropdown de Cadastro -->
                 <VBox alignment="TOP_CENTER" spacing="0.0">
                     <children>
                         <Button id="btnNavCadastro" fx:id="btnNavCadastro" alignment="CENTER_LEFT" mnemonicParsing="false" onAction="#toggleDropdownCadastro" styleClass="btn-padrao">
@@ -212,7 +206,6 @@
                             </graphic>
                         </Button>
 
-                        <!-- Submenu com as opções de cadastro (inicialmente recolhido) -->
                         <VBox fx:id="submenuCadastro" alignment="TOP_CENTER" managed="false" spacing="0.0" styleClass="submenu-lateral" visible="false">
                             <children>
                                 <Button id="btnSubNavUsuario" fx:id="btnSubNavUsuario" alignment="BASELINE_LEFT" graphicTextGap="8.0" mnemonicParsing="false" onAction="#onClickCadastroUsuario" styleClass="btn-sub-opcao" text="Cadastro Usuário">
@@ -292,73 +285,83 @@
                         </HBox>
                         <VBox fx:id="conteudoPagina" styleClass="conteudo-pagina" VBox.vgrow="ALWAYS">
                             <children>
-                                <HBox alignment="CENTER_LEFT" prefHeight="45.0" spacing="12.0">
+                                <!-- Barra de Filtros e Ações com padrão idêntico ao da tela de referência -->
+                                <HBox alignment="CENTER_LEFT" prefHeight="55.0" spacing="12.0">
                                     <children>
-                                        <TextField fx:id="FiltrarProdutos" prefHeight="35.0" prefWidth="250.0" promptText="🔍 Buscar no estoque..." styleClass="search-field">
-                                            <font>
-                                                <Font name="Arial" size="13.0" />
-                                            </font>
-                                        </TextField>
-
-                                        <Button mnemonicParsing="false" onAction="#onPesquisarClick" prefHeight="35.0" prefWidth="105.0" styleClass="btn-action-secondary" text="Pesquisar">
-                                            <font>
-                                                <Font name="Arial Bold" size="13.0" />
-                                            </font>
-                                        </Button>
-
-                                        <!-- Filtro de Unidade -->
-                                        <HBox alignment="CENTER_LEFT" spacing="8.0">
+                                        <VBox alignment="BOTTOM_LEFT" spacing="3.0">
                                             <children>
-                                                <Label text="Unidade:" textFill="#475569">
+                                                <TextField fx:id="FiltrarProdutos" prefHeight="35.0" prefWidth="200.0" promptText="🔍 Buscar no estoque..." styleClass="search-field">
+                                                    <font>
+                                                        <Font name="Arial" size="13.0" />
+                                                    </font>
+                                                </TextField>
+                                            </children>
+                                        </VBox>
+
+                                        <VBox alignment="BOTTOM_LEFT" spacing="3.0">
+                                            <children>
+                                                <Button mnemonicParsing="false" onAction="#onPesquisarClick" prefHeight="35.0" prefWidth="95.0" styleClass="btn-action-secondary" text="Pesquisar">
                                                     <font>
                                                         <Font name="Arial Bold" size="13.0" />
                                                     </font>
-                                                </Label>
-                                                <ChoiceBox fx:id="cbUnidade" prefHeight="35.0" prefWidth="130.0" styleClass="custom-choice-box" />
+                                                </Button>
                                             </children>
-                                        </HBox>
+                                        </VBox>
 
-                                        <!-- Filtro de Curso -->
-                                        <HBox alignment="CENTER_LEFT" spacing="8.0">
+                                        <!-- Filtro de Unidade (Label em cima, largura 300px) -->
+                                        <VBox alignment="BOTTOM_LEFT" spacing="3.0">
                                             <children>
-                                                <Label text="Curso:" textFill="#475569">
+                                                <Label text="Unidade" textFill="#475569">
                                                     <font>
-                                                        <Font name="Arial Bold" size="13.0" />
+                                                        <Font name="Arial Bold" size="12.0" />
                                                     </font>
                                                 </Label>
-                                                <ChoiceBox fx:id="cbCurso" prefHeight="35.0" prefWidth="130.0" styleClass="custom-choice-box" />
+                                                <ChoiceBox fx:id="cbUnidade" prefHeight="35.0" prefWidth="300.0" styleClass="custom-choice-box" />
                                             </children>
-                                        </HBox>
+                                        </VBox>
 
-
+                                        <!-- Filtro de Curso (Label em cima, largura 300px, inicia bloqueado) -->
+                                        <VBox alignment="BOTTOM_LEFT" spacing="3.0">
+                                            <children>
+                                                <Label text="Curso" textFill="#475569">
+                                                    <font>
+                                                        <Font name="Arial Bold" size="12.0" />
+                                                    </font>
+                                                </Label>
+                                                <ChoiceBox fx:id="cbCurso" disable="true" prefHeight="35.0" prefWidth="300.0" styleClass="custom-choice-box" />
+                                            </children>
+                                        </VBox>
 
                                         <Region HBox.hgrow="ALWAYS" />
 
-                                        <Button alignment="CENTER" graphicTextGap="6.0" mnemonicParsing="false" onAction="#onClickAddProduto" prefHeight="35.0" prefWidth="115.0" styleClass="btn-action-primary" text="Adicionar">
-                                            <graphic>
-                                                <ImageView fitHeight="14.0" fitWidth="14.0" pickOnBounds="true" preserveRatio="true">
-                                                    <image>
-                                                        <Image url="@imagens/mais.png" />
-                                                    </image>
-                                                    <effect>
-                                                        <ColorAdjust brightness="1.0" />
-                                                    </effect>
-                                                </ImageView>
-                                            </graphic>
-                                            <font>
-                                                <Font name="Arial Bold" size="13.0" />
-                                            </font>
-                                        </Button>
-                                        <Button fx:id="editar" mnemonicParsing="false" onAction="#onEditarProduto" prefHeight="35.0" prefWidth="95.0" styleClass="btn-action-secondary" text="Editar">
-                                            <font>
-                                                <Font name="Arial Bold" size="13.0" />
-                                            </font>
-                                        </Button>
-                                        <Button fx:id="remover" mnemonicParsing="false" onAction="#onRemoverProdutoClick" prefHeight="35.0" prefWidth="95.0" styleClass="btn-action-danger" text="Excluir">
-                                            <font>
-                                                <Font name="Arial Bold" size="13.0" />
-                                            </font>
-                                        </Button>
+                                        <!-- Botões de Ação -->
+                                        <VBox alignment="BOTTOM_LEFT" spacing="3.0">
+                                            <children>
+                                                <Button alignment="CENTER" mnemonicParsing="false" onAction="#onClickAddProduto" prefHeight="35.0" prefWidth="95.0" styleClass="btn-action-primary" text="Adicionar">
+                                                    <font>
+                                                        <Font name="Arial Bold" size="13.0" />
+                                                    </font>
+                                                </Button>
+                                            </children>
+                                        </VBox>
+                                        <VBox alignment="BOTTOM_LEFT" spacing="3.0">
+                                            <children>
+                                                <Button fx:id="editar" mnemonicParsing="false" onAction="#onEditarProduto" prefHeight="35.0" prefWidth="95.0" styleClass="btn-action-secondary" text="Editar">
+                                                    <font>
+                                                        <Font name="Arial Bold" size="13.0" />
+                                                    </font>
+                                                </Button>
+                                            </children>
+                                        </VBox>
+                                        <VBox alignment="BOTTOM_LEFT" spacing="3.0">
+                                            <children>
+                                                <Button fx:id="remover" mnemonicParsing="false" onAction="#onRemoverProdutoClick" prefHeight="35.0" prefWidth="95.0" styleClass="btn-action-danger" text="Excluir">
+                                                    <font>
+                                                        <Font name="Arial Bold" size="13.0" />
+                                                    </font>
+                                                </Button>
+                                            </children>
+                                        </VBox>
                                     </children>
                                     <VBox.margin>
                                         <Insets left="20.0" right="20.0" top="15.0" />
@@ -376,8 +379,7 @@
                                         <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                                     </columnResizePolicy>
                                     <VBox.margin>
-                                        <!-- ESPAÇAMENTO ADICIONADO AQUI: top="20.0" -->
-                                        <Insets top="20.0" bottom="20.0" left="20.0" right="20.0" />
+                                        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
                                     </VBox.margin>
                                 </TableView>
                             </children>

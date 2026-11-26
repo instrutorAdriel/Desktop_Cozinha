@@ -7,12 +7,7 @@ import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.DateCell;
-import javafx.scene.control.DatePicker;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.stage.Stage;
 
 import java.net.URL;
@@ -38,7 +33,6 @@ public class CadastroProdutoController implements Initializable {
         txtTipoProduto.setItems(FXCollections.observableArrayList(CategoriaDAO.listarNomesCategorias()));
         txtUnidadeDeMedida.setItems(FXCollections.observableArrayList("kg", "g", "L", "ml", "un"));
 
-        // Carrega apenas as unidades vinculadas ao usuário (sem a opção "Todas")
         List<String> unidadesUsuario = UnidadeDAO.listarUnidadesParaCadastro();
         cbUnidade.setItems(FXCollections.observableArrayList(unidadesUsuario));
         if (!unidadesUsuario.isEmpty()) {
