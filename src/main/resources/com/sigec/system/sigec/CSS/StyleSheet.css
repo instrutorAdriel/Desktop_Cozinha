@@ -140,85 +140,7 @@
 }
 
 /* ==========================================================================
-ESTILIZAÇÃO DA TABELA (TABLEVIEW) - FUNDO CLARO E CABEÇALHO ESCURO
-========================================================================== */
-.table-view {
-    -fx-font-family: "Arial";
-    -fx-font-size: 14px;
-    -fx-background-color: #ffffff;
-    -fx-control-inner-background: #ffffff;
-    -fx-control-inner-background-alt: #f8fafc;
-    -fx-border-color: transparent;
-    -fx-border-width: 0px;
-    -fx-border-radius: 6px;
-    -fx-background-radius: 6px;
-}
 
-/* Estilo das Células e Linhas */
-.table-view .table-cell {
-    -fx-text-fill: #1e293b;
-    -fx-font-family: "Arial";
-    -fx-padding: 8px 12px;
-    -fx-alignment: CENTER_LEFT;
-}
-
-.table-view .table-row-cell {
-    -fx-background-color: #ffffff;
-    -fx-border-color: transparent transparent #e2e8f0 transparent;
-    -fx-border-width: 0 0 1px 0;
-}
-
-/* Linhas alternadas (Zebra) em cinza muito claro */
-.table-view .table-row-cell:odd {
-    -fx-background-color: #f8fafc;
-}
-
-/* Destaque ao passar o mouse sobre a linha */
-.table-view .table-row-cell:hover {
-    -fx-background-color: #f1f5f9;
-}
-
-/* Linha Selecionada */
-.table-view .table-row-cell:filled:selected {
-    -fx-background-color: #054584;
-    -fx-text-background-color: #ffffff;
-}
-
-.table-view .table-row-cell:filled:selected .table-cell {
-    -fx-text-fill: #ffffff;
-}
-
-/* Cabeçalho das Colunas (Azul Institucional) */
-.table-view .column-header-background,
-.table-view .column-header,
-.table-view .column-header-background .filler {
-    -fx-background-color: #054584;
-    -fx-border-color: transparent #ffffff #054584 transparent;
-    -fx-border-width: 0 1px 0 0;
-    -fx-size: 38px;
-}
-
-/* Rótulo / Texto do Cabeçalho */
-.table-view .column-header .label {
-    -fx-text-fill: #ffffff;
-    -fx-font-family: "Arial Bold";
-    -fx-font-size: 13px;
-    -fx-alignment: CENTER;
-}
-
-/* Colunas numéricas (ex.: Qtd. Necessária): número alinhado à direita.
-   O styleClass da TableColumn é repassado para as células dela. */
-.table-view .table-cell.col-numero {
-    -fx-alignment: CENTER-RIGHT;
-    -fx-padding: 8px 24px 8px 12px;
-}
-
-/* Remove a borda azul ao focar na tabela */
-.table-view:focused {
-    -fx-background-color: #ffffff;
-}
-
-/* ========================================================================== */
 
 /* Botão de relatório */
 .btn-relatorio {
@@ -473,7 +395,7 @@ CONTEÚDO DA PÁGINA (ESTOQUE, HISTÓRICO/RELATÓRIOS E CONSULTAS)
 
 
 /* ==========================================================================
-   4. TABELAS
+4. TABELAS (GLOBAL PARA TODAS AS TELAS)
 ========================================================================== */
 
 .table-view {
@@ -496,6 +418,12 @@ CONTEÚDO DA PÁGINA (ESTOQUE, HISTÓRICO/RELATÓRIOS E CONSULTAS)
     -fx-alignment: CENTER_LEFT;
 }
 
+/* Colunas numéricas */
+.table-view .table-cell.col-numero {
+    -fx-alignment: CENTER-RIGHT;
+    -fx-padding: 8px 24px 8px 12px;
+}
+
 /* Linhas */
 .table-view .table-row-cell {
     -fx-background-color: #ffffff;
@@ -503,17 +431,14 @@ CONTEÚDO DA PÁGINA (ESTOQUE, HISTÓRICO/RELATÓRIOS E CONSULTAS)
     -fx-border-width: 0 0 1px 0;
 }
 
-/* Linhas alternadas */
 .table-view .table-row-cell:odd {
     -fx-background-color: #f8fafc;
 }
 
-/* Hover da linha */
 .table-view .table-row-cell:hover {
     -fx-background-color: #f1f5f9;
 }
 
-/* Linha selecionada */
 .table-view .table-row-cell:filled:selected {
     -fx-background-color: #054584;
     -fx-text-background-color: #ffffff;
@@ -523,22 +448,49 @@ CONTEÚDO DA PÁGINA (ESTOQUE, HISTÓRICO/RELATÓRIOS E CONSULTAS)
     -fx-text-fill: #ffffff;
 }
 
-/* Cabeçalho */
+/* Cabeçalho 100% fixo em todas as telas */
 .table-view .column-header-background,
-.table-view .column-header,
-.table-view .column-header-background .filler {
+.table-view .column-header-background .filler,
+.table-view .column-header-background .nested-column-header {
     -fx-background-color: #054584;
-    -fx-border-color: transparent #ffffff #054584 transparent;
-    -fx-border-width: 0 1px 0 0;
-    -fx-size: 38px;
+    -fx-pref-height: 38px;
+    -fx-min-height: 38px;
+    -fx-max-height: 38px;
+    -fx-padding: 0;
+    -fx-background-insets: 0;
 }
 
-/* Texto do cabeçalho */
+.table-view .column-header,
+.table-view .column-header:hover,
+.table-view .column-header:pressed,
+.table-view .column-header:focused {
+    -fx-background-color: #054584;
+    -fx-background-insets: 0;
+    -fx-border-color: transparent #ffffff #054584 transparent;
+    -fx-border-width: 0 1px 0 0;
+    -fx-border-insets: 0;
+    -fx-pref-height: 38px;
+    -fx-min-height: 38px;
+    -fx-max-height: 38px;
+    -fx-padding: 0;
+    -fx-cursor: hand;
+}
+
+/* Trava o texto do cabeçalho ocupando toda a largura sem ser empurrado ao ordenar */
 .table-view .column-header .label {
     -fx-text-fill: #ffffff;
     -fx-font-family: "Arial Bold";
     -fx-font-size: 13px;
     -fx-alignment: CENTER;
+    -fx-max-width: Infinity;
+    -fx-padding: 0;
+    -fx-label-padding: 0;
+}
+
+/* Mantém o espaço interno da seta constante (apenas invisível) para zero deslocamento */
+.table-view .column-header .arrow,
+.table-view .column-header .sort-order-dots-container {
+    visibility: hidden;
 }
 
 .table-view:focused {
@@ -550,8 +502,6 @@ CONTEÚDO DA PÁGINA (ESTOQUE, HISTÓRICO/RELATÓRIOS E CONSULTAS)
     -fx-background-radius: 0 0 5px 5px;
     -fx-border-color: transparent;
 }
-
-
 /* ==========================================================================
    5. CONTEÚDO E FUNDOS DAS PÁGINAS
 ========================================================================== */

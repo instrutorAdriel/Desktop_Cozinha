@@ -1,18 +1,19 @@
 package com.sigec.system.sigec.Controllers;
 
 import com.sigec.system.sigec.Constructors.ListaEstoque;
-import com.sigec.system.sigec.DAOS.CursoDAO;
 import com.sigec.system.sigec.DAOS.ProductStorageDAO;
-import com.sigec.system.sigec.DAOS.UnidadeDAO;
+import com.sigec.system.sigec.DAOS.RelatorioInsumosDAO;
+import com.sigec.system.sigec.DAOS.RelatorioInsumosDAO.Opcao;
 import com.sigec.system.sigec.MainApplication;
 import com.sigec.system.sigec.Services.SessaoService;
 import com.sigec.system.sigec.Utils.BackgroundAnimator;
 import com.sigec.system.sigec.Utils.ButtonBorderLapAnimator;
-
 import com.sigec.system.sigec.Utils.DropdownBorderLapAnimator;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -25,23 +26,30 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.util.Duration;
 
 import java.io.IOException;
 import java.net.URL;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
-import java.util.List;
 
 public class ListaController implements Initializable {
+
+    private static final Opcao TODAS_UNIDADES = new Opcao(0, "Todas");
+    private static final Opcao TODOS_CURSOS = new Opcao(0, "Todos");
+
+    private final RelatorioInsumosDAO relatorioDAO = new RelatorioInsumosDAO();
+    private boolean atualizandoFiltros = false;
 
     @FXML
     private AnchorPane topBarPane;
@@ -59,10 +67,10 @@ public class ListaController implements Initializable {
     private TextField FiltrarProdutos;
 
     @FXML
-    private ChoiceBox<String> cbUnidade;
+    private ChoiceBox<Opcao> cbUnidade;
 
     @FXML
-    private ChoiceBox<String> cbCurso;
+    private ChoiceBox<Opcao> cbCurso;
 
     @FXML
     private CheckBox chkPereciveis;
@@ -78,9 +86,9 @@ public class ListaController implements Initializable {
 
     @FXML
     private TableColumn<ListaEstoque, String> nomeProduto;
+
     @FXML
     private TableColumn<ListaEstoque, String> loteProduto;
-
 
     @FXML
     private TableColumn<ListaEstoque, String> tipoProduto;
@@ -127,53 +135,147 @@ public class ListaController implements Initializable {
         }
         configurarDataHora();
         configurarUsuario();
+        configurarTabela();
+        configurarFiltros();
 
+        onPesquisarClick(new ActionEvent());
+    }
+
+    private void configurarTabela() {
         obsLista = FXCollections.observableArrayList();
         ListaEstoque.setItems(obsLista);
 
-        // Configuração das colunas
         nomeProduto.setCellValueFactory(new PropertyValueFactory<>("nomeProduto"));
         loteProduto.setCellValueFactory(new PropertyValueFactory<>("lote"));
         tipoProduto.setCellValueFactory(new PropertyValueFactory<>("tipoProduto"));
         quantidadeProduto.setCellValueFactory(new PropertyValueFactory<>("quantidadeProduto"));
         unidadeProduto.setCellValueFactory(new PropertyValueFactory<>("unidadeProduto"));
 
+        // Faz as colunas preencherem 100% da largura da tabela
+        ListaEstoque.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
+
+        nomeProduto.prefWidthProperty().bind(ListaEstoque.widthProperty().multiply(0.34));
+        loteProduto.prefWidthProperty().bind(ListaEstoque.widthProperty().multiply(0.18));
+        tipoProduto.prefWidthProperty().bind(ListaEstoque.widthProperty().multiply(0.24));
+        quantidadeProduto.prefWidthProperty().bind(ListaEstoque.widthProperty().multiply(0.14));
+        unidadeProduto.prefWidthProperty().bind(ListaEstoque.widthProperty().multiply(0.10));
+
+        // Comparador em português (ordena A-Z corretamente mesmo com acentos como "Açúcar")
+        java.text.Collator collator = java.text.Collator.getInstance(java.util.Locale.of("pt", "BR"));
+        collator.setStrength(java.text.Collator.PRIMARY);
+        java.util.Comparator<String> comparadorTexto = (a, b) -> {
+            if (a == null && b == null) return 0;
+            if (a == null) return -1;
+            if (b == null) return 1;
+            return collator.compare(a, b);
+        };
+
+        nomeProduto.setComparator(comparadorTexto);
+        loteProduto.setComparator(comparadorTexto);
+        tipoProduto.setComparator(comparadorTexto);
+        unidadeProduto.setComparator(comparadorTexto);
+
+        // Permite ordenar ao clicar no cabeçalho, mas mantém largura e posição fixas
+        ListaEstoque.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
+        for (TableColumn<ListaEstoque, ?> col : ListaEstoque.getColumns()) {
+            col.setSortable(true);
+            col.setResizable(false);
+            col.setReorderable(false);
+        }
+
+        // Já inicia ordenado por Produtos de A-Z ao carregar a tela
+        nomeProduto.setSortType(TableColumn.SortType.ASCENDING);
+        ListaEstoque.getSortOrder().setAll(nomeProduto);
+
+
+    }
+
+    private void configurarFiltros() {
         if (cbCurso != null) {
-            cbCurso.setItems(FXCollections.observableArrayList(CursoDAO.listarNomesCursos()));
-            cbCurso.setValue("Todos");
-            cbCurso.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
-                onPesquisarClick(new ActionEvent());
+            cbCurso.setDisable(true);
+            configurarTooltip(cbCurso);
+            cbCurso.getSelectionModel().selectedItemProperty().addListener((obs, antigo, novo) -> {
+                if (!atualizandoFiltros && novo != null && !cbCurso.isDisabled()) {
+                    onPesquisarClick(new ActionEvent());
+                }
             });
         }
 
         if (cbUnidade != null) {
-            List<String> unidadesUsuario = UnidadeDAO.listarNomesUnidades();
-            cbUnidade.setItems(FXCollections.observableArrayList(unidadesUsuario));
-            if (!unidadesUsuario.isEmpty()) {
-                cbUnidade.getSelectionModel().selectFirst();
-            }
-            cbUnidade.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
-                onPesquisarClick(new ActionEvent());
+            configurarTooltip(cbUnidade);
+            carregarUnidades();
+
+            cbUnidade.getSelectionModel().selectedItemProperty().addListener((obs, antiga, nova) -> {
+                onUnidadeSelecionada(nova);
+                if (!atualizandoFiltros) {
+                    onPesquisarClick(new ActionEvent());
+                }
             });
         }
-
-        // Carrega os dados do banco
-        onPesquisarClick(new ActionEvent());
     }
 
-    private void carregarTabelaEstoque() {
-        ProductStorageDAO dao = new ProductStorageDAO();
-        List<ListaEstoque> insumo = dao.buscarTodosProdutosEstoque();
-        obsLista = FXCollections.observableArrayList(insumo);
-        ListaEstoque.setItems(obsLista);
-        ListaEstoque.refresh();
+    private void configurarTooltip(ChoiceBox<Opcao> choiceBox) {
+        choiceBox.valueProperty().addListener((obs, antigo, novo) ->
+                choiceBox.setTooltip(novo == null ? null : new Tooltip(novo.nome())));
+    }
+
+    private void carregarUnidades() {
+        atualizandoFiltros = true;
+        try {
+            List<Opcao> unidades = new ArrayList<>();
+            unidades.add(TODAS_UNIDADES);
+            unidades.addAll(relatorioDAO.listarUnidades());
+
+            cbUnidade.setItems(FXCollections.observableArrayList(unidades));
+            cbUnidade.getSelectionModel().select(TODAS_UNIDADES);
+            onUnidadeSelecionada(TODAS_UNIDADES);
+        } catch (SQLException e) {
+            exibirAlerta(Alert.AlertType.ERROR, "Erro", "Não foi possível carregar as unidades: " + e.getMessage());
+        } finally {
+            atualizandoFiltros = false;
+        }
+    }
+
+    private void onUnidadeSelecionada(Opcao unidade) {
+        if (cbCurso == null) {
+            return;
+        }
+
+        boolean estadoAnterior = atualizandoFiltros;
+        atualizandoFiltros = true;
+        try {
+            cbCurso.getItems().clear();
+            cbCurso.getSelectionModel().clearSelection();
+
+            if (unidade == null || unidade.id() == 0) {
+                cbCurso.setDisable(true);
+                return;
+            }
+
+            List<Opcao> cursos = new ArrayList<>();
+            cursos.add(TODOS_CURSOS);
+            cursos.addAll(relatorioDAO.listarCursosPorUnidade(unidade.id()));
+
+            cbCurso.setItems(FXCollections.observableArrayList(cursos));
+            cbCurso.setDisable(false);
+            cbCurso.getSelectionModel().select(TODOS_CURSOS);
+        } catch (SQLException e) {
+            cbCurso.setDisable(true);
+            exibirAlerta(Alert.AlertType.ERROR, "Erro", "Não foi possível carregar os cursos da unidade: " + e.getMessage());
+        } finally {
+            atualizandoFiltros = estadoAnterior;
+        }
     }
 
     @FXML
     public void onPesquisarClick(ActionEvent event) {
         String termoBusca = FiltrarProdutos != null ? FiltrarProdutos.getText() : "";
-        String unidade = cbUnidade != null && cbUnidade.getValue() != null ? cbUnidade.getValue() : "Todas";
-        String curso = cbCurso != null && cbCurso.getValue() != null ? cbCurso.getValue() : "Todos";
+        String unidade = (cbUnidade != null && cbUnidade.getValue() != null)
+                ? cbUnidade.getValue().nome()
+                : TODAS_UNIDADES.nome();
+        String curso = (cbCurso != null && !cbCurso.isDisabled() && cbCurso.getValue() != null)
+                ? cbCurso.getValue().nome()
+                : TODOS_CURSOS.nome();
 
         ProductStorageDAO dao = new ProductStorageDAO();
         List<ListaEstoque> produtosFiltrados = dao.buscarProdutosPorFiltro(termoBusca, unidade, curso);
@@ -237,14 +339,13 @@ public class ListaController implements Initializable {
     }
 
     @FXML
-    protected void botaoCalendarioAction(javafx.event.ActionEvent event) {
+    protected void botaoCalendarioAction(ActionEvent event) {
         try {
-            com.sigec.system.sigec.MainApplication.trocadorDeTelas("calendario.fxml");
-        } catch (java.io.IOException e) {
+            MainApplication.trocadorDeTelas("calendario.fxml");
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
-
 
     @FXML
     public void onClickSolicitacoes(ActionEvent event) {
@@ -305,20 +406,20 @@ public class ListaController implements Initializable {
     }
 
     @FXML
-    public void onClickInsumos(javafx.event.ActionEvent event) {
+    public void onClickInsumos(ActionEvent event) {
         try {
-            com.sigec.system.sigec.MainApplication.trocadorDeTelas("lista-estoque.fxml");
-        } catch (java.io.IOException e) {
+            MainApplication.trocadorDeTelas("lista-estoque.fxml");
+        } catch (IOException e) {
             e.printStackTrace();
             System.out.println("Erro ao carregar a tela de Insumos: " + e.getMessage());
         }
     }
 
     @FXML
-    public void onClickUtensilios(javafx.event.ActionEvent event) {
+    public void onClickUtensilios(ActionEvent event) {
         try {
-            com.sigec.system.sigec.MainApplication.trocadorDeTelas("gestao-utensilios.fxml");
-        } catch (java.io.IOException e) {
+            MainApplication.trocadorDeTelas("gestao-utensilios.fxml");
+        } catch (IOException e) {
             e.printStackTrace();
             System.out.println("Erro ao carregar a tela de Utensílios: " + e.getMessage());
         }
@@ -337,7 +438,6 @@ public class ListaController implements Initializable {
             exibirAlerta(Alert.AlertType.ERROR, "Erro", "Não foi possível carregar a tela de Cadastro de Turma: " + e.getMessage());
         }
     }
-
 
     private void navegarParaCadastro() {
         try {
@@ -362,7 +462,7 @@ public class ListaController implements Initializable {
     public void onClickAddProduto(ActionEvent event) {
         try {
             MainApplication.abrirPopUp("CadastroProduto.fxml");
-            onPesquisarClick(null); // Atualiza aplicando o filtro atual
+            onPesquisarClick(null);
         } catch (IOException e) {
             exibirAlerta(Alert.AlertType.ERROR, "Erro", "Erro ao abrir modal de cadastro de produto: " + e.getMessage());
         }
@@ -380,12 +480,11 @@ public class ListaController implements Initializable {
 
         try {
             MainApplication.abrirPopUp("edicaoProdutos.fxml");
-            onPesquisarClick(null); // Atualiza aplicando o filtro atual
+            onPesquisarClick(null);
         } catch (IOException e) {
             exibirAlerta(Alert.AlertType.ERROR, "Erro", "Erro ao abrir modal de edição de produto: " + e.getMessage());
         }
     }
-
 
     @FXML
     public void onRemoverProdutoClick(ActionEvent event) {
@@ -406,7 +505,7 @@ public class ListaController implements Initializable {
             boolean sucesso = dao.excluirInsumo(selecionado.getIdInsumo(), selecionado.getIdProduto());
             if (sucesso) {
                 exibirAlerta(Alert.AlertType.INFORMATION, "Sucesso", "Produto removido com sucesso!");
-                onPesquisarClick(null); // Atualiza aplicando o filtro atual
+                onPesquisarClick(null);
             } else {
                 exibirAlerta(Alert.AlertType.ERROR, "Erro", "Ocorreu um problema ao excluir o produto do banco.");
             }

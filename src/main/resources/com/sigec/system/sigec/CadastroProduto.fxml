@@ -15,16 +15,16 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane prefHeight="565.0" prefWidth="520.0" stylesheets="@CSS/StyleSheet.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sigec.system.sigec.Controllers.CadastroProdutoController">
+<BorderPane prefHeight="560.0" prefWidth="520.0" stylesheets="@CSS/StyleSheet.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sigec.system.sigec.Controllers.CadastroProdutoController">
    <center>
-      <StackPane prefHeight="565.0" prefWidth="520.0" styleClass="painel-center" BorderPane.alignment="CENTER">
+      <StackPane prefHeight="560.0" prefWidth="520.0" styleClass="painel-center" BorderPane.alignment="CENTER">
          <children>
             <ImageView fitHeight="380.0" fitWidth="380.0" opacity="0.15" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@imagens/LogocoloridaSenac.png" />
                </image>
             </ImageView>
-            <VBox alignment="CENTER" maxWidth="450.0" prefHeight="565.0" prefWidth="450.0" spacing="12.0">
+            <VBox alignment="CENTER" maxWidth="450.0" prefHeight="560.0" prefWidth="450.0" spacing="12.0">
                <children>
                   <Label alignment="CENTER" text="ADICIONAR PRODUTO" textFill="#054685">
                      <font>

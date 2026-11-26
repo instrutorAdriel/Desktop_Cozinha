@@ -32,7 +32,6 @@ public class ProductStorageDAO {
         List<Object> parametros = new ArrayList<>();
 
         if (termo != null && !termo.trim().isEmpty()) {
-
             sql.append("AND (LOWER(p.nome_produto) LIKE LOWER(?) OR LOWER(COALESCE(i.lote, '')) LIKE LOWER(?)) ");
             parametros.add("%" + termo.trim() + "%");
             parametros.add("%" + termo.trim() + "%");
@@ -42,7 +41,6 @@ public class ProductStorageDAO {
             sql.append("AND TRIM(u.nome_unidade) = TRIM(?) ");
             parametros.add(unidade.trim());
         } else {
-
             List<String> unidadesUsuario = UnidadeDAO.listarUnidadesDoUsuarioLogado(false);
             if (!unidadesUsuario.isEmpty()) {
                 sql.append("AND TRIM(u.nome_unidade) IN (");
@@ -57,12 +55,13 @@ public class ProductStorageDAO {
         if (curso != null && !curso.equals("Todos") && !curso.trim().isEmpty()) {
             sql.append("AND EXISTS ( ");
             sql.append("    SELECT 1 FROM insumo_ficha inf ");
-            sql.append("    JOIN turma_ficha tf ON inf.id_ficha = tf.id_ficha ");
-            sql.append("    JOIN turma t ON tf.id_turma = t.id_turma ");
-            sql.append("    JOIN curso cu ON t.id_curso = cu.id_curso ");
-            sql.append("    WHERE inf.id_produto = p.id_produto AND cu.nome_curso = ? ");
+            sql.append("    JOIN curso_ficha cf ON inf.id_ficha = cf.id_ficha ");
+            sql.append("    JOIN curso cu ON cu.id_curso = cf.id_curso ");
+            sql.append("    WHERE inf.id_produto = p.id_produto ");
+            sql.append("      AND cu.situacao = 'A' ");
+            sql.append("      AND TRIM(cu.nome_curso) = TRIM(?) ");
             sql.append(") ");
-            parametros.add(curso);
+            parametros.add(curso.trim());
         }
 
         try (Connection conn = ConfigDataBase.getConnection();
@@ -98,14 +97,12 @@ public class ProductStorageDAO {
             conn = ConfigDataBase.getConnection();
             conn.setAutoCommit(false);
 
-            //  Cancela o lote específico na tabela insumo
             String sqlCancelInsumo = "UPDATE insumo SET cancelado = 'S' WHERE id_insumo = ?";
             try (PreparedStatement stmt = conn.prepareStatement(sqlCancelInsumo)) {
                 stmt.setInt(1, idInsumo);
                 stmt.executeUpdate();
             }
 
-            //  Verifica se ainda existem outros lotes ativos para este mesmo produto
             String sqlCheckAtivos = "SELECT COUNT(*) FROM insumo WHERE id_produto = ? AND cancelado = 'N'";
             int lotesAtivos = 0;
             try (PreparedStatement stmtCheck = conn.prepareStatement(sqlCheckAtivos)) {
@@ -117,7 +114,6 @@ public class ProductStorageDAO {
                 }
             }
 
-            //  Se não houver mais nenhum lote ativo, inativa o produto base também
             if (lotesAtivos == 0) {
                 String sqlInativarProduto = "UPDATE produto SET situacao = 'I' WHERE id_produto = ?";
                 try (PreparedStatement stmtProd = conn.prepareStatement(sqlInativarProduto)) {
@@ -137,7 +133,6 @@ public class ProductStorageDAO {
             try { if (conn != null) { conn.setAutoCommit(true); conn.close(); } } catch (Exception ignored) {}
         }
     }
-
 
     public boolean excluirProduto(int idProduto) {
         String sqlInsumo = "UPDATE insumo SET cancelado = 'S' WHERE id_produto = ?";
@@ -189,7 +184,6 @@ public class ProductStorageDAO {
         try (Connection conn = ConfigDataBase.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, nomeProduto != null ? nomeProduto.trim() : "");
-            // Lote nulo ou em branco é tratado como "sem lote" (gravado como NULL no banco)
             stmt.setString(2, lote != null ? lote.trim() : "");
             stmt.setString(3, nomeUnidade != null ? nomeUnidade.trim() : "");
             try (ResultSet rs = stmt.executeQuery()) {
@@ -228,8 +222,15 @@ public class ProductStorageDAO {
     }
 
     public boolean adicionarProduto(String nome, String nomeCategoria, double quantidade, double estoqueMinimo,
-                                    String unidadeMedida, String lote, java.time.LocalDate dataValidade,
+                                    String unidadeMedida, String lote, LocalDate dataValidade,
                                     String nomeUnidade) {
+        return adicionarProduto(nome, nomeCategoria, quantidade, estoqueMinimo,
+                unidadeMedida, lote, dataValidade, nomeUnidade, null);
+    }
+
+    public boolean adicionarProduto(String nome, String nomeCategoria, double quantidade, double estoqueMinimo,
+                                    String unidadeMedida, String lote, LocalDate dataValidade,
+                                    String nomeUnidade, Integer idFicha) {
         Connection conn = null;
         try {
             conn = ConfigDataBase.getConnection();
@@ -239,7 +240,6 @@ public class ProductStorageDAO {
             int idUnidade = obterIdUnidade(conn, nomeUnidade);
             int idProduto = -1;
 
-            // Verifica se já existe um produto com esse nome para reaproveitar ou reativar
             String sqlBuscaProd = "SELECT id_produto FROM produto WHERE LOWER(TRIM(nome_produto)) = LOWER(TRIM(?)) LIMIT 1";
             try (PreparedStatement stmtBusca = conn.prepareStatement(sqlBuscaProd)) {
                 stmtBusca.setString(1, nome.trim());
@@ -251,7 +251,6 @@ public class ProductStorageDAO {
             }
 
             if (idProduto > 0) {
-                // Produto já existia: garante que está ativo e atualiza categoria/unidade_m
                 String sqlReativar = "UPDATE produto SET situacao = 'A', unidade_m = ?, id_categoria = ? WHERE id_produto = ?";
                 try (PreparedStatement stmtUpd = conn.prepareStatement(sqlReativar)) {
                     stmtUpd.setString(1, unidadeMedida);
@@ -260,7 +259,6 @@ public class ProductStorageDAO {
                     stmtUpd.executeUpdate();
                 }
             } else {
-                // 1. Insere o produto base INCLUINDO a coluna obrigatória unidade_m
                 String sqlProduto = "INSERT INTO produto (nome_produto, unidade_m, situacao, id_categoria) VALUES (?, ?, 'A', ?)";
                 try (PreparedStatement stmt = conn.prepareStatement(sqlProduto, Statement.RETURN_GENERATED_KEYS)) {
                     stmt.setString(1, nome.trim());
@@ -274,7 +272,6 @@ public class ProductStorageDAO {
                 }
             }
 
-            // 2. Insere o insumo associado na tabela insumo
             String sqlInsumo = "INSERT INTO insumo (quantidade, quantidade_minima, unidade_medida, cancelado, " +
                     "id_produto, id_unidade, data_validade, lote) " +
                     "VALUES (?, ?, ?, 'N', ?, ?, ?, ?)";
@@ -291,6 +288,32 @@ public class ProductStorageDAO {
                 }
                 stmt.setString(7, lote == null || lote.isBlank() ? null : lote.trim());
                 stmt.executeUpdate();
+            }
+
+            if (idFicha != null && idFicha > 0) {
+                String sqlVerificaFicha = "SELECT COUNT(*) FROM insumo_ficha WHERE id_ficha = ? AND id_produto = ?";
+                boolean jaExiste = false;
+                try (PreparedStatement stmtVer = conn.prepareStatement(sqlVerificaFicha)) {
+                    stmtVer.setInt(1, idFicha);
+                    stmtVer.setInt(2, idProduto);
+                    try (ResultSet rs = stmtVer.executeQuery()) {
+                        if (rs.next()) {
+                            jaExiste = rs.getInt(1) > 0;
+                        }
+                    }
+                }
+
+                if (!jaExiste) {
+                    String sqlInsereFicha = "INSERT INTO insumo_ficha (id_ficha, id_produto, quantidade, unidade_medida) " +
+                            "VALUES (?, ?, ?, ?)";
+                    try (PreparedStatement stmtIns = conn.prepareStatement(sqlInsereFicha)) {
+                        stmtIns.setInt(1, idFicha);
+                        stmtIns.setInt(2, idProduto);
+                        stmtIns.setInt(3, (int) Math.round(quantidade));
+                        stmtIns.setString(4, unidadeMedida);
+                        stmtIns.executeUpdate();
+                    }
+                }
             }
 
             conn.commit();
@@ -315,7 +338,6 @@ public class ProductStorageDAO {
 
             int idCategoria = obterOuCriarCategoria(conn, nomeCategoria);
             int idUnidade = obterIdUnidade(conn, nomeUnidade);
-
 
             String sqlProduto = "UPDATE produto SET nome_produto = ?, unidade_m = ?, id_categoria = ? WHERE id_produto = ?";
             try (PreparedStatement stmt = conn.prepareStatement(sqlProduto)) {
@@ -359,7 +381,7 @@ public class ProductStorageDAO {
     }
 
     private void preencherInsumo(PreparedStatement stmt, double quantidade, double estoqueMinimo, String unidadeMedida,
-                                 int idUnidade, java.time.LocalDate dataValidade, String lote) throws Exception {
+                                 int idUnidade, LocalDate dataValidade, String lote) throws Exception {
         stmt.setInt(1, (int) Math.round(quantidade));
         stmt.setInt(2, (int) Math.round(estoqueMinimo));
         stmt.setString(3, unidadeMedida);
@@ -383,7 +405,7 @@ public class ProductStorageDAO {
     public static class DetalhesInsumo {
         public double estoqueMinimo;
         public String lote;
-        public java.time.LocalDate dataValidade;
+        public LocalDate dataValidade;
         public String nomeUnidade;
         public double quantidade;
     }
@@ -416,7 +438,6 @@ public class ProductStorageDAO {
     public List<ListaEstoque> buscarInsumosParaAulas(LocalDate inicio, LocalDate fim) {
         List<ListaEstoque> lista = new ArrayList<>();
 
-        // Esta query cruza o agendamento (turma_ficha) com a receita (insumo_ficha) e soma as quantidades
         String sql = "SELECT p.nome_produto, p.unidade_m, SUM(inf.quantidade) AS quantidade_total " +
                 "FROM turma_ficha tf " +
                 "JOIN insumo_ficha inf ON tf.id_ficha = inf.id_ficha " +
@@ -433,9 +454,9 @@ public class ProductStorageDAO {
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
                     ListaEstoque item = new ListaEstoque(
-                            0, // ID fictício, pois não precisamos dele na listagem
+                            0,
                             rs.getString("nome_produto"),
-                            "Para Aulas", // Tipo genérico para a coluna de categoria
+                            "Para Aulas",
                             rs.getDouble("quantidade_total"),
                             rs.getString("unidade_m")
                     );
