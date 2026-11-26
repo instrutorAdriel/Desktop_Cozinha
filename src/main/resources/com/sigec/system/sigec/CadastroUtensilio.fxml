@@ -44,7 +44,7 @@
                         </Label>
                         <VBox spacing="12.0">
                             <children>
-                                <HBox alignment="CENTER"
+                                <HBox alignment="CENTER_LEFT"
                                       prefHeight="35.0"
                                       spacing="15.0">
                                     <children>
@@ -119,16 +119,29 @@
                                 </HBox>
                             </children>
                         </VBox>
-                        <HBox alignment="CENTER_LEFT"
-                              prefHeight="35.0"
-                              spacing="15.0">
+                        <HBox alignment="CENTER"
+                              prefHeight="50.0"
+                              spacing="40.0">
                             <children>
-                                <Button fx:id="btnVoltar" mnemonicParsing="false" onAction="#voltarTela" prefHeight="35.0" prefWidth="120.0" styleClass="btn-padrao-2" text="VOLTAR">
+                                <Button fx:id="btnVoltar"
+                                        mnemonicParsing="false"
+                                        onAction="#voltarTela"
+                                        prefHeight="35.0"
+                                        prefWidth="120.0"
+                                        styleClass="btn-padrao-2"
+                                        text="VOLTAR">
                                     <font>
                                         <Font name="Arial Bold" size="13.0" />
                                     </font>
                                 </Button>
-                                <Button fx:id="btnSalvar" mnemonicParsing="false" onAction="#onSalvar" prefHeight="35.0" prefWidth="130.0" styleClass="btn-laranja" text="CADASTRAR" textFill="WHITE">
+                                <Button fx:id="btnSalvar"
+                                        mnemonicParsing="false"
+                                        onAction="#onSalvar"
+                                        prefHeight="35.0"
+                                        prefWidth="130.0"
+                                        styleClass="btn-laranja"
+                                        text="CADASTRAR"
+                                        textFill="WHITE">
                                     <font>
                                         <Font name="Arial Bold" size="13.0" />
                                     </font>
