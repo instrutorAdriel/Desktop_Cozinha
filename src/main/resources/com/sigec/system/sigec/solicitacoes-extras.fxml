@@ -305,6 +305,16 @@
                                         <Button mnemonicParsing="false" onAction="#onFiltrarClick" prefHeight="35.0" prefWidth="85.0" styleClass="btn-action-primary" text="Buscar">
                                             <font><Font name="Arial Bold" size="13.0" /></font>
                                         </Button>
+                                        <Button mnemonicParsing="false"
+                                                onAction="#onAtualizarClick"
+                                                prefHeight="35.0"
+                                                prefWidth="100.0"
+                                                styleClass="btn-action-primary"
+                                                text="Atualizar">
+                                            <font>
+                                                <Font name="Arial Bold" size="13.0" />
+                                            </font>
+                                        </Button>
 
                                         <!-- Filtro de Status -->
                                         <HBox alignment="CENTER_LEFT" spacing="8.0">

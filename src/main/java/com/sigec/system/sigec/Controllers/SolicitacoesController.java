@@ -185,6 +185,10 @@ public class SolicitacoesController {
     void onFiltrarClick(ActionEvent event) {
         carregarDadosDoBanco();
     }
+    @FXML
+    void onAtualizarClick(ActionEvent event) {
+        carregarDadosDoBanco();
+    }
 
     @FXML
     void onAprovarClick(ActionEvent event) {
