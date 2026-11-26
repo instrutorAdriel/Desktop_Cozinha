@@ -268,13 +268,18 @@ public class UtensiliosController implements Initializable {
 
     @FXML
     public void onEditarClick(ActionEvent event) {
-        Utensilio utensilioSelecionado = tabelaUtensilios.getSelectionModel().getSelectedItem();
+
+        Utensilio utensilioSelecionado =
+                tabelaUtensilios.getSelectionModel().getSelectedItem();
 
         if (utensilioSelecionado == null) {
+
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle("Atenção");
             alert.setHeaderText(null);
-            alert.setContentText("Por favor, selecione um utensílio na tabela para editar.");
+            alert.setContentText(
+                    "Por favor, selecione um utensílio na tabela para editar."
+            );
             alert.showAndWait();
             return;
         }

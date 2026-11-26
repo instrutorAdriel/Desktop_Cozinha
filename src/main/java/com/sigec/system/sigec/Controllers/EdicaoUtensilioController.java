@@ -60,6 +60,7 @@ public class EdicaoUtensilioController implements Initializable {
     public static Utensilio utensilioParaEditar = null;
     private Map<String, Integer> mapaCategorias = new LinkedHashMap<>();
     private Map<String, Integer> mapaLaboratorios = new LinkedHashMap<>();
+    public static Runnable aoSalvar;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -77,7 +78,22 @@ public class EdicaoUtensilioController implements Initializable {
                 txtQuantidade.setText(String.valueOf(alvo.getQtdTotal()));
             }
             txtPatrimonio.setText(String.valueOf(alvo.getNumeroPatrimonio()));
+
+            // Carrega o status atual do utensílio 26/11 ros
+            String statusAtual = alvo.getStatus();
+
+            if (statusAtual != null) {
+                statusAtual = statusAtual.trim();
+
+                if (statusAtual.equalsIgnoreCase("EM_MANUTENCAO")
+                        || statusAtual.equalsIgnoreCase("EM MANUTENÇÃO")) {
+                    statusAtual = "EM MANUTENÇÃO";
+                }
+
+                cbStatus.setValue(statusAtual);
+            }
         }
+        //26/11 ros
 
         // Thread 1: Carrega laboratórios ativos em paralelo
         if (cbLaboratorio != null) {
@@ -125,7 +141,19 @@ public class EdicaoUtensilioController implements Initializable {
         String strPatrimonio = txtPatrimonio.getText();
         String nomeCategoria = cbCategoria.getValue();
         String nomeLaboratorio = cbLaboratorio.getValue();
+//26/11 ros
+        String novoStatus = cbStatus.getValue();
 
+        if (novoStatus == null || novoStatus.trim().isEmpty()) {
+            exibirPopupEstilizado(
+                    Alert.AlertType.WARNING,
+                    "Atenção",
+                    "Selecione o status do utensílio.",
+                    false
+            );
+            return;
+        }
+        //26/11 ros
         if (nome == null || nome.trim().isEmpty() || strPatrimonio == null || strPatrimonio.trim().isEmpty()) {
             exibirPopupEstilizado(Alert.AlertType.WARNING, "Atenção", "Preencha todos os campos obrigatórios.", false);
             return;
@@ -174,19 +202,32 @@ public class EdicaoUtensilioController implements Initializable {
             alvo.setIdCategoria(idCategoria);
             alvo.setIdLaboratorio(idLaboratorio);
 
-            boolean sucesso = UtensilioDAO.atualizarUtensilio(alvo);
+          //26/11ros  boolean sucesso = UtensilioDAO.atualizarUtensilio(alvo);//26/11ros
+
+            boolean sucesso = UtensilioDAO.atualizarUtensilio(alvo, novoStatus);
 
             Platform.runLater(() -> {
                 if (btnSalvar != null) btnSalvar.setDisable(false);
                 if (sucesso) {
-                    exibirPopupEstilizado(Alert.AlertType.INFORMATION, "Sucesso", "Utensílio atualizado com sucesso!", true);
-                } else {
+                    exibirPopupEstilizado(
+                            Alert.AlertType.INFORMATION,
+                            "Sucesso",
+                            "Utensílio atualizado com sucesso!",
+                            true
+                    );
+                }
+
+                else {
                     exibirPopupEstilizado(Alert.AlertType.ERROR, "Erro", "Não foi possível atualizar as informações no banco de dados.", false);
                 }
             });
         }, DB_EXECUTOR);
+
+
     }
 
+    // Se a classe Utensilio tiver setter para status/estado:
+// utensilioAtual.setStatus(novoStatus);
     @FXML
     public void onFecharPopup(ActionEvent event) {
         if (popupOverlay != null) {

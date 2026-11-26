@@ -238,6 +238,10 @@ public class UtensilioDAO {
                 }
             }
         }
+//
+
+  //
+
 
         String sqlInsert = "INSERT INTO laboratorio (nome_laboratorio, capacidade, situacao, id_unidade) VALUES (?, 20, 'A', ?)";
         try (PreparedStatement stmtInsert = conn.prepareStatement(sqlInsert, Statement.RETURN_GENERATED_KEYS)) {
@@ -308,6 +312,120 @@ public class UtensilioDAO {
         }
     }
 
+    //26/11ros
+
+
+    public static boolean atualizarUtensilio(Utensilio utensilio, String novoStatus) {
+
+        if (utensilio == null || novoStatus == null || novoStatus.isBlank()) {
+            return false;
+        }
+
+        if (existeNumeroPatrimonio(
+                utensilio.getNumeroPatrimonio(),
+                utensilio.getIdUtensilio())) {
+            return false;
+        }
+
+        // Padroniza o status para o formato utilizado no banco
+        String estadoNovo = novoStatus.trim().toUpperCase();
+
+        if (estadoNovo.equals("EM MANUTENÇÃO")) {
+            estadoNovo = "EM_MANUTENCAO";
+        }
+
+        if (!estadoNovo.equals("PRONTO")
+                && !estadoNovo.equals("DANIFICADO")
+                && !estadoNovo.equals("EM_MANUTENCAO")) {
+            return false;
+        }
+
+        String sqlAtualizar =
+                "UPDATE utensilio SET nome_utensilio = ?, quantidade = ?, " +
+                        "numero_patrimonio = ?, id_categoria_utensilio = ? " +
+                        "WHERE id_utensilio = ?";
+
+        String sqlBuscarEstado =
+                "SELECT estado_atual FROM checklist_utensilio " +
+                        "WHERE id_utensilio = ? " +
+                        "ORDER BY id_checklist_utensilio DESC LIMIT 1";
+
+        String sqlInserirEstado =
+                "INSERT INTO checklist_utensilio " +
+                        "(id_utensilio, estado_anterior, estado_atual, observacao, data_hora_entrada) " +
+                        "VALUES (?, ?, ?, ?, NOW())";
+
+        try (Connection conn = ConfigDataBase.getConnection()) {
+
+            conn.setAutoCommit(false);
+
+            try {
+
+                String estadoAnterior = "PRONTO";
+
+                // Busca o último status registrado
+                try (PreparedStatement stmt = conn.prepareStatement(sqlBuscarEstado)) {
+
+                    stmt.setInt(1, utensilio.getIdUtensilio());
+
+                    try (ResultSet rs = stmt.executeQuery()) {
+                        if (rs.next() && rs.getString("estado_atual") != null) {
+                            estadoAnterior = rs.getString("estado_atual");
+                        }
+                    }
+                }
+
+                // Atualiza os dados principais do utensílio
+                try (PreparedStatement stmt = conn.prepareStatement(sqlAtualizar)) {
+
+                    stmt.setString(1, utensilio.getNome());
+                    stmt.setInt(2, utensilio.getQtdTotal());
+                    stmt.setInt(3, utensilio.getNumeroPatrimonio());
+                    stmt.setInt(4, utensilio.getIdCategoria());
+                    stmt.setInt(5, utensilio.getIdUtensilio());
+
+                    if (stmt.executeUpdate() == 0) {
+                        conn.rollback();
+                        return false;
+                    }
+                }
+
+                // Registra o novo status somente se houve alteração
+                if (!estadoAnterior.equalsIgnoreCase(estadoNovo)) {
+
+                    try (PreparedStatement stmt = conn.prepareStatement(sqlInserirEstado)) {
+
+                        stmt.setInt(1, utensilio.getIdUtensilio());
+                        stmt.setString(2, estadoAnterior);
+                        stmt.setString(3, estadoNovo);
+                        stmt.setString(4, "Status alterado na edição do utensílio.");
+
+                        stmt.executeUpdate();
+                    }
+                }
+
+                conn.commit();
+                return true;
+
+            } catch (SQLException e) {
+
+                conn.rollback();
+                throw e;
+
+            } finally {
+                conn.setAutoCommit(true);
+            }
+
+        } catch (SQLException e) {
+
+            System.err.println("Erro ao atualizar utensílio e status: " + e.getMessage());
+            e.printStackTrace();
+
+            return false;
+        }
+    }
+
+    //26/11ros
     public static List<Utensilio> buscarUtensiliosPorFiltro(String termo, String status, String laboratorio, String unidade) {
         List<Utensilio> lista = new ArrayList<>();
 
